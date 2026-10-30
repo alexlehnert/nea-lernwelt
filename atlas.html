@@ -1480,4 +1480,11 @@ if (window.d3) { drawGlobe(document.getElementById('stamp'), 44, false); startSc
 else $('#screen').innerHTML = '<div class="card">Die Kartenbibliothek konnte nicht geladen werden. Bitte Internetverbindung prüfen und neu laden.</div>';
 </script>
 
+<script>/* Lernwelt: Kapitel-Fortschritt für die Startseite (siehe sync.js) */
+if(window.LW&&LW.kapitel){
+LW.kapitel(function(){
+  return ['welt','kompass','globus'].map(function(tp){var it=itemsFor(tp);
+    return {t:TOPIC_INFO[tp].n,p:it.length?it.reduce(function(s,k){return s+mval(k)/3},0)/it.length:0}});
+});
+}</script>
 </body></html>

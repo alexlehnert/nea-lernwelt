@@ -963,6 +963,17 @@ function judge(t){
 }
 
 home();
+
+/* Lernwelt: Kapitel-Fortschritt für die Startseite (siehe sync.js) */
+if(window.LW&&LW.kapitel){
+LW.kapitel(function(){
+  var avg=function(a,f){return a.length?a.reduce(function(s,x){return s+Math.min(1,f(x))},0)/a.length:0};
+  var ids=function(ar){return I.filter(function(x){return x.a===ar})};
+  return [{t:'Terme üben',p:avg(ids('t'),function(x){return bx(x.id)/4})},
+    {t:'Potenzen üben',p:avg(ids('p'),function(x){return bx(x.id)/4})},
+    {t:'Auswendig-Quiz: 2er- und 10er-Potenzen',p:avg(FACTS,function(f){return pqs(f)/3})}];
+});
+}
 })();
 </script>
 

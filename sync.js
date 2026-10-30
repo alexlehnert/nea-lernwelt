@@ -6,6 +6,12 @@
  * - schickt jede Änderung an localStorage an Supabase (Push, gebündelt),
  * - leitet App-Seiten ohne Login zur Startseite um.
  * Konflikte: pro Schlüssel gewinnt der neueste Stand (updated_at).
+ *
+ * Außerdem auf App-Seiten:
+ * - Kapitel-Fortschritt: Eine App meldet mit LW.kapitel(fn) eine Funktion, die [{t, p}] liefert
+ *   (Kapitelname, Anteil 0–1). Nach jeder Änderung der App wird sie neu berechnet und unter
+ *   lernwelt-fortschritt-<heft> gespeichert.
+ * - Lernzeit: Sekunden, in denen eine App sichtbar offen ist, pro Tag unter lernwelt-zeit.
  */
 (function () {
   'use strict';
@@ -15,6 +21,9 @@
   var USER = 'lernwelt-user';
   var RELOADED = 'lernwelt-reloaded';
   var DOMAIN = '@lernwelt.local';
+  var HEFT = location.pathname.replace(/^.*\//, '').replace(/\.html$/, '');
+  var FORT = 'lernwelt-fortschritt-' + HEFT;
+  var ZEIT = 'lernwelt-zeit';
 
   if (!C.url || !C.key || !window.supabase) {
     window.LW = { configured: false, ready: Promise.resolve(null) };
@@ -59,7 +68,10 @@
   }
   Storage.prototype.setItem = function (k, v) {
     setRaw.call(this, k, v);
-    if (this === LS && tracked(k)) touched(k);
+    if (this === LS && tracked(k)) {
+      touched(k);
+      if (k.indexOf('lernwelt-') !== 0) scheduleReport();
+    }
   };
   Storage.prototype.removeItem = function (k) {
     removeRaw.call(this, k);
@@ -97,6 +109,57 @@
       });
     } catch (e) {}
   }
+  // Kapitel-Fortschritt der App neu berechnen und speichern, wenn er sich geändert hat.
+  var kapFn = null, kapTimer = null;
+  function scheduleReport() {
+    if (!kapFn) return;
+    clearTimeout(kapTimer);
+    kapTimer = setTimeout(report, 600);
+  }
+  function report() {
+    if (!kapFn || !pulled || IS_HUB) return;
+    var list;
+    try { list = kapFn(); } catch (e) { return; }
+    if (!list || !list.length) return;
+    var k = list.map(function (x) {
+      var p = Math.max(0, Math.min(1, +x.p || 0));
+      return { t: String(x.t), p: Math.round(p * 100) / 100 };
+    });
+    var old = null;
+    try { old = JSON.parse(LS.getItem(FORT) || 'null'); } catch (e) {}
+    if (old && JSON.stringify(old.k) === JSON.stringify(k)) return;
+    LS.setItem(FORT, JSON.stringify({ k: k, ts: Date.now() }));
+  }
+
+  // Lernzeit: alle 20 s zählen, solange die App sichtbar ist; jede Minute und beim Verlassen speichern.
+  var secs = 0;
+  function dayKey(d) {
+    d = d || new Date();
+    return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+  }
+  function saveTime() {
+    if (!secs || !session || !pulled) return;
+    var z = {};
+    try { z = JSON.parse(LS.getItem(ZEIT) || '{}') || {}; } catch (e) {}
+    var d = dayKey();
+    z[d] = (z[d] || 0) + secs;
+    secs = 0;
+    var keys = Object.keys(z).sort();
+    while (keys.length > 120) delete z[keys.shift()];
+    LS.setItem(ZEIT, JSON.stringify(z));
+  }
+  if (!IS_HUB) {
+    setInterval(function () {
+      if (document.visibilityState !== 'visible' || !session) return;
+      secs += 20;
+      if (secs >= 60) saveTime();
+    }, 20000);
+    window.addEventListener('pagehide', saveTime);
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'hidden') saveTime();
+    });
+  }
+
   window.addEventListener('pagehide', flushOnLeave);
   document.addEventListener('visibilitychange', function () {
     if (document.visibilityState === 'hidden') flushOnLeave();
@@ -156,6 +219,7 @@
           return new Promise(function () {});
         }
         sessionStorage.removeItem(RELOADED);
+        scheduleReport();
       }
       return s;
     }, function () { pulled = true; return s; });
@@ -173,6 +237,8 @@
     configured: true,
     ready: ready,
     user: function () { return session && session.user; },
+    kapitel: function (fn) { kapFn = fn; scheduleReport(); },
+    day: dayKey,
     signIn: function (name, password) {
       name = String(name || '').trim().toLowerCase();
       var email = name.indexOf('@') >= 0 ? name : name + DOMAIN;

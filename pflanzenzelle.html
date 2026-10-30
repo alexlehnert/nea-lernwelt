@@ -864,4 +864,16 @@ buildQuiz();
 })();
 </script>
 
+<script>/* Lernwelt: Kapitel-Fortschritt für die Startseite (siehe sync.js) */
+if(window.LW&&LW.kapitel){
+(function(){
+  var K='pflanzenzelle-besucht',IDS=["entdecken", "arbeit", "wasser", "groesse", "quiz"],NAMES=["Wer wohnt in der Zelle?", "Ein Tag in der Blattzelle", "Warum Pflanzen stehen können", "Wie klein ist eine Zelle?", "Teste dich"],seen={};
+  try{seen=JSON.parse(localStorage.getItem(K)||'{}')||{}}catch(e){}
+  function mark(e){var s=e.target.closest&&e.target.closest('section[id]');
+    if(!s||IDS.indexOf(s.id)<0||seen[s.id])return;
+    seen[s.id]=1;try{localStorage.setItem(K,JSON.stringify(seen))}catch(e){}}
+  ['pointerdown','input','keydown'].forEach(function(ev){document.addEventListener(ev,mark,true)});
+  LW.kapitel(function(){return IDS.map(function(id,i){return {t:NAMES[i],p:seen[id]?1:0}})});
+})();
+}</script>
 </body></html>

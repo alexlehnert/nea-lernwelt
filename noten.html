@@ -720,4 +720,10 @@ function cheat(){hideFb();stopAll();const DX=46,X0=70;
 home();
 </script>
 
+<script>/* Lernwelt: Kapitel-Fortschritt für die Startseite (siehe sync.js) */
+if(window.LW&&LW.kapitel){
+LW.kapitel(function(){
+  return STATIONS.filter(function(s){return s.id!=='compose'}).map(function(s){return {t:s.t,p:(S.best[s.id]||0)/3}});
+});
+}</script>
 </body></html>
