@@ -1,4 +1,4 @@
-<!doctype html><html><head><meta charset=utf8><script src="/api/config"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="/sync.js"></script><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"><link rel="manifest" href="/manifest.webmanifest"><meta name="apple-mobile-web-app-title" content="Lernwelt"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="theme-color" content="#5B3FE6"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body><nav id="lw-bar" class="lw-bar lw-en" aria-label="Lernwelt"><a class="lw-back" href="index.html" aria-label="Zurück zur Lernwelt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a><span class="lw-t"><span class="lw-eyebrow">Englisch</span><span class="lw-name">English trainer</span></span></nav>
+<!doctype html><html><head><meta charset=utf8><script src="/api/config"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="/sync.js"></script><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"><link rel="manifest" href="/manifest.webmanifest"><meta name="apple-mobile-web-app-title" content="Lernwelt"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="theme-color" content="#5B3FE6"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body><nav id="lw-bar" class="lw-bar lw-en" aria-label="Lernwelt"><a class="lw-back" href="index.html#heft-englisch" aria-label="Zurück zum Heft"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a><span class="lw-t"><span class="lw-eyebrow">Englisch</span><span class="lw-name">English trainer</span></span></nav>
 <title>English trainer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800;900&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
@@ -117,7 +117,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--navy);outline-o
 .list{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:4px}
 @media (max-width:460px){.opts{grid-template-columns:1fr}.seg button span{display:none}.fach .t{font-size:.6rem}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
-</style><!--lw-look--><link rel="stylesheet" href="/lernwelt-app.css"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap"><style id="lw-look">
+</style><!--lw-look--><link rel="stylesheet" href="/lernwelt-app.css"><script src="/lernwelt-app.js"></script><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap"><style id="lw-look">
 /* Übungs-Bausteine im Lernwelt-Look (wie im Konzept: Antwortkacheln, grüne Rückmeldung, dicke Knöpfe) */
 .go,.next,.check{background:var(--lw-c);color:#fff;border:none;border-radius:16px;min-height:54px;padding:12px 22px;
   font-family:var(--lw-f-d);font-weight:700;font-size:1.05rem;letter-spacing:.04em;text-transform:uppercase;box-shadow:0 5px 0 var(--lw-cd)}
@@ -162,6 +162,8 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--navy);outline-o
 }
 .panel,.card{border-radius:20px;border-bottom-width:5px}
 .box{border-radius:22px}
+/* Name steht schon in der Leiste oben */
+.wrap > header{display:none}
 </style><!--/lw-look-->
 
 <div class="wrap">
@@ -685,7 +687,7 @@ function task(){
   const tag=isV?`Vokabel · ${SECS[it.s].p}`:TOP[it.g];
   const fach=b?`Fach ${b}`:'neu';
   const pct=Math.round(R.i/R.q.length*100);
-  $('#screen').innerHTML=`<div class="topbar"><span>Karte ${R.i+1} von ${R.q.length}${R.i>=R.first?' · Wiederholung':''}</span><button class="ghost" type="button" id="quit">Beenden</button></div>
+  $('#screen').innerHTML=`<div class="topbar"><span>Karte ${R.i+1} von ${R.q.length}${R.i>=R.first?' · Wiederholung':''}</span><button class="ghost" type="button" id="quit" aria-label="Runde beenden">Beenden</button></div>
   <div class="progress" aria-hidden="true"><i style="width:${pct}%"></i></div>
   <article class="card"><div class="card-top"><span class="tag">${esc(tag)}</span><span class="fachtag">${fach}</span></div>
   <div class="card-body" id="cb"></div></article>`;
@@ -706,9 +708,9 @@ function grade(id,ok,html){
   const fb=document.createElement('div');
   fb.className='fb '+(ok?'ok':'bad');fb.setAttribute('role','status');
   fb.innerHTML=html+(!ok&&R.retried.has(id)&&R.q.lastIndexOf(id)>R.i?'<span class="ex">Diese Karte kommt am Ende der Runde noch einmal.</span>':'');
-  const cb=$('#cb');cb.appendChild(fb);
+  const cb=$('#cb');
   const nx=document.createElement('button');nx.className='next';nx.type='button';nx.textContent=R.i+1>=R.q.length?'Ergebnis':'Weiter';
-  nx.onclick=()=>{R.i++;task();if(document.activeElement&&document.activeElement.blur)document.activeElement.blur()};cb.appendChild(nx);nx.focus({preventScroll:true});
+  nx.onclick=()=>{R.i++;task();if(document.activeElement&&document.activeElement.blur)document.activeElement.blur()};lwSheet(cb,ok,[fb,nx]);
   renderBox();
 }
 const praise=()=>rnd(['Richtig!','Super!','Genau!','Prima!','Stimmt!']);
@@ -831,8 +833,16 @@ function end(){
   </section>`;
   $('#again').onclick=startRound;$('#menu').onclick=start;$('#again').focus({preventScroll:true});
 }
+/* Lernwelt: direkt ins Kapitel (englisch.html#v1 … #v3, #g1 …), Anker stehen in hefte.js */
+function kapitelSprung(){
+  const h=location.hash.slice(1).toUpperCase(),V3={V1:[0,3],V2:[4,6],V3:[7,9]};
+  if(V3[h]){const [a,b]=V3[h];S.mode='v';S.secs=SECS.map((_,i)=>i).filter(i=>i>=a&&i<=b)}
+  else if(TOP[h]){S.mode='g';S.tops=[h]}
+  else return false;
+  save();start();if(pool().length)startRound();return true;
+}
 document.addEventListener('keydown',e=>{if(e.key==='Enter'){const nx=document.querySelector('.next');if(nx&&document.activeElement!==nx&&!(document.activeElement&&document.activeElement.tagName==='INPUT'&&!document.activeElement.disabled)){e.preventDefault();nx.click()}}});
-start();
+kapitelSprung()||start();
 </script>
 
 <script>/* Lernwelt: Kapitel-Fortschritt für die Startseite (siehe sync.js) */

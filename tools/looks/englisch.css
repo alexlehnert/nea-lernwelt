@@ -8,3 +8,5 @@
 }
 .panel,.card{border-radius:20px;border-bottom-width:5px}
 .box{border-radius:22px}
+/* Name steht schon in der Leiste oben */
+.wrap > header{display:none}

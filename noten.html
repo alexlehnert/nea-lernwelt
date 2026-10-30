@@ -1,4 +1,4 @@
-<!doctype html><html><head><meta charset=utf8><script src="/api/config"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="/sync.js"></script><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"><link rel="manifest" href="/manifest.webmanifest"><meta name="apple-mobile-web-app-title" content="Lernwelt"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="theme-color" content="#5B3FE6"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body><nav id="lw-bar" class="lw-bar lw-mu" aria-label="Lernwelt"><a class="lw-back" href="index.html" aria-label="Zurück zur Lernwelt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a><span class="lw-t"><span class="lw-eyebrow">Musik</span><span class="lw-name">Notenwerkstatt</span></span></nav>
+<!doctype html><html><head><meta charset=utf8><script src="/api/config"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="/sync.js"></script><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"><link rel="manifest" href="/manifest.webmanifest"><meta name="apple-mobile-web-app-title" content="Lernwelt"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="theme-color" content="#5B3FE6"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body><nav id="lw-bar" class="lw-bar lw-mu" aria-label="Lernwelt"><a class="lw-back" href="index.html#heft-noten" aria-label="Zurück zum Heft"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a><span class="lw-t"><span class="lw-eyebrow">Musik</span><span class="lw-name">Notenwerkstatt</span></span></nav>
 <title>Notenwerkstatt</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -252,7 +252,7 @@ canvas#fx{position:fixed;inset:0;pointer-events:none;z-index:40;width:100%;heigh
   .hero h1{font-size:1.85rem}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-</style><!--lw-look--><link rel="stylesheet" href="/lernwelt-app.css"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap"><style id="lw-look">
+</style><!--lw-look--><link rel="stylesheet" href="/lernwelt-app.css"><script src="/lernwelt-app.js"></script><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap"><style id="lw-look">
 :root:root:root{
   --lw-c:var(--lw-mu); --lw-cd:var(--lw-mu-d); --lw-cs:var(--lw-mu-s);
   --paper:var(--lw-bg); --sheet:var(--lw-card); --ink:var(--lw-ink); --muted:var(--lw-muted); --line:var(--lw-line); --soft:var(--lw-soft);
@@ -269,6 +269,9 @@ canvas#fx{position:fixed;inset:0;pointer-events:none;z-index:40;width:100%;heigh
 .feedback.bad h3{color:var(--lw-bad-ink)}
 .feedback .btn{background:var(--lw-ok);box-shadow:0 5px 0 var(--lw-ok-d)}
 .feedback.bad .btn{background:var(--lw-bad);box-shadow:0 5px 0 #9A2A17}
+/* Name steht schon in der Leiste oben. Serie, Punkte und Abzeichen gibt es einheitlich in der Lernwelt,
+   im Heft zählen die Sterne pro Station. */
+.hero,.chips:has(.xp),.level,.sec:has(+ .badges),.badges{display:none}
 </style><!--/lw-look-->
 
 <canvas id="fx" aria-hidden="true"></canvas>
@@ -527,7 +530,7 @@ function endRound(){hideFb();const n=R.n,ok=R.ok,q=ok/n;const stars=q>=.9?3:q>=.
   app.innerHTML=`<section class="result"><h2>${cheer}</h2><div class="bigstars">${[0,1,2].map(k=>I.bigstar(k<stars)).join("")}</div>
    <div class="ledgerbox"><div><span>Richtig</span><b>${ok} von ${n}</b></div><div><span>Punkte aus Antworten</span><b>${R.xp}</b></div><div><span>Sterne-Bonus</span><b>${bonus}</b></div><div><span>Zusammen</span><b>+${R.xp+bonus}</b></div></div>
    ${R.miss.length?`<div class="missed"><b>Das schauen wir uns nochmal an:</b>${R.miss.slice(0,6).map(m=>`<span class="muted">• ${m}</span>`).join("")}</div>`:""}
-   <div class="row c"><button class="btn" id="again">Nochmal</button><button class="btn sec2" id="back">Zur Übersicht</button></div></section>`;
+   <div class="row c"><button class="btn" id="again">Neue Runde</button><button class="btn sec2" id="back">Zur Übersicht</button></div></section>`;
   $("#again").onclick=()=>startRound(R.id);$("#back").onclick=home;if(stars>=2){fanfare();confetti()}scrollTo(0,0)}
 
 /* --- Aufgabentypen --- */
@@ -690,7 +693,7 @@ function rainMiss(timeout){const p=RN.cur.p;RN.lives--;RN.combo=0;$("#cmb").text
 function rainOver(){RN.run=false;cancelAnimationFrame(RN.raf);const rec=RN.score>S.hi;if(rec)S.hi=RN.score;const xp=RN.score*3;addXP(xp);if(RN.score>=20)award("rain20");
   const stars=RN.score>=25?3:RN.score>=15?2:RN.score>=6?1:0;S.best.rain=Math.max(S.best.rain||0,stars);finishDay();save();
   $("#rs").innerHTML=`<section class="result"><h2>${rec?"Neuer Rekord!":"Geschafft!"}</h2><div class="bigstars">${[0,1,2].map(k=>I.bigstar(k<stars)).join("")}</div><div class="rscore">${RN.score} Noten</div>
-   <p class="muted">+${xp} Notenpunkte · Rekord: ${S.hi}</p><p class="small">1 Stern ab 6, 2 Sterne ab 15, 3 Sterne ab 25.</p><div class="row c"><button class="btn gold" id="go2">Nochmal</button><button class="btn sec2" id="bk">Zur Übersicht</button></div></section>`;
+   <p class="muted">+${xp} Notenpunkte · Rekord: ${S.hi}</p><p class="small">1 Stern ab 6, 2 Sterne ab 15, 3 Sterne ab 25.</p><div class="row c"><button class="btn gold" id="go2">Neue Runde</button><button class="btn sec2" id="bk">Zur Übersicht</button></div></section>`;
   $("#go2").onclick=rainGo;$("#bk").onclick=home;if(rec&&RN.score>0){fanfare();confetti()}}
 
 /* ================= Melodie-Baukasten ================= */
@@ -734,7 +737,9 @@ function cheat(){hideFb();stopAll();const DX=46,X0=70;
   app.querySelectorAll(".cheat .staff .note").forEach(g=>{g.style.cursor="pointer";g.addEventListener("pointerdown",()=>{playP(+g.dataset.p);g.classList.remove("pop");void g.getBBox();g.classList.add("pop")})});
   bindPiano(app.querySelector(".pianobox"));scrollTo(0,0)}
 
-home();
+/* Lernwelt: direkt ins Kapitel (noten.html#name …), Anker stehen in hefte.js */
+function kapitelSprung(){const id=location.hash.slice(1);if(!STATIONS.some(s=>s.id===id))return false;home();openStation(id);return true}
+kapitelSprung()||home();
 </script>
 
 <script>/* Lernwelt: Kapitel-Fortschritt für die Startseite (siehe sync.js) */

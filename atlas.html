@@ -1,4 +1,4 @@
-<!doctype html><html><head><meta charset=utf8><script src="/api/config"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="/sync.js"></script><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"><link rel="manifest" href="/manifest.webmanifest"><meta name="apple-mobile-web-app-title" content="Lernwelt"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="theme-color" content="#5B3FE6"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body><nav id="lw-bar" class="lw-bar lw-geo" aria-label="Lernwelt"><a class="lw-back" href="index.html" aria-label="Zurück zur Lernwelt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a><span class="lw-t"><span class="lw-eyebrow">Erdkunde</span><span class="lw-name">Atlas-Detektiv</span></span></nav>
+<!doctype html><html><head><meta charset=utf8><script src="/api/config"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="/sync.js"></script><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"><link rel="manifest" href="/manifest.webmanifest"><meta name="apple-mobile-web-app-title" content="Lernwelt"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="theme-color" content="#5B3FE6"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body><nav id="lw-bar" class="lw-bar lw-geo" aria-label="Lernwelt"><a class="lw-back" href="index.html#heft-atlas" aria-label="Zurück zum Heft"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a><span class="lw-t"><span class="lw-eyebrow">Erdkunde</span><span class="lw-name">Atlas-Detektiv</span></span></nav>
 <title>Atlas-Detektiv</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,400..900;1,62..125,400..900&display=swap">
@@ -117,7 +117,7 @@ dl.defs dt{font-weight:800} dl.defs dd{margin:0;color:var(--muted)}
 .maplab{font-family:var(--f-map);font-weight:700;font-stretch:88%;letter-spacing:.07em;text-transform:uppercase;paint-order:stroke;stroke-linejoin:round;pointer-events:none}
 @keyframes pulse{0%,100%{stroke-opacity:1}50%{stroke-opacity:.35}}
 .hlstroke{animation:pulse 1.4s ease-in-out infinite}
-</style><!--lw-look--><link rel="stylesheet" href="/lernwelt-app.css"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap"><style id="lw-look">
+</style><!--lw-look--><link rel="stylesheet" href="/lernwelt-app.css"><script src="/lernwelt-app.js"></script><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap"><style id="lw-look">
 :root:root:root{
   --lw-c:var(--lw-geo); --lw-cd:var(--lw-geo-d); --lw-cs:var(--lw-geo-s);
   --bg:var(--lw-bg); --surface:var(--lw-card); --ink:var(--lw-ink); --muted:var(--lw-muted); --line:var(--lw-line);
@@ -160,6 +160,11 @@ body{background-image:none}
 .topic[aria-pressed="true"]{border-color:var(--lw-geo);box-shadow:none;background:var(--lw-geo-s)}
 .seg button[aria-pressed="true"]{background:var(--lw-geo);color:#fff}
 .q{text-transform:none;letter-spacing:0}
+.topbar{display:flex;align-items:center;gap:12px;padding-top:10px;font-size:.95rem;font-weight:700;color:var(--lw-muted)}
+/* Name steht schon in der Leiste oben */
+#app > header.top{display:none}
+.cover .eyebrow,.cover .band span{font-size:13px}
+.lw-bar{margin-top:-14px}
 </style><!--/lw-look-->
 
 <div class="wrap" id="app" lang="de">
@@ -605,7 +610,7 @@ function startScreen() {
   ms.appendChild(masteryGrid()); sc.appendChild(ms);
 
   const go = h('div', { class: 'row' });
-  const b = h('button', { class: 'btn big', type: 'button', id: 'start' }, 'Runde starten'); b.onclick = newRound;
+  const b = h('button', { class: 'btn big', type: 'button', id: 'start' }, 'Los geht\'s'); b.onclick = newRound;
   go.appendChild(b);
   const reset = h('button', { class: 'btn ghost', type: 'button', id: 'reset' }, 'Fortschritt löschen');
   reset.onclick = () => { if (reset.dataset.c) { SAVE.mastery = {}; SAVE.seen = []; persist(); startScreen(); } else { reset.dataset.c = 1; reset.textContent = 'Wirklich löschen?'; } };
@@ -631,6 +636,8 @@ function recordMany(res) { const all = res.every(r => r[1]); if (all) G.right++;
 
 function renderTask(t) {
   const sc = $('#screen'); sc.innerHTML = '';
+  const top = h('div', { class: 'topbar' }, `<span>Aufgabe ${G.i} von ${G.n} · ${G.right} richtig</span><button class="ghost" type="button" id="quit" aria-label="Runde beenden">Beenden</button>`); sc.appendChild(top);
+  top.querySelector('#quit').onclick = startScreen;
   const prog = h('div', { class: 'progress' }, `<i style="width:${(G.i - 1) / G.n * 100}%"></i>`); sc.appendChild(prog);
   const card = h('section', { class: 'card', style: 'display:flex;flex-direction:column;gap:12px' });
   const projName = { welt: 'Weltkarte', pazifik: 'Pazifik in der Mitte', globus: 'Globus', zoom: 'Ausschnitt', solo: 'Einzeln' }[t.proj];
@@ -649,9 +656,11 @@ function renderTask(t) {
     done = true;
     fb.className = 'feedback ' + (correct ? 'ok' : 'bad');
     fb.innerHTML = `<div class="ico">${correct ? '✓' : '✗'}</div><div><p><b>${msg}</b></p><p class="tip">${extraTip || T.tip}</p></div>`;
-    const b = h('button', { class: 'btn', type: 'button', id: 'next' }, G.i >= G.n ? 'Zum Ergebnis' : 'Weiter'); b.onclick = next;
-    nav.innerHTML = ''; nav.appendChild(h('span', { class: 'small' }, correct ? rnd(['Stark!', 'Genau!', 'Super, weiter so!', 'Richtig erkannt!']) : 'Merk dir die Stelle gut.')); nav.appendChild(b);
-    b.focus({ preventScroll: true });
+    const b = h('button', { class: 'btn', type: 'button', id: 'next' }, G.i >= G.n ? 'Ergebnis' : 'Weiter'); b.onclick = next;
+    nav.innerHTML = ''; nav.appendChild(b);
+    // Rückmeldung als Kopie in die Leiste unten; fb bleibt (leer) als Ankerpunkt für eingefügte Karten stehen
+    const sfb = fb.cloneNode(true); sfb.setAttribute('aria-live', 'polite'); fb.innerHTML = ''; fb.style.display = 'none';
+    lwSheet(card, correct, [sfb, nav]);
   }
   function choiceButtons(opts, correctKey, render, onAnswer, numeric, oneCol) {
     choices.innerHTML = ''; choices.className = 'choices' + (oneCol ? ' one' : opts.length === 3 ? ' three' : '');
@@ -1519,7 +1528,9 @@ function drawGlobe(svg, size, spin) {
     requestAnimationFrame(step);
   }
 }
-if (window.d3) { drawGlobe(document.getElementById('stamp'), 44, false); startScreen(); }
+// Lernwelt: direkt ins Kapitel (atlas.html#welt, #kompass, #globus), Anker stehen in hefte.js
+function kapitelSprung() { const tp = location.hash.slice(1); if (!['welt', 'kompass', 'globus'].includes(tp)) return false; SAVE.topic = tp; persist(); startScreen(); newRound(); return true; }
+if (window.d3) { drawGlobe(document.getElementById('stamp'), 44, false); kapitelSprung() || startScreen(); }
 else $('#screen').innerHTML = '<div class="card">Die Kartenbibliothek konnte nicht geladen werden. Bitte Internetverbindung prüfen und neu laden.</div>';
 </script>
 

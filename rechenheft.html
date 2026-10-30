@@ -1,4 +1,4 @@
-<!doctype html><html><head><meta charset=utf8><script src="/api/config"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="/sync.js"></script><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"><link rel="manifest" href="/manifest.webmanifest"><meta name="apple-mobile-web-app-title" content="Lernwelt"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="theme-color" content="#5B3FE6"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body><nav id="lw-bar" class="lw-bar lw-ma" aria-label="Lernwelt"><a class="lw-back" href="index.html" aria-label="Zurück zur Lernwelt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a><span class="lw-t"><span class="lw-eyebrow">Mathe</span><span class="lw-name">Rechenheft</span></span></nav>
+<!doctype html><html><head><meta charset=utf8><script src="/api/config"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="/sync.js"></script><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"><link rel="manifest" href="/manifest.webmanifest"><meta name="apple-mobile-web-app-title" content="Lernwelt"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="theme-color" content="#5B3FE6"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body><nav id="lw-bar" class="lw-bar lw-ma" aria-label="Lernwelt"><a class="lw-back" href="index.html#heft-rechenheft" aria-label="Zurück zum Heft"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a><span class="lw-t"><span class="lw-eyebrow">Mathe</span><span class="lw-name">Rechenheft</span></span></nav>
 <title>Rechenheft</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -237,7 +237,7 @@ input[type=range]{width:100%;accent-color:var(--red);height:30px}
 .say{font-family:var(--f-h);font-size:1.15rem;color:var(--red)}
 @media (max-width:460px){.opts{grid-template-columns:1fr}.front .t{font-size:.56rem}.stations{grid-template-columns:1fr 1fr}.parts{font-size:2rem}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
-</style><!--lw-look--><link rel="stylesheet" href="/lernwelt-app.css"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap"><style id="lw-look">
+</style><!--lw-look--><link rel="stylesheet" href="/lernwelt-app.css"><script src="/lernwelt-app.js"></script><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap"><style id="lw-look">
 /* Übungs-Bausteine im Lernwelt-Look (wie im Konzept: Antwortkacheln, grüne Rückmeldung, dicke Knöpfe) */
 .go,.next,.check{background:var(--lw-c);color:#fff;border:none;border-radius:16px;min-height:54px;padding:12px 22px;
   font-family:var(--lw-f-d);font-weight:700;font-size:1.05rem;letter-spacing:.04em;text-transform:uppercase;box-shadow:0 5px 0 var(--lw-cd)}
@@ -285,6 +285,8 @@ h1,h2,h3{font-weight:700}
 header.cover{border-radius:0 0 32px 32px;background-image:none}
 .panel,.st,.reg button,.card{border-radius:20px;border-bottom-width:5px}
 .box{border-radius:22px;box-shadow:0 6px 0 var(--lw-ma-d)}
+/* Name steht schon in der Leiste oben */
+header.cover{display:none}
 </style><!--/lw-look-->
 
 <div class="wrap">
@@ -533,7 +535,7 @@ function task(){
   PAD=null;
   if(Rd.i>=Rd.q.length)return endRound();
   const it=ALL[Rd.q[Rd.i]],b=bx(it.id);
-  $('#screen').innerHTML=`<div class="topbar"><span>Karte ${Rd.i+1} von ${Rd.q.length}${Rd.i>=Rd.first?' · Wiederholung':''}</span><button class="ghost" type="button" id="quit">Beenden</button></div>
+  $('#screen').innerHTML=`<div class="topbar"><span>Karte ${Rd.i+1} von ${Rd.q.length}${Rd.i>=Rd.first?' · Wiederholung':''}</span><button class="ghost" type="button" id="quit" aria-label="Runde beenden">Beenden</button></div>
   <div class="progress" aria-hidden="true"><i style="width:${Math.round(Rd.i/Rd.q.length*100)}%"></i></div>
   <article class="card"><div class="card-top"><span class="tag">${it.a==='p'?'Potenzen':'Terme'} · ${TOP[it.a][it.g]}</span><span class="fachtag">${b?'Fach '+b:'neu'}</span></div><div class="card-body" id="cb"></div></article>`;
   $('#quit').onclick=home;
@@ -550,10 +552,8 @@ function grade(id,ok,html){
   PAD=null;
   const cb=$('#cb'),fb=document.createElement('div');fb.className='fb '+(ok?'ok':'bad');fb.setAttribute('role','status');
   fb.innerHTML=html+(!ok&&Rd.q.lastIndexOf(id)>Rd.i?'<span class="exl">Diese Karte kommt am Ende der Runde noch einmal.</span>':'');
-  cb.appendChild(fb);
   const nx=document.createElement('button');nx.type='button';nx.className='next';nx.textContent=Rd.i+1>=Rd.q.length?'Ergebnis':'Weiter';
-  nx.onclick=()=>{Rd.i++;task()};cb.appendChild(nx);nx.focus({preventScroll:true});
-  fb.scrollIntoView({behavior:'smooth',block:'nearest'});
+  nx.onclick=()=>{Rd.i++;task()};lwSheet(cb,ok,[fb,nx]);
 }
 function endRound(){
   const n=Rd.first,r=Rd.right,ids=pool(),sure=ids.filter(id=>bx(id)===5).length;
@@ -765,7 +765,7 @@ function pqHome(){
   <div class="row" style="justify-content:space-between"><b>${sure} von 20 sicher</b><div class="days" aria-label="Geübte Tage">${[0,1,2,3,4].map(i=>`<i class="${i<days.length?'on':''}">${i+1}</i>`).join('')}<span class="small">Tage geübt</span></div></div>
   <div class="lbl">Was möchtest du üben?</div>
   <div class="chips">${[['b','Beide'],['2','nur 2er'],['10','nur 10er']].map(([k,t])=>`<button type="button" class="chip" data-pm="${k}" aria-pressed="${S.pqMode===k}">${t}</button>`).join('')}</div>
-  <div class="row"><button class="go" type="button" id="pqs" style="background:var(--red);box-shadow:0 3px 0 #8f1f18">10 Fragen starten</button><button class="ghost" type="button" id="pqr">Punkte zurücksetzen</button></div>
+  <div class="row"><button class="go" type="button" id="pqs" style="background:var(--red);box-shadow:0 3px 0 #8f1f18">Los geht's</button><button class="ghost" type="button" id="pqr">Punkte zurücksetzen</button></div>
   <p class="small" id="pqn" style="margin:0">Tipp: Schau dir das Merkblatt an, bevor du anfängst. Potenzen mit wenig Punkten kommen öfter dran.</p></section>`;
   $('#bk').onclick=home;
   document.querySelectorAll('[data-pm]').forEach(b=>b.onclick=()=>{S.pqMode=b.dataset.pm;save();pqHome()});
@@ -790,7 +790,7 @@ function pqTask(){
   PAD=null;
   if(PQ.i>=PQ.q.length)return pqEnd();
   const f=PQ.q[PQ.i],ty=pqType(f),sc=pqs(f);
-  $('#screen').innerHTML=`<div class="topbar"><span>Frage ${PQ.i+1} von ${PQ.q.length}</span><button class="ghost" type="button" id="quit">Beenden</button></div>
+  $('#screen').innerHTML=`<div class="topbar"><span>Frage ${PQ.i+1} von ${PQ.q.length}</span><button class="ghost" type="button" id="quit" aria-label="Runde beenden">Beenden</button></div>
   <div class="progress" aria-hidden="true"><i style="width:${PQ.i*10}%;background:var(--red)"></i></div>
   <article class="card" style="border-color:var(--red)"><div class="card-top" style="background:var(--red)"><span class="tag">Auswendig-Quiz · ${f.b}er-Potenzen</span><span class="fachtag" style="color:var(--red)">${'●'.repeat(sc)+'○'.repeat(3-sc)}</span></div><div class="card-body" id="cb"></div></article>`;
   $('#quit').onclick=pqHome;
@@ -824,9 +824,8 @@ function pqDone(f,ok,fld){
   const sc=pqs(f);
   const cb=$('#cb'),fb=document.createElement('div');fb.className='fb '+(ok?'ok':'bad');fb.setAttribute('role','status');
   fb.innerHTML=`<strong>${ok?praise():'Nicht ganz.'}</strong><span class="m">${f.b}<sup>${f.n}</sup> = ${fmtN(f.v)}</span><span class="exl">${tip}</span><span class="exl">${ok?(sc>=3?'Diese Potenz sitzt: 3 grüne Punkte!':`Noch ${3-sc}-mal richtig, dann sitzt sie.`):'Die Punkte für diese Potenz starten wieder bei null.'}</span>`;
-  cb.appendChild(fb);
-  const nx=document.createElement('button');nx.type='button';nx.className='next';nx.style.background='var(--red)';nx.style.boxShadow='0 3px 0 #8f1f18';nx.textContent=PQ.i+1>=PQ.q.length?'Ergebnis':'Weiter';
-  nx.onclick=()=>{PQ.i++;pqTask()};cb.appendChild(nx);nx.focus({preventScroll:true});fb.scrollIntoView({behavior:'smooth',block:'nearest'});
+  const nx=document.createElement('button');nx.type='button';nx.className='next';nx.textContent=PQ.i+1>=PQ.q.length?'Ergebnis':'Weiter';
+  nx.onclick=()=>{PQ.i++;pqTask()};lwSheet(cb,ok,[fb,nx]);
 }
 function pqEnd(){
   const r=PQ.right,sure=FACTS.filter(f=>pqs(f)>=3).length;
@@ -835,7 +834,7 @@ function pqEnd(){
   <div class="score">${r}<span style="font-size:1.4rem;color:var(--muted)"> / 10</span></div><h2 style="color:var(--ink)">${msg}</h2>
   <p class="small" style="margin:0"><b>${sure} von 20</b> Potenzen sitzen schon.</p>${pqGrid()}
   ${PQ.miss.length?`<div><div class="lbl" style="margin-bottom:6px;color:var(--red)">Das übst du noch einmal</div><ul class="list">${PQ.miss.map(f=>`<li><b>${f.b}<sup>${f.n}</sup> = ${fmtN(f.v)}</b>${f.b===10?' · '+SAY[f.n]:''}</li>`).join('')}</ul></div>`:''}
-  <div class="row"><button class="go" type="button" id="again" style="background:var(--red);box-shadow:0 3px 0 #8f1f18">Noch eine Runde</button><button class="ghost" type="button" id="menu">Zum Quiz-Start</button></div></section>`;
+  <div class="row"><button class="go" type="button" id="again" style="background:var(--red);box-shadow:0 3px 0 #8f1f18">Neue Runde</button><button class="ghost" type="button" id="menu">Zum Quiz-Start</button></div></section>`;
   $('#again').onclick=pqStart;$('#menu').onclick=pqHome;
 }
 
@@ -1010,7 +1009,14 @@ function judge(t){
   return ok('Das ist ein Term!'+name+' Sein Wert ist <b>'+(Number.isInteger(v)?fmtN(v):String(Math.round(v*100)/100).replace('.',','))+'</b>.');
 }
 
-home();
+/* Lernwelt: direkt ins Kapitel (rechenheft.html#terme, #potenzen, #quiz), Anker stehen in hefte.js */
+function kapitelSprung(){
+  const h=location.hash.slice(1),A={terme:'t',potenzen:'p'};
+  if(h==='quiz'){S.area='p';save();home();pqHome();return true}
+  if(!A[h])return false;
+  S.area=A[h];S.tops[S.area]=Object.keys(TOP[S.area]);save();home();startRound();return true;
+}
+kapitelSprung()||home();
 
 /* Lernwelt: Kapitel-Fortschritt für die Startseite (siehe sync.js) */
 if(window.LW&&LW.kapitel){

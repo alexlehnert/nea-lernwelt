@@ -11,3 +11,5 @@ h1,h2,h3{font-weight:700}
 header.cover{border-radius:0 0 32px 32px;background-image:none}
 .panel,.st,.reg button,.card{border-radius:20px;border-bottom-width:5px}
 .box{border-radius:22px;box-shadow:0 6px 0 var(--lw-ma-d)}
+/* Name steht schon in der Leiste oben */
+header.cover{display:none}

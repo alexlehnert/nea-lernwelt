@@ -47,3 +47,43 @@
 .lw-geo{--lw-c:var(--lw-geo);--lw-cd:var(--lw-geo-d);--lw-cs:var(--lw-geo-s)}
 .lw-mu{--lw-c:var(--lw-mu);--lw-cd:var(--lw-mu-d);--lw-cs:var(--lw-mu-s)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .lw-bar .lw-eyebrow{color:var(--lw-muted)}}
+/* Leiste immer über die volle Breite, auch wenn die App einen Seitenrand hat */
+.lw-bar{width:100vw;max-width:none;margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw)}
+
+/* Üben im Fokus: Während einer Runde nur X, Fortschritt und Aufgabe (wie im Konzept „Übung“) */
+html:has(#quit) .lw-bar,
+html:has(#quit) :is(.wrap,#app):has(> #screen) > :not(#screen):not(script){display:none}
+.topbar:has(#quit){justify-content:flex-start;gap:12px}
+#quit{order:-1;flex:none;width:44px;height:44px;min-height:44px;padding:0;font-size:0;border-radius:14px;
+  background:var(--lw-card) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235E5A7A' stroke-width='2.8' stroke-linecap='round'%3E%3Cpath d='M6 6l12 12M18 6L6 18'/%3E%3C/svg%3E") center/20px no-repeat;
+  border:2px solid var(--lw-line);border-bottom-width:4px;color:var(--lw-muted);cursor:pointer}
+html:has(#quit) body{padding-top:env(safe-area-inset-top,0px)}
+
+/* Rückmeldeleiste: Rückmeldung und Weiter fest am unteren Rand, ohne Scrollen (lwSheet in lernwelt-app.js) */
+.lw-sheet{position:fixed;left:0;right:0;bottom:0;z-index:9000;box-sizing:border-box;display:flex;flex-direction:column;gap:14px;
+  max-height:75vh;overflow:auto;padding:18px max(16px,calc((100vw - 680px) / 2)) calc(18px + env(safe-area-inset-bottom,0px));
+  background:var(--lw-card);color:var(--lw-ink);border-radius:28px 28px 0 0;box-shadow:0 -8px 28px rgba(30,27,58,.18);
+  font-family:var(--lw-f-b);animation:lw-up .22s ease-out}
+.lw-sheet.ok{background:var(--lw-ok-bg)}
+.lw-sheet.bad{background:var(--lw-bad-bg)}
+.lw-sheet > .fb,.lw-sheet > .feedback{background:none!important;border:none!important;box-shadow:none!important;padding:0!important;margin:0!important;border-radius:0!important}
+.lw-sheet .next,.lw-sheet #next{align-self:stretch;width:100%;margin:0;min-height:56px;border:none;border-radius:18px;color:#fff;
+  font-family:var(--lw-f-d);font-weight:700;font-size:19px;letter-spacing:.04em;text-transform:uppercase;cursor:pointer}
+.lw-sheet.ok .next,.lw-sheet.ok #next{background:var(--lw-ok);box-shadow:0 5px 0 var(--lw-ok-d)}
+.lw-sheet.bad .next,.lw-sheet.bad #next{background:var(--lw-bad);box-shadow:0 5px 0 #9A2A17}
+.lw-sheet .next:active,.lw-sheet #next:active{transform:translateY(3px);box-shadow:none}
+.lw-sheet > .row{display:block;margin:0}
+.lw-sheet > .row > :not(#next){display:none}
+.lw-sheet-space{flex:none}
+@keyframes lw-up{from{transform:translateY(100%)}to{transform:none}}
+@media (prefers-reduced-motion:reduce){.lw-sheet{animation:none}}
+
+/* Fortschritt löschen gibt es nur noch im Eltern-Bereich der Lernwelt (Profil → Für Eltern) */
+#reset,#rst,#pqr,details.parents{display:none!important}
+
+/* Tippflächen mindestens 44 px, kleine Beschriftungen mindestens 13 px */
+.chip,button.chip,.seg button,.jump a,button.m,.toggle,.btn.small,.ghost{min-height:44px}
+.seg button{min-width:44px}
+.lbl{font-size:13px}
+.box .t,#front .t{font-size:13px;line-height:1.15}
+html,body{overflow-x:clip}

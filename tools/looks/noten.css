@@ -14,3 +14,6 @@
 .feedback.bad h3{color:var(--lw-bad-ink)}
 .feedback .btn{background:var(--lw-ok);box-shadow:0 5px 0 var(--lw-ok-d)}
 .feedback.bad .btn{background:var(--lw-bad);box-shadow:0 5px 0 #9A2A17}
+/* Name steht schon in der Leiste oben. Serie, Punkte und Abzeichen gibt es einheitlich in der Lernwelt,
+   im Heft zählen die Sterne pro Station. */
+.hero,.chips:has(.xp),.level,.sec:has(+ .badges),.badges{display:none}
