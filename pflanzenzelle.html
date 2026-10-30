@@ -1,4 +1,4 @@
-<!doctype html><html><head><meta charset=utf8><script src="/api/config"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="/sync.js"></script><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"><link rel="manifest" href="/manifest.webmanifest"><meta name="apple-mobile-web-app-title" content="Lernwelt"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="theme-color" content="#5B3FE6"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body><nav id="lw-bar" aria-label="Lernwelt" style="all:initial;display:flex;align-items:center;gap:10px;box-sizing:border-box;width:100%;padding:6px max(12px,env(safe-area-inset-right,0px)) 6px max(12px,env(safe-area-inset-left,0px));background:#20304a;color:#f3f0e6;font:600 14px/1.2 system-ui,-apple-system,Segoe UI,sans-serif;position:relative;z-index:9999"><a href="index.html" style="all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:#f3f0e6;color:#20304a;font:700 14px/1 system-ui,-apple-system,Segoe UI,sans-serif">&#8249; Lernwelt</a><span style="all:unset;font:600 14px/1.2 system-ui,-apple-system,Segoe UI,sans-serif;color:#f3f0e6;opacity:.85">Biologie · Expedition Pflanzenzelle</span></nav>
+<!doctype html><html><head><meta charset=utf8><script src="/api/config"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="/sync.js"></script><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"><link rel="manifest" href="/manifest.webmanifest"><meta name="apple-mobile-web-app-title" content="Lernwelt"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="theme-color" content="#5B3FE6"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body><nav id="lw-bar" class="lw-bar lw-bio" aria-label="Lernwelt"><a class="lw-back" href="index.html" aria-label="Zurück zur Lernwelt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a><span class="lw-t"><span class="lw-eyebrow">Biologie</span><span class="lw-name">Expedition Pflanzenzelle</span></span></nav>
 <title>Expedition Pflanzenzelle</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -200,7 +200,36 @@ aside.teacher{margin-top:28px;border:1.5px solid var(--c-wall);border-radius:28p
 aside.teacher ul{margin:0;padding-left:1.2em;display:grid;gap:6px}
 footer{margin-top:24px;font-size:.88rem;color:var(--muted)}
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
-</style>
+</style><!--lw-look--><link rel="stylesheet" href="/lernwelt-app.css"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap"><style id="lw-look">
+
+/* Biologie bleibt dunkel (die Bilder leuchten), aber in den Nachtfarben der Lernwelt */
+:root:root:root{
+  --lw-bg:#15132A; --lw-card:#1F1C3A; --lw-ink:#F1EFFF; --lw-muted:#B4AFD3; --lw-line:#332E5A; --lw-soft:#2A2650;
+  --lw-ok:#3DBA70; --lw-ok-d:#1F7A45; --lw-ok-bg:#16301F; --lw-ok-ink:#8FE0AE; --lw-bad:#F07A4A; --lw-bad-bg:#3A1D1A; --lw-bad-ink:#FFB59B;
+  --lw-c:#E8722C; --lw-cd:#9A3412; --lw-cs:#3A2216;
+  --paper:#15132A; --surface:#1F1C3A; --surface2:#2A2650; --ink:#F1EFFF; --muted:#B4AFD3; --line:#332E5A;
+  --accent:#F08A24; --accent-d:#B4610F;
+  --good-bg:#16301F; --bad-bg:#3A1D1A;
+  --display:var(--lw-f-d); --hand:var(--lw-f-d); --hand2:var(--lw-f-b); --body:var(--lw-f-b);
+}
+.lw-bar{--lw-card:#1F1C3A;--lw-line:#332E5A;--lw-ink:#F1EFFF;--lw-muted:#B4AFD3}
+.panel,.card,.q{background:var(--lw-card);border:2px solid var(--lw-line);border-radius:24px}
+.btn{font-family:var(--lw-f-d);font-weight:700;border:none;border-radius:16px;min-height:44px;padding:8px 18px;background:var(--lw-c);color:#fff;box-shadow:0 4px 0 var(--lw-cd)}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--lw-cd)}
+.btn.ghost{background:var(--lw-card);color:var(--lw-ink);border:2px solid var(--lw-line);border-bottom-width:4px;box-shadow:none}
+.q h3{font-family:var(--lw-f-d);font-weight:600;font-size:1.2rem;color:var(--lw-ink)}
+.q .opts{gap:10px}
+.q .opts button{background:var(--lw-card);color:var(--lw-ink);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:18px;padding:12px 14px;min-height:54px;font-family:var(--lw-f-b);font-size:1rem}
+.q .opts button:not(:disabled):active{transform:translateY(3px);border-bottom-width:2px}
+.q .opts button.right{border:3px solid var(--lw-ok);border-bottom-width:6px;background:var(--lw-ok-bg);color:var(--lw-ok-ink)}
+.q .opts button.wrong{border-color:var(--lw-bad);background:var(--lw-bad-bg);color:var(--lw-bad-ink)}
+.feedback{font-family:var(--lw-f-d);font-size:1.1rem}
+.feedback.good{color:var(--lw-ok-ink)}
+.feedback.bad{color:var(--lw-bad-ink)}
+.progress{height:14px;border:none;background:var(--lw-line)}
+.progress i{background:var(--lw-ok)}
+.chip{font-family:var(--lw-f-b)}
+</style><!--/lw-look-->
 
 <div class="wrap">
 <header class="top">

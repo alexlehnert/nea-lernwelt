@@ -1,0 +1,42 @@
+:root:root:root{
+  --lw-c:var(--lw-geo); --lw-cd:var(--lw-geo-d); --lw-cs:var(--lw-geo-s);
+  --bg:var(--lw-bg); --surface:var(--lw-card); --ink:var(--lw-ink); --muted:var(--lw-muted); --line:var(--lw-line);
+  --accent:var(--lw-geo); --accent-ink:#fff; --ok:var(--lw-ok); --bad:var(--lw-bad); --chip:var(--lw-soft); --onbg:var(--lw-ink);
+  --f-display:var(--lw-f-d); --f-body:var(--lw-f-b);
+}
+/* Umschlag bleibt als farbige Karte (Erdkunde-Farbe), alles andere hell wie in der Lernwelt */
+.cover{background:var(--lw-geo);color:#fff;border-radius:24px;box-shadow:0 6px 0 var(--lw-geo-d)}
+.cover .eyebrow{color:rgba(255,255,255,.9)}
+.cover h2{font-stretch:normal;letter-spacing:0;text-transform:none;font-weight:700}
+.cover p{color:#fff}
+.card{border-radius:22px;border:2px solid var(--lw-line);border-bottom-width:5px;box-shadow:none}
+.q{font-weight:700;font-stretch:normal}
+.choices{gap:12px}
+.opt{background:var(--lw-card);color:var(--lw-ink);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:18px;min-height:60px;font-family:var(--lw-f-d);font-weight:600;font-stretch:normal;font-size:1.1rem}
+.opt:active{transform:translateY(3px);border-bottom-width:2px}
+.opt.ok{background:var(--lw-ok-bg);border:3px solid var(--lw-ok);border-bottom-width:6px;color:var(--lw-ok-ink)}
+.opt.bad{background:var(--lw-bad-bg);border-color:var(--lw-bad);color:var(--lw-bad-ink)}
+.opt .n{background:var(--lw-ok);color:#fff}
+.feedback{border-radius:22px;padding:16px;background:var(--lw-soft)}
+.feedback.ok{background:var(--lw-ok-bg)}
+.feedback.bad{background:var(--lw-bad-bg)}
+.feedback.ok p:first-child{color:var(--lw-ok-ink)}
+.feedback p:first-child{font-family:var(--lw-f-d);font-weight:700;font-size:1.15rem}
+.btn{border-radius:16px;font-family:var(--lw-f-d);font-weight:700;font-stretch:normal;letter-spacing:.04em;background:var(--lw-card);color:var(--lw-ink);border:2px solid var(--lw-line);border-bottom-width:4px}
+.btn.big{background:var(--lw-c);color:#fff;border:none;box-shadow:0 5px 0 var(--lw-cd)}
+.btn.big:active{box-shadow:0 2px 0 var(--lw-cd)}
+.btn.ghost{color:var(--lw-ink);border:2px solid var(--lw-line)}
+.progress{height:14px;background:var(--lw-line)}
+.progress i{background:var(--lw-ok)}
+.chip{border:2px solid var(--lw-line);border-bottom-width:4px;background:var(--lw-card);color:var(--lw-ink);font-family:var(--lw-f-d);font-weight:700}
+.chip.sel{background:var(--lw-c);border-color:var(--lw-c);color:#fff}
+body{background-image:none}
+.brand h1{color:var(--lw-ink);font-stretch:normal;letter-spacing:.01em;text-transform:none;font-weight:700;font-size:1.6rem}
+.brand small{color:var(--lw-geo)}
+.pill{background:var(--lw-card);border:2px solid var(--lw-line);color:var(--lw-ink)}
+.pill b{color:var(--lw-geo)}
+.topic{background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:18px}
+.topic b{font-family:var(--lw-f-d);font-weight:600;font-stretch:normal}
+.topic[aria-pressed="true"]{border-color:var(--lw-geo);box-shadow:none;background:var(--lw-geo-s)}
+.seg button[aria-pressed="true"]{background:var(--lw-geo);color:#fff}
+.q{text-transform:none;letter-spacing:0}

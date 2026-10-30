@@ -1,0 +1,13 @@
+/* @kit */
+:root:root:root{
+  --lw-c:var(--lw-ma); --lw-cd:var(--lw-ma-d); --lw-cs:var(--lw-ma-s);
+  --bg:var(--lw-bg); --grid:transparent; --paper:var(--lw-card); --grid2:var(--lw-soft); --ink:var(--lw-ink); --muted:var(--lw-muted); --line:var(--lw-line);
+  --cover:var(--lw-ma); --cover-dk:var(--lw-ma-d); --blue:var(--lw-ma); --blue-soft:var(--lw-ma-s);
+  --ok:var(--lw-ok); --ok-bg:var(--lw-ok-bg); --bad:var(--lw-bad); --bad-bg:var(--lw-bad-bg); --chip:var(--lw-soft);
+  --f-h:var(--lw-f-d); --f-b:var(--lw-f-b);
+}
+body{background-image:none}
+h1,h2,h3{font-weight:700}
+header.cover{border-radius:0 0 32px 32px;background-image:none}
+.panel,.st,.reg button,.card{border-radius:20px;border-bottom-width:5px}
+.box{border-radius:22px;box-shadow:0 6px 0 var(--lw-ma-d)}
