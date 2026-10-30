@@ -205,9 +205,11 @@ h2.sh{font-size:1.25rem}
 .hbar{display:flex;align-items:center;gap:10px;margin-top:14px;font-size:.9rem;font-weight:700}
 .hbar .bar{background:rgba(255,255,255,.25)}
 .hbar .bar i{background:var(--sun)}
-.goal{display:grid;grid-template-columns:72px minmax(0,1fr);gap:14px;align-items:center;width:min(100%,360px)}
+.goal{border:none;background:none;padding:0;font:inherit;color:inherit;text-align:left;cursor:pointer;display:grid;grid-template-columns:72px minmax(0,1fr);gap:14px;align-items:center;width:min(100%,360px)}
 .goal .dot{background:var(--new-bg);border:3px dashed #F0B400;box-shadow:none;border-radius:18px}
 .goal .dot svg{width:30px;height:30px}
+.goal b{display:block;font-family:var(--f-display);font-weight:600;font-size:1.05rem}
+.goal .small{display:block}
 .cta{position:sticky;bottom:calc(96px + env(safe-area-inset-bottom,0px));margin-top:8px;z-index:5}
 .cta .btn{width:100%;min-height:58px;font-size:1.15rem}
 @media (min-width:761px){.cta{bottom:20px;max-width:420px}}
@@ -244,6 +246,22 @@ h2.sh{font-size:1.25rem}
 .fields label{display:flex;flex-direction:column;gap:6px;font-weight:700;font-size:.92rem}
 .fields input,.fields select{font-weight:400;padding:10px 12px;border:2px solid var(--line);border-radius:14px;background:var(--bg);min-height:48px;width:100%}
 .fields .wide{grid-column:1/-1}
+.badges{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.badge{display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--card);border:2px solid var(--line);border-radius:18px;padding:12px 6px;text-align:center;cursor:pointer;color:var(--ink);min-height:44px}
+.badge b{font-size:.78rem;line-height:1.2;overflow-wrap:anywhere}
+.badge.lock{background:transparent;border-style:dashed;color:var(--muted)}
+.bi{width:52px;height:52px;border-radius:50%;background:var(--c);box-shadow:0 4px 0 var(--cd);display:grid;place-items:center;flex:none}
+.bi svg{width:50%;height:50%}
+.lock .bi{background:var(--soft);box-shadow:none}
+.goal .dot.bi{width:64px;height:64px;border:none;border-radius:50%;background:var(--c);box-shadow:0 5px 0 var(--cd)}
+dialog.sheet{border:none;border-radius:28px;padding:26px 22px 22px;width:min(340px,calc(100% - 32px));background:var(--card);color:var(--ink);text-align:center;box-shadow:0 8px 0 var(--shadow)}
+dialog.sheet::backdrop{background:rgba(21,19,42,.6)}
+.sheet .bi{width:104px;height:104px;margin:6px auto 14px;box-shadow:0 7px 0 var(--cd)}
+.sheet .bi.lock{background:var(--soft);box-shadow:none}
+.sheet .kick{display:inline-block;background:var(--sun);color:#1E1B3A;font-family:var(--f-display);font-weight:700;font-size:.85rem;letter-spacing:.06em;text-transform:uppercase;border-radius:99px;padding:4px 12px}
+.sheet h2{font-size:1.5rem;margin:10px 0 6px}
+.sheet p{margin:0 0 18px;color:var(--muted)}
+.sheet .btn{width:100%}
 .saved{min-height:1.5em;margin:0;font-weight:700;color:var(--ok)}
 .note{font-size:.88rem;color:var(--muted);margin:0;max-width:70ch}
 
@@ -285,6 +303,7 @@ h2.sh{font-size:1.25rem}
   <main id="view" tabindex="-1"></main>
 </div>
 <nav class="tabs" id="tabNav" aria-label="Hauptmenü" hidden></nav>
+<dialog class="sheet" id="abzDlg" aria-labelledby="abzT"></dialog>
 
 <script>
 const FAECHER=window.LW_FAECHER||[],HEFTE=window.LW_HEFTE||[],LINKS=window.LW_LINKS||[];
@@ -324,6 +343,53 @@ function serie(){
 }
 function summe(){let st=0,done=0;HEFTE.forEach(h=>kapitel(h).forEach(k=>{st+=sterne(k.p);if(k.p>=.999)done++}));return {st,done}}
 function sternSvg(on){return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7L12 17.3 5.8 21l1.6-7L2 9.2l7.1-.6z" fill="${on?'#FFB800':'var(--line)'}"/></svg>`}
+/* ---------- Abzeichen ----------
+   Einmal verdient, bleibt ein Abzeichen: lernwelt-abzeichen = {id: "2026-10-30"} (Tag, an dem es dazukam).
+   Heft-Abzeichen kommen aus hefte.js (Feld abzeichen), die übrigen stehen hier. */
+const ABZ_KEY='lernwelt-abzeichen';
+function besteSerie(){
+  const z=zeit(),tage=Object.keys(z).filter(k=>z[k]>=LERNTAG_S).sort();let best=0,run=0,prev=null;
+  tage.forEach(k=>{const d=new Date(k+'T12:00:00');run=prev&&Math.round((d-prev)/864e5)===1?run+1:1;best=Math.max(best,run);prev=d});
+  return best;
+}
+const gesamtMin=()=>Math.floor(Object.values(zeit()).reduce((a,b)=>a+(+b||0),0)/60);
+function kapOk(id,titel){const h=heft(id);if(!h)return false;const k=kapitel(h).filter(x=>titel.includes(x.t));return k.length===titel.length&&k.every(x=>x.p>=.999)}
+function abzeichenListe(){
+  return [
+    {id:'erster-stern',name:'Erster Stern',cls:'br',ic:'wstar',wie:'Hol dir in einem Kapitel deinen ersten Stern.',ok:()=>summe().st>=1},
+    {id:'serie-3',name:'Drei Tage am Stück',cls:'bio',ic:'wflame',wie:'Lerne an 3 Tagen hintereinander, jeweils mindestens 5 Minuten.',ok:()=>besteSerie()>=3},
+    {id:'serie-7',name:'Eine Woche dran',cls:'bio',ic:'wflame',wie:'Lerne an 7 Tagen hintereinander, jeweils mindestens 5 Minuten.',ok:()=>besteSerie()>=7},
+    {id:'stunde',name:'Erste Lernstunde',cls:'de',ic:'clock',wie:'Lerne insgesamt 60 Minuten.',ok:()=>gesamtMin()>=60},
+    {id:'kapitel-10',name:'Zehn Kapitel',cls:'br',ic:'flag',wie:'Schaffe 10 Kapitel mit 3 Sternen.',ok:()=>summe().done>=10},
+    {id:'karteikasten',name:'Karteikasten-Heldin',cls:'ma',ic:'box',wie:'Hol dir 3 Sterne bei „Terme üben“ und „Potenzen üben“ im Rechenheft.',ok:()=>kapOk('rechenheft',['Terme üben','Potenzen üben'])},
+    {id:'mikroskop',name:'Mikroskopier-Führerschein',cls:'bio',ic:'micro',wie:'Hol dir 3 Sterne beim Mikroskopier-Führerschein in der Bio-Expedition.',ok:()=>kapOk('bio-expedition',['Mikroskopier-Führerschein'])},
+    {id:'kontinente',name:'Kontinente-Kennerin',cls:'geo',ic:'geo',wie:'Hol dir 3 Sterne bei „Kontinente & Ozeane“ im Atlas-Detektiv.',ok:()=>kapOk('atlas',['Kontinente & Ozeane'])}
+  ].concat(HEFTE.filter(h=>h.abzeichen).map(h=>{const f=fach(h.fach)||{};
+    return {id:'heft-'+h.id,heft:h.id,name:h.abzeichen,cls:f.cls,ic:f.cls,wie:`Schaffe alle Kapitel in „${h.name}“ mit 3 Sternen.`,ok:()=>stand(h).cur==null&&stand(h).n>0}}));
+}
+function verdient(){let m={};try{m=JSON.parse(get(ABZ_KEY)||'{}')||{}}catch(e){}return m}
+// Prüft alle Abzeichen, merkt sich neue und gibt sie zurück.
+function abzeichenPruefen(){
+  const m=verdient(),neu=abzeichenListe().filter(a=>!m[a.id]&&a.ok());
+  if(neu.length){const d=dayKey(new Date());neu.forEach(a=>m[a.id]=d);put(ABZ_KEY,JSON.stringify(m))}
+  return neu;
+}
+const datum=k=>{const [y,mo,d]=String(k).split('-');return d?`${+d}.${+mo}.${y}`:''};
+const badgeHtml=(a,m)=>m[a.id]
+  ?`<button class="badge ${a.cls}" type="button" data-abz="${a.id}"><span class="bi">${I[a.ic]}</span><b>${esc(a.name)}</b></button>`
+  :`<button class="badge lock" type="button" data-abz="${a.id}" aria-label="${esc(a.name)}, noch nicht geschafft"><span class="bi">${I.lock}</span><b>${esc(a.name)}</b></button>`;
+let ABZ_Q=[];
+function abzZeigen(a,neu){
+  const m=verdient(),got=!!m[a.id],d=$('abzDlg');
+  d.className='sheet '+(got?a.cls:'');
+  d.innerHTML=`${neu?'<span class="kick">Neues Abzeichen!</span>':''}
+    <div class="bi ${got?'':'lock'}">${got?I[a.ic]:I.lock}</div>
+    <h2 id="abzT">${esc(a.name)}</h2>
+    <p>${got?(neu?esc(a.wie):`Geschafft am ${datum(m[a.id])}. ${esc(a.wie)}`):`Noch nicht geschafft. ${esc(a.wie)}`}</p>
+    <form method="dialog"><button class="btn br" value="ok">${neu?(ABZ_Q.length?'Super! Noch eins':'Super!'):'Schließen'}</button></form>`;
+  if(!d.open)d.showModal();
+}
+function abzFeiern(){const n=abzeichenPruefen();if(!n.length)return;ABZ_Q=n.slice(1);abzZeigen(n[0],true)}
 const sterneHtml=p=>{const n=sterne(p);return `<span class="stars" role="img" aria-label="${n} von 3 Sternen">${[0,1,2].map(i=>sternSvg(i<n)).join('')}</span>`};
 
 const I={
@@ -348,7 +414,14 @@ const I={
   bio:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c0-9 6-14 15-14 0 9-5 15-14 15"/><path d="M5 19l8-8"/></svg>',
   geo:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg>',
   mu:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="18" r="3"/><path d="M10 18V5l10-2v12"/><circle cx="17" cy="15" r="3"/></svg>',
-  de:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 7l3 3"/></svg>'
+  de:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 7l3 3"/></svg>',
+  wstar:'<svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7L12 17.3 5.8 21l1.6-7L2 9.2l7.1-.6z" fill="#fff"/></svg>',
+  wflame:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c4 0 7-2.7 7-7 0-4-3-6-4-10-2 2-3 4-3 6-1-1-2-2-2-4-3 2-5 5-5 8 0 4.3 3 7 7 7z"/></svg>',
+  clock:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+  flag:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4M5 4h12l-2.5 4L17 12H5"/></svg>',
+  box:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M7 6V4h10v2M8 12h8"/></svg>',
+  micro:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h4l-1 7H10z"/><path d="M6 21h12M8 18h8M14 10a5 5 0 0 1 0 8"/></svg>',
+  lock:'<svg viewBox="0 0 24 24" fill="none" stroke="#8C86AA" stroke-width="2.4" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>'
 };
 
 /* ---------- Profil und Avatar ----------
@@ -502,7 +575,8 @@ const V={
           return `<a class="step ${st}" href="${kapLink(h,i)}" data-heft="${h.id}" aria-label="Kapitel ${i+1}: ${esc(x.t)}${st==='done'?', geschafft':st==='now'?', als Nächstes':''}">
             <span class="dot">${st==='done'?I.check:i+1}</span>
             <span>${st==='now'?`<span class="here">${t.any?'Du bist hier':'Hier geht es los'}</span>`:''}<b>${esc(x.t)}</b><small>${sterneHtml(x.p)}</small></span></a>`}).join('')}
-        <div class="goal"><span class="dot">${I.trophy}</span><span><b style="font-family:var(--f-display);font-weight:600">${t.cur==null?'Heft geschafft!':'Heft geschafft'}</b><br><span class="small muted">${t.cur==null?'Alle Kapitel mit 3 Sternen':'Alle Kapitel mit 3 Sternen'}</span></span></div>
+        ${h.abzeichen?(()=>{const got=verdient()['heft-'+h.id],f2=fach(h.fach);
+          return `<button class="goal" type="button" data-abz="heft-${h.id}"><span class="dot ${got?'bi '+f2.cls:''}">${got?I[f2.cls]:I.trophy}</span><span><b>Abzeichen</b><span class="small muted">„${esc(h.abzeichen)}“ ${got?'gehört dir!':'wartet'}</span></span></button>`})():''}
         </section>
         <div class="cta"><a class="btn br" href="${t.cur!=null?kapLink(h,t.cur):heftLink(h)}" data-heft="${h.id}">${t.any?'Weiterlernen':'Heft öffnen'} ${I.arrow}</a></div>
       </div>`;
@@ -521,7 +595,10 @@ const V={
         ${(()=>{const su=summe(),se=serie();return `<div class="stats lift">
           <div class="stat"><b style="color:var(--bio)">${se}</b><span>Tage in Folge</span></div>
           <div class="stat"><b style="color:var(--new-fg)">${su.st}</b><span>Sterne</span></div>
-          <div class="stat"><b style="color:var(--ok)">${su.done}</b><span>Kapitel geschafft</span></div></div>`})()}
+          <div class="stat"><b style="color:var(--ok)">${Object.keys(verdient()).length}</b><span>Abzeichen</span></div></div>`})()}
+        ${(()=>{const m=verdient(),L=abzeichenListe(),n=L.filter(a=>m[a.id]).length;return `<section class="sec" aria-labelledby="h-abz">
+          <div class="sec-h"><h2 class="sh" id="h-abz">Meine Abzeichen</h2><span class="small muted">${n} von ${L.length}</span></div>
+          <div class="badges">${L.map(a=>badgeHtml(a,m)).join('')}</div></section>`})()}
         ${fn?`<a class="row ${fn.cls}" href="#fach-${fn.id}"><span class="ic">${I[fn.cls]}</span><div><span>Lieblingsfach</span><b>${esc(fn.name)}</b></div>${I.chev}</a>`:''}
         <section class="panel" id="avatar" aria-labelledby="h-av"><div class="grp"><h2 class="sh" id="h-av">Mein Avatar</h2>
           <div class="seg" role="group" aria-label="Avatar-Art"><button type="button" data-art="figur" aria-pressed="${ME.art==='figur'}">Figur</button><button type="button" data-art="bild" aria-pressed="${ME.art==='bild'}">Eigenes Bild</button></div></div>
@@ -572,6 +649,8 @@ document.addEventListener('click',e=>{
   if(ar){ME.art=ar.dataset.art;saveMe();route(true);refocus(`[data-art="${ME.art}"]`);return}
   const a=e.target.closest('[data-av]');
   if(a){ME[a.dataset.av]=a.dataset.v;saveMe();route(true);refocus(`[data-av="${a.dataset.av}"][data-v="${a.dataset.v}"]`);return}
+  const ab=e.target.closest('[data-abz]');
+  if(ab){const a=abzeichenListe().find(x=>x.id===ab.dataset.abz);if(a){ABZ_Q=[];abzZeigen(a,false)}return}
   if(e.target.id==='rmBild'){put(BILD,null);route(true);return}
   if(e.target.id==='logout'){LW.signOut().then(()=>{location.hash='';show(null)});return}
 });
@@ -593,6 +672,9 @@ document.addEventListener('input',e=>{
   S.q=e.target.value;const pos=e.target.selectionStart;route(true);
   const n=$('q');if(n){n.focus({preventScroll:true});n.setSelectionRange(pos,pos)}
 });
+$('abzDlg').addEventListener('close',()=>{const n=ABZ_Q.shift();if(n)setTimeout(()=>abzZeigen(n,true),150)});
+// Zurück aus einer App (Seite aus dem Zwischenspeicher): Fortschritt neu anzeigen.
+window.addEventListener('pageshow',e=>{if(e.persisted&&!$('app').hidden){route(true);abzFeiern()}});
 window.addEventListener('hashchange',()=>{if(!location.hash.startsWith('#fach-')){S.filt='alle';S.q=''}route()});
 
 function show(user){
@@ -601,7 +683,8 @@ function show(user){
   if(inn){
     const n=(user.email||'').replace(/@lernwelt\.local$/,'');
     USERNAME=n.charAt(0).toUpperCase()+n.slice(1);
-    loadMe();route();
+    loadMe();const neu=abzeichenPruefen();route();
+    if(neu.length){ABZ_Q=neu.slice(1);abzZeigen(neu[0],true)}
   }else setTimeout(()=>$('lname').focus(),0);
 }
 if(!window.LW||!LW.configured){$('noconfig').hidden=false;$('loginWrap').hidden=false;$('lbtn').disabled=true}
