@@ -790,4 +790,13 @@ document.addEventListener('keydown',e=>{if(e.key==='Enter'){const nx=document.qu
 start();
 </script>
 
+<script>/* Lernwelt: Kapitel-Fortschritt für die Startseite (siehe sync.js) */
+if(window.LW&&LW.kapitel){
+LW.kapitel(function(){
+  var avg=function(a){return a.length?a.reduce(function(s,x){return s+Math.min(1,bx(x.id)/4)},0)/a.length:0};
+  var voc=function(a,b){return avg(V.filter(function(v){return v.s>=a&&v.s<=b}))};
+  return [{t:'Vokabeln S. 170–173',p:voc(0,3)},{t:'Vokabeln S. 174–176',p:voc(4,6)},{t:'Vokabeln S. 176–180',p:voc(7,9)}]
+    .concat(Object.keys(TOP).map(function(g){return {t:TOP[g],p:avg(G.filter(function(x){return x.g===g}))}}));
+});
+}</script>
 </body></html>

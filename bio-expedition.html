@@ -1698,6 +1698,15 @@ function end(){
 }
 document.addEventListener('keydown',e=>{if(e.key==='Enter'){const nx=document.querySelector('.next');const a=document.activeElement;if(nx&&a!==nx&&!(a&&a.tagName==='INPUT'&&!a.disabled)){e.preventDefault();nx.click();}}});
 start();
+
+/* Lernwelt: Kapitel-Fortschritt für die Startseite (siehe sync.js) */
+if(window.LW&&LW.kapitel){
+LW.kapitel(function(){
+  var gs=CH.zelle.groups.concat(CH.skelett.groups);
+  return gs.map(function(g){var sk=GROUPS[g].sk;
+    return {t:GROUPS[g].n,p:sk.reduce(function(s,k){return s+Math.min(1,lv(k)/4)},0)/sk.length}});
+});
+}
 })();
 </script>
 

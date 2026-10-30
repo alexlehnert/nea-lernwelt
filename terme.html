@@ -901,4 +901,16 @@ drawDet();
 })();
 </script>
 
+<script>/* Lernwelt: Kapitel-Fortschritt für die Startseite (siehe sync.js) */
+if(window.LW&&LW.kapitel){
+(function(){
+  var K='terme-besucht',IDS=["was", "einsetzen", "alltag", "namen"],NAMES=["Was ist ein Term?", "Zahlen einsetzen", "Terme im Alltag", "Wie heißen die Teile?"],seen={};
+  try{seen=JSON.parse(localStorage.getItem(K)||'{}')||{}}catch(e){}
+  function mark(e){var s=e.target.closest&&e.target.closest('section[id]');
+    if(!s||IDS.indexOf(s.id)<0||seen[s.id])return;
+    seen[s.id]=1;try{localStorage.setItem(K,JSON.stringify(seen))}catch(e){}}
+  ['pointerdown','input','keydown'].forEach(function(ev){document.addEventListener(ev,mark,true)});
+  LW.kapitel(function(){return IDS.map(function(id,i){return {t:NAMES[i],p:seen[id]?1:0}})});
+})();
+}</script>
 </body></html>

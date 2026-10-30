@@ -83,7 +83,6 @@ main{min-width:0;display:flex;flex-direction:column;padding-bottom:110px}
 .hello .av{width:68px;height:68px;border:3px solid #fff}
 .hello h1{font-size:2rem;line-height:1.05}
 .hello p{margin:4px 0 0;font-size:.95rem;opacity:.95}
-.head.start{padding-bottom:30px}
 .ftitle{display:flex;align-items:center;gap:14px;margin-top:14px}
 .ftitle .ic{width:60px;height:60px;border-radius:18px;background:rgba(255,255,255,.2);box-shadow:none}
 .ftitle h1{font-size:2rem;line-height:1}
@@ -120,14 +119,34 @@ h2.sh{font-size:1.25rem}
 .login input{font-size:1.1rem;padding:10px 12px;border:2px solid var(--line);border-radius:14px;background:var(--bg);min-height:50px}
 .err{color:var(--err);font-weight:700;margin:0;min-height:1.4em}
 
+/* Serie, Tagesziel, Sterne */
+.streak{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.18);border-radius:99px;padding:6px 12px 6px 8px;font-weight:700;font-size:.88rem;margin-right:64px}
+.streak svg{width:18px;height:18px}
+.head.start{padding-bottom:66px}
+.goalcard{position:relative;margin-top:-66px;background:var(--card);border-radius:22px;padding:14px 16px;display:flex;align-items:center;gap:14px;box-shadow:0 5px 0 var(--shadow),0 10px 24px rgba(66,39,184,.12)}
+.goalcard svg{width:54px;height:54px;flex:none}
+.goalcard b{display:block;font-family:var(--f-display);font-weight:600;font-size:1.12rem}
+.goalcard span{font-size:.88rem;color:var(--muted)}
+.bar{display:block;height:10px;border-radius:99px;background:var(--soft);overflow:hidden;flex:1}
+.bar i{display:block;height:100%;border-radius:99px;background:var(--c,var(--brand))}
+.stars{display:inline-flex;gap:2px;vertical-align:middle}
+.stars svg{width:15px;height:15px}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.stat{background:var(--card);border-radius:18px;padding:12px 8px;text-align:center;box-shadow:0 4px 0 var(--shadow)}
+.stat b{display:block;font-family:var(--f-display);font-weight:700;font-size:1.5rem;line-height:1.2}
+.stat span{font-size:.78rem;color:var(--muted)}
+.stats.lift{margin-top:-60px;position:relative}
+
 /* Weitermachen */
 .resume{display:block;position:relative;overflow:hidden;text-decoration:none;background:var(--c);color:#fff;border-radius:22px;padding:16px 18px 18px;box-shadow:0 6px 0 var(--cd)}
 .resume::before{content:"";position:absolute;right:-24px;top:-24px;width:130px;height:130px;border-radius:50%;background:rgba(255,255,255,.10)}
 .resume>*{position:relative}
 .resume b{display:block;margin-top:4px;font-family:var(--f-display);font-weight:700;font-size:1.4rem;line-height:1.15}
 .resume p{margin:4px 0 0;font-size:.92rem;opacity:.95}
-.resume .go{display:flex;justify-content:flex-end;margin-top:14px}
-.resume .go span{display:inline-flex;align-items:center;gap:6px;background:#fff;color:var(--cd);font-family:var(--f-display);font-weight:700;font-size:.95rem;letter-spacing:.04em;text-transform:uppercase;border-radius:14px;padding:10px 16px;box-shadow:0 4px 0 rgba(0,0,0,.2)}
+.resume .go{display:flex;align-items:center;gap:12px;margin-top:14px}
+.resume .bar{background:rgba(255,255,255,.25)}
+.resume .bar i{background:var(--sun)}
+.resume .go span:not(.bar){display:inline-flex;align-items:center;gap:6px;background:#fff;color:var(--cd);font-family:var(--f-display);font-weight:700;font-size:.95rem;letter-spacing:.04em;text-transform:uppercase;border-radius:14px;padding:10px 16px;box-shadow:0 4px 0 rgba(0,0,0,.2)}
 .resume .go svg{width:14px;height:14px}
 
 /* Fächer */
@@ -156,7 +175,10 @@ h2.sh{font-size:1.25rem}
 .heft .top{display:flex;justify-content:space-between;gap:8px;align-items:center}
 .heft b{font-family:var(--f-display);font-weight:600;font-size:1.2rem;line-height:1.15}
 .heft p{margin:0;font-size:.9rem;color:var(--muted)}
-.heft .meta{font-size:.82rem;color:var(--muted)}
+.heft .meta{display:flex;align-items:center;gap:10px;font-size:.82rem;color:var(--muted)}
+.heft .meta b{font-family:var(--f-body);font-size:.82rem;color:var(--cd);white-space:nowrap}
+:root[data-theme="dark"] .heft .meta b{color:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .heft .meta b{color:#fff}}
 .refs{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
 .ref{display:flex;flex-direction:column;gap:6px;text-decoration:none;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:16px;padding:12px;min-width:0}
 @media (hover:hover){.ref:hover{border-color:var(--brand)}}
@@ -175,6 +197,14 @@ h2.sh{font-size:1.25rem}
 .step:active .dot{transform:translateY(4px);box-shadow:0 1px 0 var(--cd)}
 .step b{display:block;font-family:var(--f-display);font-weight:600;font-size:1.05rem;line-height:1.2}
 .step small{display:block;font-size:.82rem;color:var(--muted)}
+.step.done .dot{background:var(--ok);box-shadow:0 5px 0 #17703D}
+.step.done .dot svg{width:30px;height:30px}
+.step.open .dot{background:var(--card);border:3px solid var(--line);box-shadow:0 5px 0 var(--line);color:var(--muted)}
+.step.now .dot{outline:5px solid var(--sun);outline-offset:4px}
+.here{display:inline-block;background:var(--ink);color:var(--bg);font-size:.75rem;font-weight:700;border-radius:10px;padding:3px 10px;margin-bottom:4px}
+.hbar{display:flex;align-items:center;gap:10px;margin-top:14px;font-size:.9rem;font-weight:700}
+.hbar .bar{background:rgba(255,255,255,.25)}
+.hbar .bar i{background:var(--sun)}
 .goal{display:grid;grid-template-columns:72px minmax(0,1fr);gap:14px;align-items:center;width:min(100%,360px)}
 .goal .dot{background:var(--new-bg);border:3px dashed #F0B400;box-shadow:none;border-radius:18px}
 .goal .dot svg{width:30px;height:30px}
@@ -183,7 +213,7 @@ h2.sh{font-size:1.25rem}
 @media (min-width:761px){.cta{bottom:20px;max-width:420px}}
 
 /* Profil */
-.head.prof{text-align:center;padding-bottom:28px}
+.head.prof{text-align:center;padding-bottom:76px}
 .bigav{position:relative;width:112px;height:112px;margin:8px auto 0}
 .bigav .av{width:112px;height:112px;border:4px solid #fff}
 .pen{position:absolute;right:-4px;bottom:-2px;width:44px;height:44px;border-radius:50%;border:3px solid var(--c);background:var(--sun);display:grid;place-items:center;cursor:pointer;color:#1E1B3A;text-decoration:none}
@@ -265,8 +295,36 @@ const get=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
 const put=(k,v)=>{try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v);return true}catch(e){return false}};
 const fach=id=>FAECHER.find(f=>f.id===id);
 const heft=id=>HEFTE.find(h=>h.id===id);
-const started=h=>!!(h.key&&get(h.key));
 const plural=(n,a,b)=>`${n} ${n===1?a:b}`;
+
+/* ---------- Fortschritt ----------
+   Die Apps melden ihre Kapitel über sync.js (lernwelt-fortschritt-<heft>: {k:[{t,p}]}, p = 0–1).
+   Die Lernzeit pro Tag steht in lernwelt-zeit ({"2026-10-30": Sekunden}). */
+const ZIEL_MIN=15,LERNTAG_S=5*60;
+function kapitel(h){
+  let r=null;try{r=JSON.parse(get('lernwelt-fortschritt-'+h.id)||'null')}catch(e){}
+  const list=r&&Array.isArray(r.k)&&r.k.length?r.k:(h.kapitel||[]).map(t=>({t,p:0}));
+  return list.map((k,i)=>({t:k.t,p:+k.p||0,a:(h.anker||[])[i]}));
+}
+function stand(h){
+  const k=kapitel(h),done=k.filter(x=>x.p>=.999).length,cur=k.findIndex(x=>x.p<.999);
+  return {k,done,n:k.length,cur:cur<0?null:cur,any:k.some(x=>x.p>0)};
+}
+const started=h=>!!(h.key&&get(h.key))||stand(h).any;
+const sterne=p=>p>=.999?3:p>=2/3?2:p>=1/3?1:0;
+const kapLink=(h,i)=>{const a=(h.anker||[])[i];return `${h.id}.html${a?'#'+a:''}`};
+const dayKey=d=>d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);
+function zeit(){let z={};try{z=JSON.parse(get('lernwelt-zeit')||'{}')||{}}catch(e){}return z}
+function heuteMin(){return Math.floor((zeit()[dayKey(new Date())]||0)/60)}
+function serie(){
+  const z=zeit(),d=new Date();let n=0;
+  if((z[dayKey(d)]||0)<LERNTAG_S)d.setDate(d.getDate()-1);
+  while((z[dayKey(d)]||0)>=LERNTAG_S){n++;d.setDate(d.getDate()-1)}
+  return n;
+}
+function summe(){let st=0,done=0;HEFTE.forEach(h=>kapitel(h).forEach(k=>{st+=sterne(k.p);if(k.p>=.999)done++}));return {st,done}}
+function sternSvg(on){return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7L12 17.3 5.8 21l1.6-7L2 9.2l7.1-.6z" fill="${on?'#FFB800':'var(--line)'}"/></svg>`}
+const sterneHtml=p=>{const n=sterne(p);return `<span class="stars" role="img" aria-label="${n} von 3 Sternen">${[0,1,2].map(i=>sternSvg(i<n)).join('')}</span>`};
 
 const I={
   home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>',
@@ -281,6 +339,8 @@ const I={
   search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>',
   trophy:'<svg viewBox="0 0 24 24" fill="none" stroke="#A86F00" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4"/></svg>',
   refbook:'<svg viewBox="0 0 24 24" fill="none" stroke="#B0127F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5c3-1 6-1 9 1 3-2 6-2 9-1v14c-3-1-6-1-9 1-3-2-6-2-9-1z"/><path d="M12 6v14"/></svg>',
+  flame:'<svg viewBox="0 0 24 24" fill="none" stroke="#FFC93C" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c4 0 7-2.7 7-7 0-4-3-6-4-10-2 2-3 4-3 6-1-1-2-2-2-4-3 2-5 5-5 8 0 4.3 3 7 7 7z"/></svg>',
+  check:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
   bulb:'<svg width="110" height="110" viewBox="0 0 120 120" aria-hidden="true"><circle cx="70" cy="50" r="20" fill="#FFC93C"/><rect x="62" y="68" width="16" height="10" rx="3" fill="#F4B400"/><path d="M70 18v-10M98 50h10M92 28l7-7M42 50H32M48 28l-7-7" stroke="#FFC93C" stroke-width="5" stroke-linecap="round"/></svg>',
   star:'<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7L12 17.3 5.8 21l1.6-7L2 9.2l7.1-.6z" fill="#FFC93C"/></svg>',
   ma:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="M6 5v6M3 8h6M15 8h6M4 16l4 4M8 16l-4 4M15 16h6M15 20h6"/></svg>',
@@ -373,17 +433,25 @@ const backBtn=(href,label)=>`<a class="backbtn" href="${href}" aria-label="${esc
 
 const V={
   start(){
-    const last=heft(get(LAST)),f=last&&fach(last.fach);
+    const last=heft(get(LAST)),f=last&&fach(last.fach),ls=last&&stand(last);
+    const min=heuteMin(),ser=serie(),q=Math.min(1,min/ZIEL_MIN),C=138.2;
     return `<header class="head start br">
         <span class="deco" style="right:-6px;top:calc(8px + env(safe-area-inset-top,0px))">${I.bulb}</span>
         <span class="deco" style="left:46%;top:calc(24px + env(safe-area-inset-top,0px))">${I.star}</span>
-        <div class="toprow"><span class="brandname">Neas Lernwelt</span></div>
+        <div class="toprow"><span class="brandname">Neas Lernwelt</span>${ser?`<span class="streak">${I.flame}${plural(ser,'Tag','Tage')}</span>`:''}</div>
         <div class="hello">${avatar()}<div><h1>Hallo ${esc(displayName())}!</h1><p>Schön, dass du da bist.</p></div></div>
       </header>
       <div class="pad">
+      <section class="goalcard" aria-label="Tagesziel">
+        <svg role="img" aria-label="${min} von ${ZIEL_MIN} Minuten" viewBox="0 0 54 54"><circle cx="27" cy="27" r="22" fill="none" stroke="var(--soft)" stroke-width="7"/>
+          ${q>0?`<circle cx="27" cy="27" r="22" fill="none" stroke="#FFB800" stroke-width="7" stroke-linecap="round" stroke-dasharray="${(q*C).toFixed(1)} ${C}" transform="rotate(-90 27 27)"/>`:''}
+          <path d="M27 17l2.6 5.6 6 .6-4.6 4 1.4 6L27 30.1 21.6 33.2l1.4-6-4.6-4 6-.6z" fill="#FFB800"/></svg>
+        <div><b>Tagesziel: ${Math.min(min,ZIEL_MIN)} von ${ZIEL_MIN} Min.</b><span>${q>=1?'Geschafft! Heute hast du '+min+' Minuten gelernt.':`Noch ${ZIEL_MIN-min} ${ZIEL_MIN-min===1?'Minute':'Minuten'} bis zum Stern.`}</span></div>
+      </section>
       ${last?`<section class="sec"><h2 class="sh">Weitermachen</h2>
-        <a class="resume ${f.cls}" href="${heftLink(last)}" data-heft="${last.id}"><span class="eyebrow">${esc(f.name)} · ${esc(last.thema)}</span>
-          <b>${esc(last.name)}</b><p>${esc(last.info)}</p><span class="go"><span>${I.play}Weiter</span></span></a></section>`:''}
+        <a class="resume ${f.cls}" href="${ls.cur!=null?kapLink(last,ls.cur):heftLink(last)}" data-heft="${last.id}"><span class="eyebrow">${esc(f.name)} · ${esc(last.name)}</span>
+          <b>${ls.cur!=null?esc(ls.k[ls.cur].t):'Alles geschafft!'}</b><p>${ls.cur!=null?`Kapitel ${ls.cur+1} von ${ls.n}`:esc(last.info)}</p>
+          <span class="go"><span class="bar"><i style="width:${Math.round(100*ls.done/Math.max(1,ls.n))}%"></i></span><span>${I.play}Weiter</span></span></a></section>`:''}
       <section class="sec"><div class="sec-h"><h2 class="sh">Deine Fächer</h2><a href="#faecher">Alle</a></div>
         <div class="subjects">${faecherMit().map(subjCard).join('')}</div></section>
       </div>`;
@@ -418,21 +486,25 @@ const V={
       ${hs.length&&!show.length?'<p class="muted" style="margin:0">Kein Heft passt dazu.</p>':''}
       ${themen.map(t=>`<section class="sec"><h2 class="rule">${esc(t)}</h2><div class="hefte">
         ${show.filter(h=>h.thema===t).map(h=>`<a class="heft ${started(h)?'on':''}" href="#heft-${h.id}"><span class="top"><b>${esc(h.name)}</b>${h.key?`<span class="pill ${started(h)?'on':'new'}">${started(h)?'Angefangen':'Neu'}</span>`:''}</span>
-          <p>${esc(h.info)}</p><span class="meta">${plural((h.kapitel||[]).length,'Kapitel','Kapitel')}</span></a>`).join('')}</div></section>`).join('')}
+          <p>${esc(h.info)}</p>${(()=>{const t=stand(h);return started(h)?`<span class="meta"><span class="bar"><i style="width:${Math.round(100*t.done/Math.max(1,t.n))}%"></i></span><b>${t.done} / ${t.n} Kapitel</b></span>`:`<span class="meta">${plural(t.n,'Kapitel','Kapitel')}</span>`})()}</a>`).join('')}</div></section>`).join('')}
       ${refs.length?`<section class="sec"><h2 class="rule">Zum Nachschlagen</h2><div class="refs">${refs.map(refCard).join('')}</div></section>`:''}
       </div>`;
   },
   heft(id){
     const h=heft(id); if(!h) return V.faecher();
-    const f=fach(h.fach),k=h.kapitel||[];
+    const f=fach(h.fach),t=stand(h),k=t.k;
     return `<header class="head ${f.cls}"><div class="toprow" style="justify-content:flex-start">${backBtn('#fach-'+f.id,'Zurück zu '+f.name)}<span class="eyebrow">${esc(f.name)} · ${esc(h.thema)}</span></div>
-        <h1 style="margin-top:14px;font-size:1.9rem;line-height:1.05">${esc(h.name)}</h1><p class="sub">${esc(h.info)}</p></header>
+        <h1 style="margin-top:14px;font-size:1.9rem;line-height:1.05">${esc(h.name)}</h1><p class="sub">${esc(h.info)}</p>
+        <div class="hbar"><span class="bar"><i style="width:${Math.round(100*t.done/Math.max(1,t.n))}%"></i></span><span>${t.done} von ${plural(t.n,'Kapitel','Kapiteln')}</span></div></header>
       <div class="pad ${f.cls}">
         <section class="path" aria-label="Kapitel">
-        ${k.map((t,i)=>`<a class="step" href="${heftLink(h)}" data-heft="${h.id}"><span class="dot">${i+1}</span><span><b>${esc(t)}</b><small>Kapitel ${i+1}</small></span></a>`).join('')}
-        <div class="goal"><span class="dot">${I.trophy}</span><span><b style="font-family:var(--f-display);font-weight:600">Heft geschafft</b><br><span class="small muted">Alle Kapitel durch</span></span></div>
+        ${k.map((x,i)=>{const st=x.p>=.999?'done':i===t.cur?'now':'open';
+          return `<a class="step ${st}" href="${kapLink(h,i)}" data-heft="${h.id}" aria-label="Kapitel ${i+1}: ${esc(x.t)}${st==='done'?', geschafft':st==='now'?', als Nächstes':''}">
+            <span class="dot">${st==='done'?I.check:i+1}</span>
+            <span>${st==='now'?`<span class="here">${t.any?'Du bist hier':'Hier geht es los'}</span>`:''}<b>${esc(x.t)}</b><small>${sterneHtml(x.p)}</small></span></a>`}).join('')}
+        <div class="goal"><span class="dot">${I.trophy}</span><span><b style="font-family:var(--f-display);font-weight:600">${t.cur==null?'Heft geschafft!':'Heft geschafft'}</b><br><span class="small muted">${t.cur==null?'Alle Kapitel mit 3 Sternen':'Alle Kapitel mit 3 Sternen'}</span></span></div>
         </section>
-        <div class="cta"><a class="btn br" href="${heftLink(h)}" data-heft="${h.id}">${started(h)?'Weiterlernen':'Heft öffnen'} ${I.arrow}</a></div>
+        <div class="cta"><a class="btn br" href="${t.cur!=null?kapLink(h,t.cur):heftLink(h)}" data-heft="${h.id}">${t.any?'Weiterlernen':'Heft öffnen'} ${I.arrow}</a></div>
       </div>`;
   },
   profil(){
@@ -446,6 +518,10 @@ const V={
         <h1>${esc(displayName())}</h1>${ME.motto?`<p class="motto">„${esc(ME.motto)}“</p>`:''}
       </header>
       <div class="pad">
+        ${(()=>{const su=summe(),se=serie();return `<div class="stats lift">
+          <div class="stat"><b style="color:var(--bio)">${se}</b><span>Tage in Folge</span></div>
+          <div class="stat"><b style="color:var(--new-fg)">${su.st}</b><span>Sterne</span></div>
+          <div class="stat"><b style="color:var(--ok)">${su.done}</b><span>Kapitel geschafft</span></div></div>`})()}
         ${fn?`<a class="row ${fn.cls}" href="#fach-${fn.id}"><span class="ic">${I[fn.cls]}</span><div><span>Lieblingsfach</span><b>${esc(fn.name)}</b></div>${I.chev}</a>`:''}
         <section class="panel" id="avatar" aria-labelledby="h-av"><div class="grp"><h2 class="sh" id="h-av">Mein Avatar</h2>
           <div class="seg" role="group" aria-label="Avatar-Art"><button type="button" data-art="figur" aria-pressed="${ME.art==='figur'}">Figur</button><button type="button" data-art="bild" aria-pressed="${ME.art==='bild'}">Eigenes Bild</button></div></div>
