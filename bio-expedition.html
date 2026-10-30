@@ -1,0 +1,1704 @@
+<!doctype html><html><head><meta charset=utf8><script src="/api/config"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="/sync.js"></script><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body><nav id="lw-bar" aria-label="Lernwelt" style="all:initial;display:flex;align-items:center;gap:10px;box-sizing:border-box;width:100%;padding:6px max(12px,env(safe-area-inset-right,0px)) 6px max(12px,env(safe-area-inset-left,0px));background:#20304a;color:#f3f0e6;font:600 14px/1.2 system-ui,-apple-system,Segoe UI,sans-serif;position:relative;z-index:9999"><a href="index.html" style="all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:#f3f0e6;color:#20304a;font:700 14px/1 system-ui,-apple-system,Segoe UI,sans-serif">&#8249; Lernwelt</a><span style="all:unset;font:600 14px/1.2 system-ui,-apple-system,Segoe UI,sans-serif;color:#f3f0e6;opacity:.85">Biologie · Bio-Expedition</span></nav>
+<title>Bio-Expedition</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Chelsea+Market&family=Patrick+Hand&family=Patrick+Hand+SC&display=swap">
+<style>
+/* Poster look (wie „Expedition Pflanzenzelle“): Kreide auf Anthrazit, Orange, Senf, Hellgrün, Creme. Bewusst ein einziges dunkles Erscheinungsbild. */
+:root{
+  color-scheme:dark;
+  --paper:#252321; --surface:#2E2B27; --surface2:#3A362F; --ink:#F4E6C1; --muted:#C2B597; --line:#5C5446;
+  --accent:#F08A24; --accent-d:#B4610F; --accent-ink:#1E1C1A; --good:#B9D24A; --bad:#F2875A; --good-bg:#34401D; --bad-bg:#4A2A1C;
+  --c-wall:#E0B447; --c-wall-d:#8C6A1E; --c-mem:#F7EBC8; --c-cyto:#34302A; --c-vac:#7FAF9B; --c-vac-d:#CFE5D6;
+  --c-nuc:#D95A2B; --c-nuc-d:#F7D774; --c-chl:#A9C33B; --c-chl-d:#4C6A1C; --c-mit:#F29A3A; --c-mit-d:#6E3312;
+  --c-er:#E98C7A; --c-gol:#F6D35E; --c-rib:#FFF4D6;
+  --sun:#F6D35E; --p-h2o:#6FB7D0; --salt:#6A5E44; --soil:#E07B2E; --leaf:#A9C33B; --leaf-d:#6E8A24; --petal:#F6E3B0;
+  --display:"Chelsea Market", "Comic Sans MS", system-ui, sans-serif;
+  --hand:"Patrick Hand SC", "Patrick Hand", "Comic Sans MS", system-ui, sans-serif;
+  --hand2:"Patrick Hand", "Comic Sans MS", system-ui, sans-serif;
+  --body:"Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{
+  background-color:var(--paper);
+  background-image:radial-gradient(circle,rgba(246,211,94,.45) 1px,transparent 1.6px),radial-gradient(circle,rgba(240,138,36,.35) 1px,transparent 1.6px),radial-gradient(circle,rgba(244,230,193,.16) .8px,transparent 1.4px);
+  background-size:67px 71px,89px 83px,23px 29px;background-position:0 0,31px 43px,7px 11px;
+  color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.5;padding-inline:16px;padding-block:0 40px;-webkit-tap-highlight-color:transparent}
+.wrap{max-width:640px;margin-inline:auto;display:flex;flex-direction:column;gap:16px}
+h1,h2,h3{margin:0;font-weight:400;line-height:1.12;text-wrap:balance}
+p{margin:0}
+b{color:#FFF6DC}
+button{font:inherit;color:inherit;cursor:pointer;touch-action:manipulation}
+:focus-visible{outline:2px dashed var(--accent);outline-offset:3px}
+.hand{font-family:var(--hand)}
+.small{font-size:.9rem;color:var(--muted)}
+
+/* Kopf */
+header.top{padding-block:22px 4px;display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.kicker{font-family:var(--hand);letter-spacing:.1em;color:var(--c-wall);font-size:1rem}
+h1{font-family:var(--display);font-size:clamp(2.3rem,10vw,3.2rem);color:var(--accent);line-height:1}
+h1 small{display:block;font-family:var(--hand2);font-size:1.15rem;color:var(--muted);margin-top:6px}
+.stats{display:flex;gap:6px;flex-wrap:wrap}
+.pill{border:1.5px solid var(--line);border-radius:999px;padding:2px 12px;font-family:var(--hand2);font-size:1.05rem;white-space:nowrap}
+.pill b{color:var(--good);font-weight:400}
+
+/* Karten / Panels */
+.panel{background:rgba(46,43,39,.94);border:1.5px solid var(--line);border-radius:26px;padding:18px;display:flex;flex-direction:column;gap:14px}
+.lbl{font-family:var(--hand);font-size:1.05rem;letter-spacing:.08em;color:var(--c-wall)}
+h2{font-family:var(--display);font-size:1.4rem;color:var(--accent)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1.5px solid var(--line);background:transparent;border-radius:999px;padding:4px 14px;font-family:var(--hand2);font-size:1.1rem;min-height:40px}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.go{background:var(--accent);color:var(--accent-ink);border:none;border-radius:999px;padding:14px 28px;font-family:var(--display);font-size:1.25rem;box-shadow:0 5px 0 var(--accent-d)}
+.go:active{transform:translateY(3px);box-shadow:0 2px 0 var(--accent-d)}
+.ghost{background:transparent;border:1.5px solid var(--line);border-radius:999px;padding:8px 16px;font-family:var(--hand2);font-size:1.08rem;color:var(--ink)}
+.ghost:hover{border-color:var(--accent)}
+
+/* Wissens-Pflanze */
+.plantwrap{display:grid;grid-template-columns:minmax(0,200px) minmax(0,1fr);gap:14px;align-items:center}
+@media (max-width:520px){.plantwrap{grid-template-columns:minmax(0,1fr)}.plantwrap svg{max-height:300px}}
+.plantwrap svg{width:100%;height:auto;display:block;max-height:380px}
+.leaf{cursor:pointer;transition:opacity .3s}
+.leaf.hl path:first-child{stroke:var(--accent)!important;stroke-width:3!important}
+.leaf.new{animation:grow 1.4s ease-out 2}
+@keyframes grow{0%{transform-box:fill-box;filter:drop-shadow(0 0 0 var(--good))}50%{filter:drop-shadow(0 0 10px var(--good))}}
+.mastery{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
+.m{display:flex;align-items:center;justify-content:space-between;gap:6px;border:1.5px solid var(--line);border-radius:14px;padding:4px 10px;font-family:var(--hand2);font-size:1.05rem;background:transparent;text-align:left;min-width:0}
+.m span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.m[aria-pressed="true"]{border-color:var(--accent)}
+.pips{display:flex;gap:3px;flex:none}
+.pips i{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--muted)}
+.pips i.on{background:var(--good);border-color:var(--good)}
+.plantcap{font-family:var(--hand2);font-size:1.1rem;color:var(--muted);min-height:1.5em}
+
+/* Runde */
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;font-family:var(--hand2);font-size:1.1rem;color:var(--muted);padding-top:16px}
+.progress{height:10px;border-radius:99px;border:1.5px solid var(--line);overflow:hidden}
+.progress i{display:block;height:100%;background:var(--good);transition:width .3s}
+.card{background:rgba(46,43,39,.96);border:1.5px solid var(--line);border-radius:26px;padding:18px 16px 20px;display:flex;flex-direction:column;gap:14px}
+.tags{display:flex;gap:6px;flex-wrap:wrap}
+.tag{font-family:var(--hand);font-size:.98rem;letter-spacing:.05em;border-radius:999px;padding:0 10px;background:var(--accent);color:var(--accent-ink)}
+.tag.soft{background:transparent;color:var(--muted);border:1.5px dashed var(--line)}
+.prompt{font-family:var(--display);font-size:clamp(1.2rem,5vw,1.5rem);line-height:1.25;color:var(--petal);text-wrap:balance}
+.instr{font-size:.95rem;color:var(--muted)}
+.opts{display:grid;grid-template-columns:1fr;gap:8px}
+.opts.two{grid-template-columns:1fr 1fr}
+.opt{border:1.5px solid var(--line);background:transparent;border-radius:16px;padding:11px 14px;text-align:left;font-size:1rem;min-height:54px;line-height:1.3}
+.opts.two .opt{text-align:center;font-family:var(--hand2);font-size:1.2rem}
+@media (hover:hover){.opt:hover:not(:disabled){border-color:var(--accent)}}
+.opt:active:not(:disabled){transform:scale(.98)}
+.opt.ok{background:var(--good-bg);border-color:var(--good)}
+.opt.bad{background:var(--bad-bg);border-color:var(--bad)}
+.opt:disabled{cursor:default}
+.fb{border-radius:18px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;font-size:.98rem}
+.fb.ok{background:var(--good-bg);border:1.5px solid var(--good)}
+.fb.bad{background:var(--bad-bg);border:1.5px solid var(--bad)}
+.fb strong{font-family:var(--display);font-weight:400;font-size:1.15rem}
+.fb.ok strong{color:var(--good)} .fb.bad strong{color:var(--bad)}
+.fb .ex{color:var(--muted);font-size:.93rem}
+.next{align-self:stretch;background:var(--accent);color:var(--accent-ink);border:none;border-radius:999px;padding:13px 22px;font-family:var(--display);font-size:1.2rem;box-shadow:0 5px 0 var(--accent-d)}
+.next:active{transform:translateY(3px);box-shadow:0 2px 0 var(--accent-d)}
+.check{background:var(--accent);color:var(--accent-ink);border:none;border-radius:999px;padding:11px 22px;font-family:var(--hand2);font-size:1.2rem}
+.check:disabled{opacity:.4}
+
+/* Zelle */
+.cellbox{background:rgba(37,35,33,.8);border:1.5px solid var(--line);border-radius:22px;padding:8px}
+.cellbox svg{display:block;width:100%;height:auto;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+svg .org{cursor:pointer}
+svg.dimmed .org:not(.hl){opacity:.22}
+svg .org.hl{animation:glow 1.3s ease-in-out infinite}
+@keyframes glow{50%{filter:drop-shadow(0 0 7px var(--accent)) brightness(1.15)}}
+svg .org.ok{filter:drop-shadow(0 0 8px var(--good))}
+svg .org.bad{filter:drop-shadow(0 0 8px var(--bad))}
+svg .org.sel{filter:drop-shadow(0 0 6px var(--accent))}
+svg.sel-on .org:not(.sel){opacity:.45}
+svg .pin circle{fill:var(--paper);stroke:var(--ink);stroke-width:3}
+svg .pin text{font-family:var(--display);font-size:22px;fill:var(--ink);text-anchor:middle;dominant-baseline:central;pointer-events:none}
+svg .pin.ok circle{stroke:var(--good);fill:var(--good-bg)} svg .pin.bad circle{stroke:var(--bad);fill:var(--bad-bg)}
+svg .pin.act circle{stroke:var(--accent)}
+svg .pin{cursor:pointer}
+svg text.lab{font-family:var(--hand);font-size:19px;fill:var(--ink)}
+
+/* Zuordnen (Beschriften / Verbinden) */
+.pool{display:flex;flex-wrap:wrap;gap:6px;min-height:44px}
+.tile{border:1.5px solid var(--ink);background:var(--surface2);border-radius:999px;padding:5px 14px;font-family:var(--hand2);font-size:1.12rem;min-height:42px}
+.tile[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.tile:disabled{opacity:.35}
+.slots{display:flex;flex-direction:column;gap:6px}
+.slotrow{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:center;border:1.5px dashed var(--line);border-radius:16px;padding:6px 8px 6px 10px;background:transparent;text-align:left;min-height:50px;font-size:.98rem}
+.slotrow .num{font-family:var(--display);color:var(--accent);font-size:1.2rem;min-width:1.2em;text-align:center}
+.slotrow .got{font-family:var(--hand2);font-size:1.15rem;color:var(--muted)}
+.slotrow .got.filled{color:var(--ink)}
+.slotrow.ok{border-style:solid;border-color:var(--good);background:var(--good-bg)}
+.slotrow.bad{border-style:solid;border-color:var(--bad);background:var(--bad-bg)}
+.slotrow.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.vrow{display:flex;flex-direction:column;gap:2px}
+
+/* Memory */
+.mem{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;perspective:800px}
+.mc{position:relative;border:none;background:none;padding:0;min-height:98px}
+.mc .in{position:absolute;inset:0;transition:transform .4s;transform-style:preserve-3d}
+.mc.open .in,.mc.done .in{transform:rotateY(180deg)}
+.mc .f,.mc .b{position:absolute;inset:0;border-radius:14px;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;text-align:center}
+.mc .f{background:var(--surface2);border:1.5px solid var(--line);background-image:radial-gradient(circle,rgba(169,195,59,.5) 1.5px,transparent 2px);background-size:14px 14px}
+.mc .f::after{content:"?";font-family:var(--display);font-size:1.6rem;color:var(--c-wall)}
+.mc .b{transform:rotateY(180deg);background:var(--surface);border:1.5px solid var(--ink);font-family:var(--hand2);font-size:1rem;line-height:1.15}
+.mc .b.city{border-style:dashed;color:var(--petal)}
+.mc .b svg{width:46px;height:30px}
+.mc.done .b{border-color:var(--good);background:var(--good-bg)}
+.memstat{font-family:var(--hand2);font-size:1.1rem;color:var(--muted)}
+
+/* Wischen */
+.swipe{position:relative;height:250px;border:1.5px dashed var(--line);border-radius:22px;overflow:hidden;touch-action:pan-y}
+.swipe .side{position:absolute;top:10px;font-family:var(--hand);font-size:1.05rem;letter-spacing:.06em;padding:2px 10px;border-radius:999px;transition:opacity .15s,background .15s}
+.swipe .side.l{left:10px;color:var(--good)} .swipe .side.r{right:10px;color:var(--c-mit)}
+.swipe .side.on.l{background:var(--good);color:var(--accent-ink)} .swipe .side.on.r{background:var(--c-mit);color:var(--accent-ink)}
+.scard{position:absolute;left:50%;top:50px;width:min(72%,260px);margin-left:calc(min(72%,260px) / -2);height:170px;border-radius:22px;background:var(--surface2);border:2px solid var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+.scard svg{width:96px;height:64px}
+.scard .nm{font-family:var(--display);font-size:1.35rem;color:var(--petal);text-align:center;padding:0 8px}
+.scard.fly{transition:transform .35s ease-in,opacity .35s}
+.scard.back{transition:transform .25s}
+.swfb{min-height:1.5em;font-family:var(--hand2);font-size:1.12rem;text-align:center}
+.swfb.ok{color:var(--good)} .swfb.bad{color:var(--bad)}
+.dots{display:flex;gap:5px;justify-content:center}
+.dots i{width:10px;height:10px;border-radius:50%;border:1.5px solid var(--line)}
+.dots i.ok{background:var(--good);border-color:var(--good)} .dots i.bad{background:var(--bad);border-color:var(--bad)}
+
+/* Gleichung */
+.eqn{display:flex;flex-direction:column;align-items:center;gap:6px}
+.eside{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px}
+.eqn .op{font-family:var(--display);font-size:1.4rem;color:var(--c-wall)}
+.eqn .arrow{display:flex;align-items:center;gap:8px;font-family:var(--hand2);color:var(--sun);font-size:1rem;line-height:1}
+.eqn .arrow span:first-child{font-family:var(--display);font-size:1.8rem;color:var(--c-wall)}
+.eslot{min-width:110px;min-height:46px;border:1.5px dashed var(--muted);border-radius:14px;background:transparent;font-family:var(--hand2);font-size:1.1rem;padding:4px 10px}
+.eslot.filled{border-style:solid;border-color:var(--ink);background:var(--surface2)}
+.eslot.ok{border-color:var(--good);background:var(--good-bg)} .eslot.bad{border-color:var(--bad);background:var(--bad-bg)}
+.side-lbl{font-family:var(--hand);font-size:.9rem;color:var(--muted);letter-spacing:.06em;width:100%;text-align:center}
+
+/* Balance */
+.sunrow{display:flex;align-items:center;gap:12px}
+.sunrow svg{width:46px;height:46px;flex:none}
+input[type=range]{width:100%;accent-color:var(--accent);height:34px}
+.meter{display:grid;grid-template-columns:7.5em minmax(0,1fr);gap:10px;align-items:center;font-family:var(--hand2);font-size:1.08rem}
+.meter .track{height:14px;border-radius:99px;border:1.5px solid var(--line);overflow:hidden;position:relative}
+.meter .track i{position:absolute;top:0;bottom:0;left:0;border-radius:99px;transition:width .15s}
+.div-track{height:18px;border-radius:99px;border:1.5px solid var(--line);position:relative;overflow:hidden}
+.div-track::before{content:"";position:absolute;left:50%;top:-2px;bottom:-2px;width:2px;background:var(--ink);opacity:.7}
+.div-track i{position:absolute;top:0;bottom:0;transition:all .15s}
+.div-labels{display:flex;justify-content:space-between;font-family:var(--hand2);color:var(--muted)}
+.live{font-family:var(--hand2);font-size:1.15rem;text-align:center;min-height:1.5em}
+
+/* Bilder-Auswahl */
+.pics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.pic{border:1.5px solid var(--line);background:transparent;border-radius:16px;padding:6px;display:flex;flex-direction:column;align-items:center;gap:4px}
+.pic svg{width:100%;height:auto}
+.pic span{font-family:var(--hand2);font-size:1rem;color:var(--muted);min-height:1.3em}
+.pic.ok{border-color:var(--good);background:var(--good-bg)} .pic.bad{border-color:var(--bad);background:var(--bad-bg)}
+.bigpic{max-width:240px;align-self:center;width:70%}
+
+/* Sortieren / Lupe */
+.sortl{display:flex;flex-direction:column;gap:8px}
+.sorti{display:flex;align-items:center;gap:12px;border:1.5px solid var(--line);background:transparent;border-radius:16px;padding:8px 12px;min-height:52px;text-align:left}
+.sorti .badge{width:32px;height:32px;border-radius:50%;border:1.5px dashed var(--muted);display:grid;place-items:center;font-family:var(--display);flex:none}
+.sorti.on .badge{border-style:solid;background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.sorti .sz{margin-left:auto;font-family:var(--hand2);color:var(--muted)}
+.sorti.ok{border-color:var(--good);background:var(--good-bg)} .sorti.bad{border-color:var(--bad);background:var(--bad-bg)}
+.lupe{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.lupe button{display:flex;align-items:center;gap:8px;border:1.5px solid var(--line);background:transparent;border-radius:16px;padding:8px 10px;min-height:56px;font-family:var(--hand2);font-size:1.1rem;text-align:left}
+.lupe button svg{width:40px;height:28px;flex:none}
+.lupe button[aria-pressed="true"]{border-color:var(--accent);background:rgba(240,138,36,.15)}
+.lupe button.ok{border-color:var(--good);background:var(--good-bg)} .lupe button.bad{border-color:var(--bad);background:var(--bad-bg)}
+
+/* Schreiben */
+.inp{display:flex;gap:8px;flex-wrap:wrap}
+.inp input{flex:1 1 180px;min-width:0;font:inherit;font-size:1.2rem;padding:11px 14px;border:1.5px solid var(--line);border-radius:14px;background:var(--paper);color:var(--ink)}
+.inp input.ok{border-color:var(--good);background:var(--good-bg)} .inp input.bad{border-color:var(--bad);background:var(--bad-bg)}
+.sol{font-family:var(--hand2);font-size:1.35rem;letter-spacing:.02em}
+.sol .x{color:var(--bad);text-decoration:underline wavy;text-underline-offset:4px}
+
+/* Ende */
+.score{font-family:var(--display);font-size:3.4rem;line-height:1;color:var(--good)}
+.score span{font-size:1.5rem;color:var(--muted)}
+.stars{font-size:1.9rem;letter-spacing:.15em;color:var(--sun)}
+.misslist{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:6px;font-size:.95rem}
+
+/* Erkunden */
+.info{display:flex;flex-direction:column;gap:8px}
+.info h3{font-family:var(--display);font-size:1.4rem;color:var(--petal);display:flex;align-items:center;gap:10px}
+.info h3 svg{width:48px;height:32px}
+.facts{display:flex;flex-wrap:wrap;gap:6px}
+.fchip{font-family:var(--hand2);font-size:1rem;border:1.5px dashed var(--line);border-radius:999px;padding:0 10px}
+.fchip.plant{border-style:solid;border-color:var(--good);color:var(--good)}
+/* Führerschein */
+.licence{border:2px dashed var(--c-wall);background:linear-gradient(160deg,rgba(224,180,71,.10),rgba(46,43,39,.94) 45%)}
+.lic-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.passed{font-family:var(--display);color:var(--accent);border:3px solid var(--accent);border-radius:12px;padding:4px 10px;transform:rotate(-8deg);text-transform:uppercase;font-size:1.1rem;text-align:center;line-height:1.1}
+.passed small{display:block;font-family:var(--hand2);font-size:.85rem;text-transform:none}
+.lic-name{font-family:var(--hand);font-size:1.1rem;letter-spacing:.05em;display:flex;align-items:center;gap:8px}
+.lic-name input{flex:1;min-width:0;font:inherit;font-family:var(--hand2);font-size:1.2rem;background:transparent;border:none;border-bottom:1.5px dashed var(--muted);color:var(--ink);padding:2px 4px}
+.stamps{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:8px}
+.stamp{aspect-ratio:1;border-radius:50%;display:grid;place-items:center;text-align:center;padding:6px;font-family:var(--hand2);font-size:.86rem;line-height:1.05;color:var(--muted);
+  background:radial-gradient(circle,var(--surface) 62%,transparent 63%),conic-gradient(var(--good) calc(var(--p)*360deg),var(--line) 0)}
+.stamp span{overflow-wrap:anywhere}
+.stamp.got{background:var(--accent);color:var(--accent-ink);transform:rotate(-7deg);box-shadow:inset 0 0 0 3px var(--accent-ink),inset 0 0 0 5px var(--accent)}
+/* Kapitel */
+.chtabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding-top:6px}
+.chtabs button{border:1.5px solid var(--line);background:rgba(46,43,39,.9);border-radius:20px;padding:10px 12px;text-align:left;font-family:var(--hand2);font-size:1.12rem;line-height:1.15;min-height:64px}
+.chtabs button small{display:block;font-family:var(--hand);color:var(--c-wall);letter-spacing:.08em;font-size:.92rem}
+.chtabs button[aria-pressed="true"]{border:2px solid var(--accent);background:rgba(240,138,36,.14)}
+/* Skelett */
+.skelwrap svg{max-height:420px}
+.cellbox.fig svg{max-height:440px;margin-inline:auto}
+.small-fig{max-width:200px;align-self:center;width:55%}
+.spinebox svg{max-height:400px;width:100%;margin-inline:auto}
+svg .org.glow{filter:drop-shadow(0 0 5px rgba(255,244,214,.8))}
+svg .org.new{animation:glow 1.2s ease-in-out 3}
+.xray{background:#0c1820;border-color:#2c4a5a}
+svg.hidden-bones .org{opacity:.025}
+.riddle{display:flex;gap:12px;align-items:flex-start;border:1.5px dashed var(--c-wall);border-radius:20px;padding:14px;background:rgba(224,180,71,.08)}
+.riddle .q{font-family:var(--display);font-size:2.2rem;color:var(--accent);line-height:1}
+.riddle p{font-family:var(--hand2);font-size:1.3rem;line-height:1.3;color:var(--petal)}
+.paints{display:flex;gap:8px;flex-wrap:wrap}
+.paint{display:flex;align-items:center;gap:8px;border:1.5px solid var(--line);background:transparent;border-radius:999px;padding:5px 14px 5px 6px;font-family:var(--hand2);font-size:1.1rem;min-height:44px}
+.paint i{width:28px;height:28px;border-radius:50%;border:2px solid var(--ink)}
+.paint[aria-pressed="true"]{border:2px solid var(--ink);background:var(--surface2)}
+.sortcard{border:2px solid var(--ink);border-radius:22px;background:var(--surface2);min-height:120px;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:16px;text-align:center;position:relative}
+.sortcard p{font-family:var(--display);font-size:1.3rem;color:var(--petal);line-height:1.25}
+.sortcard .cnt{position:absolute;top:8px;right:14px;font-family:var(--hand2);color:var(--muted)}
+.sortcard.pop{animation:pop .3s}
+@keyframes pop{0%{transform:scale(.9);opacity:.3}}
+.buckets{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.buckets .opt{text-align:center;font-family:var(--hand2);font-size:1.15rem}
+.lockwrap{display:flex;flex-direction:column;align-items:center;gap:12px}
+.padlock{width:100px;height:auto}
+.padlock #shk{transition:transform .5s}
+.padlock.open #shk{transform:translateY(-16px) rotate(-12deg);transform-origin:90px 62px;stroke:var(--good)!important}
+.padlock.nope{animation:shake .4s}
+.wheels{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.wheel{display:flex;flex-direction:column;align-items:center;gap:4px;border:1.5px solid var(--line);border-radius:18px;padding:6px 8px;min-width:76px}
+.wheel button{border:none;background:var(--surface2);border-radius:10px;width:52px;height:38px;font-size:1rem;color:var(--ink)}
+.wheel output{font-family:var(--display);font-size:2rem;color:var(--petal);min-width:1.6em;text-align:center}
+.wheel span{font-family:var(--hand2);color:var(--muted);font-size:1rem}
+.bauk{display:flex;flex-direction:column;gap:12px}
+.steppers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.stepper{display:flex;flex-direction:column;align-items:center;gap:4px;font-family:var(--hand2);font-size:1.05rem;border:1.5px solid var(--line);border-radius:16px;padding:6px 2px}
+.stepper div{display:flex;flex-direction:column;align-items:center;gap:4px}
+.stepper button[data-d="1"]{order:-1}
+.stepper button[data-d="-1"]{order:1}
+.stepper>span{font-size:.92rem;white-space:nowrap}
+.stepper button{border:1.5px solid var(--line);background:var(--surface2);border-radius:12px;width:42px;height:42px;font-size:1.4rem;color:var(--ink)}
+.stepper output{font-family:var(--display);font-size:1.5rem;min-width:1.6em;text-align:center;color:var(--petal)}
+.lt{font-size:1.08rem;line-height:2.3}
+.lt .gap{border:none;border-bottom:2px dashed var(--muted);background:transparent;font-family:var(--hand2);font-size:1.12rem;padding:0 6px;min-width:64px;border-radius:6px 6px 0 0}
+.lt .gap.filled{border-bottom-style:solid;border-color:var(--ink);background:var(--surface2)}
+.lt .gap.act{border-color:var(--accent);background:rgba(240,138,36,.18)}
+.lt .gap.ok{background:var(--good-bg);border-color:var(--good)} .lt .gap.bad{background:var(--bad-bg);border-color:var(--bad);text-decoration:line-through}
+.lt .fix{font-family:var(--hand2);color:var(--good);margin-left:4px}
+.lupe.one{grid-template-columns:1fr}
+.stossbox svg{display:block;max-width:240px;margin-inline:auto;width:100%;height:auto}
+.stack .vb,.stack .dsc{transform-box:fill-box}
+.stack .dsc{transform-origin:center}
+.stack.jump .vb{animation:dropv .7s ease-in-out}
+.stack.jump .dsc{animation:squash .7s ease-in-out}
+@keyframes dropv{45%{transform:translateY(var(--dy))}}
+@keyframes squash{45%{transform:scaleY(.45)}}
+.stack.nodisc.jump{animation:shake .4s}
+svg .spark{opacity:0}
+svg .stack.nodisc.jump~.spark{animation:spark .5s}
+@keyframes spark{20%,60%{opacity:1}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div><div class="kicker">[ Biologie · Klasse 5 ]</div><h1>Bio-Expedition<small>Zellen · Mikroskop · Skelett</small></h1></div>
+    <div class="stats" id="stats"></div>
+  </header>
+  <main id="screen" class="wrap"></main>
+</div>
+
+<script>
+(function(){
+'use strict';
+/* =================== INHALTE =================== */
+const O={
+ zellwand:{n:'Zellwand',nom:'Die Zellwand',akk:'die Zellwand',al:['zellwand'],plant:1,lm:1,size:'sehr dünn, aber zäh',
+  fn:'gibt der Pflanzenzelle feste Form und Halt',wo:'Tippe auf die feste Hülle aus Cellulose, die der Zelle Form und Halt gibt.',city:'Stadtmauer',col:'--c-wall',pin:[27,250]},
+ membran:{n:'Zellmembran',nom:'Die Zellmembran',akk:'die Zellmembran',al:['zellmembran','membran','plasmamembran'],plant:0,lm:0,size:'ca. 8 nm dünn',
+  fn:'entscheidet, welche Stoffe in die Zelle hinein- und hinausdürfen',wo:'Tippe auf das dünne Häutchen, das auswählt, welche Stoffe hineindürfen.',city:'Stadttor mit Kontrolle',col:'--c-mem',pin:[38,420]},
+ cytoplasma:{n:'Zellplasma',nom:'Das Zellplasma',akk:'das Zellplasma',al:['zellplasma','cytoplasma','zytoplasma','plasma'],plant:0,lm:1,size:'füllt die ganze Zelle',
+  fn:'ist die geleeartige Masse, in der alle Organellen liegen',wo:'Tippe auf die geleeartige Masse, in der alle Organellen liegen.',city:'Stadtgebiet mit Straßen und Plätzen',col:'--c-cyto',pin:[548,160]},
+ zellkern:{n:'Zellkern',nom:'Der Zellkern',akk:'den Zellkern',al:['zellkern','kern','nucleus','nukleus'],plant:0,lm:1,size:'ca. 5–20 µm',
+  fn:'enthält die Erbinformation und steuert die Zelle',wo:'Tippe auf die Steuerzentrale mit der Erbinformation (DNA).',city:'Rathaus mit Bauplan-Archiv',col:'--c-nuc',pin:[125,235]},
+ vakuole:{n:'Vakuole',nom:'Die Vakuole',akk:'die Vakuole',al:['vakuole','zentralvakuole'],plant:1,lm:1,size:'oft 80–90 % der Zelle',
+  fn:'speichert Zellsaft und macht die Zelle prall',wo:'Tippe auf den Speicher für Zellsaft, der die Zelle prall macht.',city:'Wasserturm und Lagerhalle',col:'--c-vac',pin:[400,240]},
+ chloroplast:{n:'Chloroplast',nom:'Ein Chloroplast',akk:'einen Chloroplasten',al:['chloroplast','chloroplasten','blattgrünkorn','blattgrünkörner','chloroplaste'],plant:1,lm:1,size:'ca. 5–10 µm',
+  fn:'stellt mit Sonnenlicht Traubenzucker her',wo:'Tippe auf den Ort, an dem mit Sonnenlicht Zucker entsteht.',city:'Solarküche',col:'--c-chl',pin:[290,66]},
+ mitochondrium:{n:'Mitochondrium',nom:'Ein Mitochondrium',akk:'ein Mitochondrium',al:['mitochondrium','mitochondrien'],plant:0,lm:0,size:'ca. 1–3 µm',
+  fn:'gewinnt aus Zucker und Sauerstoff Energie',wo:'Tippe auf ein Kraftwerk, das aus Zucker Energie gewinnt.',city:'Kraftwerk',col:'--c-mit',pin:[120,150]},
+ er:{n:'Endoplasmatisches Retikulum',short:'ER',nom:'Das ER',akk:'das ER (Endoplasmatisches Retikulum)',al:['er','endoplasmatischesretikulum','endoplasmatisches retikulum'],plant:0,lm:0,size:'Netz aus Kanälen',
+  fn:'ist ein Kanalnetz, in dem Stoffe hergestellt und transportiert werden',wo:'Tippe auf das Kanalnetz, in dem Stoffe hergestellt und transportiert werden.',city:'Straßen- und Kanalnetz',col:'--c-er',pin:[208,230]},
+ golgi:{n:'Golgi-Apparat',nom:'Der Golgi-Apparat',akk:'den Golgi-Apparat',al:['golgiapparat','golgi','dictyosom','dictyosomen'],plant:0,lm:0,size:'Stapel flacher Säckchen',
+  fn:'verpackt Stoffe in Bläschen und verschickt sie',wo:'Tippe auf den Stapel, der Stoffe in Bläschen verpackt und verschickt.',city:'Post und Paketzentrum',col:'--c-gol',pin:[220,337]},
+ ribosom:{n:'Ribosom',nom:'Ein Ribosom',akk:'ein Ribosom',al:['ribosom','ribosomen'],plant:0,lm:0,size:'ca. 25 nm',
+  fn:'baut Eiweiße nach Bauplan zusammen',wo:'Tippe auf ein winziges Körnchen, das Eiweiße baut.',city:'Handwerksbetrieb',col:'--c-rib',pin:[255,160]}
+};
+const ORG=Object.keys(O);
+const nm=k=>O[k].short?`${O[k].short} (${O[k].n})`:O[k].n;
+const SK_NAME=Object.assign({},...ORG.map(k=>({[k]:O[k].short||O[k].n})),{vergleich:'Pflanze oder Tier',foto:'Fotosynthese',atmung:'Zellatmung',wasser:'Wasser & Turgor',mikro:'Mikroskop & Größen'});
+const GROUPS={organellen:{n:'Zellbestandteile',sk:ORG},vergleich:{n:'Pflanze oder Tier',sk:['vergleich']},energie:{n:'Fotosynthese & Atmung',sk:['foto','atmung']},wasser:{n:'Wasser & Turgor',sk:['wasser']},mikro:{n:'Mikroskop & Größen',sk:['mikro']}};
+const SKILLS=[...ORG,'vergleich','foto','atmung','wasser','mikro'];
+
+/* ----- Mikroskopier-Führerschein ----- */
+const M={
+ mk_okular:{n:'Okular',nom:'Das Okular',akk:'das Okular',al:['okular'],fn:'ist die Linse, durch die man ins Mikroskop schaut',ab:'Hier schaut man in das Mikroskop.',wo:'Tippe auf den Teil, durch den du ins Mikroskop schaust.',pin:[160,52]},
+ mk_tubus:{n:'Tubus',nom:'Der Tubus',akk:'den Tubus',al:['tubus'],fn:'verbindet Okular und Objektiv',ab:'Verbindet Okular und Objektiv.',wo:'Tippe auf das Rohr, das Okular und Objektiv verbindet.',pin:[194,116]},
+ mk_stativ:{n:'Stativ',nom:'Das Stativ',akk:'das Stativ',al:['stativ'],fn:'trägt alle Teile – nur hier fasst man das Mikroskop an',ab:'Nur hier fasst man das Mikroskop an.',wo:'Tippe auf den Teil, an dem du das Mikroskop anfassen darfst.',pin:[140,245]},
+ mk_grobtrieb:{n:'Grobtrieb',nom:'Der Grobtrieb',akk:'den Grobtrieb',al:['grobtrieb'],fn:'stellt das Bild in großen Schritten scharf',wo:'Tippe auf das große Rad, mit dem du grob scharf stellst.',pin:[166,306]},
+ mk_feintrieb:{n:'Feintrieb',nom:'Der Feintrieb',akk:'den Feintrieb',al:['feintrieb'],fn:'stellt das Bild in kleinen Schritten genau scharf',wo:'Tippe auf das kleine Rad, mit dem du ganz genau scharf stellst.',pin:[126,332]},
+ mk_revolver:{n:'Objektivrevolver',nom:'Der Objektivrevolver',akk:'den Objektivrevolver',al:['objektivrevolver','revolver'],fn:'wird gedreht, um ein anderes Objektiv einzustellen',ab:'Braucht man zur Einstellung der verschiedenen Objektive.',wo:'Tippe auf die Drehscheibe, mit der du das Objektiv wechselst.',pin:[318,200]},
+ mk_objektiv:{n:'Objektiv',nom:'Das Objektiv',akk:'ein Objektiv',al:['objektiv','objektive'],fn:'ist die Linse direkt über dem Präparat und vergrößert es',wo:'Tippe auf eine Linse direkt über dem Präparat.',pin:[260,228]},
+ mk_objekt:{n:'Objekt',nom:'Das Objekt',akk:'das Objekt',al:['objekt','praeparat','objekttraeger'],fn:'ist das Präparat, das man anschauen möchte',wo:'Tippe auf das Präparat, das du anschauen willst.',pin:[226,259]},
+ mk_tisch:{n:'Objekttisch',nom:'Der Objekttisch',akk:'den Objekttisch',al:['objekttisch','tisch'],fn:'hält das Objekt mit Klammern fest',ab:'Hält das Objekt, das ich anschauen möchte.',wo:'Tippe auf den Tisch, auf dem das Präparat festgeklemmt wird.',pin:[346,269]},
+ mk_blende:{n:'Blende',nom:'Die Blende',akk:'die Blende',al:['blende'],fn:'stellt die Helligkeit ein',ab:'Hier kann ich die Helligkeit einstellen.',wo:'Tippe auf den Teil, mit dem du die Helligkeit einstellst.',pin:[300,292]},
+ mk_schalter:{n:'Schalter',nom:'Der Schalter',akk:'den Schalter',al:['schalter'],fn:'schaltet die Lampe ein und aus',wo:'Tippe auf den Knopf, der die Lampe einschaltet.',pin:[322,394]},
+ mk_lampe:{n:'Lampe',nom:'Die Lampe',akk:'die Lampe',al:['lampe','beleuchtung','licht'],fn:'beleuchtet das Objekt von unten',ab:'Dient zur Beleuchtung des Objektes.',wo:'Tippe auf den Teil, der das Objekt von unten beleuchtet.',pin:[256,400]}
+};
+const MKP=Object.keys(M);
+const MKS=[...MKP,'mk_vergr','mk_umgang'];
+MKP.forEach(k=>SK_NAME[k]=M[k].n);SK_NAME.mk_vergr='Vergrößerung';SK_NAME.mk_umgang='Richtig mikroskopieren';
+GROUPS.fuehrerschein={n:'Mikroskopier-Führerschein',sk:MKS};
+const STEPS=['Mikroskop mit beiden Händen am Stativ tragen, abstellen und die Lampe einschalten','Kleinstes Objektiv eindrehen und das Präparat mit den Klammern auf dem Objekttisch festmachen','Von der Seite schauen und mit dem Grobtrieb das Präparat nah ans Objektiv bringen','Durchs Okular schauen und mit dem Grobtrieb langsam scharf stellen','Mit Feintrieb und Blende nachregeln','Erst jetzt ein größeres Objektiv eindrehen'];
+const STAMP={mk_revolver:'Revolver',mk_tisch:'Objekt-tisch',mk_vergr:'Vergrö-ßerung',mk_umgang:'Umgang'}; 
+
+// Richtig oder falsch? [skill, Aussage, stimmt?, Erklärung]
+const TF=[
+ ['zellwand','Die Zellwand besteht vor allem aus Cellulose.',1,'Cellulose ist ein Stoff aus langen Zuckerketten. Auch Holz und Papier bestehen großenteils daraus.'],
+ ['zellwand','Auch Tierzellen haben eine Zellwand.',0,'Nur Pflanzenzellen haben eine Zellwand. Deshalb sind Tierzellen weich und oft rundlich.'],
+ ['zellwand','Die Zellwand entscheidet, welche Stoffe in die Zelle dürfen.',0,'Das macht die Zellmembran. Die Zellwand ist für Wasser und gelöste Stoffe fast frei durchlässig.'],
+ ['membran','Die Zellmembran liegt direkt an der Innenseite der Zellwand.',1,'Deshalb sieht man sie im Lichtmikroskop kaum – außer bei der Plasmolyse.'],
+ ['membran','Die Zellmembran ist der „Türsteher“ der Zelle.',1,'Sie ist auswählend durchlässig: Nicht jeder Stoff kommt hinein oder hinaus.'],
+ ['cytoplasma','Im Zellplasma laufen viele Stoffwechselvorgänge ab.',1,'Das Zellplasma ist viel mehr als „Füllstoff“: Hier wird gearbeitet.'],
+ ['cytoplasma','Bei der Wasserpest sieht man, wie das Zellplasma mit den Chloroplasten strömt.',1,'Das nennt man Plasmaströmung.'],
+ ['zellkern','Der Zellkern enthält die Erbinformation (DNA).',1,'Die DNA enthält die Baupläne der Zelle.'],
+ ['zellkern','Nur Pflanzenzellen haben einen Zellkern.',0,'Auch Tierzellen haben einen Zellkern.'],
+ ['vakuole','Die Vakuole kann bis zu 90 % der Pflanzenzelle ausfüllen.',1,'In ausgewachsenen Zellen ist sie riesig und drückt alles andere an den Rand.'],
+ ['vakuole','Die rote Farbe der roten Zwiebel sitzt im Zellsaft der Vakuole.',1,'Der Farbstoff heißt Anthocyan.'],
+ ['vakuole','Die Vakuole stellt Traubenzucker her.',0,'Zucker entsteht in den Chloroplasten. Die Vakuole speichert.'],
+ ['chloroplast','Chloroplasten enthalten den grünen Farbstoff Chlorophyll.',1,'Chlorophyll fängt das Sonnenlicht ein.'],
+ ['chloroplast','In der Zwiebelhaut findest du viele Chloroplasten.',0,'Die Zwiebel wächst ohne Licht unter der Erde. Ihre Zellen haben keine Chloroplasten.'],
+ ['chloroplast','Jede Pflanzenzelle hat Chloroplasten.',0,'Nur Zellen, die Licht bekommen, z. B. im Blatt. Wurzelzellen haben keine.'],
+ ['mitochondrium','Pflanzen brauchen keine Mitochondrien, weil sie Fotosynthese machen.',0,'Pflanzen atmen Tag und Nacht. Die Zellatmung läuft in den Mitochondrien.'],
+ ['mitochondrium','Mitochondrien nennt man auch die Kraftwerke der Zelle.',1,'Dort wird aus Zucker Energie gewonnen.'],
+ ['er','Am rauen ER sitzen Ribosomen.',1,'Deshalb sieht es „rau“ aus. Dort entstehen Eiweiße.'],
+ ['golgi','Der Golgi-Apparat verschickt Stoffe in kleinen Bläschen.',1,'Die Bläschen heißen Vesikel.'],
+ ['ribosom','Ribosomen kann man im Schulmikroskop gut erkennen.',0,'Sie sind nur etwa 25 nm groß. Man sieht sie nur im Elektronenmikroskop.'],
+ ['ribosom','Ribosomen bauen Eiweiße zusammen.',1,'Sie lesen dafür die Baupläne aus dem Zellkern.'],
+ ['foto','Bei der Fotosynthese entsteht Sauerstoff.',1,'Kohlenstoffdioxid + Wasser → Traubenzucker + Sauerstoff.'],
+ ['foto','Bei der Fotosynthese wird Sauerstoff verbraucht.',0,'Sauerstoff entsteht. Verbraucht werden Kohlenstoffdioxid und Wasser.'],
+ ['foto','Die Fotosynthese findet in den Mitochondrien statt.',0,'Sie findet in den Chloroplasten statt.'],
+ ['foto','Ohne Licht gibt es keine Fotosynthese.',1,'Licht liefert die Energie, um Zucker aufzubauen.'],
+ ['atmung','Pflanzen atmen nur nachts.',0,'Die Zellatmung läuft Tag und Nacht. Tagsüber ist nur die Fotosynthese meist stärker.'],
+ ['atmung','Bei der Zellatmung wird Energie frei.',1,'Traubenzucker + Sauerstoff → Kohlenstoffdioxid + Wasser + Energie.'],
+ ['atmung','Nachts nimmt ein Blatt Sauerstoff auf.',1,'Ohne Licht keine Fotosynthese – die Zellatmung verbraucht weiter Sauerstoff.'],
+ ['atmung','Tagsüber legt ein Blatt einen Stärke-Vorrat an.',1,'Von diesem Vorrat lebt die Pflanze nachts.'],
+ ['wasser','Der Innendruck der Vakuole heißt Turgor.',1,'Er drückt das Zellplasma gegen die Zellwand und macht die Pflanze fest.'],
+ ['wasser','In Salzwasser nimmt die Zelle Wasser auf und platzt.',0,'Sie verliert Wasser, die Vakuole schrumpft (Plasmolyse).'],
+ ['wasser','Bei der Plasmolyse löst sich die Zellmembran von der Zellwand.',1,'Die Zellwand behält ihre Form, das Zellplasma schrumpft.'],
+ ['wasser','Eine welke Pflanze hat zu wenig Wasser in ihren Vakuolen.',1,'Gießt man sie rechtzeitig, füllen sich die Vakuolen wieder.'],
+ ['mikro','Ein Lichtmikroskop zeigt Dinge ab etwa 0,2 µm.',1,'Alles Kleinere sieht man nur im Elektronenmikroskop.'],
+ ['mikro','Eine Blattzelle kann man mit bloßem Auge gut erkennen.',0,'Blattzellen sind etwa 0,05 mm groß. Das Auge sieht erst ab etwa 0,1 mm.'],
+ ['mikro','1 µm ist ein Tausendstel Millimeter.',1,'1 mm = 1000 µm.'],
+ ['mikro','Bilder aus dem Elektronenmikroskop sind eigentlich schwarz-weiß.',1,'Die Farben werden erst nachträglich ergänzt.'],
+ ['vergleich','Tierzellen haben keine Chloroplasten.',1,'Tiere können keine Fotosynthese machen. Sie müssen Nahrung fressen.'],
+ ['vergleich','Tierzellen haben eine große Zentralvakuole.',0,'Tierzellen haben höchstens kleine Vakuolen.'],
+ ['vergleich','Pflanzen- und Tierzellen haben beide Mitochondrien.',1,'Beide brauchen Energie aus der Zellatmung.']
+];
+// Wissensfragen [skill, Frage, [Antworten, erste ist richtig], Erklärung]
+const MC=[
+ ['foto','Was braucht eine Pflanze für die Fotosynthese?',['Kohlenstoffdioxid, Wasser und Licht','Sauerstoff und Traubenzucker','Nur Wasser und Erde','Stickstoff und Licht'],'Daraus baut der Chloroplast Traubenzucker und es entsteht Sauerstoff.'],
+ ['foto','Wo findet die Fotosynthese statt?',['In den Chloroplasten','In den Mitochondrien','Im Zellkern','In der Vakuole'],'Chloroplasten enthalten das grüne Chlorophyll.'],
+ ['foto','Welcher Farbstoff fängt das Sonnenlicht ein?',['Chlorophyll','Cellulose','Anthocyan','Stärke'],'Chlorophyll macht Blätter grün.'],
+ ['atmung','Was passiert nachts in einem Blatt?',['Nur Zellatmung: Es nimmt Sauerstoff auf','Nur Fotosynthese','Gar nichts, die Pflanze schläft','Es gibt besonders viel Sauerstoff ab'],'Ohne Licht keine Fotosynthese. Die Zellatmung läuft weiter.'],
+ ['atmung','Wovon lebt eine Pflanze in der Nacht?',['Vom Stärke-Vorrat, den sie tagsüber angelegt hat','Vom Mondlicht','Vom Sauerstoff in der Luft','Von der Erde'],'Tagsüber macht sie mehr Zucker, als sie braucht, und speichert ihn als Stärke.'],
+ ['atmung','Wo läuft die Zellatmung ab?',['In den Mitochondrien','In den Chloroplasten','In der Zellwand','In der Vakuole'],'Mitochondrien sind die Kraftwerke der Zelle.'],
+ ['wasser','Wie nennt man den Innendruck der Vakuole?',['Turgor','Plasmolyse','Osmose','Chlorophyll'],'Turgor macht Pflanzen fest – wie Luft einen Fahrradreifen.'],
+ ['wasser','Warum verliert eine Zelle in Salzwasser Wasser?',['Wasser wandert dorthin, wo mehr Salz gelöst ist','Das Salz zerstört die Zellwand','Die Zelle schwitzt','Salz ist schwerer als Wasser'],'Diesen Vorgang nennt man Osmose.'],
+ ['mikro','Ab welcher Größe zeigt ein Lichtmikroskop etwas?',['ab etwa 0,2 µm','ab etwa 1 mm','ab etwa 1 nm','ab etwa 1 cm'],'Kleineres (z. B. Ribosomen) braucht ein Elektronenmikroskop.'],
+ ['mikro','In welchem Präparat siehst du im Schulmikroskop Chloroplasten?',['Wasserpest-Blättchen','Zwiebelhaut','Mundschleimhaut','Haar'],'Zwiebelhaut hat keine Chloroplasten, Mundschleimhaut ist eine Tierzelle.'],
+ ['mikro','Womit färbt man den Zellkern in der Zwiebelhaut an?',['Iod-Kaliumiodid-Lösung oder Methylenblau','Salzwasser','Zuckerwasser','Leitungswasser'],'Danach ist der Zellkern gut zu erkennen.'],
+ ['vergleich','Welche drei Bestandteile hat nur die Pflanzenzelle?',['Zellwand, große Vakuole, Chloroplasten','Zellkern, Zellwand, Mitochondrien','Zellmembran, Vakuole, Ribosomen','Chloroplasten, Golgi-Apparat, Zellkern'],'Merke die drei Extras: Wand, Wasserspeicher, Chloroplasten.'],
+ ['vergleich','Warum ist eine Tierzelle oft rundlich und weich?',['Sie hat keine Zellwand','Sie hat keinen Zellkern','Sie hat zu viel Wasser','Sie hat keine Mitochondrien'],'Die feste Zellwand gibt nur Pflanzenzellen ihre eckige Form.']
+];
+const SIZES=[['Zellmembran (Dicke)','ca. 8 nm',8e-9],['Ribosom','ca. 25 nm',2.5e-8],['Mitochondrium','ca. 2 µm',2e-6],['Chloroplast','ca. 7 µm',7e-6],['Blattzelle','ca. 50 µm',5e-5],['Zwiebelhautzelle','ca. 0,3 mm',3e-4],['Ameise','ca. 5 mm',5e-3]];
+const WSTATE={prall:'Prall (Turgor)',welk:'Welk',plasmo:'Plasmolyse'};
+const WSC=[
+ ['Die Topfpflanze wurde gut gegossen.','prall','Die Vakuolen sind voll und drücken gegen die Zellwand (Turgor).'],
+ ['Die Zwiebelhaut liegt in Salzwasser.','plasmo','Wasser strömt hinaus, die Vakuole schrumpft und die Membran löst sich von der Wand.'],
+ ['Die Topfpflanze wurde eine Woche lang nicht gegossen.','welk','Die Vakuolen geben Wasser ab, der Druck sinkt, die Pflanze wird schlapp.'],
+ ['Eine Zelle mit Plasmolyse kommt in Leitungswasser.','prall','Wasser strömt zurück in die Vakuole, die Zelle wird wieder prall.']
+];
+
+TF.push(
+ ['mk_umgang','Man trägt das Mikroskop mit einer Hand am Tubus.',0,'Immer mit beiden Händen: eine Hand am Stativ, die andere unter dem Fuß.'],
+ ['mk_umgang','Man beginnt immer mit dem kleinsten Objektiv.',1,'Bei kleiner Vergrößerung findest du das Präparat viel leichter.'],
+ ['mk_umgang','Beim größten Objektiv stellt man nur noch mit dem Feintrieb scharf.',1,'Mit dem Grobtrieb könnte das Objektiv gegen das Präparat stoßen.'],
+ ['mk_umgang','Das Objektiv darf das Präparat ruhig berühren.',0,'Dabei können Deckglas und Linse kaputtgehen.'],
+ ['mk_umgang','Linsen putzt man mit dem Finger sauber.',0,'Linsen nie anfassen! Zum Reinigen nimmt man spezielles Linsenpapier.'],
+ ['mk_umgang','Das Mikroskop fasst man nur am Stativ an.',1,'Das Stativ ist der Griff des Mikroskops.'],
+ ['mk_umgang','Mit der Blende stellt man das Bild scharf.',0,'Mit der Blende stellt man die Helligkeit ein. Scharf stellt man mit Grob- und Feintrieb.'],
+ ['mk_vergr','Gesamtvergrößerung = Okular-Vergrößerung × Objektiv-Vergrößerung.',1,'Zum Beispiel 10 × 40 = 400-fach.'],
+ ['mk_vergr','Okular 10-fach und Objektiv 40-fach ergeben eine 50-fache Vergrößerung.',0,'Man rechnet mal, nicht plus: 10 × 40 = 400-fach.'],
+ ['mk_vergr','Je stärker die Vergrößerung, desto mehr vom Präparat sieht man auf einmal.',0,'Umgekehrt: Alles wird größer, aber du siehst einen kleineren Ausschnitt.']
+);
+MC.push(
+ ['mk_umgang','Womit fängst du beim Mikroskopieren an?',['Mit dem kleinsten Objektiv','Mit dem größten Objektiv','Mit dem Feintrieb','Mit ganz geschlossener Blende'],'Mit kleiner Vergrößerung findest du das Präparat leichter.'],
+ ['mk_umgang','Warum schaust du beim Hochdrehen des Objekttisches von der Seite?',['Damit das Objektiv nicht gegen das Präparat stößt','Damit die Lampe angeht','Damit das Bild bunter wird','Weil das Okular noch zu ist'],'So siehst du, wann Objektiv und Präparat sich fast berühren.'],
+ ['mk_umgang','Wie trägst du das Mikroskop richtig?',['Mit einer Hand am Stativ, die andere unter dem Fuß','Am Tubus mit einer Hand','Am Objekttisch','Am Okular'],'Das Mikroskop ist schwer und teuer – immer mit zwei Händen.'],
+ ['mk_vergr','Wo steht, wie stark ein Objektiv vergrößert?',['Auf dem Objektiv selbst (z. B. 4x, 10x, 40x)','Auf der Lampe','Auf dem Objekttisch','Nirgends'],'Auch auf dem Okular steht seine Vergrößerung, meist 10x.']
+);
+
+/* =================== KAPITEL 4: DAS SKELETT =================== */
+const B={
+ sk_stirnbein:{fig:'skull',n:'Stirnbein',nom:'Das Stirnbein',akk:'das Stirnbein',al:['stirnbein'],fn:'bildet die Stirn über den Augen',wo:'Tippe auf den Knochen, der deine Stirn bildet.',wer:'Ich liege direkt über deinen Augen. Wenn du dir an die Stirn tippst, berührst du mich.',pin:[150,70],anc:[[150,60],[110,95],[190,95]]},
+ sk_nasenbein:{fig:'skull',n:'Nasenbein',nom:'Das Nasenbein',akk:'das Nasenbein',al:['nasenbein'],fn:'bildet den knöchernen Nasenrücken',wo:'Tippe auf den kleinen Knochen oben an der Nase.',wer:'Ich bin klein und sitze oben auf deiner Nase. Die Nasenspitze gehört nicht zu mir – die ist aus Knorpel.',pin:[150,142],anc:[[150,140]]},
+ sk_jochbein:{fig:'skull',n:'Jochbein',nom:'Das Jochbein',akk:'das Jochbein',al:['jochbein'],fn:'ist der Wangenknochen unter dem Auge',wo:'Tippe auf einen Wangenknochen.',wer:'Ich bin dein Wangenknochen. Du fühlst mich, wenn du unter deinem Auge auf die Wange drückst.',pin:[84,180],anc:[[84,180],[216,180]]},
+ sk_oberkiefer:{fig:'skull',n:'Oberkiefer',nom:'Der Oberkiefer',akk:'den Oberkiefer',al:['oberkiefer'],fn:'trägt die oberen Zähne',wo:'Tippe auf den Knochen, in dem die oberen Zähne sitzen.',wer:'In mir stecken deine oberen Zähne. Ich kann mich nicht bewegen.',pin:[150,216],anc:[[150,214],[118,222],[182,222]]},
+ sk_unterkiefer:{fig:'skull',n:'Unterkiefer',nom:'Der Unterkiefer',akk:'den Unterkiefer',al:['unterkiefer'],fn:'trägt die unteren Zähne und ist beweglich – damit kaust du',wo:'Tippe auf den beweglichen Knochen, mit dem du kaust.',wer:'Ich bin der einzige Schädelknochen, der sich bewegen kann. Ohne mich könntest du nicht kauen.',pin:[150,298],anc:[[150,298],[90,250],[210,250]]},
+ sk_wirbelsaeule:{fig:'body',n:'Wirbelsäule',nom:'Die Wirbelsäule',akk:'die Wirbelsäule',al:['wirbelsaeule','wirbelsaule'],fn:'trägt Kopf und Oberkörper und schützt das Rückenmark',wo:'Tippe auf die Säule aus vielen kleinen Knochen.',wer:'Ich bestehe aus vielen kleinen Knochen und trage deinen Kopf. In mir verläuft das Rückenmark.',pin:[160,318],anc:[[160,124],[160,318],[160,360]]},
+ sk_rippen:{fig:'body',n:'Rippen',nom:'Die Rippen',akk:'die Rippen',al:['rippen','rippe'],fn:'bilden den Brustkorb und schützen Herz und Lunge',wo:'Tippe auf die Knochen, die wie ein Käfig Herz und Lunge schützen.',wer:'Wir sind viele gebogene Knochen und bilden einen Käfig um Herz und Lunge.',pin:[124,238],anc:[[124,200],[196,200],[126,250],[194,250],[132,280],[188,280]],pl:1},
+ sk_brustbein:{fig:'body',n:'Brustbein',nom:'Das Brustbein',akk:'das Brustbein',al:['brustbein'],fn:'liegt vorn in der Mitte der Brust – daran sind die Rippen befestigt',wo:'Tippe auf den flachen Knochen vorn in der Mitte der Brust.',wer:'Ich liege vorn in der Mitte deiner Brust. Die Rippen sind an mir befestigt.',pin:[160,204],anc:[[160,175],[160,215],[160,240]]},
+ sk_schluesselbein:{fig:'body',n:'Schlüsselbein',nom:'Das Schlüsselbein',akk:'das Schlüsselbein',al:['schluesselbein'],fn:'verbindet Brustbein und Schulter',wo:'Tippe auf den Knochen, der Brustbein und Schulter verbindet.',wer:'Ich verlaufe quer unter deinem Hals von der Mitte bis zur Schulter. Du kannst mich gut fühlen.',pin:[128,145],anc:[[128,147],[192,147]]},
+ sk_schulterblatt:{fig:'body',n:'Schulterblatt',nom:'Das Schulterblatt',akk:'das Schulterblatt',al:['schulterblatt'],fn:'ist der flache, dreieckige Knochen hinten an der Schulter',wo:'Tippe auf den dreieckigen Knochen an der Schulter.',wer:'Ich bin flach und dreieckig und liege hinten an deiner Schulter.',pin:[110,176],anc:[[112,172],[208,172]]},
+ sk_becken:{fig:'body',n:'Becken',nom:'Das Becken',akk:'das Becken',al:['becken'],fn:'trägt den Oberkörper und verbindet ihn mit den Beinen',wo:'Tippe auf den großen Knochenring, an dem die Beine ansetzen.',wer:'Ich bin ein großer Knochenring. Auf mir ruht dein Oberkörper und an mir setzen die Beine an.',pin:[116,364],anc:[[118,362],[202,362],[160,398]]}
+};
+const BK=Object.keys(B),BSKULL=BK.filter(k=>B[k].fig==='skull'),BBODY=BK.filter(k=>B[k].fig==='body');
+const SKT=['sk_aufbau','sk_funktion','sk_schaedel','sk_wirbel','sk_bau','sk_modell'];
+const SKALL=[...BK,...SKT];
+BK.forEach(k=>SK_NAME[k]=B[k].n);
+Object.assign(SK_NAME,{sk_aufbau:'Aufbau des Skeletts',sk_funktion:'Aufgaben des Skeletts',sk_schaedel:'Schädel',sk_wirbel:'Abschnitte der Wirbelsäule',sk_bau:'Wirbel & Bandscheiben',sk_modell:'Papprollen-Modell'});
+Object.assign(GROUPS,{
+ sg_aufbau:{n:'Aufbau & Aufgaben',sk:['sk_aufbau','sk_funktion']},
+ sg_schaedel:{n:'Schädel',sk:[...BSKULL,'sk_schaedel']},
+ sg_rumpf:{n:'Rumpfskelett',sk:BBODY},
+ sg_wirbel:{n:'Wirbelsäule',sk:['sk_wirbel','sk_bau','sk_modell']}
+});
+const CH={
+ zelle:{n:'Kapitel 3',t:'Lebewesen bestehen aus Zellen',groups:['organellen','vergleich','energie','wasser','mikro','fuehrerschein'],skills:[...SKILLS,...MKS]},
+ skelett:{n:'Kapitel 4',t:'Das Skelett ist unsere Stütze',groups:['sg_aufbau','sg_schaedel','sg_rumpf','sg_wirbel'],skills:SKALL}
+};
+const SP={
+ sp_hals:{n:'Halswirbelsäule',c:7,akk:'die Halswirbelsäule',q:'Tippe auf den Abschnitt mit 7 Wirbeln direkt unter dem Kopf.'},
+ sp_brust:{n:'Brustwirbelsäule',c:12,akk:'die Brustwirbelsäule',q:'Tippe auf den Abschnitt mit 12 Wirbeln, an dem die Rippen ansetzen.'},
+ sp_lenden:{n:'Lendenwirbelsäule',c:5,akk:'die Lendenwirbelsäule',q:'Tippe auf die 5 dicksten einzelnen Wirbel.'},
+ sp_kreuz:{n:'Kreuzbein',c:0,akk:'das Kreuzbein',q:'Tippe auf den großen Knochen aus verwachsenen Wirbeln.'},
+ sp_steiss:{n:'Steißbein',c:0,akk:'das Steißbein',q:'Tippe auf das kleine verwachsene Ende ganz unten.'}
+};
+const SPK=Object.keys(SP);
+const WINFO={wirbel:['Wirbel','Die Wirbel sind die kleinen Knochen der Wirbelsäule. Zusammen bilden sie einen Kanal.'],bandscheibe:['Bandscheibe','Zwischen den Wirbeln liegen Bandscheiben aus Knorpel. Sie federn Stöße ab und machen die Wirbelsäule beweglich.'],rueckenmark:['Rückenmark','Das Rückenmark verläuft geschützt im Kanal, den alle Wirbel zusammen bilden.']};
+const EXTRA_INFO={sk_kopf:['Schädel','Der Schädel besteht aus Gehirnschädel und Gesichtsschädel. Er schützt das Gehirn.'],sk_arme:['Arme','Arme und Hände gehören zum Extremitäten-Skelett.'],sk_beine:['Beine','Beine und Füße gehören zum Extremitäten-Skelett.'],hirn:['Gehirnschädel','Der Gehirnschädel umschließt das Gehirn wie ein Helm und schützt es.']};
+
+// Lückentexte [skill, Text mit [Antwort] oder [Antwort#gruppe], Ablenker]
+const LT=[
+ ['sk_bau','Die Wirbelsäule besteht aus vielen kleinen Knochen, den [Wirbeln]. Zwischen ihnen liegen [Bandscheiben] aus [Knorpel]. Alle Wirbel zusammen bilden einen [Kanal], in dem das [Rückenmark] verläuft.',['Muskeln','Gehirn','Rippen']],
+ ['sk_wirbel','[7] Wirbelknochen bilden die Halswirbelsäule, [12] die Brustwirbelsäule und [5] die Lendenwirbelsäule. Darauf folgen das [Kreuzbein] und das [Steißbein]. Dort sind die Wirbelknochen [verwachsen].',['9','Becken','beweglich']],
+ ['sk_funktion','Neben der [Schutzfunktion#a] erfüllt das Skelett eine [Stützfunktion#a]. Es dient als Ansatzstelle für [Muskeln#b] und [Sehnen#b]. Zusammen mit Nerven, Muskeln, [Gelenken] und Sehnen ermöglicht es unsere [Bewegung].',['Verdauung','Haaren']],
+ ['sk_schaedel','Als [Schädel] bezeichnet man die Gesamtheit der Knochen des Kopfes. Man unterscheidet den [Gehirnschädel#a] und den [Gesichtsschädel#a]. Die wichtigste Aufgabe des Gehirnschädels ist der [Schutz] des Gehirns.',['Rumpf','Halsschädel']],
+ ['sk_modell','Die Papprolle mit Schnitten lässt sich gut [biegen], die Rolle ohne Schnitte ist [steif]. Unsere Wirbelsäule gleicht dem Modell [mit] Schnitten, denn sie besteht aus vielen einzelnen [Wirbeln]. So können wir uns [bücken] und drehen.',['ohne','Rippen','knicken']],
+ ['sk_aufbau','Das menschliche Skelett besteht aus ca. [206] Knochen. Man unterscheidet das [Schädel#a]-Skelett, das [Rumpf#a]-Skelett und das [Extremitäten#a]-Skelett.',['26','Hals']]
+];
+const SORTSETS={
+ aufbau:{cats:{schaedel:'Schädel-Skelett',rumpf:'Rumpf-Skelett',ext:'Extremitäten-Skelett'},q:'Zu welchem Teil des Skeletts gehört der Knochen?',
+  items:[['Unterkiefer','schaedel'],['Nasenbein','schaedel'],['Stirnbein','schaedel'],['Jochbein','schaedel'],['Rippen','rumpf'],['Brustbein','rumpf'],['Wirbelsäule','rumpf'],['Oberarmknochen','ext'],['Oberschenkelknochen','ext'],['Fingerknochen','ext'],['Zehenknochen','ext'],['Kniescheibe','ext']],
+  ex:'Schädel = Kopf · Rumpf = Wirbelsäule, Rippen, Brustbein · Extremitäten = Arme und Beine (Gliedmaßen).'},
+ funktion:{cats:{schutz:'Schutz',stuetze:'Stütze',ansatz:'Ansatz für Muskeln',bewegung:'Bewegung'},q:'Welche Aufgabe des Skeletts steckt dahinter?',
+  items:[['Beim Kopfball bleibt dein Gehirn heil.','schutz'],['Die Rippen bilden einen Käfig um Herz und Lunge.','schutz'],['Der Schädel umschließt das Gehirn wie ein Helm.','schutz'],['Ohne Skelett würdest du zusammensacken wie ein Pudding.','stuetze'],['Du kannst aufrecht stehen und sitzen.','stuetze'],['Die Wirbelsäule trägt Kopf und Oberkörper.','stuetze'],['Muskeln und Sehnen sind an den Knochen festgewachsen.','ansatz'],['Sehnen verbinden die Muskeln mit den Knochen.','ansatz'],['Du rennst zum Bus: Knochen, Gelenke, Muskeln und Nerven arbeiten zusammen.','bewegung'],['Du springst über eine Pfütze.','bewegung']],
+  ex:'Das Skelett schützt, stützt, ist Ansatzstelle für Muskeln und Sehnen und ermöglicht – zusammen mit Gelenken, Muskeln, Sehnen und Nerven – die Bewegung.'}
+};
+const SKAUF=[['schützt das Gehirn',1],['schützt die Augen in den Augenhöhlen',1],['ermöglicht das Kauen',1],['gibt dem Gesicht seine Form',1],['pumpt das Blut durch den Körper',0],['verdaut die Nahrung',0],['bewegt die Beine',0],['bildet das Rückenmark',0]];
+const SPPAIRS=[['Halswirbelsäule','7 Wirbel'],['Brustwirbelsäule','12 Wirbel'],['Lendenwirbelsäule','5 Wirbel'],['Kreuzbein & Steißbein','verwachsene Wirbel'],['Bandscheibe','aus Knorpel'],['Rückenmark','verläuft im Wirbelkanal']];
+TF.push(
+ ['sk_aufbau','Das menschliche Skelett besteht aus ungefähr 206 Knochen.',1,'Bei Babys sind es sogar noch mehr – einige Knochen wachsen später zusammen.'],
+ ['sk_aufbau','Arme und Beine gehören zum Rumpfskelett.',0,'Arme und Beine bilden das Extremitäten-Skelett.'],
+ ['sk_aufbau','Extremitäten ist das Fachwort für Gliedmaßen – also Arme und Beine.',1,'Deshalb heißt es Extremitäten-Skelett.'],
+ ['sk_aufbau','Das Skelett hat drei Hauptabschnitte: Schädel-, Rumpf- und Extremitäten-Skelett.',1,'Auf dem Arbeitsblatt: rot, gelb und grün.'],
+ ['sk_funktion','Das Skelett stützt unseren Körper.',1,'Das ist die Stützfunktion.'],
+ ['sk_funktion','Für eine Bewegung braucht man nur Knochen.',0,'Knochen, Gelenke, Muskeln, Sehnen und Nerven arbeiten zusammen.'],
+ ['sk_funktion','Muskeln und Sehnen setzen am Skelett an.',1,'Das Skelett ist ihre Ansatzstelle.'],
+ ['sk_funktion','Das Skelett schützt empfindliche Organe wie Gehirn, Herz und Lunge.',1,'Das ist die Schutzfunktion.'],
+ ['sk_schaedel','Der Schädel besteht aus Gehirnschädel und Gesichtsschädel.',1,'Der Gehirnschädel umschließt das Gehirn, der Gesichtsschädel formt das Gesicht.'],
+ ['sk_schaedel','Der Schädel ist ein einziger Knochen.',0,'Er besteht aus vielen Knochen, die fest miteinander verbunden sind.'],
+ ['sk_schaedel','Die wichtigste Aufgabe des Gehirnschädels ist der Schutz des Gehirns.',1,'Er wirkt wie ein eingebauter Helm.'],
+ ['sk_unterkiefer','Der Unterkiefer ist der einzige bewegliche Schädelknochen.',1,'Damit kannst du kauen und sprechen.'],
+ ['sk_oberkiefer','Im Oberkiefer sitzen die unteren Zähne.',0,'Im Oberkiefer sitzen die oberen Zähne.'],
+ ['sk_jochbein','Das Jochbein ist dein Wangenknochen.',1,'Fühl mal unter deinem Auge auf der Wange.'],
+ ['sk_nasenbein','Die ganze Nase besteht aus Knochen.',0,'Nur oben ist das Nasenbein. Die Nasenspitze ist aus Knorpel – deshalb kannst du sie biegen.'],
+ ['sk_stirnbein','Das Stirnbein liegt über den Augen.',1,'Es bildet deine Stirn.'],
+ ['sk_rippen','Die Rippen schützen Herz und Lunge.',1,'Zusammen bilden sie den Brustkorb.'],
+ ['sk_brustbein','Das Brustbein liegt hinten am Rücken.',0,'Es liegt vorn in der Mitte der Brust.'],
+ ['sk_schluesselbein','Das Schlüsselbein verbindet Brustbein und Schulter.',1,'Du kannst es unter deinem Hals fühlen.'],
+ ['sk_schulterblatt','Das Schulterblatt liegt vorn auf der Brust.',0,'Es liegt hinten an der Schulter.'],
+ ['sk_becken','An das Becken setzen die Beine an.',1,'Es trägt den Oberkörper.'],
+ ['sk_wirbelsaeule','Die Wirbelsäule ist ein einziger langer Knochen.',0,'Sie besteht aus vielen einzelnen Wirbeln.'],
+ ['sk_wirbel','Die Halswirbelsäule hat 7 Wirbel.',1,'Übrigens: Auch eine Giraffe hat nur 7 Halswirbel – sie sind nur viel länger.'],
+ ['sk_wirbel','Die Brustwirbelsäule hat 5 Wirbel.',0,'Sie hat 12 Wirbel. 5 hat die Lendenwirbelsäule.'],
+ ['sk_wirbel','Beim Kreuzbein kann man keine einzelnen Wirbel erkennen.',1,'Die Wirbelknochen sind verwachsen.'],
+ ['sk_wirbel','Unsere Wirbelsäule hat 24 einzelne Wirbelknochen.',1,'7 + 12 + 5 = 24.'],
+ ['sk_bau','Bandscheiben bestehen aus Knorpel.',1,'Knorpel ist fest, aber biegsam.'],
+ ['sk_bau','Das Rückenmark verläuft in einem Kanal, den die Wirbel bilden.',1,'So ist es gut geschützt.'],
+ ['sk_bau','Bandscheiben liegen zwischen den Rippen.',0,'Sie liegen zwischen den Wirbeln.'],
+ ['sk_modell','Die Papprolle mit Schnitten lässt sich besser biegen.',1,'Wie unsere Wirbelsäule aus vielen einzelnen Wirbeln.'],
+ ['sk_modell','Eine Wirbelsäule aus einem einzigen Knochen wäre beweglicher.',0,'Sie wäre steif wie die Rolle ohne Schnitte.']
+);
+MC.push(
+ ['sk_aufbau','Was gehört zum Extremitäten-Skelett?',['Arme und Beine','Rippen und Brustbein','Schädel und Kiefer','Die Wirbelsäule'],'Extremitäten = Gliedmaßen.'],
+ ['sk_aufbau','In welcher Farbe hast du das Rumpf-Skelett angemalt?',['Gelb','Rot','Grün','Blau'],'Schädel rot, Rumpf gelb, Extremitäten grün.'],
+ ['sk_funktion','Welche Aufgabe hat das Skelett NICHT?',['Es verdaut die Nahrung','Es schützt Organe','Es stützt den Körper','Es ist Ansatzstelle für Muskeln und Sehnen'],'Verdauen macht der Darm.'],
+ ['sk_schaedel','Welche zwei Teile unterscheidet man beim Schädel?',['Gehirnschädel und Gesichtsschädel','Oberschädel und Unterschädel','Kopfschädel und Halsschädel','Stirnschädel und Kieferschädel'],'Der Gehirnschädel schützt das Gehirn, der Gesichtsschädel formt das Gesicht.'],
+ ['sk_schaedel','Welcher Schädelknochen ist beweglich?',['Der Unterkiefer','Das Stirnbein','Das Nasenbein','Das Jochbein'],'Mit dem Unterkiefer kaust du.'],
+ ['sk_wirbel','Welche Reihenfolge stimmt – von oben nach unten?',['Hals – Brust – Lenden – Kreuzbein – Steißbein','Brust – Hals – Lenden – Steißbein – Kreuzbein','Hals – Lenden – Brust – Kreuzbein – Steißbein','Lenden – Brust – Hals – Kreuzbein – Steißbein'],'Das Steißbein ist ganz unten.'],
+ ['sk_wirbel','Warum erkennt man beim Kreuzbein keine einzelnen Wirbel?',['Die Wirbelknochen sind verwachsen','Dort gibt es keine Wirbel','Sie sind aus Knorpel','Sie sind zu klein'],'Verwachsen heißt: zu einem Knochen zusammengewachsen.'],
+ ['sk_bau','Woraus bestehen die Bandscheiben?',['Knorpel','Knochen','Muskeln','Haut'],'Knorpel ist fest, aber biegsam – wie deine Nasenspitze.'],
+ ['sk_bau','Was verläuft im Kanal der Wirbelsäule?',['Das Rückenmark','Die Speiseröhre','Die Lunge','Eine Bandscheibe'],'Die Wirbel schützen das Rückenmark.'],
+ ['sk_modell','Welche Frage untersucht der Papprollen-Versuch?',['Warum besteht die Wirbelsäule aus vielen einzelnen Wirbeln?','Wie schwer ist ein Knochen?','Ist Papier stabiler als Knochen?','Wie lang ist die Wirbelsäule?'],'Vermutung: für eine bessere Beweglichkeit.']
+);
+
+/* =================== SPEICHER =================== */
+const KEY='zellstadt-v1';
+let S={lv:{},len:10,groups:Object.keys(GROUPS),rounds:0,best:0};
+try{const s=JSON.parse(localStorage.getItem(KEY)||'null');if(s&&s.lv)S=Object.assign(S,s);}catch(e){}
+if(!S.mk){S.mk=1;if(!S.groups.includes('fuehrerschein'))S.groups.push('fuehrerschein');}
+if(!S.skx){S.skx=1;CH.skelett.groups.forEach(g=>{if(!S.groups.includes(g))S.groups.push(g);});S.ch='skelett';}
+if(!CH[S.ch])S.ch='zelle';
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+const lv=k=>S.lv[k]||0;
+
+/* =================== HELFER =================== */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];}return a;};
+const rnd=a=>a[Math.random()*a.length|0];
+const praise=()=>rnd(['Richtig!','Super!','Genau!','Stark!','Prima!']);
+const buzz=p=>{try{navigator.vibrate&&navigator.vibrate(p);}catch(e){}};
+const norm=s=>s.toLowerCase().replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss').replace(/[^a-z]/g,'');
+const lev=(a,b)=>{const d=Array.from({length:a.length+1},(_,i)=>[i]);for(let j=1;j<=b.length;j++)d[0][j]=j;for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[a.length][b.length];};
+function diffHTML(typed,target){
+  const a=typed.toLowerCase(),b=target,bl=b.toLowerCase(),n=a.length,m=b.length;
+  const d=Array.from({length:n+1},(_,i)=>Array.from({length:m+1},(_,j)=>i?(j?0:i):j));
+  for(let i=1;i<=n;i++)for(let j=1;j<=m;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===bl[j-1]?0:1));
+  const mark=new Array(m).fill(true);let i=n,j=m;
+  while(i>0||j>0){if(i>0&&j>0&&d[i][j]===d[i-1][j-1]+(a[i-1]===bl[j-1]?0:1)){if(a[i-1]!==bl[j-1])mark[j-1]=false;i--;j--;}else if(j>0&&d[i][j]===d[i][j-1]+1){mark[j-1]=false;j--;}else i--;}
+  return [...b].map((c,k)=>mark[k]?esc(c):`<span class="x">${esc(c)}</span>`).join('');
+}
+const NS='http://www.w3.org/2000/svg';
+function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+function rr(x,y,w,h,r){return `M${x+r},${y}H${x+w-r}A${r},${r} 0 0 1 ${x+w},${y+r}V${y+h-r}A${r},${r} 0 0 1 ${x+w-r},${y+h}H${x+r}A${r},${r} 0 0 1 ${x},${y+h-r}V${y+r}A${r},${r} 0 0 1 ${x+r},${y}Z`;}
+const recap=k=>`<span><b>${esc(O[k].nom)}</b> ${esc(O[k].fn)}.</span><span class="ex">In der Zellstadt: ${esc(O[k].city)}.</span>`;
+
+/* kleine Symbole je Bestandteil */
+function icon(k){
+  const s=c=>`style="fill:var(${c})"`;
+  const I={
+   zellwand:`<path d="${rr(3,3,54,34,8)}${rr(9,9,42,22,5)}" fill-rule="evenodd" ${s('--c-wall')}/>`,
+   membran:`<rect x="6" y="6" width="48" height="28" rx="8" style="fill:var(--c-cyto);stroke:var(--c-mem);stroke-width:3"/>`,
+   cytoplasma:`<path d="M8,20 C8,6 30,4 44,8 C58,12 56,32 40,34 C24,36 8,34 8,20Z" style="fill:#4a443a;stroke:var(--muted);stroke-width:1.5"/><circle cx="22" cy="16" r="2" style="fill:var(--muted)"/><circle cx="36" cy="24" r="2" style="fill:var(--muted)"/><circle cx="30" cy="14" r="1.5" style="fill:var(--muted)"/>`,
+   zellkern:`<circle cx="30" cy="20" r="16" style="fill:var(--c-nuc);stroke:var(--c-mem);stroke-width:2;stroke-dasharray:6 2"/><circle cx="34" cy="17" r="5" style="fill:var(--c-nuc-d)"/>`,
+   vakuole:`<path d="M10,18 C12,4 46,4 52,14 C58,26 46,36 30,35 C14,34 8,28 10,18Z" style="fill:var(--c-vac);stroke:var(--c-vac-d);stroke-width:2"/>`,
+   chloroplast:`<ellipse cx="30" cy="20" rx="25" ry="13" style="fill:var(--c-chl);stroke:var(--c-chl-d);stroke-width:2"/><rect x="16" y="13" width="6" height="14" rx="2" ${s('--c-chl-d')}/><rect x="27" y="12" width="6" height="16" rx="2" ${s('--c-chl-d')}/><rect x="38" y="13" width="6" height="14" rx="2" ${s('--c-chl-d')}/>`,
+   mitochondrium:`<rect x="5" y="9" width="50" height="22" rx="11" style="fill:var(--c-mit);stroke:var(--c-mit-d);stroke-width:2"/><path d="M12,20 l4,-6 l4,12 l4,-12 l4,12 l4,-12 l4,12 l4,-12 l3,6" style="fill:none;stroke:var(--c-mit-d);stroke-width:2"/>`,
+   er:`<path d="M6,11 q6,-6 12,0 t12,0 t12,0 t12,0 M6,21 q6,-6 12,0 t12,0 t12,0 t12,0 M6,31 q6,-6 12,0 t12,0 t12,0 t12,0" style="fill:none;stroke:var(--c-er);stroke-width:3.5;stroke-linecap:round"/>`,
+   golgi:`<path d="M12,12 q18,-8 36,0 M12,20 q18,-8 36,0 M12,28 q18,-8 36,0" style="fill:none;stroke:var(--c-gol);stroke-width:4;stroke-linecap:round"/><circle cx="52" cy="10" r="3" ${s('--c-gol')}/>`,
+   ribosom:`<circle cx="16" cy="14" r="3.5" ${s('--c-rib')}/><circle cx="30" cy="24" r="3.5" ${s('--c-rib')}/><circle cx="44" cy="12" r="3.5" ${s('--c-rib')}/><circle cx="22" cy="30" r="3.5" ${s('--c-rib')}/><circle cx="46" cy="30" r="3.5" ${s('--c-rib')}/>`
+  };
+  return `<svg viewBox="0 0 60 40" aria-hidden="true">${I[k]}</svg>`;
+}
+
+/* =================== ZELLE ZEICHNEN =================== */
+function makeCell(opt){
+  opt=opt||{};
+  const svg=el('svg',{viewBox:'0 0 640 480',role:'img','aria-label':'Pflanzenzelle'});
+  const G={};
+  const grp=(k,extra)=>{const g=el('g',{class:'org','data-key':k},svg);G[k]=g;return g;};
+  const gC=grp('cytoplasma');el('path',{d:rr(38,38,564,384,17),style:'fill:var(--c-cyto)'},gC);
+  const gV=grp('vakuole');
+  el('path',{d:'M300,120 C 360,95 470,100 505,140 C 540,185 535,300 500,338 C 460,378 340,380 295,350 C 250,318 245,150 300,120 Z',style:'fill:var(--c-vac);stroke:var(--c-vac-d);stroke-width:2.5'},gV);
+  el('path',{d:'M320,140 C 360,122 430,122 460,140',style:'fill:none;stroke:var(--c-vac-d);stroke-width:5;stroke-linecap:round;opacity:.45'},gV);
+  const gE=grp('er');el('rect',{x:170,y:182,width:80,height:92,style:'fill:transparent'},gE);
+  [200,220,240,260].forEach(y=>el('path',{d:`M176,${y} q 8,-9 16,0 t 16,0 t 16,0 t 16,0`,style:'fill:none;stroke:var(--c-er);stroke-width:4.5;stroke-linecap:round'},gE));
+  const gG=grp('golgi');el('rect',{x:186,y:306,width:72,height:58,style:'fill:transparent'},gG);
+  [322,332,342,352].forEach((y,i)=>el('path',{d:`M${200+i*2},${y} q ${20-i*2},-10 ${40-i*4},0`,style:'fill:none;stroke:var(--c-gol);stroke-width:5;stroke-linecap:round'},gG));
+  [[250,317,4],[252,356,3.5],[192,314,3]].forEach(c=>el('circle',{cx:c[0],cy:c[1],r:c[2],style:'fill:var(--c-gol)'},gG));
+  const gM=grp('mitochondrium');
+  [[120,150,25],[236,104,-20],[112,332,-30],[522,368,-10]].forEach(([x,y,a])=>{const g=el('g',{transform:`translate(${x},${y}) rotate(${a})`},gM);
+    el('rect',{x:-22,y:-14,width:44,height:28,style:'fill:transparent'},g);
+    el('rect',{x:-16,y:-8,width:32,height:16,rx:8,style:'fill:var(--c-mit);stroke:var(--c-mit-d);stroke-width:1.5'},g);
+    el('path',{d:'M-11,0 l3,-4.5 l3,9 l3,-9 l3,9 l3,-9 l3,9 l3,-9 l2,4.5',style:'fill:none;stroke:var(--c-mit-d);stroke-width:1.4'},g);});
+  const gH=grp('chloroplast');
+  [[92,70,-15],[190,64,4],[290,66,-6],[390,64,5],[490,70,-4],[566,112,60],[572,212,88],[570,310,95],[545,394,-35],[450,400,4],[350,402,-4],[165,402,6]].forEach(([x,y,a])=>{
+    const g=el('g',{transform:`translate(${x},${y}) rotate(${a})`},gH);
+    el('ellipse',{rx:23,ry:11.5,style:'fill:var(--c-chl);stroke:var(--c-chl-d);stroke-width:1.5'},g);
+    [-12,-3,6].forEach(dx=>el('rect',{x:dx,y:-6,width:5,height:12,rx:1.5,style:'fill:var(--c-chl-d)'},g));});
+  const gN=grp('zellkern');
+  el('circle',{cx:125,cy:235,r:46,style:'fill:var(--c-nuc);stroke:var(--c-mem);stroke-width:3;stroke-dasharray:14 3'},gN);
+  el('circle',{cx:136,cy:226,r:13,style:'fill:var(--c-nuc-d)'},gN);
+  [[104,220],[110,255],[132,260],[146,245],[100,238],[120,212]].forEach(p=>el('circle',{cx:p[0],cy:p[1],r:2.2,style:'fill:var(--c-nuc-d);opacity:.8'},gN));
+  const gR=grp('ribosom');
+  const ribs=[[150,110],[160,300],[255,160],[250,290],[95,120],[58,210],[540,150],[546,258],[430,386],[300,386],[210,150],[190,380],[68,300],[184,191.5],[216,191.5],[200,228.5],[232,228.5],[184,211.5],[216,211.5]];
+  ribs.forEach(p=>{el('circle',{cx:p[0],cy:p[1],r:13,style:'fill:transparent'},gR);el('circle',{cx:p[0],cy:p[1],r:3,style:'fill:var(--c-rib)'},gR);});
+  const gMe=grp('membran');
+  el('path',{d:rr(38,38,564,384,17),style:'fill:none;stroke:var(--c-mem);stroke-width:3'},gMe);
+  el('path',{d:rr(38,38,564,384,17),'pointer-events':'stroke',style:'fill:none;stroke:transparent;stroke-width:16'},gMe);
+  const gW=grp('zellwand');
+  el('path',{d:rr(20,20,600,420,30)+rr(34,34,572,392,20),'fill-rule':'evenodd',style:'fill:var(--c-wall);stroke:var(--c-wall-d);stroke-width:1.5'},gW);
+  el('path',{d:rr(16,16,608,428,32),'pointer-events':'stroke',style:'fill:none;stroke:transparent;stroke-width:16'},gW);
+  // Maßstab
+  el('line',{x1:490,y1:458,x2:603,y2:458,style:'stroke:var(--ink);stroke-width:3'},svg);
+  const t=el('text',{x:546,y:476,'text-anchor':'middle',class:'lab',style:'font-size:16px'},svg);t.textContent='10 µm';
+  return {svg,G};
+}
+
+/* =================== WISSENS-PFLANZE =================== */
+function plantSVG(newSet){
+  const svg=el('svg',{viewBox:'0 0 360 600',role:'img','aria-label':'Wissens-Pflanze: jedes Blatt ist ein Thema'});
+  el('rect',{x:30,y:540,width:300,height:54,rx:24,style:'fill:var(--soil)'},svg);
+  el('path',{d:'M180,540 L181,590 M180,544 C 176,560 160,574 136,588 M182,546 C 196,562 214,574 240,586 M176,556 C 150,560 120,566 92,578 M186,558 C 214,560 244,566 272,576 M140,576 l-10,10 M222,572 l8,12',style:'fill:none;stroke:var(--petal);stroke-width:2.2;stroke-linecap:round;opacity:.9'},svg);
+  el('path',{d:'M180,542 C 172,430 190,300 178,170 C 174,120 182,92 180,74',style:'fill:none;stroke:var(--leaf);stroke-width:7;stroke-linecap:round'},svg);
+  el('path',{d:'M180,542 C 172,430 190,300 178,170 C 174,120 182,92 180,74',style:'fill:none;stroke:var(--leaf-d);stroke-width:1.5'},svg);
+  const leaves={};
+  SKILLS.forEach((k,i)=>{
+    const y=516-i*29.5,x=180+5*Math.sin(i*.7),side=i%2?1:-1,len=88-i*2.2,a=side>0?-24-i*.8:-156+i*.8,L=lv(k);
+    const g=el('g',{class:'leaf'+(newSet&&newSet.has(k)?' new':''),'data-k':k,transform:`translate(${x.toFixed(1)},${y.toFixed(1)}) rotate(${a.toFixed(1)})`,tabindex:'0',role:'button','aria-label':`${SK_NAME[k]}: Stufe ${L} von 5`},svg);
+    const op=[0,.3,.48,.66,.84,1][L];
+    el('path',{d:`M0,0 C ${len*.3},${-len*.4} ${len*.8},${-len*.4} ${len*1.08},0 C ${len*.8},${len*.4} ${len*.3},${len*.4} 0,0 Z`,style:`fill:var(--leaf);fill-opacity:${op};stroke:${L?'var(--leaf-d)':'var(--muted)'};stroke-width:1.8;${L?'':'stroke-dasharray:4 4;'}`},g);
+    if(L)el('path',{d:`M2,0 L${len},0 M${len*.35},0 l${len*.13},${-len*.15} M${len*.6},0 l${len*.13},${-len*.15} M${len*.35},0 l${len*.13},${len*.15} M${len*.6},0 l${len*.13},${len*.15}`,style:`fill:none;stroke:var(--leaf-d);stroke-width:1.3;stroke-linecap:round`},g);
+    leaves[k]=g;
+  });
+  // Blüte: jedes Thema auf Stufe 5 = ein Blütenblatt
+  const f=el('g',{transform:'translate(180,64)'},svg);const full=SKILLS.filter(k=>lv(k)>=5).length;
+  SKILLS.forEach((k,i)=>{const on=i<full;el('path',{d:'M0,0 C 7,-7 24,-7 30,0 C 24,7 7,7 0,0 Z',transform:`rotate(${i*24-90})`,style:on?'fill:var(--petal);stroke:var(--c-wall-d);stroke-width:1':'fill:none;stroke:var(--line);stroke-width:1;stroke-dasharray:2 3'},f);});
+  el('circle',{r:10,style:'fill:var(--accent)'},f);
+  return {svg,leaves};
+}
+function stage(){const t=SKILLS.reduce((s,k)=>s+lv(k),0);return {pts:t,max:SKILLS.length*5,green:SKILLS.filter(k=>lv(k)>=4).length,full:SKILLS.filter(k=>lv(k)>=5).length};}
+/* =================== START =================== */
+function renderStats(){
+  if(S.ch==='skelett'){$('#stats').innerHTML=`<span class="pill">Knochen <b>${BK.filter(k=>lv(k)>=4).length}/${BK.length}</b></span><span class="pill">Themen <b>${SKT.filter(k=>lv(k)>=4).length}/${SKT.length}</b></span>`;return;}
+  const s=stage();$('#stats').innerHTML=`<span class="pill">Blätter <b>${SKILLS.filter(k=>lv(k)>0).length}/${SKILLS.length}</b></span><span class="pill">Blüte <b>${s.full}/${SKILLS.length}</b></span><span class="pill">Stempel <b>${MKS.filter(k=>lv(k)>=4).length}/${MKS.length}</b></span>`;
+}
+function masteryGrid(list){return list.map(k=>`<button class="m" type="button" data-k="${k}" aria-pressed="false"><span>${esc(SK_NAME[k])}</span><span class="pips">${[1,2,3,4,5].map(i=>`<i class="${lv(k)>=i?'on':''}"></i>`).join('')}</span></button>`).join('');}
+function start(){
+  R=null;renderStats();window.scrollTo(0,0);
+  const scr=$('#screen');scr.innerHTML='';
+  const tabs=document.createElement('nav');tabs.className='chtabs';tabs.setAttribute('aria-label','Kapitel');
+  tabs.innerHTML=Object.entries(CH).map(([k,c])=>`<button type="button" data-ch="${k}" aria-pressed="${S.ch===k}"><small>${c.n}</small>${esc(c.t)}</button>`).join('');
+  scr.appendChild(tabs);
+  tabs.querySelectorAll('button').forEach(b=>b.onclick=()=>{S.ch=b.dataset.ch;save();start();});
+  if(S.ch==='skelett')startSkelett(scr);else startZelle(scr);
+  settingsPanel(scr);
+}
+function startZelle(scr){
+  const p=document.createElement('section');p.className='panel';
+  p.innerHTML=`<h2>Deine Wissens-Pflanze</h2><p class="small">Jedes Blatt ist ein Thema. Je öfter du es richtig weißt, desto grüner wird es. Ist ein Thema ganz sicher, wächst ein Blütenblatt.</p><div class="plantwrap"><div id="pl"></div><div><div class="mastery" id="mg"></div><p class="plantcap" id="pcap">Tippe auf ein Blatt.</p></div></div>`;
+  scr.appendChild(p);
+  const P=plantSVG();$('#pl').appendChild(P.svg);
+  $('#mg').innerHTML=masteryGrid(SKILLS);
+  const pick=k=>{Object.values(P.leaves).forEach(g=>g.classList.toggle('hl',g.dataset.k===k));document.querySelectorAll('.m').forEach(b=>b.setAttribute('aria-pressed',b.dataset.k===k));
+    const L=lv(k);$('#pcap').textContent=`${SK_NAME[k]}: ${['noch nicht geübt','gerade gekeimt','wächst','wird kräftig','fast sicher','ganz sicher – Blütenblatt!'][L]}`;};
+  document.querySelectorAll('.m').forEach(b=>b.onclick=()=>pick(b.dataset.k));
+  Object.entries(P.leaves).forEach(([k,g])=>{g.addEventListener('click',()=>pick(k));g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(k);}});});
+  const stamps=MKS.filter(k=>lv(k)>=4).length,all=stamps===MKS.length;
+  if(all&&!S.mkDate){S.mkDate=new Date().toLocaleDateString('de-DE');save();}
+  const fs=document.createElement('section');fs.className='panel licence';
+  fs.innerHTML=`<div class="lic-head"><div><div class="lbl">Ausweis</div><h2>Mikroskopier-Führerschein</h2></div>${all?`<div class="passed">Bestanden<small>${esc(S.mkDate||'')}</small></div>`:''}</div>
+   <label class="lic-name">Name: <input id="lname" type="text" maxlength="30" autocomplete="off" value="${esc(S.name||'')}" placeholder="dein Name"></label>
+   <div class="stamps">${MKS.map(k=>{const L=lv(k);return `<div class="stamp${L>=4?' got':''}" style="--p:${Math.min(L,4)/4}" title="${esc(SK_NAME[k])}"><span>${esc(STAMP[k]||SK_NAME[k])}</span></div>`;}).join('')}</div>
+   <p class="small">${all?'Alle Stempel gesammelt – du darfst mikroskopieren!':`${stamps} von ${MKS.length} Stempeln. Einen Stempel gibt es, wenn ein Teil richtig sicher sitzt.`}</p>
+   <div class="row"><button class="go" type="button" id="mkgo">Führerschein üben</button><button class="ghost" type="button" id="mkex">Mikroskop erkunden</button></div>`;
+  scr.appendChild(fs);
+  $('#lname').oninput=e=>{S.name=e.target.value;save();};
+  $('#mkgo').onclick=()=>startRound(['fuehrerschein']);$('#mkex').onclick=()=>explore('scope');
+}
+function startSkelett(scr){
+  const p=document.createElement('section');p.className='panel';
+  const done=BK.filter(k=>lv(k)>=4).length+SKT.filter(k=>lv(k)>=4).length,all=done===SKALL.length;
+  p.innerHTML=`<h2>Dein leuchtendes Skelett</h2><p class="small">Am Anfang ist dein Skelett noch dunkel. Jeder Knochen leuchtet heller, je sicherer du ihn kennst. ${all?'<b>Alles leuchtet – du bist ein echter Knochen-Profi!</b>':'Schaffst du es, dass alles strahlt?'}</p><div class="plantwrap skelwrap"><div id="pl"></div><div><div class="mastery" id="mg"></div><p class="plantcap" id="pcap">Tippe auf einen Knochen.</p></div></div>`;
+  scr.appendChild(p);
+  const P=progressBody();$('#pl').appendChild(P.svg);
+  $('#mg').innerHTML=masteryGrid(SKALL);
+  const word=['noch dunkel','glimmt','wird heller','leuchtet','fast hell','strahlt!'];
+  const pick=k=>{const gs=SK2G(k);Object.entries(P.G).forEach(([g,e])=>e.classList.toggle('sel',gs.includes(g)));P.svg.classList.add('sel-on');
+    document.querySelectorAll('.m').forEach(b=>b.setAttribute('aria-pressed',b.dataset.k===k));$('#pcap').textContent=`${SK_NAME[k]}: ${word[lv(k)]}`;};
+  document.querySelectorAll('.m').forEach(b=>b.onclick=()=>pick(b.dataset.k));
+  Object.entries(P.G).forEach(([g,e])=>e.addEventListener('click',()=>{const k=g==='sk_kopf'?'sk_schaedel':g==='sk_arme'||g==='sk_beine'?'sk_aufbau':g==='sk_wirbelsaeule'?'sk_wirbelsaeule':g;pick(k);}));
+  const q=document.createElement('section');q.className='panel';
+  q.innerHTML=`<div class="row" style="justify-content:space-between"><button class="go" type="button" id="skgo">Knochen-Training</button><button class="ghost" type="button" id="skex">Skelett erkunden</button></div>`;
+  scr.appendChild(q);
+  $('#skgo').onclick=()=>{const gs=S.groups.filter(g=>CH.skelett.groups.includes(g));startRound(gs.length?gs:CH.skelett.groups);};
+  $('#skex').onclick=()=>explore('skelett');
+}
+function settingsPanel(scr){
+  const ch=CH[S.ch];
+  const q=document.createElement('section');q.className='panel';
+  q.innerHTML=`<div class="lbl">Was möchtest du üben? · ${ch.n}</div>
+   <div class="chips">${ch.groups.map(g=>`<button class="chip" type="button" data-g="${g}" aria-pressed="${S.groups.includes(g)}">${esc(GROUPS[g].n)}</button>`).join('')}</div>
+   <div class="lbl">Aufgaben pro Runde</div>
+   <div class="chips">${[8,12,16].map(n=>`<button class="chip" type="button" data-len="${n}" aria-pressed="${S.len===n}">${n}</button>`).join('')}</div>
+   <div class="row" style="justify-content:space-between"><button class="go" type="button" id="go">Los geht's</button>${S.ch==='zelle'?'<button class="ghost" type="button" id="explore">Zelle erkunden</button>':''}</div>
+   <p class="small" id="note">Neue Themen übst du erst leicht: antippen und auswählen. Je sicherer du wirst, desto kniffliger werden die Aufgaben – bis du die Fachbegriffe selbst schreibst.</p>
+   <div class="row" style="justify-content:space-between"><span class="small">${S.rounds?`${S.rounds} Runden gespielt · bestes Ergebnis ${S.best} %`:'Noch keine Runde gespielt'}</span><button class="ghost" type="button" id="reset" style="font-size:.95rem;padding:4px 12px">${ch.n} zurücksetzen</button></div>`;
+  scr.appendChild(q);
+  q.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>{const g=b.dataset.g;S.groups=S.groups.includes(g)?S.groups.filter(x=>x!==g):[...S.groups,g];save();b.setAttribute('aria-pressed',S.groups.includes(g));});
+  q.querySelectorAll('[data-len]').forEach(b=>b.onclick=()=>{S.len=+b.dataset.len;save();q.querySelectorAll('[data-len]').forEach(x=>x.setAttribute('aria-pressed',x===b));});
+  let armed=false;$('#reset').onclick=e=>{if(!armed){armed=true;e.target.textContent='Wirklich zurücksetzen?';return;}ch.skills.forEach(k=>delete S.lv[k]);if(S.ch==='zelle')S.mkDate='';save();start();};
+  $('#go').onclick=()=>{const gs=S.groups.filter(g=>ch.groups.includes(g));if(!gs.length){$('#note').textContent='Wähle mindestens ein Thema aus.';return;}startRound(gs);};
+  if($('#explore'))$('#explore').onclick=()=>explore('cell');
+}
+
+/* =================== ERKUNDEN =================== */
+function exTabs(cur){return `<div class="chips">${[['cell','Zelle'],['scope','Mikroskop'],['skelett','Skelett']].map(([k,n])=>`<button class="chip" type="button" data-ex="${k}" aria-pressed="${cur===k}">${n}</button>`).join('')}</div>`;}
+function bindTabs(){document.querySelectorAll('[data-ex]').forEach(b=>b.onclick=()=>explore(b.dataset.ex));$('#back').onclick=start;}
+function explore(kind,view){
+  window.scrollTo(0,0);
+  const scr=$('#screen');
+  if(kind==='skelett'){
+   view=view||'body';
+   const V={body:'Körper',skull:'Schädel',spine:'Wirbelsäule',wirbel:'Wirbel im Schnitt'};
+   scr.innerHTML=`<div class="topbar"><span>Skelett erkunden</span><button class="ghost" type="button" id="back">Zurück</button></div>
+   <section class="card">${exTabs('skelett')}<div class="chips" id="vw">${Object.entries(V).map(([k,n])=>`<button class="chip" type="button" data-v="${k}" aria-pressed="${view===k}">${n}</button>`).join('')}</div>
+   <p class="instr">Tippe auf einen Knochen oder Teil.</p><div class="cellbox fig${view==='spine'?' spinebox':''}" id="cb"></div><div class="info" id="info"></div></section>`;
+   bindTabs();document.querySelectorAll('#vw .chip').forEach(b=>b.onclick=()=>explore('skelett',b.dataset.v));
+   const C=view==='skull'?makeSkull():view==='spine'?makeSpine(null,{labels:true}):view==='wirbel'?makeWirbel():makeBody();$('#cb').appendChild(C.svg);
+   const show=k=>{C.svg.classList.add('sel-on');Object.entries(C.G).forEach(([x,g])=>g.classList.toggle('sel',x===k));
+     let t,d;if(B[k]){t=B[k].n;d=`${B[k].nom} ${B[k].fn}.`;}else if(SP[k]){t=SP[k].n;d=SP[k].c?`Sie besteht aus ${SP[k].c} einzelnen Wirbeln.`:'Hier sind die Wirbelknochen miteinander verwachsen – man kann keine einzelnen Wirbel erkennen.';}
+     else if(WINFO[k]){[t,d]=WINFO[k];}else if(EXTRA_INFO[k]){[t,d]=EXTRA_INFO[k];}
+     const sec=BSKULL.includes(k)||k==='hirn'||k==='sk_kopf'?'Schädel-Skelett':BBODY.includes(k)?'Rumpf-Skelett':k==='sk_arme'||k==='sk_beine'?'Extremitäten-Skelett':'';
+     $('#info').innerHTML=`<h3>${esc(t)}</h3>${sec?`<div class="facts"><span class="fchip">${sec}</span></div>`:''}<p>${esc(d)}</p>`;};
+   Object.entries(C.G).forEach(([k,g])=>g.addEventListener('click',()=>show(k)));
+   show(view==='skull'?'sk_jochbein':view==='spine'?'sp_lenden':view==='wirbel'?'bandscheibe':'sk_brustbein');
+   return;
+  }
+  if(kind==='scope'){
+   scr.innerHTML=`<div class="topbar"><span>Mikroskop erkunden</span><button class="ghost" type="button" id="back">Zurück</button></div>
+   <section class="card">${exTabs('scope')}<p class="instr">Tippe auf einen Teil des Mikroskops oder unten auf einen Namen.</p><div class="cellbox" id="cb"></div>
+   <div class="chips" id="ech">${MKP.map(k=>`<button class="chip" type="button" data-k="${k}" aria-pressed="false">${esc(M[k].n)}</button>`).join('')}</div><div class="info" id="info"></div></section>`;
+   bindTabs();
+   const C=makeScope();$('#cb').appendChild(C.svg);
+   const show=k=>{C.svg.classList.add('sel-on');MKP.forEach(x=>C.G[x].classList.toggle('sel',x===k));document.querySelectorAll('#ech .chip').forEach(b=>b.setAttribute('aria-pressed',b.dataset.k===k));
+     $('#info').innerHTML=`<h3>${esc(M[k].n)}</h3><p>${esc(M[k].nom)} ${esc(M[k].fn)}.</p>${M[k].ab?`<p class="small">Arbeitsblatt: „${esc(M[k].ab)}“</p>`:''}`;};
+   MKP.forEach(k=>C.G[k].addEventListener('click',()=>show(k)));document.querySelectorAll('#ech .chip').forEach(b=>b.onclick=()=>show(b.dataset.k));show('mk_okular');
+   return;
+  }
+  scr.innerHTML=`<div class="topbar"><span>Zelle erkunden</span><button class="ghost" type="button" id="back">Zurück</button></div>
+  <section class="card">${exTabs('cell')}<p class="instr">Tippe auf einen Bestandteil der Zelle oder unten auf einen Namen.</p><div class="cellbox" id="cb"></div>
+  <div class="chips" id="ech">${ORG.map(k=>`<button class="chip" type="button" data-k="${k}" aria-pressed="false">${esc(O[k].short||O[k].n)}</button>`).join('')}</div>
+  <div class="info" id="info"></div></section>`;
+  bindTabs();
+  const C=makeCell();$('#cb').appendChild(C.svg);
+  const show=k=>{const o=O[k];C.svg.classList.add('sel-on');ORG.forEach(x=>C.G[x].classList.toggle('sel',x===k));
+    document.querySelectorAll('#ech .chip').forEach(b=>b.setAttribute('aria-pressed',b.dataset.k===k));
+    $('#info').innerHTML=`<h3>${icon(k)}${esc(nm(k))}</h3><div class="facts">${o.plant?'<span class="fchip plant">nur Pflanzenzelle</span>':'<span class="fchip">Pflanze &amp; Tier</span>'}<span class="fchip">Lichtmikroskop: ${o.lm?'sichtbar':'nicht sichtbar'}</span><span class="fchip">${esc(o.size)}</span></div><p>${esc(o.nom)} ${esc(o.fn)}.</p><p class="small">In der Zellstadt: <b>${esc(o.city)}</b></p>`;};
+  ORG.forEach(k=>C.G[k].addEventListener('click',()=>show(k)));
+  document.querySelectorAll('#ech .chip').forEach(b=>b.onclick=()=>show(b.dataset.k));
+  show('chloroplast');
+}
+
+/* =================== RUNDE PLANEN =================== */
+let R=null;
+const ORGT=[['finde_n',0,2],['benenne',0,5],['aufgabe',0,5],['wer',1,5],['wahr',1,5],['finde_f',2,5],['finde_c',3,5],['schreib',3,5],['beschriften',1,5],['verbinde',1,5],['memory',2,5]];
+const TOPT={vergleich:[['swipe',0],['wahr',0],['mc',1]],foto:[['gleichung',0],['wahr',0],['mc',0],['balance',2]],atmung:[['gleichung',0],['wahr',0],['mc',0],['balance',2]],wasser:[['predict',0],['zustand',1],['wahr',0],['mc',0]],mikro:[['lupe',0],['sortiere',1],['wahr',0],['mc',0]]};
+const MULTI=new Set(['beschriften','verbinde','memory','swipe','lupe','sortiere','m_beschriften','m_verbinde','m_reihe']);
+const MKT=[['m_finde_n',0,2],['m_benenne',0,5],['m_funktion',0,5],['m_finde_f',1,5],['m_verbinde',0,5],['m_beschriften',1,5],['m_schreib',3,5]];
+TOPT.mk_vergr=[['m_vergr',0],['wahr',0],['mc',1]];TOPT.mk_umgang=[['m_reihe',0],['wahr',0],['mc',0]];
+const BT=[['b_finde_n',0,2],['b_benenne',0,5],['b_raetsel',0,5],['wahr',1,5],['b_finde_f',1,5],['b_beschriften',1,5],['b_roentgen',2,5],['b_schreib',3,5]];
+Object.assign(TOPT,{sk_aufbau:[['malbuch',0],['sorter',0],['schloss',0],['luecke',1],['wahr',0],['mc',0]],sk_funktion:[['sorter',0],['luecke',0],['wahr',0],['mc',0]],sk_schaedel:[['schaedelreg',0],['schaedelauf',0],['luecke',1],['wahr',0],['mc',0]],sk_wirbel:[['spfinde',0],['spreihe',0],['schloss',0],['baukasten',1],['spmemory',2],['luecke',1],['wahr',0],['mc',1]],sk_bau:[['querfinde',0],['stoss',0],['luecke',0],['wahr',0],['mc',0]],sk_modell:[['biege',0],['luecke',1],['wahr',0],['mc',0]]});
+['malbuch','sorter','b_beschriften','spmemory','stoss','biege','baukasten','luecke','schaedelauf','spreihe'].forEach(t=>MULTI.add(t));
+function typesFor(k){
+  const L=lv(k);
+  if(B[k])return BT.filter(t=>L>=t[1]&&L<=t[2]&&(t[0]!=='wahr'||TF.some(f=>f[0]===k))).map(t=>t[0]);
+  if(M[k])return MKT.filter(t=>L>=t[1]&&L<=t[2]).map(t=>t[0]);
+  if(O[k])return ORGT.filter(t=>L>=t[1]&&L<=t[2]&&(t[0]!=='wahr'||TF.some(f=>f[0]===k))).map(t=>t[0]);
+  return TOPT[k].filter(t=>L>=t[1]&&(t[0]!=='wahr'||TF.some(f=>f[0]===k))&&(t[0]!=='mc'||MC.some(f=>f[0]===k))&&(t[0]!=='luecke'||LT.some(f=>f[0]===k))).map(t=>t[0]);
+}
+function pickWeighted(arr,w){const tot=arr.reduce((s,a)=>s+w(a),0);let r=Math.random()*tot;for(const a of arr){r-=w(a);if(r<=0)return a;}return arr[arr.length-1];}
+function pickOrgs(n,must){const rest=shuffle(ORG.filter(k=>k!==must));rest.sort((a,b)=>lv(a)-lv(b)+(Math.random()-.5)*2);return shuffle([must,...rest.slice(0,n-1)]);}
+function planRound(gs){
+  const pool=[...new Set((gs||S.groups).flatMap(g=>GROUPS[g].sk))];
+  const out=[],used={},recent=[];let lastT=null;const usedTF=new Set(),usedMC=new Set();
+  for(let i=0;i<S.len;i++){
+    const cand=pool.filter(k=>!recent.includes(k));const k=pickWeighted(cand.length?cand:pool,k=>Math.pow(6-lv(k),2)+.5);
+    recent.push(k);if(recent.length>Math.min(3,pool.length-1))recent.shift();
+    let types=typesFor(k).filter(t=>!(MULTI.has(t)&&used[t]));
+    if(!types.length)types=['wahr'].filter(()=>TF.some(f=>f[0]===k));
+    if(!types.length)types=B[k]?['b_benenne']:M[k]?['m_benenne']:O[k]?['benenne']:[TOPT[k][0][0]];
+    const t=pickWeighted(types,t=>Math.max(.08,1-(t===lastT?.85:0)-.35*(used[t]||0)));
+    used[t]=(used[t]||0)+1;lastT=t;
+    out.push(makeSpec(t,k,usedTF,usedMC));
+  }
+  return out;
+}
+function makeSpec(t,k,usedTF,usedMC){
+  const sp={t,k};
+  if(t==='wahr'){const c=TF.filter(f=>f[0]===k);const f=rnd(c.filter(x=>!usedTF.has(x))||c)||rnd(c);sp.f=f||rnd(c);usedTF.add(sp.f);}
+  if(t==='mc'){const c=MC.filter(f=>f[0]===k);const f=rnd(c.filter(x=>!usedMC.has(x)))||rnd(c);sp.f=f;usedMC.add(f);}
+  if(t==='beschriften')sp.ks=pickOrgs(5,k);
+  if(t==='verbinde'){sp.ks=pickOrgs(4,k);sp.mode=lv(k)>=3&&Math.random()<.5?'city':'fn';}
+  if(t==='memory')sp.ks=pickOrgs(6,k);
+  if(t==='swipe'){const pl=shuffle(ORG.filter(x=>O[x].plant)).slice(0,2+(Math.random()<.5?1:0));sp.ks=shuffle([...pl,...shuffle(ORG.filter(x=>!O[x].plant)).slice(0,6-pl.length)]);}
+  if(t==='gleichung'||t==='balance')sp.v=t==='balance'?rnd(['gleich','auf','ab']):null;
+  if(t==='predict')sp.f=rnd(WSC);
+  if(t==='zustand')sp.f=rnd(Object.keys(WSTATE));
+  if(t==='lupe'){const vis=shuffle(['zellwand','zellkern','vakuole','chloroplast']).slice(0,3),no=shuffle(['ribosom','er','golgi','mitochondrium']).slice(0,3);sp.ks=shuffle([...vis,...no]);}
+  if(t==='sortiere'){let pick;do{pick=shuffle(SIZES).slice(0,4).sort((a,b)=>a[2]-b[2]);}while(pick.some((x,i)=>i&&x[2]/pick[i-1][2]<3));sp.items=shuffle(pick);}
+  if(t==='b_beschriften')sp.ks=B[k].fig==='skull'?shuffle(BSKULL):shuffle([k,...sameFig(k,4)]);
+  if(t==='sorter'){sp.set=k==='sk_funktion'?'funktion':'aufbau';const all=shuffle(SORTSETS[sp.set].items),pick=[];Object.keys(SORTSETS[sp.set].cats).forEach(c=>pick.push(all.find(x=>x[1]===c)));all.forEach(x=>{if(pick.length<(sp.set==='funktion'?6:7)&&!pick.includes(x))pick.push(x);});sp.items=shuffle(pick);}
+  if(t==='schloss')sp.v=k==='sk_aufbau'?'knochen':rnd(['abschnitte','abschnitte','einzeln']);
+  if(t==='baukasten'){do{sp.start=[3+Math.random()*8|0,3+Math.random()*8|0,3+Math.random()*8|0];}while(sp.start.join()==='7,12,5');}
+  if(t==='spfinde'){sp.tg=rnd(SPK);sp.mode=lv(k)>=2&&Math.random()<.6?'q':'n';}
+  if(t==='luecke')sp.f=rnd(LT.filter(l=>l[0]===k));
+  if(t==='schaedelreg')sp.tg=rnd(['hirn','gesicht']);
+  if(t==='schaedelauf')sp.items=shuffle([...shuffle(SKAUF.filter(x=>x[1])).slice(0,3),...shuffle(SKAUF.filter(x=>!x[1])).slice(0,3)]);
+  if(t==='querfinde')sp.tg=rnd(['wirbel','bandscheibe','rueckenmark']);
+  if(t==='m_beschriften')sp.ks=pickParts(5,k);
+  if(t==='m_verbinde')sp.ks=pickParts(4,k,true);
+  if(t==='m_reihe'){const idx=shuffle(STEPS.map((_,i)=>i)).slice(0,5).sort((a,b)=>a-b);sp.items=shuffle(idx);}
+  if(t==='m_vergr'){sp.v=rnd(['rechne','stelle']);sp.ok=sp.v==='rechne'?rnd([10,10,5,15]):10;sp.ob=rnd([4,10,40]);}
+  return sp;
+}
+function pickParts(n,must,noPair){let rest=shuffle(MKP.filter(k=>k!==must));if(noPair&&(must==='mk_grobtrieb'||must==='mk_feintrieb'))rest=rest.filter(k=>k!=='mk_grobtrieb'&&k!=='mk_feintrieb');rest.sort((a,b)=>lv(a)-lv(b)+(Math.random()-.5)*2);
+  const out=[must];for(const k of rest){if(out.length>=n)break;if(noPair&&(k==='mk_grobtrieb'||k==='mk_feintrieb')&&out.some(x=>x==='mk_grobtrieb'||x==='mk_feintrieb'))continue;out.push(k);}return shuffle(out);}
+function startRound(gs){
+  gs=Array.isArray(gs)?gs:null;const q=planRound(gs);
+  R={gs,ch:S.ch,q,i:0,first:q.length,right:0,streak:0,missed:[],before:Object.assign({},S.lv),retried:new Set()};
+  task();
+}
+
+/* =================== AUFGABE ANZEIGEN =================== */
+const TLABEL_M=Object.assign({},{m_finde_n:'Finde es',m_finde_f:'Finde es',m_benenne:'Wie heißt das?',m_funktion:'Wozu dient das?',m_beschriften:'Beschrifte',m_verbinde:'Verbinde',m_schreib:'Schreib es',m_vergr:'Vergrößerung',m_reihe:'Reihenfolge'});
+const TLABEL={finde_n:'Finde es',finde_f:'Finde es',finde_c:'Zellstadt',benenne:'Wie heißt das?',aufgabe:'Welche Aufgabe?',wer:'Wer macht das?',wahr:'Stimmt das?',schreib:'Schreib es',beschriften:'Beschrifte',verbinde:'Verbinde',memory:'Memory',swipe:'Wisch-Sortierer',gleichung:'Gleichung bauen',balance:'Sonnen-Regler',predict:'Was passiert?',zustand:'Welcher Zustand?',lupe:'Mikroskop-Check',sortiere:'Nach Größe',mc:'Wissensfrage'};Object.assign(TLABEL,TLABEL_M);
+function task(){
+  renderStats();
+  if(R.i>=R.q.length)return end();
+  const sp=R.q[R.i];
+  const pct=Math.round(R.i/R.q.length*100);
+  $('#screen').innerHTML=`<div class="topbar"><span>Aufgabe ${R.i+1} von ${R.q.length}${R.i>=R.first?' · Wiederholung':''}${R.streak>=3?` · Serie ${R.streak}`:''}</span><button class="ghost" type="button" id="quit">Beenden</button></div>
+  <div class="progress" aria-hidden="true"><i style="width:${pct}%"></i></div>
+  <article class="card"><div class="tags"><span class="tag">${TLABEL[sp.t]}</span><span class="tag soft">${esc(SK_NAME[sp.k])}</span></div><div id="cb" style="display:flex;flex-direction:column;gap:14px"></div></article>`;
+  $('#quit').onclick=start;window.scrollTo(0,0);
+  T[sp.t]($('#cb'),sp);
+}
+
+/* Bewertung. per = {skill:true/false} für Mehrfach-Aufgaben */
+function grade(sp,ok,html,per,opts){
+  opts=opts||{};
+  const first=!sp.retry;
+  if(first){
+    const apply=(k,good)=>{const L=lv(k);S.lv[k]=good?Math.min(5,L+1):(opts.soft?L:Math.max(1,L-2));};
+    if(per)Object.entries(per).forEach(([k,g])=>apply(k,g));else apply(sp.k,ok);
+    if(ok){R.right++;R.streak++;}else R.streak=0;
+    save();
+  }else if(ok)R.streak++;
+  if(!ok){buzz([40,40,40]);if(first&&opts.sum)R.missed.push(opts.sum);
+    if(first&&!MULTI.has(sp.t)&&sp.t!=='balance'){R.q.push(Object.assign({},sp,{retry:true}));}}
+  else buzz(15);
+  const cb=$('#cb');
+  const fb=document.createElement('div');fb.className='fb '+(ok?'ok':'bad');fb.setAttribute('role','status');
+  fb.innerHTML=html+(!ok&&first&&!MULTI.has(sp.t)&&sp.t!=='balance'?'<span class="ex">Diese Aufgabe kommt am Ende der Runde noch einmal.</span>':'');
+  cb.appendChild(fb);
+  const nx=document.createElement('button');nx.className='next';nx.type='button';nx.textContent=R.i+1>=R.q.length?'Zum Ergebnis':'Weiter';
+  nx.onclick=()=>{R.i++;task();};cb.appendChild(nx);
+  setTimeout(()=>{try{nx.scrollIntoView({behavior:'smooth',block:'nearest'});}catch(e){}},60);
+  renderStats();
+}
+
+/* Auswahl-Knöpfe */
+function choices(cb,opts,correctIdx,render,onDone,cls){
+  const box=document.createElement('div');box.className='opts'+(cls?' '+cls:'');
+  opts.forEach((o,i)=>{const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=render(o);b.onclick=()=>{
+    box.querySelectorAll('.opt').forEach((x,j)=>{x.disabled=true;if(j===correctIdx)x.classList.add('ok');});
+    if(i!==correctIdx)b.classList.add('bad');onDone(i===correctIdx,i);};box.appendChild(b);});
+  cb.appendChild(box);return box;
+}
+const H=(cb,html)=>{const d=document.createElement('div');d.innerHTML=html;while(d.firstChild)cb.appendChild(d.firstChild);};
+function distract(k,n){return shuffle(ORG.filter(x=>x!==k)).slice(0,n);}
+
+/* =================== AUFGABENTYPEN =================== */
+const T={
+ /* Tippe in der Zelle */
+ finde_n(cb,sp){finde(cb,sp,`Tippe auf ${O[sp.k].akk}.`);},
+ finde_f(cb,sp){finde(cb,sp,O[sp.k].wo);},
+ finde_c(cb,sp){finde(cb,sp,`Zellstadt-Rätsel: Tippe auf das „${O[sp.k].city}“ der Zelle.`);},
+ benenne(cb,sp){
+  H(cb,`<p class="prompt">Wie heißt der leuchtende Bestandteil?</p><div class="cellbox" id="cl"></div>`);
+  const C=makeCell();$('#cl').appendChild(C.svg);C.svg.classList.add('dimmed');C.G[sp.k].classList.add('hl');
+  const opts=shuffle([sp.k,...distract(sp.k,3)]);
+  choices(cb,opts,opts.indexOf(sp.k),k=>esc(nm(k)),(ok,i)=>{C.G[sp.k].classList.remove('hl');
+    grade(sp,ok,`<strong>${ok?praise():'Nicht ganz.'}</strong>${ok?'':`<span>Das ist ${esc(O[sp.k].akk.replace(/^den /,'der ').replace(/^einen /,'ein '))}.</span>`}${recap(sp.k)}`,null,{sum:`<b>${esc(nm(sp.k))}</b> – ${esc(O[sp.k].fn)}`});},'two');
+ },
+ aufgabe(cb,sp){
+  H(cb,`<p class="prompt">${esc(O[sp.k].nom)} …</p><p class="instr">Welche Aufgabe passt?</p>`);
+  const opts=shuffle([sp.k,...distract(sp.k,3)]);
+  choices(cb,opts,opts.indexOf(sp.k),k=>esc(O[k].fn),ok=>grade(sp,ok,`<strong>${ok?praise():'Nicht ganz.'}</strong>${recap(sp.k)}`,null,{sum:`<b>${esc(nm(sp.k))}</b> ${esc(O[sp.k].fn)}`}));
+ },
+ wer(cb,sp){
+  H(cb,`<p class="instr">Welcher Bestandteil …</p><p class="prompt">… ${esc(O[sp.k].fn)}?</p>`);
+  const opts=shuffle([sp.k,...distract(sp.k,3)]);
+  choices(cb,opts,opts.indexOf(sp.k),k=>`<span style="display:flex;align-items:center;gap:10px"><span style="width:42px;flex:none">${icon(k)}</span>${esc(nm(k))}</span>`,ok=>grade(sp,ok,`<strong>${ok?praise():'Nicht ganz.'}</strong>${recap(sp.k)}`,null,{sum:`<b>${esc(nm(sp.k))}</b> ${esc(O[sp.k].fn)}`}));
+ },
+ wahr(cb,sp){
+  const [k,txt,truth,ex]=sp.f;
+  H(cb,`<p class="instr">Stimmt das?</p><p class="prompt">„${esc(txt)}“</p>`);
+  choices(cb,['Stimmt','Stimmt nicht'],truth?0:1,x=>x,ok=>grade(sp,ok,`<strong>${ok?praise():'Nicht ganz.'}</strong><span>Die Aussage ${truth?'stimmt':'stimmt nicht'}. ${esc(ex)}</span>`,null,{sum:`„${esc(txt)}“ – ${truth?'stimmt':'stimmt nicht'}. ${esc(ex)}`}),'two');
+ },
+ mc(cb,sp){
+  const [k,q,ans,ex]=sp.f;const opts=shuffle(ans);
+  H(cb,`<p class="prompt">${esc(q)}</p>`);
+  choices(cb,opts,opts.indexOf(ans[0]),esc,ok=>grade(sp,ok,`<strong>${ok?praise():'Nicht ganz.'}</strong><span>${esc(ans[0])}. ${esc(ex)}</span>`,null,{sum:`${esc(q)} → <b>${esc(ans[0])}</b>`}));
+ },
+ schreib(cb,sp){
+  const o=O[sp.k];
+  H(cb,`<p class="instr">Schreib den Fachbegriff für den leuchtenden Bestandteil.</p><div class="cellbox" id="cl"></div><p class="small">Tipp: Dieser Bestandteil ${esc(o.fn)}.</p>
+   <form class="inp" id="f"><input id="ans" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Fachbegriff"><button class="check" type="submit">Prüfen</button></form>`);
+  const C=makeCell();$('#cl').appendChild(C.svg);C.svg.classList.add('dimmed');C.G[sp.k].classList.add('hl');
+  const inp=$('#ans');
+  $('#f').onsubmit=e=>{e.preventDefault();const raw=inp.value.trim();if(!raw)return;inp.disabled=true;e.target.querySelector('button').disabled=true;
+    const n=norm(raw),ok=o.al.some(a=>norm(a)===n);
+    if(ok){inp.classList.add('ok');grade(sp,true,`<strong>${praise()}</strong><span>${esc(nm(sp.k))}</span>${recap(sp.k)}`);}
+    else{inp.classList.add('bad');const close=o.al.some(a=>lev(n,norm(a))<=2);
+      grade(sp,false,`<strong>${close?'Fast! Schau genau auf die Buchstaben:':'Richtig wäre:'}</strong><span class="sol">${diffHTML(raw,o.n)}</span><span class="ex">Du hast geschrieben: ${esc(raw)}</span>${recap(sp.k)}`,null,{sum:`<b>${esc(nm(sp.k))}</b> (richtig schreiben!)`});}};
+ },
+ /* Beschriften: Namen an Nummern in der Zelle */
+ beschriften(cb,sp){
+  H(cb,`<p class="prompt">Beschrifte die Zelle.</p><p class="instr">Tippe einen Namen an und dann die passende Nummer – in der Zelle oder in der Liste.</p><div class="cellbox" id="cl"></div><div class="pool" id="pool"></div><div class="slots" id="slots"></div><button class="check" id="chk" type="button" disabled>Prüfen</button>`);
+  const C=makeCell();$('#cl').appendChild(C.svg);
+  const ks=sp.ks,asg={},pins={};let sel=null,done=false;
+  ks.forEach((k,i)=>{const [x,y]=O[k].pin;const g=el('g',{class:'pin',transform:`translate(${x},${y})`},C.svg);el('circle',{r:18},g);el('text',{},g).textContent=i+1;pins[k]=g;g.addEventListener('click',()=>place(i));});
+  const names=shuffle(ks);
+  const draw=()=>{
+    $('#pool').innerHTML=names.map(k=>`<button class="tile" type="button" data-k="${k}" aria-pressed="${sel===k}" ${Object.values(asg).includes(k)||done?'disabled':''}>${esc(O[k].short||O[k].n)}</button>`).join('');
+    $('#slots').innerHTML=ks.map((k,i)=>`<button class="slotrow${done?(asg[i]===k?' ok':' bad'):''}" type="button" data-i="${i}"><span class="num">${i+1}</span><span class="got${asg[i]?' filled':''}">${asg[i]?esc(O[asg[i]].short||O[asg[i]].n):'antippen …'}${done&&asg[i]!==k?` → <b>${esc(O[k].short||O[k].n)}</b>`:''}</span></button>`).join('');
+    ks.forEach((k,i)=>pins[k].classList.toggle('act',!!asg[i]));
+    $('#pool').querySelectorAll('.tile').forEach(b=>b.onclick=()=>{sel=sel===b.dataset.k?null:b.dataset.k;draw();});
+    $('#slots').querySelectorAll('.slotrow').forEach(b=>b.onclick=()=>place(+b.dataset.i));
+    $('#chk').disabled=done||Object.keys(asg).length<ks.length;
+  };
+  const place=i=>{if(done)return;if(sel){asg[i]=sel;sel=null;}else if(asg[i])delete asg[i];draw();};
+  $('#chk').onclick=()=>{done=true;const per={};let n=0;ks.forEach((k,i)=>{per[k]=asg[i]===k;if(per[k])n++;pins[k].classList.add(per[k]?'ok':'bad');});draw();
+    const ok=n>=ks.length-1;grade(sp,ok,`<strong>${n===ks.length?'Alles richtig beschriftet!':`${n} von ${ks.length} richtig.`}</strong>${ks.filter(k=>!per[k]).map(k=>`<span>${esc(nm(k))}: ${esc(O[k].fn)}.</span>`).join('')}`,per,{sum:`Beschriften: ${ks.filter(k=>!per[k]).map(k=>esc(nm(k))).join(', ')}`});};
+  draw();
+ },
+ /* Verbinden: Name ↔ Aufgabe / Zellstadt mit sofortiger Rückmeldung */
+ verbinde(cb,sp){
+  const city=sp.mode==='city';const ks=sp.ks,rows=shuffle(ks),mist={};let sel=null,found=new Set();
+  H(cb,`<p class="prompt">${city?'Was ist was in der Zellstadt?':'Wer macht was?'}</p><p class="instr">Tippe einen Namen an und dann ${city?'das passende Gebäude':'die passende Aufgabe'}.</p><div class="pool" id="pool"></div><div class="slots" id="slots"></div>`);
+  const draw=()=>{
+    $('#pool').innerHTML=ks.map(k=>`<button class="tile" type="button" data-k="${k}" aria-pressed="${sel===k}" ${found.has(k)?'disabled':''}>${esc(O[k].short||O[k].n)}</button>`).join('');
+    $('#slots').innerHTML=rows.map((k,i)=>`<button class="slotrow${found.has(k)?' ok':''}" type="button" data-k="${k}"><span class="num">${found.has(k)?'✓':'?'}</span><span class="vrow"><span>${esc(city?O[k].city:O[k].fn)}</span>${found.has(k)?`<span class="got filled">${esc(nm(k))}</span>`:''}</span></button>`).join('');
+    $('#pool').querySelectorAll('.tile').forEach(b=>b.onclick=()=>{sel=sel===b.dataset.k?null:b.dataset.k;draw();});
+    $('#slots').querySelectorAll('.slotrow').forEach(b=>b.onclick=()=>{const k=b.dataset.k;if(!sel||found.has(k))return;
+      if(sel===k){found.add(k);sel=null;buzz(15);draw();if(found.size===ks.length)fin();}
+      else{mist[sel]=1;mist[k]=1;buzz([30,30,30]);b.classList.add('bad','shake');const s=sel;sel=null;setTimeout(()=>draw(),450);}});
+  };
+  const fin=()=>{const per={};ks.forEach(k=>per[k]=!mist[k]);const m=Object.keys(mist).length;
+    grade(sp,m<=2,`<strong>${m?'Geschafft!':'Ohne Fehler – stark!'}</strong>${m?`<span class="ex">Hier hast du gezögert: ${Object.keys(mist).map(k=>esc(O[k].short||O[k].n)).join(', ')}</span>`:''}`,per,{sum:`Verbinden: ${Object.keys(mist).map(k=>`${esc(nm(k))} = ${esc(city?O[k].city:O[k].fn)}`).join(' · ')}`});};
+  draw();
+ },
+ /* Memory: Name ↔ Zellstadt-Gebäude */
+ memory(cb,sp){
+  const ks=sp.ks;const cards=shuffle(ks.flatMap(k=>[{k,c:0},{k,c:1}]));let open=[],lock=false,miss=0,done=new Set();
+  H(cb,`<p class="prompt">Zellstadt-Memory</p><p class="instr">Finde die Paare: Bestandteil und passendes Gebäude der Zellstadt.</p><div class="mem" id="mem"></div><p class="memstat" id="ms">Fehlversuche: 0</p>`);
+  const box=$('#mem');
+  cards.forEach((c,i)=>{const b=document.createElement('button');b.type='button';b.className='mc';b.dataset.k=c.k;b.setAttribute('aria-label','Karte '+(i+1));
+    b.innerHTML=`<div class="in"><div class="f"></div><div class="b${c.c?' city':''}">${c.c?esc(O[c.k].city):icon(c.k)+esc(O[c.k].short||O[c.k].n)}</div></div>`;
+    b.onclick=()=>{if(lock||done.has(i)||open.includes(i))return;b.classList.add('open');b.setAttribute('aria-label',c.c?O[c.k].city:O[c.k].n);open.push(i);
+      if(open.length===2){const [a,d]=open.map(x=>cards[x]);
+        if(a.k===d.k&&a.c!==d.c){open.forEach(x=>{done.add(x);box.children[x].classList.add('done');});open=[];buzz(15);if(done.size===cards.length)fin();}
+        else{miss++;$('#ms').textContent='Fehlversuche: '+miss;lock=true;setTimeout(()=>{open.forEach(x=>{box.children[x].classList.remove('open');box.children[x].setAttribute('aria-label','Karte '+(x+1));});open=[];lock=false;},950);}}};
+    box.appendChild(b);});
+  const fin=()=>{const ok=miss<=8;const per={};ks.forEach(k=>per[k]=ok);
+    grade(sp,ok,`<strong>${miss<=4?'Super Gedächtnis!':ok?'Alle Paare gefunden!':'Geschafft – mit etwas Suchen.'}</strong><span class="ex">${miss} Fehlversuche. ${ks.map(k=>`${esc(O[k].short||O[k].n)} = ${esc(O[k].city)}`).join(' · ')}</span>`,per,{soft:true});};
+ },
+ /* Wischen: nur Pflanze ← → Pflanze & Tier */
+ swipe(cb,sp){
+  const ks=sp.ks;let i=0,good=0;const res=[];
+  H(cb,`<p class="prompt">Nur Pflanze oder beide?</p><p class="instr">Wische die Karte nach <b>links</b>, wenn nur die Pflanzenzelle sie hat, nach <b>rechts</b>, wenn Pflanzen- und Tierzellen sie haben. Oder tippe die Knöpfe.</p>
+   <div class="swipe" id="sw"><span class="side l">← nur Pflanze</span><span class="side r">beide →</span></div>
+   <div class="opts two"><button class="opt" type="button" id="bl">← nur Pflanze</button><button class="opt" type="button" id="br">beide →</button></div>
+   <p class="swfb" id="swfb"></p><div class="dots" id="dots">${ks.map(()=>'<i></i>').join('')}</div>`);
+  const sw=$('#sw');let card=null,dx=0,sx=0,drag=false,busy=false;
+  const sideL=sw.querySelector('.l'),sideR=sw.querySelector('.r');
+  const show=()=>{const k=ks[i];card=document.createElement('div');card.className='scard';card.innerHTML=`${icon(k)}<span class="nm">${esc(O[k].short||O[k].n)}</span>`;sw.appendChild(card);
+    card.addEventListener('pointerdown',e=>{if(busy)return;drag=true;sx=e.clientX;dx=0;card.setPointerCapture(e.pointerId);card.classList.remove('back');});
+    card.addEventListener('pointermove',e=>{if(!drag)return;dx=e.clientX-sx;card.style.transform=`translateX(${dx}px) rotate(${dx/14}deg)`;sideL.classList.toggle('on',dx<-40);sideR.classList.toggle('on',dx>40);});
+    const up=()=>{if(!drag)return;drag=false;sideL.classList.remove('on');sideR.classList.remove('on');if(Math.abs(dx)>70)commit(dx<0?'p':'b');else{card.classList.add('back');card.style.transform='';}};
+    card.addEventListener('pointerup',up);card.addEventListener('pointercancel',up);};
+  const commit=dir=>{if(busy||i>=ks.length)return;busy=true;const k=ks[i];const ok=(dir==='p')===!!O[k].plant;if(ok)good++;res.push(ok);
+    card.classList.add('fly');card.style.transform=`translateX(${dir==='p'?-420:420}px) rotate(${dir==='p'?-25:25}deg)`;card.style.opacity='0';
+    $('#dots').children[i].className=ok?'ok':'bad';const f=$('#swfb');f.className='swfb '+(ok?'ok':'bad');
+    f.textContent=ok?`${praise()} ${O[k].short||O[k].n}: ${O[k].plant?'nur Pflanze':'Pflanze und Tier'}.`:`Falsch: ${O[k].short||O[k].n} gibt es ${O[k].plant?'nur in der Pflanzenzelle':'in Pflanzen- und Tierzellen'}.`;
+    buzz(ok?15:[40,40,40]);
+    const old=card;setTimeout(()=>{old.remove();i++;busy=false;if(i<ks.length)show();else fin();},ok?450:1100);};
+  $('#bl').onclick=()=>commit('p');$('#br').onclick=()=>commit('b');
+  const fin=()=>{$('#bl').disabled=$('#br').disabled=true;const ok=good>=ks.length-1;
+    grade(sp,ok,`<strong>${good} von ${ks.length} richtig sortiert.</strong><span>Nur die Pflanzenzelle hat: Zellwand, große Vakuole und Chloroplasten.</span>`,null,{sum:'Nur Pflanze: Zellwand, große Vakuole, Chloroplasten. Alles andere haben beide.'});};
+  show();
+ },
+ /* Gleichung bauen */
+ gleichung(cb,sp){
+  const foto=sp.k==='foto';
+  const L=foto?['Kohlenstoffdioxid','Wasser']:['Traubenzucker','Sauerstoff'],Rr=foto?['Traubenzucker','Sauerstoff']:['Kohlenstoffdioxid','Wasser','Energie'];
+  const tiles=shuffle([...L,...Rr,...(foto?['Stickstoff','Stärke']:['Licht','Chlorophyll'])]);
+  const slots=new Array(L.length+Rr.length).fill(null);
+  H(cb,`<p class="prompt">Bau die Wortgleichung der ${foto?'Fotosynthese':'Zellatmung'}.</p><p class="instr">Tippe die Stoffe in der richtigen Reihenfolge an. Oben steht, was gebraucht wird, unten, was entsteht. Antippen im Kasten nimmt einen Stoff wieder heraus.</p>
+   <div class="eqn" id="eq"></div><div class="pool" id="pool" style="justify-content:center"></div><button class="check" id="chk" type="button" disabled>Prüfen</button>`);
+  let done=false;
+  const draw=()=>{
+    const s=i=>`<button class="eslot${slots[i]!=null?' filled':''}" type="button" data-s="${i}">${slots[i]!=null?esc(tiles[slots[i]]):'…'}</button>`;
+    const lhs=L.map((_,i)=>s(i)).join('<span class="op">+</span>'),rhs=Rr.map((_,i)=>s(L.length+i)).join('<span class="op">+</span>');
+    $('#eq').innerHTML=`<span class="side-lbl">wird gebraucht</span><div class="eside">${lhs}</div><span class="arrow"><span>↓</span>${foto?'<span>Licht, Chlorophyll</span>':''}</span><div class="eside">${rhs}</div><span class="side-lbl">entsteht</span>`;
+    $('#pool').innerHTML=tiles.map((t,i)=>`<button class="tile" type="button" data-t="${i}" ${slots.includes(i)||done?'disabled':''}>${esc(t)}</button>`).join('');
+    $('#eq').querySelectorAll('.eslot').forEach(b=>b.onclick=()=>{if(done)return;slots[+b.dataset.s]=null;draw();});
+    $('#pool').querySelectorAll('.tile').forEach(b=>b.onclick=()=>{const j=slots.indexOf(null);if(j<0)return;slots[j]=+b.dataset.t;draw();});
+    $('#chk').disabled=done||slots.includes(null);
+  };
+  $('#chk').onclick=()=>{done=true;const got=slots.map(x=>tiles[x]);const lh=got.slice(0,L.length),rh=got.slice(L.length);
+    const okL=L.every(x=>lh.includes(x)),okR=Rr.every(x=>rh.includes(x)),ok=okL&&okR;draw();
+    $('#eq').querySelectorAll('.eslot').forEach((b,i)=>{const t=got[i];b.classList.add((i<L.length?L:Rr).includes(t)?'ok':'bad');});
+    const eqTxt=`${L.join(' + ')} → ${Rr.join(' + ')}`;
+    grade(sp,ok,`<strong>${ok?praise():'Nicht ganz.'}</strong><span><b>${foto?'Fotosynthese':'Zellatmung'}:</b> ${esc(eqTxt)}</span><span class="ex">${foto?'Läuft in den Chloroplasten und braucht Licht. Profi: 6 CO₂ + 6 H₂O → C₆H₁₂O₆ + 6 O₂':'Läuft Tag und Nacht in den Mitochondrien. Die Gleichung ist die Fotosynthese rückwärts – plus Energie.'}</span>`,null,{sum:`${foto?'Fotosynthese':'Zellatmung'}: ${esc(eqTxt)}`});};
+  draw();
+ },
+ /* Sonnen-Regler */
+ balance(cb,sp){
+  const goal={gleich:'Stell die Sonne so ein, dass das Blatt <b>genau so viel Sauerstoff erzeugt, wie es verbraucht</b>.',auf:'Stell die Sonne so ein, dass das Blatt unterm Strich <b>Sauerstoff aufnimmt</b> – aber nicht ganz dunkel.',ab:'Stell die Sonne so ein, dass das Blatt <b>mehr Sauerstoff abgibt, als es verbraucht</b>.'}[sp.v];
+  H(cb,`<p class="prompt">Sonnen-Regler</p><p>${goal}</p>
+   <div class="sunrow"><svg viewBox="0 0 46 46" aria-hidden="true"><g id="rays" style="stroke:var(--sun);stroke-width:3;stroke-linecap:round"><line x1="23" y1="2" x2="23" y2="8"/><line x1="23" y1="38" x2="23" y2="44"/><line x1="2" y1="23" x2="8" y2="23"/><line x1="38" y1="23" x2="44" y2="23"/><line x1="8" y1="8" x2="12" y2="12"/><line x1="34" y1="34" x2="38" y2="38"/><line x1="38" y1="8" x2="34" y2="12"/><line x1="12" y1="34" x2="8" y2="38"/></g><circle id="sunc" cx="23" cy="23" r="10" style="fill:var(--sun)"/></svg><input type="range" id="li" min="0" max="100" value="${sp.v==='gleich'?70:sp.v==='auf'?80:5}" aria-label="Sonnenlicht in Prozent"></div>
+   <div class="meter"><span>Fotosynthese</span><div class="track"><i id="mp" style="background:var(--c-chl)"></i></div></div>
+   <div class="meter"><span>Zellatmung</span><div class="track"><i id="mr" style="background:var(--c-mit)"></i></div></div>
+   <div><div class="div-track"><i id="mo"></i></div><div class="div-labels"><span>← nimmt O₂ auf</span><span>gibt O₂ ab →</span></div></div>
+   <p class="live" id="live"></p><button class="check" id="chk" type="button">Fertig</button>`);
+  const li=$('#li');
+  const upd=()=>{const L=+li.value,P=L/10,Rv=2,net=P-Rv;$('#mp').style.width=P*10+'%';$('#mr').style.width=Rv*10+'%';
+    const w=Math.min(50,Math.abs(net)/8*50),o=$('#mo');o.style.left=net>=0?'50%':(50-w)+'%';o.style.width=w+'%';o.style.background=net>=0?'var(--good)':'var(--bad)';
+    $('#rays').style.opacity=.15+L/100*.85;$('#sunc').style.opacity=.35+L/100*.65;
+    $('#live').textContent=Math.abs(net)<.35?'Gleichstand':net>0?'Das Blatt gibt Sauerstoff ab':'Das Blatt nimmt Sauerstoff auf';};
+  li.oninput=upd;upd();
+  $('#chk').onclick=()=>{li.disabled=true;$('#chk').disabled=true;const L=+li.value,net=L/10-2;
+    const ok=sp.v==='gleich'?Math.abs(L-20)<=5:sp.v==='auf'?(L>0&&net<-.3):net>.3;
+    grade(sp,ok,`<strong>${ok?praise():'Nicht ganz.'}</strong><span>Die Zellatmung läuft immer gleich weiter. Bei etwa <b>20 % Licht</b> erzeugt die Fotosynthese genau so viel Sauerstoff, wie die Zellatmung verbraucht. ${sp.v==='auf'?'Darunter nimmt das Blatt Sauerstoff auf.':sp.v==='ab'?'Darüber gibt das Blatt Sauerstoff ab.':''}</span><span class="ex">Profi-Wort: Diesen Punkt nennt man Kompensationspunkt.</span>`,null,{sum:'Bei wenig Licht (ca. 20 %) halten sich Fotosynthese und Zellatmung die Waage.'});};
+ },
+ /* Wasser: Was passiert? */
+ predict(cb,sp){
+  const [sc,ans,ex]=sp.f;const opts=shuffle(Object.keys(WSTATE));
+  H(cb,`<p class="instr">Welches Bild zeigt die Zelle danach?</p><p class="prompt">${esc(sc)}</p><div class="pics" id="pics"></div>`);
+  opts.forEach(s=>{const b=document.createElement('button');b.type='button';b.className='pic';b.innerHTML=mini(s)+'<span></span>';b.dataset.s=s;$('#pics').appendChild(b);
+    b.onclick=()=>{$('#pics').querySelectorAll('.pic').forEach(x=>{x.disabled=true;x.querySelector('span').textContent=WSTATE[x.dataset.s];if(x.dataset.s===ans)x.classList.add('ok');});
+      const ok=s===ans;if(!ok)b.classList.add('bad');grade(sp,ok,`<strong>${ok?praise():'Nicht ganz.'}</strong><span><b>${WSTATE[ans]}:</b> ${esc(ex)}</span>`,null,{sum:`${esc(sc)} → <b>${WSTATE[ans]}</b>`});};});
+ },
+ zustand(cb,sp){
+  const s=sp.f;const X={prall:'Die Vakuole ist voll und drückt gegen die Zellwand.',welk:'Die Vakuole hat Wasser verloren, der Druck auf die Wand ist weg.',plasmo:'Das Zellplasma hat sich von der Zellwand gelöst – typisch für Salzwasser.'};
+  H(cb,`<p class="prompt">Wie heißt dieser Zustand?</p><div class="bigpic">${mini(s)}</div>`);
+  const opts=shuffle(Object.keys(WSTATE));
+  choices(cb,opts,opts.indexOf(s),x=>WSTATE[x],ok=>grade(sp,ok,`<strong>${ok?praise():'Nicht ganz.'}</strong><span><b>${WSTATE[s]}:</b> ${X[s]}</span>`,null,{sum:`${WSTATE[s]}: ${X[s]}`}));
+ },
+ /* Mikroskop-Check */
+ lupe(cb,sp){
+  const ks=sp.ks,on=new Set();
+  H(cb,`<p class="prompt">Was siehst du im Schulmikroskop?</p><p class="instr">Tippe alle Bestandteile an, die man im Lichtmikroskop erkennen kann. Dann „Prüfen“.</p><div class="lupe" id="lp"></div><button class="check" id="chk" type="button">Prüfen</button>`);
+  ks.forEach(k=>{const b=document.createElement('button');b.type='button';b.setAttribute('aria-pressed','false');b.innerHTML=icon(k)+esc(O[k].short||O[k].n);b.onclick=()=>{on.has(k)?on.delete(k):on.add(k);b.setAttribute('aria-pressed',on.has(k));};b.dataset.k=k;$('#lp').appendChild(b);});
+  $('#chk').onclick=()=>{$('#chk').disabled=true;let n=0;$('#lp').querySelectorAll('button').forEach(b=>{b.disabled=true;const k=b.dataset.k,right=on.has(k)===!!O[k].lm;if(right)n++;b.classList.add(right?'ok':'bad');});
+    const ok=n===ks.length;grade(sp,ok,`<strong>${ok?praise():`${n} von ${ks.length} richtig.`}</strong><span>Sichtbar: ${ks.filter(k=>O[k].lm).map(k=>esc(O[k].short||O[k].n)).join(', ')}. Zu klein (nur Elektronenmikroskop): ${ks.filter(k=>!O[k].lm).map(k=>esc(O[k].short||O[k].n)).join(', ')}.</span><span class="ex">Das Lichtmikroskop zeigt Dinge ab etwa 0,2 µm.</span>`,null,{sum:'Im Lichtmikroskop: Zellwand, Zellkern, Vakuole, Chloroplasten. Nicht: Ribosomen, ER, Golgi, Mitochondrien.'});};
+ },
+ sortiere(cb,sp){
+  const items=sp.items,order=[];let done=false;
+  H(cb,`<p class="prompt">Vom kleinsten zum größten!</p><p class="instr">Tippe die Dinge der Größe nach an – fang beim kleinsten an. Noch mal tippen nimmt es zurück.</p><div class="sortl" id="sl"></div>`);
+  const draw=()=>{$('#sl').innerHTML=items.map((it,i)=>{const p=order.indexOf(i);const cls=done?(sp.sorted&&sp.sorted[i]?' ok':' bad'):'';return `<button class="sorti${p>=0?' on':''}${cls}" type="button" data-i="${i}" ${done?'disabled':''}><span class="badge">${p>=0?p+1:''}</span><span>${esc(it[0])}</span>${done?`<span class="sz">${esc(it[1])}</span>`:''}</button>`;}).join('');
+    $('#sl').querySelectorAll('.sorti').forEach(b=>b.onclick=()=>{const i=+b.dataset.i,p=order.indexOf(i);if(p>=0)order.splice(p);else order.push(i);draw();if(order.length===items.length)fin();});};
+  const fin=()=>{done=true;const true_=items.map((x,i)=>i).sort((a,b)=>items[a][2]-items[b][2]);sp.sorted={};order.forEach((i,p)=>sp.sorted[i]=true_[p]===i);
+    const ok=order.every((i,p)=>true_[p]===i);draw();
+    grade(sp,ok,`<strong>${ok?praise():'Nicht ganz.'}</strong><span>Richtig: ${true_.map(i=>`${esc(items[i][0])} (${esc(items[i][1])})`).join(' &lt; ')}</span><span class="ex">1 mm = 1000 µm · 1 µm = 1000 nm</span>`,null,{sum:`Größen: ${true_.map(i=>esc(items[i][0])).join(' &lt; ')}`});};
+  draw();
+ }
+};
+/* =================== MIKROSKOP =================== */
+function makeScope(){
+  const svg=el('svg',{viewBox:'0 0 420 470',role:'img','aria-label':'Mikroskop'});
+  const G={};const grp=k=>{const g=el('g',{class:'org','data-key':k},svg);G[k]=g;return g;};
+  const body='fill:var(--petal);stroke:var(--c-wall-d);stroke-width:2';
+  const st=grp('mk_stativ');
+  el('path',{d:rr(70,405,290,42,20),style:body},st);
+  el('rect',{x:92,y:445,width:30,height:7,rx:3,style:'fill:var(--c-wall-d)'},st);el('rect',{x:308,y:445,width:30,height:7,rx:3,style:'fill:var(--c-wall-d)'},st);
+  el('path',{d:'M110,410 C 100,330 110,250 160,200 L 205,170 L 222,198 C 182,232 168,300 172,410 Z',style:body},st);
+  el('rect',{x:165,y:272,width:45,height:22,style:body},st);
+  el('path',{d:rr(190,150,124,46,20),style:body},st);
+  const tu=grp('mk_tubus');
+  el('path',{d:'M206,163 L230,147 L181,70 L157,86 Z',style:'fill:var(--c-wall);stroke:var(--c-wall-d);stroke-width:2'},tu);
+  const ok=grp('mk_okular');
+  el('path',{d:'M179,71.5 L159,84.5 L142.7,59 L163,46 Z',style:'fill:var(--accent);stroke:var(--accent-d);stroke-width:2'},ok);
+  el('path',{d:'M163,46 L142.7,59',style:'stroke:var(--accent-ink);stroke-width:6;stroke-linecap:round'},ok);
+  el('circle',{cx:160,cy:62,r:24,style:'fill:transparent'},ok);
+  const rv=grp('mk_revolver');
+  el('ellipse',{cx:260,cy:202,rx:52,ry:11,style:'fill:var(--c-gol);stroke:var(--c-wall-d);stroke-width:2'},rv);
+  el('path',{d:'M212,200 Q260,214 308,200',style:'fill:none;stroke:var(--c-wall-d);stroke-width:1.5'},rv);
+  const ob=grp('mk_objektiv');
+  const obj=(x,a,h)=>{const g=el('g',{transform:`translate(${x},208) rotate(${a})`},ob);el('rect',{x:-11,y:0,width:22,height:h,rx:4,style:'fill:var(--c-mem);stroke:var(--c-wall-d);stroke-width:2'},g);el('rect',{x:-11,y:h*.45,width:22,height:5,style:'fill:var(--accent)'},g);el('rect',{x:-6,y:h-3,width:12,height:5,rx:2,style:'fill:var(--c-wall-d)'},g);};
+  obj(224,28,30);obj(296,-28,30);obj(260,0,40);
+  const bl=grp('mk_blende');
+  el('rect',{x:220,y:280,width:80,height:22,style:'fill:transparent'},bl);
+  el('ellipse',{cx:260,cy:291,rx:36,ry:9,style:'fill:var(--line);stroke:var(--ink);stroke-width:2'},bl);
+  el('ellipse',{cx:260,cy:291,rx:14,ry:4,style:'fill:var(--paper);stroke:var(--ink);stroke-width:1.5'},bl);
+  el('path',{d:'M292,293 l18,6',style:'stroke:var(--ink);stroke-width:3;stroke-linecap:round'},bl);
+  const ti=grp('mk_tisch');
+  el('rect',{x:158,y:262,width:204,height:15,rx:5,style:'fill:#1A1816;stroke:var(--ink);stroke-width:2'},ti);
+  el('rect',{x:196,y:254,width:28,height:5,rx:2,style:'fill:var(--muted)'},ti);el('rect',{x:298,y:254,width:28,height:5,rx:2,style:'fill:var(--muted)'},ti);
+  const oj=grp('mk_objekt');
+  el('rect',{x:214,y:248,width:92,height:16,style:'fill:transparent'},oj);
+  el('rect',{x:214,y:256,width:92,height:6,rx:1,style:'fill:var(--c-vac);stroke:var(--c-vac-d);stroke-width:1'},oj);
+  el('circle',{cx:260,cy:259,r:5,style:'fill:var(--bad)'},oj);
+  const la=grp('mk_lampe');
+  el('ellipse',{cx:256,cy:399,rx:34,ry:12,style:'fill:var(--sun);opacity:.25'},la);
+  el('ellipse',{cx:256,cy:400,rx:22,ry:7,style:'fill:var(--sun);stroke:var(--c-wall-d);stroke-width:2'},la);
+  el('rect',{x:226,y:388,width:60,height:24,style:'fill:transparent'},la);
+  const sc=grp('mk_schalter');
+  el('circle',{cx:322,cy:396,r:16,style:'fill:transparent'},sc);
+  el('rect',{x:313,y:386,width:18,height:16,rx:6,style:'fill:var(--c-er);stroke:var(--c-mit-d);stroke-width:2'},sc);
+  const gt=grp('mk_grobtrieb');
+  el('circle',{cx:152,cy:318,r:27,style:'fill:var(--c-chl-d);stroke:var(--ink);stroke-width:2'},gt);
+  el('circle',{cx:152,cy:318,r:21,style:'fill:none;stroke:var(--leaf);stroke-width:3;stroke-dasharray:3 4'},gt);
+  const ft=grp('mk_feintrieb');
+  el('circle',{cx:128,cy:332,r:14,style:'fill:var(--leaf);stroke:var(--ink);stroke-width:2'},ft);
+  el('circle',{cx:128,cy:332,r:5,style:'fill:var(--c-chl-d)'},ft);
+  return {svg,G};
+}
+const recapM=k=>`<span><b>${esc(M[k].nom)}</b> ${esc(M[k].fn)}.</span>`;
+const capM=k=>{const t=M[k].ab||(M[k].fn[0].toUpperCase()+M[k].fn.slice(1)+'.');return t;};
+function mview(mag){const w=mag/4,id='pv'+Math.random().toString(36).slice(2,7);
+  return `<svg viewBox="0 0 200 200" aria-hidden="true" style="width:160px;height:160px"><defs><pattern id="${id}" width="${w*1.7}" height="${w*.7}" patternUnits="userSpaceOnUse"><rect x="1" y="1" width="${w*1.7-2}" height="${w*.7-2}" style="fill:rgba(207,229,214,.25);stroke:var(--petal);stroke-width:${Math.max(.6,w/25)}"/><circle cx="${w*.5}" cy="${w*.35}" r="${Math.max(.8,w/9)}" style="fill:var(--c-nuc)"/></pattern><clipPath id="c${id}"><circle cx="100" cy="100" r="92"/></clipPath></defs><circle cx="100" cy="100" r="96" style="fill:#0d0c0b"/><rect width="200" height="200" fill="url(#${id})" clip-path="url(#c${id})"/><circle cx="100" cy="100" r="92" style="fill:none;stroke:var(--line);stroke-width:5"/></svg>`;}
+Object.assign(T,{
+ m_finde_n(cb,sp){mfinde(cb,sp,`Tippe auf ${M[sp.k].akk}.`);},
+ m_finde_f(cb,sp){mfinde(cb,sp,M[sp.k].wo);},
+ m_benenne(cb,sp){
+  H(cb,`<p class="prompt">Wie heißt der leuchtende Teil?</p><div class="cellbox" id="cl"></div>`);
+  const C=makeScope();$('#cl').appendChild(C.svg);C.svg.classList.add('dimmed');C.G[sp.k].classList.add('hl');
+  const opts=shuffle([sp.k,...shuffle(MKP.filter(x=>x!==sp.k)).slice(0,3)]);
+  choices(cb,opts,opts.indexOf(sp.k),k=>esc(M[k].n),ok=>{C.G[sp.k].classList.remove('hl');grade(sp,ok,`<strong>${ok?praise():'Nicht ganz.'}</strong>${ok?'':`<span>Das ist ${esc(M[sp.k].akk.replace(/^den /,'der ').replace(/^ein /,'ein '))}.</span>`}${recapM(sp.k)}`,null,{sum:`<b>${esc(M[sp.k].n)}</b> ${esc(M[sp.k].fn)}`});},'two');
+ },
+ m_funktion(cb,sp){
+  H(cb,`<p class="prompt">${esc(M[sp.k].nom)} …</p><p class="instr">Wozu dient dieser Teil?</p>`);
+  let others=shuffle(MKP.filter(x=>x!==sp.k)).slice(0,3);
+  const opts=shuffle([sp.k,...others]);
+  choices(cb,opts,opts.indexOf(sp.k),k=>esc(M[k].fn),ok=>grade(sp,ok,`<strong>${ok?praise():'Nicht ganz.'}</strong>${recapM(sp.k)}`,null,{sum:`<b>${esc(M[sp.k].n)}</b> ${esc(M[sp.k].fn)}`}));
+ },
+ m_schreib(cb,sp){
+  const o=M[sp.k];
+  H(cb,`<p class="instr">Schreib den Namen des leuchtenden Teils.</p><div class="cellbox" id="cl"></div><p class="small">Tipp: Dieser Teil ${esc(o.fn)}.</p>
+   <form class="inp" id="f"><input id="ans" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Name des Teils"><button class="check" type="submit">Prüfen</button></form>`);
+  const C=makeScope();$('#cl').appendChild(C.svg);C.svg.classList.add('dimmed');C.G[sp.k].classList.add('hl');
+  const inp=$('#ans');
+  $('#f').onsubmit=e=>{e.preventDefault();const raw=inp.value.trim();if(!raw)return;inp.disabled=true;e.target.querySelector('button').disabled=true;
+    const n=norm(raw),ok=o.al.some(a=>norm(a)===n);
+    if(ok){inp.classList.add('ok');grade(sp,true,`<strong>${praise()}</strong><span>${esc(o.n)}</span>${recapM(sp.k)}`);}
+    else{inp.classList.add('bad');const close=o.al.some(a=>lev(n,norm(a))<=2);
+      grade(sp,false,`<strong>${close?'Fast! Schau genau auf die Buchstaben:':'Richtig wäre:'}</strong><span class="sol">${diffHTML(raw,o.n)}</span><span class="ex">Du hast geschrieben: ${esc(raw)}</span>${recapM(sp.k)}`,null,{sum:`<b>${esc(o.n)}</b> (richtig schreiben!)`});}};
+ },
+ m_beschriften(cb,sp){
+  H(cb,`<p class="prompt">Beschrifte das Mikroskop.</p><p class="instr">Tippe einen Namen an und dann die passende Nummer – im Bild oder in der Liste.</p><div class="cellbox" id="cl"></div><div class="pool" id="pool"></div><div class="slots" id="slots"></div><button class="check" id="chk" type="button" disabled>Prüfen</button>`);
+  const C=makeScope();$('#cl').appendChild(C.svg);
+  const ks=sp.ks,asg={},pins={};let sel=null,done=false;
+  ks.forEach((k,i)=>{const [x,y]=M[k].pin;const g=el('g',{class:'pin',transform:`translate(${x},${y})`},C.svg);el('circle',{r:15},g);const t=el('text',{},g);t.textContent=i+1;t.setAttribute('style','font-size:18px');pins[k]=g;g.addEventListener('click',()=>place(i));});
+  const names=shuffle(ks);
+  const draw=()=>{
+    $('#pool').innerHTML=names.map(k=>`<button class="tile" type="button" data-k="${k}" aria-pressed="${sel===k}" ${Object.values(asg).includes(k)||done?'disabled':''}>${esc(M[k].n)}</button>`).join('');
+    $('#slots').innerHTML=ks.map((k,i)=>`<button class="slotrow${done?(asg[i]===k?' ok':' bad'):''}" type="button" data-i="${i}"><span class="num">${i+1}</span><span class="got${asg[i]?' filled':''}">${asg[i]?esc(M[asg[i]].n):'antippen …'}${done&&asg[i]!==k?` → <b>${esc(M[k].n)}</b>`:''}</span></button>`).join('');
+    ks.forEach((k,i)=>pins[k].classList.toggle('act',!!asg[i]));
+    $('#pool').querySelectorAll('.tile').forEach(b=>b.onclick=()=>{sel=sel===b.dataset.k?null:b.dataset.k;draw();});
+    $('#slots').querySelectorAll('.slotrow').forEach(b=>b.onclick=()=>place(+b.dataset.i));
+    $('#chk').disabled=done||Object.keys(asg).length<ks.length;
+  };
+  const place=i=>{if(done)return;if(sel){asg[i]=sel;sel=null;}else if(asg[i])delete asg[i];draw();};
+  $('#chk').onclick=()=>{done=true;const per={};let n=0;ks.forEach((k,i)=>{per[k]=asg[i]===k;if(per[k])n++;pins[k].classList.add(per[k]?'ok':'bad');});draw();
+    grade(sp,n>=ks.length-1,`<strong>${n===ks.length?'Alles richtig beschriftet!':`${n} von ${ks.length} richtig.`}</strong>${ks.filter(k=>!per[k]).map(k=>`<span>${esc(M[k].n)}: ${esc(M[k].fn)}.</span>`).join('')}`,per,{sum:`Mikroskop beschriften: ${ks.filter(k=>!per[k]).map(k=>esc(M[k].n)).join(', ')}`});};
+  draw();
+ },
+ m_verbinde(cb,sp){
+  const ks=sp.ks,rows=shuffle(ks),mist={};let sel=null;const found=new Set();
+  H(cb,`<p class="prompt">Verbinde Teil und Funktion.</p><p class="instr">Tippe einen Namen an und dann die passende Funktion – wie auf dem Arbeitsblatt.</p><div class="pool" id="pool"></div><div class="slots" id="slots"></div>`);
+  const draw=()=>{
+    $('#pool').innerHTML=ks.map(k=>`<button class="tile" type="button" data-k="${k}" aria-pressed="${sel===k}" ${found.has(k)?'disabled':''}>${esc(M[k].n)}</button>`).join('');
+    $('#slots').innerHTML=rows.map(k=>`<button class="slotrow${found.has(k)?' ok':''}" type="button" data-k="${k}"><span class="num">${found.has(k)?'✓':'?'}</span><span class="vrow"><span>${esc(capM(k))}</span>${found.has(k)?`<span class="got filled">${esc(M[k].n)}</span>`:''}</span></button>`).join('');
+    $('#pool').querySelectorAll('.tile').forEach(b=>b.onclick=()=>{sel=sel===b.dataset.k?null:b.dataset.k;draw();});
+    $('#slots').querySelectorAll('.slotrow').forEach(b=>b.onclick=()=>{const k=b.dataset.k;if(!sel||found.has(k))return;
+      if(sel===k){found.add(k);sel=null;buzz(15);draw();if(found.size===ks.length)fin();}
+      else{mist[sel]=1;mist[k]=1;buzz([30,30,30]);b.classList.add('bad','shake');sel=null;setTimeout(draw,450);}});
+  };
+  const fin=()=>{const per={};ks.forEach(k=>per[k]=!mist[k]);const m=Object.keys(mist).length;
+    grade(sp,m<=2,`<strong>${m?'Geschafft!':'Ohne Fehler – stark!'}</strong>${m?`<span class="ex">Hier hast du gezögert: ${Object.keys(mist).map(k=>esc(M[k].n)).join(', ')}</span>`:''}`,per,{sum:`Verbinden: ${Object.keys(mist).map(k=>`${esc(M[k].n)} – ${esc(capM(k))}`).join(' · ')}`});};
+  draw();
+ },
+ m_vergr(cb,sp){
+  const OBJ=[4,10,40];
+  if(sp.v==='rechne'){
+   const r=sp.ok*sp.ob;const opts=shuffle([...new Set([r,sp.ok+sp.ob,r*10,Math.max(2,r/2)])].slice(0,4));
+   H(cb,`<p class="prompt">Wie stark wird vergrößert?</p><p>Auf dem Okular steht <b>${sp.ok}x</b>, auf dem Objektiv <b>${sp.ob}x</b>.</p>`);
+   choices(cb,opts,opts.indexOf(r),x=>`${x}-fach`,ok=>{H(cb,`<div style="align-self:center">${mview(r)}</div>`);grade(sp,ok,`<strong>${ok?praise():'Nicht ganz.'}</strong><span>Okular × Objektiv = ${sp.ok} × ${sp.ob} = <b>${r}-fach</b>.</span><span class="ex">So sieht eine Zwiebelhaut bei ${r}-facher Vergrößerung ungefähr aus.</span>`,null,{sum:`Vergrößerung: Okular × Objektiv (z. B. ${sp.ok} × ${sp.ob} = ${r})`});},'two');
+  }else{
+   const goal=10*sp.ob;let cur=4;
+   H(cb,`<p class="prompt">Stell eine ${goal}-fache Vergrößerung ein.</p><p>Das Okular vergrößert <b>10x</b>. Dreh den Objektivrevolver: Welches Objektiv brauchst du?</p><div style="align-self:center" id="vw">${mview(40)}</div><p class="live" id="vl">Jetzt: 10 × 4 = 40-fach</p><div class="opts" id="ob" style="grid-template-columns:repeat(3,1fr)">${OBJ.map(o=>`<button class="opt" type="button" data-o="${o}" style="text-align:center;font-family:var(--display);font-size:1.3rem">${o}x</button>`).join('')}</div><button class="check" id="chk" type="button">Fertig</button>`);
+   $('#ob').querySelectorAll('.opt').forEach(b=>b.onclick=()=>{cur=+b.dataset.o;$('#ob').querySelectorAll('.opt').forEach(x=>x.style.borderColor=x===b?'var(--accent)':'');$('#vw').innerHTML=mview(10*cur);$('#vl').textContent=`Jetzt: 10 × ${cur} = ${10*cur}-fach`;});
+   $('#chk').onclick=()=>{$('#chk').disabled=true;$('#ob').querySelectorAll('.opt').forEach(x=>{x.disabled=true;if(+x.dataset.o===sp.ob)x.classList.add('ok');else if(+x.dataset.o===cur)x.classList.add('bad');});
+     const ok=cur===sp.ob;grade(sp,ok,`<strong>${ok?praise():'Nicht ganz.'}</strong><span>Du brauchst das <b>${sp.ob}x</b>-Objektiv: 10 × ${sp.ob} = ${goal}-fach.</span><span class="ex">Je stärker die Vergrößerung, desto kleiner der Ausschnitt, den du siehst.</span>`,null,{sum:`${goal}-fach = Okular 10x × Objektiv ${sp.ob}x`});};
+  }
+ },
+ m_reihe(cb,sp){
+  const items=sp.items,order=[];let done=false,res={};
+  H(cb,`<p class="prompt">In welcher Reihenfolge?</p><p class="instr">Tippe die Schritte beim Mikroskopieren der Reihe nach an. Noch mal tippen nimmt einen Schritt zurück.</p><div class="sortl" id="sl"></div>`);
+  const draw=()=>{$('#sl').innerHTML=items.map((it,i)=>{const p=order.indexOf(i);return `<button class="sorti${p>=0?' on':''}${done?(res[i]?' ok':' bad'):''}" type="button" data-i="${i}" ${done?'disabled':''}><span class="badge">${p>=0?p+1:''}</span><span>${esc(STEPS[it])}</span></button>`;}).join('');
+    $('#sl').querySelectorAll('.sorti').forEach(b=>b.onclick=()=>{const i=+b.dataset.i,p=order.indexOf(i);if(p>=0)order.splice(p);else order.push(i);draw();if(order.length===items.length)fin();});};
+  const fin=()=>{done=true;const right=items.map((x,i)=>i).sort((a,b)=>items[a]-items[b]);order.forEach((i,p)=>res[i]=right[p]===i);const ok=order.every((i,p)=>right[p]===i);draw();
+    grade(sp,ok,`<strong>${ok?praise():'Nicht ganz.'}</strong><ol style="margin:0;padding-left:1.2em">${right.map(i=>`<li>${esc(STEPS[items[i]])}</li>`).join('')}</ol>`,null,{sum:'Reihenfolge: tragen und Lampe an → kleinstes Objektiv, Präparat festklemmen → von der Seite heranfahren → mit Grobtrieb scharf → Feintrieb und Blende → erst dann größeres Objektiv.'});};
+  draw();
+ }
+});
+function mfinde(cb,sp,prompt){
+  H(cb,`<p class="prompt">${esc(prompt)}</p><div class="cellbox" id="cl"></div>`);
+  const C=makeScope();$('#cl').appendChild(C.svg);let done=false;
+  MKP.forEach(k=>C.G[k].addEventListener('click',()=>{if(done)return;done=true;const ok=k===sp.k;
+    C.G[sp.k].classList.add(ok?'ok':'hl');if(!ok)C.G[k].classList.add('bad');
+    grade(sp,ok,`<strong>${ok?praise():'Nicht ganz.'}</strong>${ok?'':`<span>Du hast ${esc(M[k].akk)} getippt. Gesucht war ${esc(M[sp.k].akk)} – es leuchtet jetzt.</span>`}${recapM(sp.k)}`,null,{sum:`<b>${esc(M[sp.k].n)}</b> ${esc(M[sp.k].fn)}`});}));
+}
+/* =================== SKELETT ZEICHNEN =================== */
+const BONE='fill:var(--bone,var(--petal));stroke:var(--c-wall-d);stroke-width:1.5';
+const DARK='fill:#1A1816';
+function boneLine(g,d,w,hit){
+  if(hit)el('path',{d,style:`fill:none;stroke:transparent;stroke-width:${hit};stroke-linecap:round`},g);
+  el('path',{d,style:`fill:none;stroke:var(--c-wall-d);stroke-width:${w+3};stroke-linecap:round`},g);
+  el('path',{d,style:`fill:none;stroke:var(--bone,var(--petal));stroke-width:${w};stroke-linecap:round`},g);
+}
+const BODY_OUTLINE='M160,6 C 188,6 202,30 199,58 C 197,84 186,98 177,103 L 177,118 C 198,124 222,132 229,150 C 238,190 238,250 246,338 C 250,362 252,390 244,394 C 236,398 232,372 228,352 C 222,300 218,244 211,206 L 206,252 C 208,300 216,340 216,382 C 212,442 208,502 202,580 C 202,596 198,606 186,606 L 166,606 C 164,560 164,480 160,424 C 156,480 156,560 154,606 L 134,606 C 122,606 118,596 118,580 C 112,502 108,442 104,382 C 104,340 112,300 114,252 L 109,206 C 102,244 98,300 92,352 C 88,372 84,398 76,394 C 68,390 70,362 74,338 C 82,250 82,190 91,150 C 98,132 122,124 143,118 L 143,103 C 134,98 123,84 121,58 C 118,30 132,6 160,6 Z';
+function makeBody(opt){
+  opt=opt||{};
+  const svg=el('svg',{viewBox:opt.crop?'54 90 212 334':'0 0 320 612',role:'img','aria-label':'Menschliches Skelett'});
+  const G={};const grp=k=>{const g=el('g',{class:'org','data-key':k},svg);G[k]=g;return g;};
+  if(opt.ghost)el('path',{d:BODY_OUTLINE,style:'fill:rgba(111,183,208,.10);stroke:var(--p-h2o);stroke-width:1.5;stroke-dasharray:5 4'},svg);
+  const sb=grp('sk_schulterblatt');
+  el('path',{d:'M103,153 L136,158 L122,216 Z',style:BONE},sb);el('path',{d:'M217,153 L184,158 L198,216 Z',style:BONE},sb);
+  const ws=grp('sk_wirbelsaeule');
+  el('rect',{x:146,y:102,width:28,height:48,style:'fill:transparent'},ws);el('rect',{x:144,y:290,width:32,height:104,style:'fill:transparent'},ws);
+  let y=104;for(let i=0;i<7;i++){el('rect',{x:154,y,width:12,height:5,rx:2,style:BONE},ws);y+=6.6;}
+  y=151;for(let i=0;i<12;i++){el('rect',{x:152,y,width:16,height:9.5,rx:2,style:BONE},ws);y+=11.8;}
+  y=294;for(let i=0;i<5;i++){el('rect',{x:149,y,width:22,height:9,rx:2,style:BONE},ws);y+=10.5;}
+  el('path',{d:'M147,348 L173,348 L166,386 L154,386 Z',style:BONE},ws);el('rect',{x:156,y:388,width:8,height:8,rx:3,style:BONE},ws);
+  const bk=grp('sk_becken');
+  el('path',{d:'M149,350 C 124,330 98,338 98,360 C 98,382 118,394 141,393 L 151,378 Z',style:BONE},bk);
+  el('path',{d:'M171,350 C 196,330 222,338 222,360 C 222,382 202,394 179,393 L 169,378 Z',style:BONE},bk);
+  boneLine(bk,'M141,394 Q160,406 179,394',6);
+  el('circle',{cx:128,cy:382,r:5,style:DARK},bk);el('circle',{cx:192,cy:382,r:5,style:DARK},bk);
+  const rp=grp('sk_rippen');
+  for(let i=0;i<10;i++){const y0=160+i*12.5,w=34+24*Math.sin(Math.PI*(i+2)/12);
+    [1,-1].forEach(s=>{const X=x=>s>0?x:320-x;
+      const d=`M${X(158)},${y0} Q${X(160-w*1.15).toFixed(1)},${y0-4} ${X(160-w).toFixed(1)},${y0+12} Q${X(160-w*.6).toFixed(1)},${y0+24} ${X(i<7?155:150-w*.2).toFixed(1)},${y0+(i<7?20:22)}`;
+      boneLine(rp,d,3.2,11);});}
+  const br=grp('sk_brustbein');
+  el('path',{d:'M151,153 L169,153 L166,172 L166,240 L160,254 L154,240 L154,172 Z',style:BONE},br);
+  const sl=grp('sk_schluesselbein');
+  boneLine(sl,'M154,151 Q130,143 105,150',5,16);boneLine(sl,'M166,151 Q190,143 215,150',5,16);
+  const ar=grp('sk_arme'),bn=grp('sk_beine');
+  [1,-1].forEach(s=>{const X=x=>s>0?x:320-x;
+    boneLine(ar,`M${X(101)},156 L${X(88)},252`,7,14);el('circle',{cx:X(88),cy:254,r:5,style:BONE},ar);
+    boneLine(ar,`M${X(85)},258 L${X(75)},344`,4,10);boneLine(ar,`M${X(92)},258 L${X(86)},344`,4,10);
+    el('rect',{x:Math.min(X(72),X(90)),y:345,width:18,height:9,rx:3,style:BONE},ar);
+    [[72,68],[77,75],[82,82],[87,90]].forEach(([a,b])=>boneLine(ar,`M${X(a)},356 L${X(b)},388`,2.6,8));
+    boneLine(bn,`M${X(130)},390 L${X(134)},484`,9,16);el('circle',{cx:X(134),cy:490,r:6,style:BONE},bn);
+    boneLine(bn,`M${X(137)},497 L${X(137)},578`,6,12);boneLine(bn,`M${X(126)},499 L${X(127)},576`,3,8);
+    boneLine(bn,`M${X(140)},586 L${X(112)},598`,6,12);});
+  const kp=grp('sk_kopf');
+  el('ellipse',{cx:160,cy:50,rx:34,ry:40,style:BONE},kp);
+  el('path',{d:'M134,66 Q136,104 160,108 Q184,104 186,66 Z',style:BONE},kp);
+  el('ellipse',{cx:147,cy:56,rx:8,ry:7,style:DARK},kp);el('ellipse',{cx:173,cy:56,rx:8,ry:7,style:DARK},kp);
+  el('path',{d:'M160,64 L155,77 L165,77 Z',style:DARK},kp);
+  el('path',{d:'M146,88 L174,88 M150,84 L150,92 M156,84 L156,92 M162,84 L162,92 M168,84 L168,92',style:'stroke:var(--c-wall-d);stroke-width:1.3'},kp);
+  return {svg,G};
+}
+function makeSkull(){
+  const svg=el('svg',{viewBox:'0 0 300 330',role:'img','aria-label':'Schädel von vorn'});
+  const G={};const grp=k=>{const g=el('g',{class:'org','data-key':k},svg);G[k]=g;return g;};
+  const hi=grp('hirn');
+  el('path',{d:'M150,18 C 66,18 34,84 40,150 C 44,196 58,214 72,226 L 228,226 C 242,214 256,196 260,150 C 266,84 234,18 150,18 Z',style:BONE},hi);
+  const st=grp('sk_stirnbein');
+  el('path',{d:'M150,22 C 80,22 46,78 46,124 C 80,112 118,108 150,110 C 182,108 220,112 254,124 C 254,78 220,22 150,22 Z',style:BONE+';fill-opacity:.95'},st);
+  el('path',{d:'M150,26 L150,104',style:'stroke:var(--c-wall-d);stroke-width:1;stroke-dasharray:3 4;opacity:.6'},st);
+  el('ellipse',{cx:106,cy:150,rx:30,ry:24,style:DARK,'pointer-events':'none'},svg);
+  el('ellipse',{cx:194,cy:150,rx:30,ry:24,style:DARK,'pointer-events':'none'},svg);
+  const na=grp('sk_nasenbein');el('rect',{x:132,y:118,width:36,height:46,style:'fill:transparent'},na);
+  el('path',{d:'M141,122 L159,122 L164,160 L136,160 Z',style:BONE},na);
+  el('path',{d:'M150,162 C 140,170 133,186 137,198 L 150,193 L 163,198 C 167,186 160,170 150,162 Z',style:DARK,'pointer-events':'none'},svg);
+  const jo=grp('sk_jochbein');
+  el('path',{d:'M58,166 C 72,156 100,168 114,184 C 104,200 80,202 64,194 C 56,186 54,174 58,166 Z',style:BONE},jo);
+  el('path',{d:'M242,166 C 228,156 200,168 186,184 C 196,200 220,202 236,194 C 244,186 246,174 242,166 Z',style:BONE},jo);
+  const un=grp('sk_unterkiefer');
+  el('path',{d:'M76,214 C 80,270 112,314 150,316 C 188,314 220,270 224,214 L 206,216 C 206,256 184,284 150,286 C 116,284 94,256 94,216 Z',style:BONE},un);
+  for(let i=0;i<8;i++)el('rect',{x:113+i*9.5,y:268,width:8,height:14,rx:2,style:'fill:var(--c-mem);stroke:var(--c-wall-d);stroke-width:1'},un);
+  const ob=grp('sk_oberkiefer');
+  el('path',{d:'M102,190 C 120,202 136,200 150,198 C 164,200 180,202 198,190 L 206,232 C 184,241 116,241 94,232 Z',style:BONE},ob);
+  for(let i=0;i<8;i++)el('rect',{x:113+i*9.5,y:236,width:8,height:15,rx:2,style:'fill:var(--c-mem);stroke:var(--c-wall-d);stroke-width:1'},ob);
+  return {svg,G};
+}
+/* Wirbelsäule von der Seite (vorn = links) */
+function makeSpine(counts,opt){
+  opt=opt||{};counts=counts||[7,12,5];
+  const secs=[['sp_hals',counts[0],9,26,3],['sp_brust',counts[1],12,34,3],['sp_lenden',counts[2],16,44,5]];
+  let L=0;secs.forEach(s=>L+=s[1]*(s[2]+s[4]));L+=62+20;
+  const H=L+40,svg=el('svg',{viewBox:`0 0 300 ${H}`,role:'img','aria-label':'Wirbelsäule von der Seite'});
+  const G={};const grp=k=>{const g=el('g',{class:'org','data-key':k},svg);G[k]=g;return g;};
+  const CX=opt.labels?200:150;
+  const X=y=>CX+24*-Math.cos(2*Math.PI*1.75*((y-20)/L-.1));
+  const ang=y=>Math.atan2(X(y+1)-X(y-1),2)*-180/Math.PI;
+  let y=20;const ranges={};
+  secs.forEach(([k,n,h,w,gap])=>{const g=grp(k);const y0=y;const hit=el('rect',{style:'fill:transparent'},g);
+    for(let i=0;i<n;i++){const cy=y+h/2,cx=X(cy);const v=el('g',{transform:`translate(${cx.toFixed(1)},${cy.toFixed(1)}) rotate(${ang(cy).toFixed(1)})`},g);
+      el('rect',{x:-w/2,y:-h/2,width:w,height:h,rx:3,style:BONE},v);
+      el('path',{d:`M${w/2-1},${-h/2+1} L${w/2+w*.42},${h*.25} L${w/2+w*.36},${h/2+2} L${w/2-1},${h/2-1} Z`,style:BONE},v);
+      el('rect',{x:-w/2+2,y:h/2,width:w-4,height:gap,rx:1.5,style:'fill:var(--c-vac)'},v);
+      y+=h+gap;}
+    ranges[k]=[y0,y];Object.entries({x:CX-90,y:y0-1,width:180,height:y-y0+2}).forEach(([a,b])=>hit.setAttribute(a,b));});
+  const gk=grp('sp_kreuz');const y0=y,xa=X(y0),xb=X(y0+60);
+  el('rect',{x:CX-80,y:y0,width:170,height:62,style:'fill:transparent'},gk);
+  el('path',{d:`M${xa-24},${y0} L${xa+24},${y0} L${xb+10},${y0+60} L${xb-8},${y0+60} Z`,style:BONE},gk);
+  [12,24,36,48].forEach(d=>{const xx=X(y0+d),wd=24-d*.27;el('path',{d:`M${xx-wd+2},${y0+d} L${xx+wd-2},${y0+d}`,style:'stroke:var(--c-wall-d);stroke-width:1;stroke-dasharray:3 3'},gk);});
+  ranges.sp_kreuz=[y0,y0+62];y=y0+62;
+  const gs=grp('sp_steiss');el('rect',{x:CX-30,y:y,width:100,height:24,style:'fill:transparent'},gs);
+  [[8,6],[6,5],[4,5]].forEach(([w,h])=>{const xx=X(y)+4;el('rect',{x:xx-w/2,y:y+1,width:w,height:h,rx:2,style:BONE},gs);y+=h+1.5;});
+  ranges.sp_steiss=[y0+62,y];
+  if(opt.labels){const lab=[['sp_hals',`${counts[0]} Halswirbel`],['sp_brust',`${counts[1]} Brustwirbel`],['sp_lenden',`${counts[2]} Lendenwirbel`],['sp_kreuz','Kreuzbein'],['sp_steiss','Steißbein']];
+    lab.forEach(([k,t])=>{const [a,b]=ranges[k];const m=(a+b)/2;el('path',{d:`M140,${a+2} Q134,${a+2} 134,${a+6} L134,${b-6} Q134,${b-2} 140,${b-2}`,style:'fill:none;stroke:var(--c-wall);stroke-width:2'},svg);
+      const tx=el('text',{x:128,y:m,class:'lab',style:'font-size:17px;fill:var(--c-wall)','text-anchor':'end','dominant-baseline':'middle'},svg);tx.textContent=t;});}
+  return {svg,G,ranges};
+}
+/* Wirbel im Längsschnitt: Wirbelkörper, Bandscheiben, Rückenmark */
+function makeWirbel(){
+  const svg=el('svg',{viewBox:'0 0 300 300',role:'img','aria-label':'Ausschnitt der Wirbelsäule mit Bandscheiben und Rückenmark'});
+  const G={};const grp=k=>{const g=el('g',{class:'org','data-key':k},svg);G[k]=g;return g;};
+  const wb=grp('wirbel');
+  [28,108,188].forEach(y0=>{el('rect',{x:58,y:y0,width:92,height:62,rx:7,style:BONE},wb);
+    el('path',{d:`M150,${y0+8} L180,${y0+8} L180,${y0+22} L150,${y0+22} Z`,style:BONE},wb);
+    el('path',{d:`M178,${y0+4} L238,${y0+28} L266,${y0+70} L248,${y0+78} L222,${y0+44} L178,${y0+50} Z`,style:BONE},wb);});
+  const bs=grp('bandscheibe');
+  [[10,14],[92,14],[172,14],[252,14]].forEach(([y0,h])=>el('rect',{x:62,y:y0+(y0===10?0:2),width:84,height:h,rx:5,style:'fill:var(--c-vac);stroke:var(--c-vac-d);stroke-width:1.5'},bs));
+  const rm=grp('rueckenmark');el('rect',{x:150,y:2,width:30,height:296,style:'fill:transparent'},rm);
+  el('rect',{x:157,y:4,width:16,height:292,rx:8,style:'fill:var(--accent);stroke:var(--accent-d);stroke-width:1.5'},rm);
+  return {svg,G};
+}
+function figFor(k){return B[k].fig==='skull'?makeSkull():makeBody({crop:true});}
+const recapB=k=>`<span><b>${esc(B[k].nom)}</b> ${esc(B[k].fn)}.</span>`;
+const LVC=['#4a443a','#6d6350','#8f8468','#b8aa86','#e0d0a6','#fff4d6'];
+function bodyLevels(){
+  const avg=a=>Math.floor(a.reduce((s,k)=>s+lv(k),0)/a.length);
+  const m={sk_kopf:avg([...BSKULL,'sk_schaedel']),sk_wirbelsaeule:avg(['sk_wirbelsaeule','sk_wirbel','sk_bau','sk_modell']),sk_arme:avg(['sk_aufbau','sk_funktion']),sk_beine:avg(['sk_aufbau','sk_funktion'])};
+  ['sk_rippen','sk_brustbein','sk_schluesselbein','sk_schulterblatt','sk_becken'].forEach(k=>m[k]=lv(k));return m;}
+const SK2G=k=>BSKULL.includes(k)||k==='sk_schaedel'?['sk_kopf']:['sk_wirbel','sk_bau','sk_modell'].includes(k)?['sk_wirbelsaeule']:['sk_aufbau','sk_funktion'].includes(k)?['sk_arme','sk_beine']:[k];
+function progressBody(newSet){
+  const P=makeBody();const L=bodyLevels();
+  Object.entries(L).forEach(([g,l])=>{const e=P.G[g];if(!e)return;e.style.setProperty('--bone',LVC[l]);if(l>=5)e.classList.add('glow');});
+  if(newSet)newSet.forEach(k=>SK2G(k).forEach(g=>P.G[g]&&P.G[g].classList.add('new')));
+  return P;
+}
+function svgPoint(svg,e){const pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;return pt.matrixTransform(svg.getScreenCTM().inverse());}
+function parseLT(t){const parts=[],gaps=[];t.split(/(\[[^\]]+\])/).forEach(p=>{const m=p.match(/^\[([^\]#]+)(?:#(\w+))?\]$/);if(m){gaps.push({a:m[1],g:m[2]||null});parts.push({gap:gaps.length-1});}else if(p)parts.push({t:p});});return {parts,gaps};}
+
+/* =================== SKELETT-AUFGABEN =================== */
+Object.assign(TLABEL,{b_finde_n:'Finde den Knochen',b_finde_f:'Finde den Knochen',b_benenne:'Wie heißt der Knochen?',b_raetsel:'Wer bin ich?',b_beschriften:'Beschrifte',b_roentgen:'Röntgen-Rätsel',b_schreib:'Schreib es',malbuch:'Skelett-Malbuch',sorter:'Sortier-Station',schloss:'Zahlenschloss',baukasten:'Wirbel-Baukasten',spfinde:'Finde den Abschnitt',spreihe:'Von oben nach unten',spmemory:'Wirbel-Memory',luecke:'Lückentext',schaedelreg:'Schädel-Check',schaedelauf:'Was kann der Schädel?',querfinde:'Blick in die Wirbelsäule',stoss:'Stoßdämpfer-Test',biege:'Papprollen-Versuch'});
+function bfinde(cb,sp,prompt){
+  H(cb,`<p class="prompt">${esc(prompt)}</p><div class="cellbox fig" id="cl"></div>`);
+  const C=figFor(sp.k);$('#cl').appendChild(C.svg);let done=false;
+  Object.entries(C.G).forEach(([k,g])=>g.addEventListener('click',()=>{if(done)return;done=true;const ok=k===sp.k;
+    C.G[sp.k].classList.add(ok?'ok':'hl');if(!ok)g.classList.add('bad');
+    const got=B[k]?B[k].akk:EXTRA_INFO[k]?EXTRA_INFO[k][0]:'etwas anderes';
+    grade(sp,ok,`<strong>${ok?praise():'Nicht ganz.'}</strong>${ok?'':`<span>Du hast ${esc(got)} getippt. Gesucht war ${esc(B[sp.k].akk)} – es leuchtet jetzt.</span>`}${recapB(sp.k)}`,null,{sum:`<b>${esc(B[sp.k].n)}</b> ${esc(B[sp.k].fn)}`});}));
+}
+function sameFig(k,n){const pool=B[k].fig==='skull'?BSKULL:BBODY;return shuffle(pool.filter(x=>x!==k)).slice(0,n);}
+function lockUI(cb,labels,ranges,check,sum){
+  const vals=labels.map((_,i)=>ranges[i][2]);
+  H(cb,`<div class="lockwrap"><svg class="padlock" id="pl" viewBox="0 0 120 130" aria-hidden="true"><path id="shk" d="M30,62 L30,40 C30,10 90,10 90,40 L90,62" style="fill:none;stroke:var(--muted);stroke-width:12;stroke-linecap:round"/><rect x="14" y="58" width="92" height="66" rx="14" style="fill:var(--c-wall);stroke:var(--c-wall-d);stroke-width:3"/><circle cx="60" cy="86" r="9" style="fill:var(--c-wall-d)"/><rect x="56" y="88" width="8" height="20" rx="3" style="fill:var(--c-wall-d)"/></svg>
+   <div class="wheels">${labels.map((l,i)=>`<div class="wheel"><button type="button" data-i="${i}" data-d="1" aria-label="${esc(l)} plus">▲</button><output id="wv${i}">${vals[i]}</output><button type="button" data-i="${i}" data-d="-1" aria-label="${esc(l)} minus">▼</button><span>${esc(l)}</span></div>`).join('')}</div></div><button class="check" id="chk" type="button">Schloss öffnen</button>`);
+  cb.querySelectorAll('.wheel button').forEach(b=>b.onclick=()=>{const i=+b.dataset.i,[lo,hi]=ranges[i];vals[i]+= +b.dataset.d;if(vals[i]>hi)vals[i]=lo;if(vals[i]<lo)vals[i]=hi;$('#wv'+i).textContent=vals[i];buzz(5);});
+  $('#chk').onclick=()=>{cb.querySelectorAll('.wheel button').forEach(b=>b.disabled=true);$('#chk').disabled=true;const ok=check(vals);
+    $('#pl').classList.add(ok?'open':'nope');grade(cb._sp,ok,`<strong>${ok?'Klick – das Schloss ist offen!':'Das Schloss bleibt zu.'}</strong>${sum}`,null,{sum});};
+}
+Object.assign(T,{
+ b_finde_n(cb,sp){bfinde(cb,sp,`Tippe auf ${B[sp.k].akk}.`);},
+ b_finde_f(cb,sp){bfinde(cb,sp,B[sp.k].wo);},
+ b_benenne(cb,sp){
+  H(cb,`<p class="prompt">Wie heißt der leuchtende Knochen?</p><div class="cellbox fig" id="cl"></div>`);
+  const C=figFor(sp.k);$('#cl').appendChild(C.svg);C.svg.classList.add('dimmed');C.G[sp.k].classList.add('hl');
+  const opts=shuffle([sp.k,...sameFig(sp.k,3)]);
+  choices(cb,opts,opts.indexOf(sp.k),k=>esc(B[k].n),ok=>{C.G[sp.k].classList.remove('hl');grade(sp,ok,`<strong>${ok?praise():'Nicht ganz.'}</strong>${ok?'':`<span>Das ist ${esc(B[sp.k].akk.replace(/^den /,'der '))}.</span>`}${recapB(sp.k)}`,null,{sum:`<b>${esc(B[sp.k].n)}</b> ${esc(B[sp.k].fn)}`});},'two');
+ },
+ b_raetsel(cb,sp){
+  H(cb,`<div class="riddle"><span class="q">?</span><p>„${esc(B[sp.k].wer)}“</p></div><p class="prompt">Wer bin ich?</p>`);
+  const opts=shuffle([sp.k,...shuffle(BK.filter(x=>x!==sp.k)).slice(0,3)]);
+  choices(cb,opts,opts.indexOf(sp.k),k=>esc(B[k].n),ok=>{const s=document.createElement('div');s.className='cellbox fig small-fig';const C=figFor(sp.k);C.svg.classList.add('dimmed');C.G[sp.k].classList.add('hl');s.appendChild(C.svg);cb.appendChild(s);
+    grade(sp,ok,`<strong>${ok?praise():'Nicht ganz.'}</strong><span>Ich bin ${esc(B[sp.k].akk.replace(/^den /,'der ').replace(/^die Rippen/,'die Rippen'))}!</span>${recapB(sp.k)}`,null,{sum:`<b>${esc(B[sp.k].n)}</b>: ${esc(B[sp.k].wer)}`});},'two');
+ },
+ b_schreib(cb,sp){
+  const o=B[sp.k];
+  H(cb,`<p class="instr">Schreib den Namen des leuchtenden Knochens.</p><div class="cellbox fig" id="cl"></div><p class="small">Tipp: ${o.pl?'Diese Knochen':'Dieser Knochen'} ${esc(o.fn)}.</p>
+   <form class="inp" id="f"><input id="ans" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Name des Knochens"><button class="check" type="submit">Prüfen</button></form>`);
+  const C=figFor(sp.k);$('#cl').appendChild(C.svg);C.svg.classList.add('dimmed');C.G[sp.k].classList.add('hl');
+  const inp=$('#ans');
+  $('#f').onsubmit=e=>{e.preventDefault();const raw=inp.value.trim();if(!raw)return;inp.disabled=true;e.target.querySelector('button').disabled=true;
+    const n=norm(raw),ok=o.al.some(a=>norm(a)===n);
+    if(ok){inp.classList.add('ok');grade(sp,true,`<strong>${praise()}</strong><span>${esc(o.n)}</span>${recapB(sp.k)}`);}
+    else{inp.classList.add('bad');const close=o.al.some(a=>lev(n,norm(a))<=2);
+      grade(sp,false,`<strong>${close?'Fast! Schau genau auf die Buchstaben:':'Richtig wäre:'}</strong><span class="sol">${diffHTML(raw,o.n)}</span><span class="ex">Du hast geschrieben: ${esc(raw)}</span>${recapB(sp.k)}`,null,{sum:`<b>${esc(o.n)}</b> (richtig schreiben!)`});}};
+ },
+ b_beschriften(cb,sp){
+  const ks=sp.ks,skull=B[ks[0]].fig==='skull';
+  H(cb,`<p class="prompt">Beschrifte ${skull?'den Schädel':'das Rumpfskelett'}.</p><p class="instr">Tippe einen Namen an und dann die passende Nummer – im Bild oder in der Liste.</p><div class="cellbox fig" id="cl"></div><div class="pool" id="pool"></div><div class="slots" id="slots"></div><button class="check" id="chk" type="button" disabled>Prüfen</button>`);
+  const C=skull?makeSkull():makeBody({crop:true});$('#cl').appendChild(C.svg);
+  const asg={},pins={};let sel=null,done=false;
+  ks.forEach((k,i)=>{const [x,y]=B[k].pin;const g=el('g',{class:'pin',transform:`translate(${x},${y})`},C.svg);el('circle',{r:skull?15:12},g);const t=el('text',{},g);t.textContent=i+1;t.setAttribute('style',`font-size:${skull?18:15}px`);pins[k]=g;g.addEventListener('click',()=>place(i));});
+  const names=shuffle(ks);
+  const draw=()=>{
+    $('#pool').innerHTML=names.map(k=>`<button class="tile" type="button" data-k="${k}" aria-pressed="${sel===k}" ${Object.values(asg).includes(k)||done?'disabled':''}>${esc(B[k].n)}</button>`).join('');
+    $('#slots').innerHTML=ks.map((k,i)=>`<button class="slotrow${done?(asg[i]===k?' ok':' bad'):''}" type="button" data-i="${i}"><span class="num">${i+1}</span><span class="got${asg[i]?' filled':''}">${asg[i]?esc(B[asg[i]].n):'antippen …'}${done&&asg[i]!==k?` → <b>${esc(B[k].n)}</b>`:''}</span></button>`).join('');
+    ks.forEach((k,i)=>pins[k].classList.toggle('act',!!asg[i]));
+    $('#pool').querySelectorAll('.tile').forEach(b=>b.onclick=()=>{sel=sel===b.dataset.k?null:b.dataset.k;draw();});
+    $('#slots').querySelectorAll('.slotrow').forEach(b=>b.onclick=()=>place(+b.dataset.i));
+    $('#chk').disabled=done||Object.keys(asg).length<ks.length;
+  };
+  const place=i=>{if(done)return;if(sel){asg[i]=sel;sel=null;}else if(asg[i])delete asg[i];draw();};
+  $('#chk').onclick=()=>{done=true;const per={};let n=0;ks.forEach((k,i)=>{per[k]=asg[i]===k;if(per[k])n++;pins[k].classList.add(per[k]?'ok':'bad');});draw();
+    grade(sp,n>=ks.length-1,`<strong>${n===ks.length?'Alles richtig beschriftet!':`${n} von ${ks.length} richtig.`}</strong>${ks.filter(k=>!per[k]).map(k=>`<span>${esc(B[k].n)}: ${esc(B[k].fn)}.</span>`).join('')}`,per,{sum:`Beschriften: ${ks.filter(k=>!per[k]).map(k=>esc(B[k].n)).join(', ')}`});};
+  draw();
+ },
+ b_roentgen(cb,sp){
+  const skull=B[sp.k].fig==='skull';
+  H(cb,`<p class="prompt">Röntgen-Rätsel: Wo liegt ${esc(B[sp.k].akk)}?</p><p class="instr">Die Knochen sind unsichtbar. Tippe dorthin, wo ${esc(B[sp.k].akk)} ${B[sp.k].pl?'liegen':'liegt'}. Dann wird das Röntgenbild entwickelt.</p><div class="cellbox fig xray" id="cl"></div>`);
+  const C=skull?makeSkull():makeBody({ghost:true,crop:true});C.svg.classList.add('hidden-bones');$('#cl').appendChild(C.svg);
+  if(skull)el('path',{d:'M150,10 C 60,10 26,84 32,154 C 36,206 52,230 70,250 C 80,290 110,326 150,326 C 190,326 220,290 230,250 C 248,230 264,206 268,154 C 274,84 240,10 150,10 Z',style:'fill:rgba(111,183,208,.10);stroke:var(--p-h2o);stroke-width:1.5;stroke-dasharray:5 4'},C.svg).parentNode.insertBefore(C.svg.lastChild,C.svg.firstChild);
+  let done=false;
+  C.svg.addEventListener('click',e=>{if(done)return;done=true;const p=svgPoint(C.svg,e);
+    const pool=skull?BSKULL:BBODY;let best=null,bd=1e9;pool.forEach(k=>B[k].anc.forEach(([ax,ay])=>{const d=Math.hypot(ax-p.x,ay-p.y);if(d<bd){bd=d;best=k;}}));
+    const ok=best===sp.k&&bd<(skull?60:48);
+    const m=el('g',{transform:`translate(${p.x},${p.y})`},C.svg);el('circle',{r:9,style:`fill:none;stroke:${ok?'var(--good)':'var(--bad)'};stroke-width:3`},m);el('path',{d:'M-14,0 H14 M0,-14 V14',style:`stroke:${ok?'var(--good)':'var(--bad)'};stroke-width:2`},m);
+    C.svg.classList.remove('hidden-bones');C.svg.classList.add('dimmed');C.G[sp.k].classList.add('hl');buzz(ok?15:[40,40,40]);
+    grade(sp,ok,`<strong>${ok?'Volltreffer im Röntgenbild!':'Daneben.'}</strong>${ok?'':`<span>${esc(B[sp.k].nom)} leuchtet jetzt im Bild.</span>`}${recapB(sp.k)}`,null,{sum:`Wo liegt ${esc(B[sp.k].akk)}? ${esc(B[sp.k].fn)}`});});
+ },
+ malbuch(cb,sp){
+  const COL={rot:['#E5543B','Schädel'],gelb:['#F2C94C','Rumpf'],gruen:['#8DBF3F','Extremitäten']};
+  const want={sk_kopf:['rot'],sk_wirbelsaeule:['gelb'],sk_rippen:['gelb'],sk_brustbein:['gelb'],sk_schluesselbein:['gelb','gruen'],sk_schulterblatt:['gelb','gruen'],sk_becken:['gelb','gruen'],sk_arme:['gruen'],sk_beine:['gruen']};
+  H(cb,`<p class="prompt">Male das Skelett an – wie auf dem Arbeitsblatt!</p><p class="instr">Wähle eine Farbe und tippe dann auf die Knochen. Schädel-Skelett rot, Rumpf-Skelett gelb, Extremitäten-Skelett grün.</p>
+   <div class="paints" id="pt">${Object.entries(COL).map(([k,[c,n]])=>`<button type="button" class="paint" data-c="${k}" aria-pressed="${k==='rot'}"><i style="background:${c}"></i>${n}</button>`).join('')}</div>
+   <div class="cellbox fig" id="cl"></div><p class="small" id="mcount"></p><button class="check" id="chk" type="button" disabled>Fertig</button>`);
+  const C=makeBody();$('#cl').appendChild(C.svg);let cur='rot';const painted={};let done=false;
+  cb.querySelectorAll('.paint').forEach(b=>b.onclick=()=>{cur=b.dataset.c;cb.querySelectorAll('.paint').forEach(x=>x.setAttribute('aria-pressed',x===b));});
+  const upd=()=>{const n=Object.keys(painted).length;$('#mcount').textContent=`${n} von ${Object.keys(want).length} Teilen angemalt`;$('#chk').disabled=done||n<Object.keys(want).length;};
+  Object.keys(want).forEach(k=>C.G[k].addEventListener('click',()=>{if(done)return;painted[k]=cur;C.G[k].style.setProperty('--bone',COL[cur][0]);buzz(8);upd();}));
+  upd();
+  $('#chk').onclick=()=>{done=true;$('#chk').disabled=true;const wrong=Object.keys(want).filter(k=>!want[k].includes(painted[k]));
+    wrong.forEach(k=>C.G[k].classList.add('bad'));Object.keys(want).filter(k=>!wrong.includes(k)).forEach(k=>C.G[k].classList.add('ok'));
+    const nm2={sk_kopf:'Schädel',sk_wirbelsaeule:'Wirbelsäule',sk_rippen:'Rippen',sk_brustbein:'Brustbein',sk_schluesselbein:'Schlüsselbein',sk_schulterblatt:'Schulterblatt',sk_becken:'Becken',sk_arme:'Arme',sk_beine:'Beine'};
+    grade(sp,wrong.length===0,`<strong>${wrong.length?'Fast!':'Perfekt angemalt!'}</strong>${wrong.length?`<span>Schau noch mal: ${wrong.map(k=>nm2[k]).join(', ')}.</span>`:''}<span>Schädel = rot · Wirbelsäule, Rippen, Brustbein = gelb · Arme und Beine = grün.</span><span class="ex">Schlüsselbein, Schulterblatt und Becken verbinden Rumpf und Gliedmaßen. Auf eurem Blatt 4.3 zählen sie zum Rumpfskelett – darum gilt hier gelb oder grün.</span>`,null,{sum:'Malbuch: Schädel rot, Rumpf gelb, Extremitäten grün.'});};
+ },
+ sorter(cb,sp){
+  const set=SORTSETS[sp.set],items=sp.items;let i=0,good=0;
+  H(cb,`<p class="prompt">${esc(set.q)}</p><div class="sortcard" id="sc"></div><div class="buckets" id="bk">${Object.entries(set.cats).map(([k,n])=>`<button type="button" class="opt" data-c="${k}">${esc(n)}</button>`).join('')}</div><p class="swfb" id="swfb"></p><div class="dots" id="dots">${items.map(()=>'<i></i>').join('')}</div>`);
+  const show=()=>{$('#sc').innerHTML=`<span class="cnt">${i+1}/${items.length}</span><p>${esc(items[i][0])}</p>`;$('#sc').classList.remove('pop');void $('#sc').offsetWidth;$('#sc').classList.add('pop');};
+  $('#bk').querySelectorAll('.opt').forEach(b=>b.onclick=()=>{if(i>=items.length||b.disabled)return;const ok=b.dataset.c===items[i][1];if(ok)good++;
+    $('#dots').children[i].className=ok?'ok':'bad';const f=$('#swfb');f.className='swfb '+(ok?'ok':'bad');f.textContent=ok?praise():`Das gehört zu: ${set.cats[items[i][1]]}`;buzz(ok?12:[40,40,40]);
+    $('#bk').querySelectorAll('.opt').forEach(x=>x.disabled=true);
+    setTimeout(()=>{i++;$('#bk').querySelectorAll('.opt').forEach(x=>x.disabled=false);if(i<items.length)show();else{$('#bk').querySelectorAll('.opt').forEach(x=>x.disabled=true);
+      grade(sp,good>=items.length-1,`<strong>${good} von ${items.length} richtig sortiert.</strong><span>${esc(set.ex)}</span>`,null,{sum:esc(set.ex)});}},ok?550:1300);});
+  show();
+ },
+ schloss(cb,sp){
+  cb._sp=sp;
+  if(sp.v==='knochen'){H(cb,`<p class="prompt">Knacke das Zahlenschloss!</p><p>Aus wie vielen Knochen besteht das menschliche Skelett ungefähr?</p>`);
+    lockUI(cb,['Hunderter','Zehner','Einer'],[[0,9,1],[0,9,0],[0,9,0]],v=>v.join('')==='206','<span>Das Skelett besteht aus etwa <b>206</b> Knochen.</span>');}
+  else if(sp.v==='einzeln'){H(cb,`<p class="prompt">Knacke das Zahlenschloss!</p><p>Wie viele <b>einzelne</b> Wirbelknochen hat unsere Wirbelsäule insgesamt?</p>`);
+    lockUI(cb,['Zehner','Einer'],[[0,9,1],[0,9,0]],v=>v.join('')==='24','<span><b>24</b> einzelne Wirbel: 7 + 12 + 5. Dazu kommen 8 bis 10 verwachsene Wirbel in Kreuzbein und Steißbein.</span>');}
+  else{H(cb,`<p class="prompt">Knacke das Zahlenschloss!</p><p>Der Code ist die Zahl der Wirbel in jedem Abschnitt – von oben nach unten.</p>`);
+    lockUI(cb,['Hals','Brust','Lenden'],[[1,15,4],[1,15,4],[1,15,4]],v=>v[0]===7&&v[1]===12&&v[2]===5,'<span>Halswirbelsäule <b>7</b> · Brustwirbelsäule <b>12</b> · Lendenwirbelsäule <b>5</b>.</span>');}
+ },
+ baukasten(cb,sp){
+  const c=sp.start.slice();const nm3=['Halswirbel','Brustwirbel','Lendenwirbel'];
+  H(cb,`<p class="prompt">Wirbel-Baukasten</p><p class="instr">Bau die Wirbelsäule zusammen: Wie viele Wirbel braucht jeder Abschnitt? Unten sind Kreuzbein und Steißbein schon fertig.</p>
+   <div class="bauk"><div class="cellbox spinebox" id="sv"></div><div class="steppers">${nm3.map((n,i)=>`<div class="stepper"><span>${n}</span><div><button type="button" data-i="${i}" data-d="-1" aria-label="${n} weniger">−</button><output id="bv${i}">${c[i]}</output><button type="button" data-i="${i}" data-d="1" aria-label="${n} mehr">+</button></div></div>`).join('')}</div></div>
+   <button class="check" id="chk" type="button">Fertig gebaut</button>`);
+  const draw=()=>{$('#sv').innerHTML='';$('#sv').appendChild(makeSpine(c,{labels:true}).svg);nm3.forEach((_,i)=>$('#bv'+i).textContent=c[i]);};
+  cb.querySelectorAll('.stepper button').forEach(b=>b.onclick=()=>{const i=+b.dataset.i;c[i]=Math.max(1,Math.min(15,c[i]+ +b.dataset.d));draw();buzz(5);});
+  draw();
+  $('#chk').onclick=()=>{cb.querySelectorAll('.stepper button').forEach(b=>b.disabled=true);$('#chk').disabled=true;const ok=c[0]===7&&c[1]===12&&c[2]===5;
+    if(!ok){c[0]=7;c[1]=12;c[2]=5;setTimeout(draw,900);}
+    grade(sp,ok,`<strong>${ok?'Perfekt gebaut!':'Nicht ganz – so sieht sie richtig aus:'}</strong><span>7 Halswirbel · 12 Brustwirbel · 5 Lendenwirbel = 24 einzelne Wirbel. Darunter Kreuzbein und Steißbein aus verwachsenen Wirbeln.</span>`,null,{sum:'Wirbelsäule: 7 Hals, 12 Brust, 5 Lenden, dann Kreuzbein und Steißbein.'});};
+ },
+ spfinde(cb,sp){
+  const t=SP[sp.tg];const byName=sp.mode==='n';
+  H(cb,`<p class="prompt">${esc(byName?`Tippe auf ${t.akk}.`:t.q)}</p><div class="cellbox spinebox" id="cl"></div>`);
+  const C=makeSpine();$('#cl').appendChild(C.svg);let done=false;
+  SPK.forEach(k=>C.G[k].addEventListener('click',()=>{if(done)return;done=true;const ok=k===sp.tg;C.G[sp.tg].classList.add(ok?'ok':'hl');if(!ok)C.G[k].classList.add('bad');
+    grade(sp,ok,`<strong>${ok?praise():'Nicht ganz.'}</strong><span>${ok?'':`Du hast ${esc(SP[k].akk)} getippt. `}Gesucht war ${esc(t.akk)}${t.c?` mit ${t.c} Wirbeln`:' aus verwachsenen Wirbeln'}.</span>`,null,{sum:`${esc(t.n)}${t.c?`: ${t.c} Wirbel`:': verwachsene Wirbel'}`});}));
+ },
+ spreihe(cb,sp){
+  const items=shuffle(SPK),order=[];let done=false;const res={};
+  H(cb,`<p class="prompt">Von oben nach unten!</p><p class="instr">Tippe die Abschnitte der Wirbelsäule der Reihe nach an – vom Kopf bis ganz nach unten.</p><div class="sortl" id="sl"></div>`);
+  const draw=()=>{$('#sl').innerHTML=items.map((k,i)=>{const p=order.indexOf(i);return `<button class="sorti${p>=0?' on':''}${done?(res[i]?' ok':' bad'):''}" type="button" data-i="${i}" ${done?'disabled':''}><span class="badge">${p>=0?p+1:''}</span><span>${esc(SP[k].n)}</span>${done&&SP[k].c?`<span class="sz">${SP[k].c} Wirbel</span>`:''}</button>`;}).join('');
+    $('#sl').querySelectorAll('.sorti').forEach(b=>b.onclick=()=>{const i=+b.dataset.i,p=order.indexOf(i);if(p>=0)order.splice(p);else order.push(i);draw();if(order.length===items.length)fin();});};
+  const fin=()=>{done=true;order.forEach((i,p)=>res[i]=SPK[p]===items[i]);const ok=order.every((i,p)=>SPK[p]===items[i]);draw();
+    grade(sp,ok,`<strong>${ok?praise():'Nicht ganz.'}</strong><span>Hals (7) → Brust (12) → Lenden (5) → Kreuzbein → Steißbein</span>`,null,{sum:'Reihenfolge: Hals – Brust – Lenden – Kreuzbein – Steißbein'});};
+  draw();
+ },
+ spmemory(cb,sp){
+  const pairs=shuffle(SPPAIRS).slice(0,6);const cards=shuffle(pairs.flatMap((p,i)=>[{k:i,t:p[0],c:0},{k:i,t:p[1],c:1}]));let open=[],lock=false,miss=0;const done=new Set();
+  H(cb,`<p class="prompt">Wirbel-Memory</p><p class="instr">Finde die Paare: Abschnitt oder Teil und was dazu gehört.</p><div class="mem" id="mem"></div><p class="memstat" id="ms">Fehlversuche: 0</p>`);
+  const box=$('#mem');
+  cards.forEach((c,i)=>{const b=document.createElement('button');b.type='button';b.className='mc';b.dataset.k=c.k;b.setAttribute('aria-label','Karte '+(i+1));
+    b.innerHTML=`<div class="in"><div class="f"></div><div class="b${c.c?' city':''}">${esc(c.t)}</div></div>`;
+    b.onclick=()=>{if(lock||done.has(i)||open.includes(i))return;b.classList.add('open');open.push(i);
+      if(open.length===2){const [a,d]=open.map(x=>cards[x]);
+        if(a.k===d.k&&a.c!==d.c){open.forEach(x=>{done.add(x);box.children[x].classList.add('done');});open=[];buzz(15);if(done.size===cards.length)fin();}
+        else{miss++;$('#ms').textContent='Fehlversuche: '+miss;lock=true;setTimeout(()=>{open.forEach(x=>box.children[x].classList.remove('open'));open=[];lock=false;},950);}}};
+    box.appendChild(b);});
+  const fin=()=>{const ok=miss<=8;grade(sp,ok,`<strong>${miss<=4?'Super Gedächtnis!':'Alle Paare gefunden!'}</strong><span class="ex">${pairs.map(p=>`${esc(p[0])} = ${esc(p[1])}`).join(' · ')}</span>`,{sk_wirbel:ok,sk_bau:ok},{soft:true});};
+ },
+ luecke(cb,sp){
+  const [k,text,dis]=sp.f;const {parts,gaps}=parseLT(text);const tiles=shuffle([...gaps.map(g=>g.a),...dis]);const fill=new Array(gaps.length).fill(null);let act=0,done=false;
+  H(cb,`<p class="prompt">Ergänze den Merktext.</p><p class="instr">Tippe auf eine Lücke und dann auf das passende Wort. Ohne Auswahl füllst du die nächste freie Lücke.</p><p class="lt" id="lt"></p><div class="pool" id="pool"></div><button class="check" id="chk" type="button" disabled>Prüfen</button>`);
+  let res=null;
+  const draw=()=>{
+    $('#lt').innerHTML=parts.map(p=>p.t!=null?esc(p.t):`<button type="button" class="gap${fill[p.gap]!=null?' filled':''}${act===p.gap&&!done?' act':''}${res?(res[p.gap]?' ok':' bad'):''}" data-g="${p.gap}">${fill[p.gap]!=null?esc(tiles[fill[p.gap]]):'&nbsp;…&nbsp;'}</button>${res&&!res[p.gap]?`<span class="fix">${esc(gaps[p.gap].a)}</span>`:''}`).join('');
+    $('#pool').innerHTML=tiles.map((t,i)=>`<button class="tile" type="button" data-t="${i}" ${fill.includes(i)||done?'disabled':''}>${esc(t)}</button>`).join('');
+    $('#lt').querySelectorAll('.gap').forEach(b=>b.onclick=()=>{if(done)return;const g=+b.dataset.g;if(fill[g]!=null&&act===g){fill[g]=null;}act=g;draw();});
+    $('#pool').querySelectorAll('.tile').forEach(b=>b.onclick=()=>{let g=act;if(g==null||fill[g]!=null)g=fill.indexOf(null);if(g<0)return;fill[g]=+b.dataset.t;const nx=fill.indexOf(null);act=nx<0?null:nx;buzz(5);draw();});
+    $('#chk').disabled=done||fill.includes(null);
+  };
+  $('#chk').onclick=()=>{done=true;const got=fill.map(i=>tiles[i]);res=gaps.map((g,i)=>{if(!g.g)return got[i]===g.a;const mates=gaps.map((x,j)=>j).filter(j=>gaps[j].g===g.g);const want=mates.map(j=>gaps[j].a).sort().join('|'),have=mates.map(j=>got[j]).sort().join('|');return want===have?true:got[i]===g.a;});
+    const n=res.filter(Boolean).length;draw();
+    grade(sp,n>=gaps.length-(gaps.length>5?1:0),`<strong>${n===gaps.length?'Alles richtig ergänzt!':`${n} von ${gaps.length} Lücken richtig.`}</strong>${n<gaps.length?'<span class="ex">Die richtigen Wörter stehen jetzt neben den falschen Lücken.</span>':''}`,null,{sum:esc(text.replace(/\[([^\]#]+)(#\w+)?\]/g,'$1'))});};
+  draw();
+ },
+ schaedelreg(cb,sp){
+  const hirn=sp.tg==='hirn';
+  H(cb,`<p class="prompt">${hirn?'Tippe auf den Gehirnschädel – den Teil, der das Gehirn umschließt.':'Tippe auf einen Knochen des Gesichtsschädels.'}</p><div class="cellbox fig" id="cl"></div>`);
+  const C=makeSkull();$('#cl').appendChild(C.svg);let done=false;
+  const isH=k=>k==='hirn'||k==='sk_stirnbein';
+  Object.entries(C.G).forEach(([k,g])=>g.addEventListener('click',()=>{if(done)return;done=true;
+    const ok=hirn?isH(k):['sk_nasenbein','sk_jochbein','sk_oberkiefer','sk_unterkiefer'].includes(k);
+    const lit=hirn?['hirn','sk_stirnbein']:['sk_nasenbein','sk_jochbein','sk_oberkiefer','sk_unterkiefer'];C.svg.classList.add('dimmed');lit.forEach(x=>C.G[x].classList.add('hl'));if(!ok)g.classList.add('bad');
+    grade(sp,ok,`<strong>${ok?praise():'Nicht ganz.'}</strong><span>${hirn?'Der <b>Gehirnschädel</b> ist die große Kapsel oben – sie schützt das Gehirn wie ein Helm.':'Zum <b>Gesichtsschädel</b> gehören u. a. Nasenbein, Jochbein, Ober- und Unterkiefer.'}</span>`,null,{sum:'Schädel = Gehirnschädel (schützt das Gehirn) + Gesichtsschädel (Nase, Wangen, Kiefer).'});}));
+ },
+ schaedelauf(cb,sp){
+  const items=sp.items,on=new Set();
+  H(cb,`<p class="prompt">Was kann der Schädel?</p><p class="instr">Tippe alle Aufgaben an, die das Schädelskelett erfüllt. Dann „Prüfen“.</p><div class="lupe one" id="lp"></div><button class="check" id="chk" type="button">Prüfen</button>`);
+  items.forEach(([t,v],i)=>{const b=document.createElement('button');b.type='button';b.setAttribute('aria-pressed','false');b.textContent=t;b.onclick=()=>{on.has(i)?on.delete(i):on.add(i);b.setAttribute('aria-pressed',on.has(i));};$('#lp').appendChild(b);});
+  $('#chk').onclick=()=>{$('#chk').disabled=true;let n=0;$('#lp').querySelectorAll('button').forEach((b,i)=>{b.disabled=true;const right=on.has(i)===!!items[i][1];if(right)n++;b.classList.add(right?'ok':'bad');});
+    grade(sp,n===items.length,`<strong>${n===items.length?praise():`${n} von ${items.length} richtig.`}</strong><span>Der Schädel schützt das Gehirn und die Augen, gibt dem Gesicht seine Form und mit dem Unterkiefer kannst du kauen. Am wichtigsten ist der Schutz des Gehirns.</span>`,null,{sum:'Schädel: schützt Gehirn und Augen, formt das Gesicht, Kauen mit dem Unterkiefer.'});};
+ },
+ querfinde(cb,sp){
+  const q={wirbel:'Tippe auf einen Wirbel.',bandscheibe:'Tippe auf eine Bandscheibe aus Knorpel.',rueckenmark:'Tippe auf das Rückenmark im Wirbelkanal.'}[sp.tg];
+  H(cb,`<p class="prompt">${q}</p><p class="instr">Ein Ausschnitt aus der Wirbelsäule, von der Seite aufgeschnitten.</p><div class="cellbox fig" id="cl" style="max-width:340px;align-self:center;width:100%"></div>`);
+  const C=makeWirbel();$('#cl').appendChild(C.svg);let done=false;
+  Object.entries(C.G).forEach(([k,g])=>g.addEventListener('click',()=>{if(done)return;done=true;const ok=k===sp.tg;C.G[sp.tg].classList.add(ok?'ok':'hl');if(!ok)g.classList.add('bad');
+    grade(sp,ok,`<strong>${ok?praise():'Nicht ganz.'}</strong><span><b>${WINFO[sp.tg][0]}:</b> ${esc(WINFO[sp.tg][1])}</span>`,null,{sum:`${WINFO[sp.tg][0]}: ${esc(WINFO[sp.tg][1])}`});}));
+ },
+ stoss(cb,sp){
+  let disc=true;const tried={an:0,aus:0};
+  H(cb,`<p class="prompt">Stoßdämpfer-Test</p><p class="instr">Lass die Wirbelsäule springen – einmal mit und einmal ohne Bandscheiben. Was passiert?</p>
+   <div class="chips" id="dt"><button class="chip" type="button" data-v="an" aria-pressed="true">mit Bandscheiben</button><button class="chip" type="button" data-v="aus" aria-pressed="false">ohne Bandscheiben</button></div>
+   <div class="cellbox stossbox"><svg id="ss" viewBox="0 0 220 250" aria-hidden="true"></svg></div><button class="go" id="jump" type="button" style="align-self:center">Springen!</button><p class="live" id="sl"></p><div id="q"></div>`);
+  const s=$('#ss');
+  const draw=()=>{s.innerHTML='';const g=el('g',{class:'stack'+(disc?'':' nodisc')},s);
+    const ys=disc?[18,94,170]:[40,96,152];
+    ys.forEach((y,i)=>{const v=el('g',{class:'vb v'+i,style:`--dy:${disc?[24,12,0][i]:0}px`},g);el('rect',{x:50,y,width:90,height:56,rx:8,style:BONE},v);el('path',{d:`M140,${y+10} L190,${y+30} L184,${y+52} L140,${y+46} Z`,style:BONE},v);});
+    if(disc)[74,150].forEach(y=>el('rect',{x:54,y,width:82,height:20,rx:7,class:'dsc',style:'fill:var(--c-vac);stroke:var(--c-vac-d);stroke-width:1.5'},g));
+    el('rect',{x:30,y:228,width:160,height:8,rx:4,style:'fill:var(--line)'},s);
+    if(!disc)[[140,96],[140,152]].forEach(([x,y])=>{const k=el('g',{class:'spark'},s);el('path',{d:`M${x+4},${y-8} l12,-6 M${x+4},${y} l16,0 M${x+4},${y+8} l12,6 M${50-4},${y-8} l-12,-6 M${46},${y} l-16,0 M${46},${y+8} l-12,6`,style:'stroke:var(--bad);stroke-width:3;stroke-linecap:round'},k);});
+  };
+  draw();
+  cb.querySelectorAll('#dt .chip').forEach(b=>b.onclick=()=>{disc=b.dataset.v==='an';cb.querySelectorAll('#dt .chip').forEach(x=>x.setAttribute('aria-pressed',x===b));draw();$('#sl').textContent='';});
+  $('#jump').onclick=()=>{const g=s.querySelector('.stack');g.classList.remove('jump');void g.getBBox();g.classList.add('jump');
+    tried[disc?'an':'aus']=1;$('#sl').textContent=disc?'Federt sanft ab – die Bandscheiben werden kurz zusammengedrückt.':'Autsch! Knochen stoßen direkt aufeinander.';$('#sl').style.color=disc?'var(--good)':'var(--bad)';buzz(disc?20:[60,30,60]);
+    if(tried.an&&tried.aus&&!$('#q').children.length){const opts=shuffle(['Sie federn Stöße ab wie Stoßdämpfer.','Sie stellen das Blut her.','Sie bewegen die Muskeln.','Sie schützen das Gehirn.']);
+      H($('#q'),`<p class="prompt" style="margin-bottom:8px">Wozu sind die Bandscheiben gut?</p>`);
+      choices($('#q'),opts,opts.indexOf('Sie federn Stöße ab wie Stoßdämpfer.'),esc,ok=>{$('#jump').disabled=true;grade(sp,ok,`<strong>${ok?praise():'Nicht ganz.'}</strong><span>Die Bandscheiben aus <b>Knorpel</b> liegen zwischen den Wirbeln. Sie federn Stöße ab und machen die Wirbelsäule beweglich.</span>`,null,{sum:'Bandscheiben (Knorpel) zwischen den Wirbeln federn Stöße ab.'});});}
+    else if(!(tried.an&&tried.aus))$('#sl').textContent+=` Jetzt probier es ${disc?'ohne':'mit'} Bandscheiben!`;};
+ },
+ biege(cb,sp){
+  H(cb,`<p class="prompt">Papprollen-Versuch</p><p class="instr">Wie auf deinem Arbeitsblatt 4.3.2: Modell 1 hat viele Schnitte, Modell 2 keine. Zieh am Regler und biege beide Rollen.</p>
+   <div class="cellbox"><svg id="rv" viewBox="0 0 300 270" aria-hidden="true"></svg></div>
+   <input type="range" id="bend" min="0" max="100" value="0" aria-label="Biegen"><p class="live" id="bl">Noch nicht gebogen</p><div id="q"></div>`);
+  const s=$('#rv');let asked=false;
+  const draw=b=>{s.innerHTML='';
+    // Modell 1: Segmente
+    let x=80,y=230,a=0;const segL=21,n=8;
+    for(let i=0;i<n;i++){const g=el('g',{transform:`translate(${x.toFixed(1)},${y.toFixed(1)}) rotate(${(a*180/Math.PI).toFixed(1)})`},s);
+      el('rect',{x:-20,y:-segL+1,width:40,height:segL-2,rx:3,style:'fill:var(--petal);stroke:var(--c-wall-d);stroke-width:1.5'},g);
+      x+=Math.sin(a)*segL;y-=Math.cos(a)*segL;a+=b*0.17;}
+    // Modell 2: steif, knickt ab 70 %
+    if(b<.7){const tilt=b*6*Math.sin(Date.now()/60);el('rect',{x:200,y:230-176,width:40,height:176,rx:4,transform:`rotate(${tilt.toFixed(1)} 220 230)`,style:'fill:var(--petal);stroke:var(--c-wall-d);stroke-width:1.5'},s);}
+    else{el('rect',{x:200,y:142,width:40,height:88,rx:4,style:'fill:var(--petal);stroke:var(--c-wall-d);stroke-width:1.5'},s);
+      el('rect',{x:200,y:54,width:40,height:88,rx:4,transform:'rotate(38 240 142)',style:'fill:var(--petal);stroke:var(--c-wall-d);stroke-width:1.5'},s);
+      el('path',{d:'M196,138 l8,-6 l6,8 l8,-8 l6,8 l8,-8 l8,6',style:'fill:none;stroke:var(--bad);stroke-width:3'},s);
+      const t=el('text',{x:258,y:128,class:'lab',style:'fill:var(--bad);font-size:20px'},s);t.textContent='Knick!';}
+    el('rect',{x:20,y:232,width:270,height:6,rx:3,style:'fill:var(--line)'},s);
+    const l1=el('text',{x:80,y:258,'text-anchor':'middle',class:'lab',style:'font-size:16px'},s);l1.textContent='Modell 1';
+    const l2=el('text',{x:220,y:258,'text-anchor':'middle',class:'lab',style:'font-size:16px'},s);l2.textContent='Modell 2';
+  };
+  draw(0);
+  $('#bend').oninput=e=>{const b=e.target.value/100;draw(b);$('#bl').textContent=b<.15?'Noch nicht gebogen':b<.7?'Modell 1 biegt sich – Modell 2 bleibt steif.':'Modell 1 biegt sich weit – Modell 2 knickt!';
+    if(b>=.7&&!asked){asked=true;const opts=['Modell 1 (mit Schnitten)','Modell 2 (ohne Schnitte)'];
+      H($('#q'),`<p class="prompt" style="margin-bottom:8px">Welches Modell ist unserer Wirbelsäule am ähnlichsten?</p>`);
+      choices($('#q'),opts,0,esc,ok=>{$('#bend').disabled=true;grade(sp,ok,`<strong>${ok?praise():'Nicht ganz.'}</strong><span>Modell 1 – wie die Wirbelsäule besteht es aus vielen einzelnen Teilen (<b>Wirbeln</b>), die beweglich verbunden sind. Dazwischen liegen <b>Bandscheiben</b>.</span><span class="ex">Darum ist es wichtig: So können wir uns bücken, drehen und beugen. Aus einem einzigen Knochen wäre unser Rücken steif wie Modell 2.</span>`,null,{sum:'Papprollen-Versuch: Die Rolle mit Schnitten (viele einzelne Wirbel) ist beweglich wie unsere Wirbelsäule.'});},'two');}};
+ }
+});
+
+function finde(cb,sp,prompt){
+  H(cb,`<p class="prompt">${esc(prompt)}</p><div class="cellbox" id="cl"></div>`);
+  const C=makeCell();$('#cl').appendChild(C.svg);let done=false;
+  ORG.forEach(k=>C.G[k].addEventListener('click',()=>{if(done)return;done=true;const ok=k===sp.k;
+    C.G[sp.k].classList.add(ok?'ok':'hl');if(!ok)C.G[k].classList.add('bad');
+    grade(sp,ok,`<strong>${ok?praise():'Nicht ganz.'}</strong>${ok?'':`<span>Du hast ${esc(O[k].akk.replace(/\s*\(.*\)/,''))} getippt. Gesucht war ${esc(O[sp.k].akk)} – es leuchtet jetzt.</span>`}${recap(sp.k)}`,null,{sum:`<b>${esc(nm(sp.k))}</b> ${esc(O[sp.k].fn)}`});}));
+}
+/* Mini-Zellen für Wasser-Aufgaben */
+function mini(s){
+  const p=s==='plasmo'?{x:34,y:30,w:52,h:40,r:16}:{x:11,y:11,w:98,h:78,r:8};
+  const vf=s==='prall'?1:s==='welk'?.62:.5;const vw=(p.w-22)*vf,vh=(p.h-18)*vf,vx=p.x+14+(p.w-22-vw)/2,vy=p.y+9+(p.h-18-vh)/2;
+  const arrows=s==='prall'?`<g style="stroke:var(--c-vac-d);stroke-width:2.5;stroke-linecap:round"><path d="M60,${vy} v-7 m-3,3 l3,-3 l3,3"/><path d="M60,${vy+vh} v7 m-3,-3 l3,3 l3,-3"/><path d="M${vx},50 h-7 m3,-3 l-3,3 l3,3"/><path d="M${vx+vw},50 h7 m-3,-3 l3,3 l-3,3"/></g>`:'';
+  return `<svg viewBox="0 0 120 100" aria-hidden="true"><rect x="8" y="8" width="104" height="84" rx="10" style="fill:${s==='plasmo'?'var(--salt)':'var(--c-cyto)'}"/>
+   <rect x="${p.x}" y="${p.y}" width="${p.w}" height="${p.h}" rx="${p.r}" style="fill:var(--c-cyto);stroke:var(--c-mem);stroke-width:2"/>
+   <rect x="${vx.toFixed(1)}" y="${vy.toFixed(1)}" width="${vw.toFixed(1)}" height="${vh.toFixed(1)}" rx="${(Math.min(vw,vh)*.35).toFixed(1)}" style="fill:var(--c-vac);stroke:var(--c-vac-d);stroke-width:1.5"/>
+   ${arrows}<circle cx="${p.x+8}" cy="${p.y+p.h/2}" r="5" style="fill:var(--c-nuc)"/>
+   <rect x="6" y="6" width="108" height="88" rx="12" style="fill:none;stroke:var(--c-wall);stroke-width:5"/></svg>`;
+}
+
+/* =================== ENDE =================== */
+function end(){
+  renderStats();window.scrollTo(0,0);
+  const n=R.first,r=R.right,pct=Math.round(r/n*100);S.rounds++;S.best=Math.max(S.best,pct);save();
+  const stars=pct>=90?3:pct>=70?2:pct>=40?1:0;
+  const sk=R.ch==='skelett';
+  const msg=pct===100?(sk?'Alles richtig – dein Skelett strahlt!':'Alles richtig – deine Pflanze strahlt!'):pct>=80?'Sehr gut gemacht!':pct>=50?'Gut! Was noch wackelt, kommt in der nächsten Runde öfter dran.':'Dranbleiben – morgen sitzt es schon besser.';
+  let info='',fig=null;
+  if(sk){const up=SKALL.filter(k=>lv(k)>(R.before[k]||0));info=up.length?`<p class="small">Heller geworden: ${up.map(k=>esc(SK_NAME[k])).join(', ')}.</p>`:'<p class="small">Diesmal ist nichts heller geworden – nicht aufgeben!</p>';fig=()=>progressBody(new Set(up)).svg;}
+  else{const grown=new Set(SKILLS.filter(k=>lv(k)>(R.before[k]||0)));
+    const newSt=MKS.filter(k=>lv(k)>=4&&(R.before[k]||0)<4),mkUp=MKS.filter(k=>lv(k)>(R.before[k]||0));
+    info=`${grown.size||!mkUp.length?`<p class="small">${grown.size?`Gewachsen: ${[...grown].map(k=>esc(SK_NAME[k])).join(', ')}.`:'Diesmal ist kein Blatt gewachsen – nicht aufgeben!'}</p>`:''}
+     ${mkUp.length?`<p class="small">Führerschein: ${newSt.length?`neue Stempel für <b>${newSt.map(k=>esc(SK_NAME[k])).join(', ')}</b>!`:`sicherer geworden bei ${mkUp.map(k=>esc(SK_NAME[k])).join(', ')}.`} Stempel: ${MKS.filter(k=>lv(k)>=4).length}/${MKS.length}</p>`:''}`;
+    if(grown.size||!mkUp.length)fig=()=>plantSVG(grown).svg;}
+  $('#screen').innerHTML=`<section class="panel"><div class="lbl">Runde geschafft</div>
+   <div class="row" style="justify-content:space-between;align-items:flex-end"><div class="score">${r}<span> / ${n}</span></div><div class="stars" aria-label="${stars} von 3 Sternen">${'★'.repeat(stars)}${'☆'.repeat(3-stars)}</div></div>
+   <h2>${msg}</h2>${info}
+   ${fig?'<div id="pl" style="max-width:220px;align-self:center;width:60%"></div>':''}
+   ${R.missed.length?`<div><div class="lbl" style="margin-bottom:6px">Das schaust du dir am besten noch mal an</div><ul class="misslist">${R.missed.map(m=>`<li>${m}</li>`).join('')}</ul></div>`:''}
+   <div class="row"><button class="go" type="button" id="again">Neue Runde</button><button class="ghost" type="button" id="home">Startseite</button></div></section>`;
+  if(fig)$('#pl').appendChild(fig());
+  $('#again').onclick=()=>startRound(R.gs);$('#home').onclick=start;
+}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'){const nx=document.querySelector('.next');const a=document.activeElement;if(nx&&a!==nx&&!(a&&a.tagName==='INPUT'&&!a.disabled)){e.preventDefault();nx.click();}}});
+start();
+})();
+</script>
+
+</body></html>

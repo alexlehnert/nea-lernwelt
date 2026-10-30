@@ -1,0 +1,867 @@
+<!doctype html><html><head><meta charset=utf8><script src="/api/config"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="/sync.js"></script><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body><nav id="lw-bar" aria-label="Lernwelt" style="all:initial;display:flex;align-items:center;gap:10px;box-sizing:border-box;width:100%;padding:6px max(12px,env(safe-area-inset-right,0px)) 6px max(12px,env(safe-area-inset-left,0px));background:#20304a;color:#f3f0e6;font:600 14px/1.2 system-ui,-apple-system,Segoe UI,sans-serif;position:relative;z-index:9999"><a href="index.html" style="all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:#f3f0e6;color:#20304a;font:700 14px/1 system-ui,-apple-system,Segoe UI,sans-serif">&#8249; Lernwelt</a><span style="all:unset;font:600 14px/1.2 system-ui,-apple-system,Segoe UI,sans-serif;color:#f3f0e6;opacity:.85">Biologie · Expedition Pflanzenzelle</span></nav>
+<title>Expedition Pflanzenzelle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Chelsea+Market&family=Patrick+Hand&family=Patrick+Hand+SC&display=swap">
+<style>
+/* Poster look: one deliberate dark "chalk-on-charcoal" world, same in every theme */
+:root{
+  color-scheme:dark;
+  --paper:#252321; --surface:#2E2B27; --surface2:#3A362F; --ink:#F4E6C1; --muted:#C2B597; --line:#5C5446;
+  --accent:#F08A24; --accent-ink:#1E1C1A; --good:#B9D24A; --bad:#F2875A; --good-bg:#34401D; --bad-bg:#4A2A1C;
+  --c-wall:#E0B447; --c-wall-d:#8C6A1E; --c-mem:#F7EBC8; --c-cyto:#34302A; --c-vac:#7FAF9B; --c-vac-d:#CFE5D6;
+  --c-nuc:#D95A2B; --c-nuc-d:#F7D774; --c-chl:#A9C33B; --c-chl-d:#4C6A1C; --c-mit:#F29A3A; --c-mit-d:#6E3312;
+  --c-er:#E98C7A; --c-gol:#F6D35E; --c-rib:#FFF4D6; --pot:#E07B2E;
+  --sky:#443D2E; --night:#101014; --sun:#F6D35E; --p-co2:#B8AE9C; --p-h2o:#6FB7D0; --p-o2:#D6EC8E; --salt:#6A5E44;
+  --soil:#E07B2E; --soil-d:#B85A1B; --leaf:#A9C33B; --leaf-d:#6E8A24; --petal:#F6E3B0;
+  --display:"Chelsea Market", "Comic Sans MS", system-ui, sans-serif;
+  --hand:"Patrick Hand SC", "Patrick Hand", "Comic Sans MS", system-ui, sans-serif;
+  --hand2:"Patrick Hand", "Comic Sans MS", system-ui, sans-serif;
+  --body:"Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{
+  background-color:var(--paper);
+  background-image:
+    radial-gradient(circle,rgba(246,211,94,.45) 1px,transparent 1.6px),
+    radial-gradient(circle,rgba(240,138,36,.35) 1px,transparent 1.6px),
+    radial-gradient(circle,rgba(244,230,193,.18) .8px,transparent 1.4px);
+  background-size:67px 71px,89px 83px,23px 29px;
+  background-position:0 0,31px 43px,7px 11px;
+  color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55;padding-inline:16px;padding-block:0 48px}
+.wrap{max-width:1180px;margin-inline:auto}
+h1,h2,h3,h4{line-height:1.12;text-wrap:balance;margin:0;font-weight:400}
+h2{font-family:var(--display);font-size:clamp(1.7rem,3.6vw,2.4rem);color:var(--accent)}
+h3{font-family:var(--display);font-size:1.45rem;color:var(--ink)}
+h4{font-family:var(--hand);font-size:1.02rem;letter-spacing:.06em;color:var(--c-wall)}
+p{margin:0}
+b{color:#FFF6DC}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px dashed var(--accent);outline-offset:3px}
+
+/* HERO */
+header.top{padding-block:44px 22px;display:grid;gap:16px;justify-items:center;text-align:center}
+.kicker{font-family:var(--hand);font-size:1.05rem;letter-spacing:.1em;color:var(--muted)}
+h1{display:flex;flex-wrap:wrap;justify-content:center;align-items:baseline;gap:.05em .28em;max-width:900px}
+h1 .sm{font-family:var(--hand2);font-size:clamp(1.3rem,2.6vw,1.9rem);color:var(--c-wall);transform:rotate(-6deg);display:inline-block}
+h1 .big{font-family:var(--display);font-size:clamp(2.5rem,7vw,4.8rem);letter-spacing:.01em;line-height:1}
+h1 .o{color:var(--accent)} h1 .c{color:var(--petal);position:relative}
+h1 .c svg{position:absolute;left:0;right:0;bottom:-.28em;width:100%;height:.35em;overflow:visible}
+header.top .lead{font-size:1.1rem;color:var(--muted);max-width:60ch}
+
+/* NAV */
+nav.jump{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:rgba(37,35,33,.94);backdrop-filter:blur(4px);padding-block:10px;border-bottom:1.5px dashed var(--line);margin-bottom:12px}
+nav.jump ul{list-style:none;margin:0;padding:0;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;justify-content:safe center}
+nav.jump a{display:block;white-space:nowrap;text-decoration:none;color:var(--ink);font-family:var(--hand);font-size:1.05rem;letter-spacing:.04em;padding:3px 14px;border:1.5px solid var(--line);border-radius:999px}
+nav.jump a:hover{border-color:var(--accent);color:var(--accent)}
+
+section{padding-block:44px 24px;display:grid;gap:18px;scroll-margin-top:64px}
+.sec-head{display:grid;gap:8px;max-width:760px}
+.sec-head p{color:var(--muted)}
+.bracket{font-family:var(--hand);font-size:1.15rem;letter-spacing:.12em;color:var(--c-wall);display:flex;align-items:center;gap:10px}
+.bracket::after{content:"";height:0;border-top:1.5px solid var(--c-wall);flex:0 1 120px;opacity:.7}
+
+/* CONTROLS */
+.controls{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
+.ctl{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ctl > span{font-family:var(--hand);font-size:1rem;color:var(--muted);letter-spacing:.06em}
+.seg{display:inline-flex;flex-wrap:wrap;border:1.5px solid var(--line);border-radius:999px;padding:3px;gap:2px;background:rgba(46,43,39,.8)}
+.seg button{border:0;background:none;padding:4px 13px;border-radius:999px;cursor:pointer;color:var(--muted);font-family:var(--hand2);font-size:1.08rem}
+.seg button:hover{color:var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+
+/* EXPLORER */
+.explorer{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:22px;align-items:start}
+@media (max-width:900px){.explorer{grid-template-columns:minmax(0,1fr)}}
+.stage{position:relative;background:rgba(46,43,39,.85);border:1.5px solid var(--line);border-radius:40px;padding:14px}
+.stage svg{display:block;width:100%;height:auto;transition:filter .4s}
+.stage.lm svg{filter:blur(.5px) saturate(.75)}
+.stage.em svg{filter:grayscale(1) contrast(1.15)}
+.stage::after{content:"";position:absolute;inset:0;border-radius:40px;pointer-events:none;opacity:0;transition:opacity .4s;background:radial-gradient(circle at 50% 48%,transparent 50%,rgba(0,0,0,.7) 74%)}
+.stage.lm::after{opacity:1}
+.stage-caption{font-size:.95rem;color:var(--muted);padding:10px 8px 2px;min-height:3em}
+
+#cell .org{cursor:pointer;transition:opacity .25s}
+#cell .org:hover{filter:brightness(1.12)}
+#cell.has-sel .org:not(.sel){opacity:.42}
+#cell .org.sel{filter:drop-shadow(0 0 6px var(--accent))}
+#cell .org.hit{filter:drop-shadow(0 0 9px var(--good))}
+#cell .org.miss{filter:drop-shadow(0 0 9px var(--bad))}
+#cell .org.hint{animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.3}}
+#cell .org:focus{outline:none}
+#cell .org:focus-visible{filter:drop-shadow(0 0 4px var(--accent)) drop-shadow(0 0 2px var(--accent))}
+#cell .animal-only{display:none}
+#cell.animal .animal-only{display:inline}
+#cell.animal .plant-only{display:none}
+#cell.lm .em-only{display:none}
+#cell text{font-family:var(--hand);font-size:19px;fill:var(--ink)}
+#cell .labels{transition:opacity .3s}
+#cell.nolabels .labels{display:none}
+#cell .lab{cursor:pointer}
+#cell .lab line,#cell .lab polyline{fill:none;stroke:var(--ink);stroke-width:1.3;opacity:.8}
+#cell .lab circle{fill:var(--ink)}
+#cell .lab.on text{fill:var(--accent)}
+#cell .lab.on polyline{stroke:var(--accent);opacity:1}
+#cell .lab.on circle{fill:var(--accent)}
+
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.legend button{display:inline-flex;align-items:center;gap:7px;border:1.5px solid var(--line);background:transparent;border-radius:999px;padding:2px 12px 2px 6px;cursor:pointer;font-family:var(--hand2);font-size:1.02rem}
+.legend button:hover{border-color:var(--ink)}
+.legend button[aria-pressed="true"]{border-color:var(--accent);color:var(--accent)}
+.legend button.off{opacity:.35;text-decoration:line-through}
+.legend[aria-disabled="true"]{visibility:hidden}
+.sw{width:14px;height:14px;border-radius:50%;flex:none;border:1.5px solid rgba(244,230,193,.55)}
+
+.panel{background:rgba(46,43,39,.9);border:1.5px solid var(--line);border-radius:28px;padding:22px;display:grid;gap:14px}
+.panel-head{display:flex;gap:12px;align-items:center}
+.panel-head .sw{width:34px;height:34px}
+.fach{font-family:var(--hand2);font-size:1.1rem;color:var(--muted)}
+.facts{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-family:var(--hand2);font-size:1rem;padding:1px 10px;border-radius:999px;border:1.5px dashed var(--line);color:var(--ink)}
+.chip.plant{border-style:solid;border-color:var(--good);color:var(--good)}
+.box{border-top:1.5px dashed var(--line);padding-top:12px;display:grid;gap:5px}
+details{border-top:1.5px dashed var(--line);padding-top:12px}
+summary{cursor:pointer;font-family:var(--hand);font-size:1.1rem;letter-spacing:.05em;color:var(--accent)}
+details p{margin-top:8px}
+.note{font-size:.92rem;padding:8px 14px;border-radius:14px;background:var(--bad-bg);color:var(--ink)}
+
+.game-task{font-family:var(--display);font-size:1.45rem;line-height:1.25;text-wrap:balance;color:var(--petal)}
+.feedback{min-height:1.6em;font-weight:700}
+.feedback.good{color:var(--good)} .feedback.bad{color:var(--bad)}
+.progress{height:10px;border-radius:99px;border:1.5px solid var(--line);overflow:hidden}
+.progress i{display:block;height:100%;background:var(--good);width:0;transition:width .3s}
+.btn{border:1.5px solid var(--accent);background:var(--accent);color:var(--accent-ink);border-radius:999px;padding:3px 16px;cursor:pointer;font-family:var(--hand2);font-size:1.1rem}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn.ghost:hover{border-color:var(--accent);color:var(--accent)}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap}
+.score{font-family:var(--hand2);font-size:1.15rem;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+
+.merk{border:1.5px dashed var(--c-wall);border-radius:28px;padding:18px 22px;display:grid;gap:8px;max-width:780px;background:rgba(46,43,39,.7)}
+.merk ol{margin:0;padding-left:1.3em}
+
+.twocol{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:22px;align-items:start}
+@media (max-width:900px){.twocol{grid-template-columns:minmax(0,1fr)}}
+.card{background:rgba(46,43,39,.9);border:1.5px solid var(--line);border-radius:28px;padding:18px;display:grid;gap:14px}
+.card svg{display:block;width:100%;height:auto}
+.card svg text{font-family:var(--hand);font-size:16px;fill:var(--ink);paint-order:stroke;stroke:var(--paper);stroke-width:4px;stroke-linejoin:round}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.range-row{display:grid;gap:8px}
+.range-row label{font-family:var(--hand);font-size:1.15rem;letter-spacing:.05em;display:flex;justify-content:space-between;gap:10px}
+.range-row output{font-family:var(--hand2);color:var(--c-wall)}
+.meter{display:grid;grid-template-columns:8.5em minmax(0,1fr) 3.2em;gap:10px;align-items:center;font-family:var(--hand2);font-size:1.08rem}
+.meter .track{height:12px;border-radius:99px;border:1.5px solid var(--line);overflow:hidden;position:relative}
+.meter .track i{position:absolute;top:0;bottom:0;left:0;border-radius:99px}
+.meter b{font-weight:400;text-align:right;font-variant-numeric:tabular-nums;color:var(--ink)}
+.div-track{height:14px;border-radius:99px;border:1.5px solid var(--line);position:relative;overflow:hidden}
+.div-track::before{content:"";position:absolute;left:50%;top:-2px;bottom:-2px;width:2px;background:var(--ink);opacity:.6}
+.div-track i{position:absolute;top:0;bottom:0}
+.div-labels{display:flex;justify-content:space-between;font-family:var(--hand2);font-size:.98rem;color:var(--muted)}
+.status{padding:12px 16px;border-radius:18px;background:var(--surface2);font-size:.97rem}
+.eq{display:grid;gap:8px;font-size:.97rem}
+.eq div{padding:12px 16px;border-radius:20px;border:1.5px dashed var(--line);transition:opacity .3s}
+.eq .f{font-family:var(--hand2);font-size:1.05rem;color:var(--c-wall);display:block;margin-top:3px}
+.key{display:flex;flex-wrap:wrap;gap:6px 14px;font-family:var(--hand2);font-size:1.02rem;color:var(--muted)}
+.key span{display:inline-flex;align-items:center;gap:6px}
+.key i{width:11px;height:11px;border-radius:50%;display:inline-block}
+
+.ladder{display:grid;gap:4px}
+.lrow{display:grid;grid-template-columns:minmax(0,12em) minmax(0,1fr);gap:12px;align-items:center}
+@media (max-width:560px){.lrow{grid-template-columns:minmax(0,1fr)}.lrow .lname{padding-top:6px}}
+.lname{font-family:var(--hand2);font-size:1.12rem;line-height:1.15}
+.lname small{display:block;color:var(--c-wall);font-size:.95rem}
+.ltrack{position:relative;height:26px;border-radius:99px;border:1.5px solid var(--line)}
+.ltrack .zone{position:absolute;top:0;bottom:0;border-radius:99px}
+.ltrack .dot{position:absolute;top:50%;width:16px;height:16px;border-radius:50%;transform:translate(-50%,-50%);border:2px solid var(--ink)}
+.ltrack .lim{position:absolute;top:-4px;bottom:-4px;width:0;border-left:2px dashed var(--ink);opacity:.5}
+.axis{position:relative;height:22px;font-family:var(--hand2);font-size:.95rem;color:var(--muted)}
+.axis span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+@media (max-width:560px){.axis span.odd{display:none}}
+.band-legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-family:var(--hand2);font-size:1.05rem}
+.band-legend span{display:inline-flex;gap:6px;align-items:center}
+.band-legend i{width:22px;height:10px;border-radius:99px;display:inline-block}
+
+.quiz{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:14px}
+.q{background:rgba(46,43,39,.9);border:1.5px solid var(--line);border-radius:26px;padding:20px;display:grid;gap:10px;align-content:start}
+.q h3{font-size:1.12rem;font-family:var(--body);font-weight:700;line-height:1.35;color:var(--petal)}
+.q .opts{display:grid;gap:6px}
+.q .opts button{text-align:left;border:1.5px solid var(--line);background:transparent;border-radius:16px;padding:8px 14px;cursor:pointer;font-size:.97rem}
+.q .opts button:hover:not(:disabled){border-color:var(--accent)}
+.q .opts button:disabled{cursor:default}
+.q .opts button.right{background:var(--good-bg);border-color:var(--good);font-weight:700}
+.q .opts button.wrong{background:var(--bad-bg);border-color:var(--bad)}
+.q .expl{font-size:.94rem;color:var(--muted)}
+.qn{font-family:var(--display);color:var(--accent);margin-right:.2em}
+
+aside.teacher{margin-top:28px;border:1.5px solid var(--c-wall);border-radius:28px;padding:22px;display:grid;gap:10px;background:rgba(46,43,39,.9)}
+aside.teacher ul{margin:0;padding-left:1.2em;display:grid;gap:6px}
+footer{margin-top:24px;font-size:.88rem;color:var(--muted)}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+<header class="top">
+  <p class="kicker">[ Biologie · Zellenlehre · Klasse 5–7 ]</p>
+  <h1 aria-label="Expedition Pflanzenzelle"><span class="sm">die</span><span class="big o">Expedition</span><span class="sm">in die</span><span class="big c">Pflanzenzelle<svg viewBox="0 0 300 20" preserveAspectRatio="none" aria-hidden="true"><path d="M4,12 C 60,2 120,18 170,9 S 260,4 296,11" style="fill:none;stroke:var(--leaf);stroke-width:3;stroke-linecap:round"/></svg></span></h1>
+  <p class="lead">Jede Pflanze besteht aus Millionen winziger Zellen. Hier nimmst du eine Pflanzenzelle auseinander, schaust ihr bei der Arbeit zu und probierst selbst aus, was passiert, wenn sich etwas ändert.</p>
+</header>
+
+<nav class="jump" aria-label="Abschnitte">
+  <ul>
+    <li><a href="#entdecken">1 · Entdecken</a></li>
+    <li><a href="#arbeit">2 · Licht &amp; Energie</a></li>
+    <li><a href="#wasser">3 · Wasser &amp; Halt</a></li>
+    <li><a href="#groesse">4 · Wie klein?</a></li>
+    <li><a href="#quiz">5 · Teste dich</a></li>
+  </ul>
+</nav>
+
+<!-- 1 ENTDECKEN -->
+<section id="entdecken">
+  <div class="sec-head">
+    <span class="bracket">[ Teil 1 ]</span>
+    <h2>Wer wohnt in der Zelle?</h2>
+    <p>Tippe auf einen Bestandteil. Stell dir die Zelle als kleine Stadt vor: Jeder Bestandteil hat eine eigene Aufgabe. Die Bestandteile im Inneren heißen <b>Zellorganellen</b>.</p>
+  </div>
+
+  <div class="controls">
+    <div class="ctl"><span>Modus</span>
+      <div class="seg" id="seg-mode"><button data-v="explore" aria-pressed="true">Entdecken</button><button data-v="game" aria-pressed="false">Suchspiel</button></div></div>
+    <div class="ctl"><span>Zelle</span>
+      <div class="seg" id="seg-type"><button data-v="plant" aria-pressed="true">Pflanzenzelle</button><button data-v="animal" aria-pressed="false">Tierzelle</button></div></div>
+    <div class="ctl"><span>Ansicht</span>
+      <div class="seg" id="seg-view"><button data-v="model" aria-pressed="true">Modell</button><button data-v="lm" aria-pressed="false">Lichtmikroskop</button><button data-v="em" aria-pressed="false">Elektronenmikroskop</button></div></div>
+    <div class="ctl"><span>Beschriftung</span>
+      <div class="seg" id="seg-lab"><button data-v="on" aria-pressed="true">an</button><button data-v="off" aria-pressed="false">aus</button></div></div>
+  </div>
+
+  <div class="explorer">
+    <div>
+      <div class="stage" id="stage">
+        <svg id="cell" viewBox="0 0 640 480" role="group" aria-label="Interaktive Pflanzenzelle"></svg>
+      </div>
+      <p class="stage-caption" id="caption"></p>
+      <div class="legend" id="legend" aria-label="Bestandteile auswählen"></div>
+    </div>
+
+    <div class="panel" id="panel" aria-live="polite">
+      <div class="panel-head"><span class="sw" id="p-sw"></span><div><h3 id="p-name"></h3><p class="fach" id="p-fach"></p></div></div>
+      <div class="facts" id="p-facts"></div>
+      <p id="p-task"></p>
+      <div class="box"><h4>In der Zellstadt</h4><p id="p-city"></p></div>
+      <div class="box"><h4>Was wäre, wenn es fehlt?</h4><p id="p-without"></p></div>
+      <details id="p-det"><summary>Profi-Wissen</summary><p id="p-profi"></p></details>
+      <p class="note" id="p-hidden" hidden></p>
+    </div>
+
+    <div class="panel" id="game" hidden aria-live="polite">
+      <h4 id="g-count">Aufgabe 1 von 10</h4>
+      <div class="progress"><i id="g-bar"></i></div>
+      <p class="game-task" id="g-task"></p>
+      <p class="feedback" id="g-fb">Tippe in der Zelle auf den richtigen Bestandteil.</p>
+      <p id="g-score" class="score"></p>
+      <div class="btn-row"><button class="btn ghost" id="g-skip">Überspringen</button><button class="btn ghost" id="g-restart">Neu starten</button></div>
+    </div>
+  </div>
+
+  <div class="merk">
+    <h4>[ Merke ] Die drei Extras der Pflanzenzelle</h4>
+    <p>Pflanzen- und Tierzellen haben Zellmembran, Zellplasma, Zellkern und Mitochondrien. Nur die Pflanzenzelle hat zusätzlich:</p>
+    <ol>
+      <li><b>Zellwand</b> aus Cellulose: gibt Form und Halt.</li>
+      <li><b>große Vakuole</b> mit Zellsaft: speichert Wasser und macht die Pflanze fest.</li>
+      <li><b>Chloroplasten</b>: stellen mit Licht Zucker her (Fotosynthese).</li>
+    </ol>
+  </div>
+</section>
+
+<!-- 2 ARBEIT -->
+<section id="arbeit">
+  <div class="sec-head">
+    <span class="bracket">[ Teil 2 ]</span>
+    <h2>Ein Tag in der Blattzelle</h2>
+    <p>Die Chloroplasten stellen mit Sonnenlicht Zucker her. Die Mitochondrien gewinnen aus diesem Zucker Energie. Stell die Sonne ein und beobachte, was in die Zelle hineingeht und was herauskommt.</p>
+  </div>
+  <div class="twocol">
+    <div class="card">
+      <svg id="photo" viewBox="0 0 640 330" role="img" aria-label="Schema: Fotosynthese im Chloroplasten und Zellatmung im Mitochondrium">
+        <rect x="0" y="0" width="640" height="330" rx="12" style="fill:var(--sky)"/>
+        <rect id="ph-night" x="0" y="0" width="640" height="330" rx="12" style="fill:var(--night)" opacity="0"/>
+        <g id="ph-sun"><g style="stroke:var(--sun);stroke-width:2.5;stroke-linecap:round"><line x1="48" y1="14" x2="48" y2="22"/><line x1="48" y1="82" x2="48" y2="90"/><line x1="10" y1="52" x2="18" y2="52"/><line x1="78" y1="52" x2="86" y2="52"/><line x1="21" y1="25" x2="27" y2="31"/><line x1="69" y1="73" x2="75" y2="79"/><line x1="75" y1="25" x2="69" y2="31"/><line x1="27" y1="73" x2="21" y2="79"/></g><circle cx="48" cy="52" r="30" style="fill:var(--sun)" opacity=".25"/><circle cx="48" cy="52" r="20" style="fill:var(--sun)"/></g>
+        <rect x="110" y="30" width="500" height="270" rx="26" style="fill:var(--c-cyto);stroke:var(--c-wall);stroke-width:10"/>
+        <rect x="120" y="40" width="480" height="250" rx="18" style="fill:none;stroke:var(--c-mem);stroke-width:1.5;opacity:.8"/>
+        <ellipse cx="245" cy="162" rx="80" ry="42" style="fill:var(--c-chl);stroke:var(--c-chl-d);stroke-width:3"/>
+        <g style="fill:var(--c-chl-d)"><rect x="190" y="148" width="12" height="28" rx="3"/><rect x="214" y="144" width="12" height="36" rx="3"/><rect x="238" y="142" width="12" height="40" rx="3"/><rect x="262" y="144" width="12" height="36" rx="3"/><rect x="286" y="148" width="12" height="28" rx="3"/></g>
+        <rect x="400" y="130" width="140" height="64" rx="32" style="fill:var(--c-mit);stroke:var(--c-mit-d);stroke-width:3"/>
+        <path d="M418,162 l10,-18 l10,36 l10,-36 l10,36 l10,-36 l10,36 l10,-36 l10,36 l10,-36 l6,18" style="fill:none;stroke:var(--c-mit-d);stroke-width:3;stroke-linejoin:round"/>
+        <rect x="330" y="236" width="120" height="44" rx="22" style="fill:var(--paper);stroke:var(--c-gol);stroke-width:2;stroke-dasharray:5 4"/>
+        <rect id="ph-store" x="336" y="262" width="60" height="12" rx="4" style="fill:var(--c-gol)"/>
+        <text x="390" y="254" text-anchor="middle">Stärke-Vorrat</text>
+        <g style="fill:none;stroke:var(--ink);stroke-width:1.5;stroke-dasharray:3 5;opacity:.35">
+          <path id="p-light" d="M74,68 L182,132"/>
+          <path id="p-co2" d="M18,300 C 90,300 150,250 180,192"/>
+          <path id="p-h2o" d="M250,328 L250,206"/>
+          <path id="p-sugar" d="M326,160 L398,160"/>
+          <path id="p-o2out" d="M272,122 C 282,82 300,42 318,4"/>
+          <path id="p-o2in" d="M560,4 C 540,50 500,92 482,130"/>
+          <path id="p-co2out" d="M540,172 C 580,182 610,202 638,232"/>
+          <path id="p-energy" d="M470,196 L470,286"/>
+          <path id="p-tostore" d="M272,200 C 292,236 310,252 330,256"/>
+          <path id="p-fromstore" d="M442,236 C 444,216 450,204 456,196"/>
+        </g>
+        <g id="ph-parts"></g>
+        <text x="206" y="226" text-anchor="middle" style="font-weight:600">Chloroplast</text>
+        <text x="540" y="222" text-anchor="middle" style="font-weight:600">Mitochondrium</text>
+        <text x="84" y="58">Licht</text>
+        <text x="8" y="322">CO₂ aus der Luft</text>
+        <text x="258" y="322">Wasser aus den Wurzeln</text>
+        <text x="310" y="18" text-anchor="end">O₂ in die Luft</text>
+        <text x="552" y="18" text-anchor="end">O₂ aus der Luft</text>
+        <text x="634" y="252" text-anchor="end">CO₂ + Wasser</text>
+        <text x="476" y="296">Energie</text>
+      </svg>
+      <div class="key">
+        <span><i style="background:var(--sun)"></i>Licht / Energie</span>
+        <span><i style="background:var(--p-co2)"></i>Kohlenstoffdioxid (CO₂)</span>
+        <span><i style="background:var(--p-h2o)"></i>Wasser</span>
+        <span><i style="background:var(--p-o2)"></i>Sauerstoff (O₂)</span>
+        <span><i style="background:var(--c-gol);border-radius:2px"></i>Traubenzucker</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="range-row">
+        <label for="light">Sonnenlicht <output id="light-out">100 %</output></label>
+        <input type="range" id="light" min="0" max="100" value="100">
+        <div class="btn-row" id="light-presets">
+          <button class="btn ghost" data-v="0">Nacht</button><button class="btn ghost" data-v="20">Dämmerung</button><button class="btn ghost" data-v="50">Bewölkt</button><button class="btn ghost" data-v="100">Mittag</button>
+        </div>
+      </div>
+      <div class="meter"><span>Fotosynthese</span><div class="track"><i id="m-p" style="background:var(--c-chl)"></i></div><b id="m-pv">10</b></div>
+      <div class="meter"><span>Zellatmung</span><div class="track"><i id="m-r" style="background:var(--c-mit)"></i></div><b id="m-rv">2</b></div>
+      <div class="meter"><span>Stärke-Vorrat</span><div class="track"><i id="m-s" style="background:var(--c-gol)"></i></div><b id="m-sv">60</b></div>
+      <div>
+        <h4 style="margin-bottom:6px">Sauerstoff-Bilanz des Blattes</h4>
+        <div class="div-track"><i id="m-o2"></i></div>
+        <div class="div-labels"><span>← nimmt O₂ auf</span><span>gibt O₂ ab →</span></div>
+      </div>
+      <p class="status" id="ph-status"></p>
+    </div>
+  </div>
+  <div class="eq">
+    <div id="eq-p"><b>Fotosynthese</b> (im Chloroplasten): Kohlenstoffdioxid + Wasser → Traubenzucker + Sauerstoff <span class="f">braucht Licht und Chlorophyll · 6 CO₂ + 6 H₂O → C₆H₁₂O₆ + 6 O₂</span></div>
+    <div id="eq-r"><b>Zellatmung</b> (im Mitochondrium): Traubenzucker + Sauerstoff → Kohlenstoffdioxid + Wasser + Energie <span class="f">läuft Tag und Nacht · C₆H₁₂O₆ + 6 O₂ → 6 CO₂ + 6 H₂O + Energie</span></div>
+  </div>
+</section>
+
+<!-- 3 WASSER -->
+<section id="wasser">
+  <div class="sec-head">
+    <span class="bracket">[ Teil 3 ]</span>
+    <h2>Warum Pflanzen stehen können</h2>
+    <p>Pflanzen haben keine Knochen. Trotzdem stehen sie aufrecht. Das Geheimnis ist Wasser in der Vakuole. Probiere die drei Situationen aus.</p>
+  </div>
+  <div class="twocol">
+    <div class="card">
+      <svg id="water" viewBox="0 0 640 300" role="img" aria-label="Topfpflanze und vergrößerte Zelle mit Vakuole"></svg>
+    </div>
+    <div class="card">
+      <div class="seg" id="seg-water" style="justify-self:start"><button data-v="gut" aria-pressed="true">Gut gegossen</button><button data-v="trocken" aria-pressed="false">Zu wenig Wasser</button><button data-v="salz" aria-pressed="false">In Salzwasser</button></div>
+      <h3 id="w-title"></h3>
+      <p id="w-text"></p>
+      <p class="status" id="w-tip"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 4 GRÖSSE -->
+<section id="groesse">
+  <div class="sec-head">
+    <span class="bracket">[ Teil 4 ]</span>
+    <h2>Wie klein ist eine Zelle?</h2>
+    <p>Zellen misst man in <b>Mikrometern</b> (µm): 1 µm ist ein Tausendstel Millimeter. Noch kleinere Dinge misst man in <b>Nanometern</b> (nm): 1 nm ist ein Tausendstel Mikrometer. Die gestrichelten Linien zeigen, wo dein Auge und das Lichtmikroskop an ihre Grenze kommen.</p>
+  </div>
+  <div class="card">
+    <div class="band-legend">
+      <span><i style="background:var(--c-chl);opacity:.35"></i>mit bloßem Auge sichtbar (ab ca. 0,1 mm)</span>
+      <span><i style="background:var(--accent);opacity:.3"></i>nur im Lichtmikroskop (ab ca. 0,2 µm)</span>
+      <span><i style="background:var(--c-nuc-d);opacity:.3"></i>nur im Elektronenmikroskop</span>
+    </div>
+    <div class="ladder" id="ladder"></div>
+    <p class="status">Rechne selbst: Eine Blattzelle ist etwa 0,05 mm breit. Auf 1 cm (10 mm) passen also etwa <b>200 Zellen</b> nebeneinander.</p>
+  </div>
+</section>
+
+<!-- 5 QUIZ -->
+<section id="quiz">
+  <div class="sec-head">
+    <span class="bracket">[ Teil 5 ]</span>
+    <h2>Teste dich</h2>
+    <p>Hier geht es ums Verstehen, nicht ums Auswendiglernen. Nach jeder Antwort bekommst du eine Erklärung.</p>
+  </div>
+  <div class="score"><span id="q-score">0 von 7 richtig</span><button class="btn ghost" id="q-reset">Neu beginnen</button></div>
+  <div class="quiz" id="quizbox"></div>
+</section>
+
+<aside class="teacher">
+  <h4>[ Für die Lehrkraft ] Passende Versuche</h4>
+  <ul>
+    <li><b>Zwiebelhaut-Präparat</b> (Innenseite der Zwiebelschuppe): Zellwand, Zellkern, Vakuole gut sichtbar; Kern mit Iod-Kaliumiodid-Lösung oder Methylenblau anfärben. Keine Chloroplasten, da die Zwiebel ohne Licht wächst.</li>
+    <li><b>Wasserpest oder Moosblättchen</b>: Chloroplasten direkt sichtbar, bei Wasserpest oft auch Plasmaströmung.</li>
+    <li><b>Rote Zwiebelhaut in Salzlösung</b>: Plasmolyse unter dem Mikroskop beobachten; mit Leitungswasser rückgängig machen (Deplasmolyse).</li>
+    <li>Das Suchspiel (Teil 1) und das Quiz (Teil 5) eignen sich als Einstieg oder Sicherung, auch in Partnerarbeit am Tablet.</li>
+  </ul>
+</aside>
+<footer>Größenangaben sind typische Richtwerte; echte Zellen und Organellen schwanken je nach Pflanze und Gewebe. Die Farben im Modell dienen der Unterscheidung – in echt ist eine Zelle fast durchsichtig, nur die Chloroplasten sind grün.</footer>
+</div>
+
+<script>
+(function(){
+const NS='http://www.w3.org/2000/svg';
+function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs){if(k==='style')e.setAttribute('style',attrs[k]);else e.setAttribute(k,attrs[k]);}if(parent)parent.appendChild(e);return e;}
+function rr(x,y,w,h,r){return `M${x+r},${y}H${x+w-r}A${r},${r} 0 0 1 ${x+w},${y+r}V${y+h-r}A${r},${r} 0 0 1 ${x+w-r},${y+h}H${x+r}A${r},${r} 0 0 1 ${x},${y+h-r}V${y+r}A${r},${r} 0 0 1 ${x+r},${y}Z`;}
+const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- DATA ---------- */
+const ORG={
+ zellwand:{name:'Zellwand',fach:'Wand aus Cellulose',plant:true,lm:'sichtbar',size:'sehr dünn, aber zäh',color:'--c-wall',
+  task:'Die Zellwand ist die feste Hülle ganz außen. Sie besteht vor allem aus Cellulose, einem Stoff aus langen Zuckerketten. Sie gibt der Zelle ihre Form und hält dem Wasserdruck von innen stand.',
+  city:'Stadtmauer: stabil, aber mit vielen Durchgängen. Wasser und gelöste Stoffe kommen fast überall hindurch.',
+  without:'Die Zelle würde sich bei viel Wasser immer weiter aufblähen und könnte platzen. Die Pflanze hätte keinen Halt.',
+  profi:'Die Zellwand ist für Wasser und kleine Teilchen frei durchlässig. Welche Stoffe wirklich in die Zelle kommen, entscheidet erst die Zellmembran dahinter. Durch feine Kanäle (Plasmodesmen) sind Nachbarzellen miteinander verbunden. Holz und Papier bestehen großenteils aus Zellwänden.'},
+ membran:{name:'Zellmembran',fach:'Plasmamembran',plant:false,lm:'kaum (liegt an der Zellwand an)',size:'ca. 8 nm dünn',color:'--c-mem',
+  task:'Ein hauchdünnes Häutchen direkt an der Innenseite der Zellwand. Es umschließt das Zellplasma und entscheidet, welche Stoffe in die Zelle hinein- und hinausdürfen.',
+  city:'Stadttor mit Kontrolle: Nur wer auf der Liste steht, kommt durch.',
+  without:'Alles würde ungehindert ein- und auslaufen. Die Zelle könnte ihre Stoffe nicht zusammenhalten und würde sterben.',
+  profi:'Die Membran ist „auswählend durchlässig“ (selektiv permeabel). Sie besteht aus einer doppelten Schicht fettähnlicher Teilchen (Lipide). Darin stecken Eiweiße, die als Kanäle und Pumpen arbeiten. Im Lichtmikroskop sieht man sie nur, wenn sie sich von der Wand ablöst (Plasmolyse, siehe Teil 3).'},
+ cytoplasma:{name:'Zellplasma',fach:'Cytoplasma',plant:false,lm:'sichtbar (körnig)',size:'füllt die ganze Zelle',color:'--c-cyto',
+  task:'Eine zähflüssige, geleeartige Masse aus viel Wasser und gelösten Stoffen. Darin liegen alle Organellen, und hier laufen viele Stoffwechselvorgänge ab.',
+  city:'Das Stadtgebiet mit Straßen und Plätzen, auf dem alle Gebäude stehen und alles unterwegs ist.',
+  without:'Die Organellen hätten keinen Platz und keine Verbindung untereinander. Stoffe könnten nicht transportiert werden.',
+  profi:'In vielen Pflanzenzellen fließt das Plasma im Kreis (Plasmaströmung). Bei der Wasserpest sieht man im Mikroskop, wie die Chloroplasten mitwandern.'},
+ zellkern:{name:'Zellkern',fach:'Nucleus',plant:false,lm:'sichtbar (gut nach Anfärben)',size:'ca. 5–20 µm',color:'--c-nuc-d',
+  task:'Die Steuerzentrale. Im Zellkern liegt die Erbinformation (DNA). Sie enthält die Baupläne für alles, was die Zelle herstellt, und steuert so alle Lebensvorgänge. Bei der Zellteilung wird sie an die neuen Zellen weitergegeben.',
+  city:'Rathaus mit Archiv: Hier liegen alle Baupläne der Stadt, und von hier kommen die Anweisungen.',
+  without:'Die Zelle bekäme keine neuen Anweisungen, könnte sich nicht teilen und würde bald absterben.',
+  profi:'Der Kern ist von einer doppelten Hülle mit Poren umgeben. Durch die Kernporen gelangen Abschriften der Baupläne ins Zellplasma. Das dunkle Kernkörperchen (Nucleolus) stellt Bauteile für die Ribosomen her.'},
+ vakuole:{name:'Vakuole',fach:'Zentralvakuole mit Zellsaft',plant:true,lm:'sichtbar',size:'oft 80–90 % der Zelle',color:'--c-vac-d',
+  task:'Ein großer Raum, gefüllt mit Zellsaft. Zellsaft ist vor allem Wasser mit gelösten Stoffen wie Zucker, Salzen und manchmal Farbstoffen. Die prall gefüllte Vakuole drückt von innen gegen die Zellwand und macht die Pflanze fest.',
+  city:'Wasserturm und Lagerhalle: speichert Wasser und Vorräte und lagert auch Abfälle.',
+  without:'Die Pflanze könnte kein Wasser speichern und würde schlapp werden, wie eine Topfpflanze, die niemand gießt.',
+  profi:'Den Innendruck nennt man Turgor. Die rote Farbe der roten Zwiebel oder des Rotkohls sitzt im Zellsaft der Vakuole (Anthocyane). Die Vakuole hat eine eigene Membran, den Tonoplasten. Tierzellen haben höchstens kleine Vakuolen.'},
+ chloroplast:{name:'Chloroplasten',fach:'Chloroplast (Blattgrünkorn)',plant:true,lm:'sichtbar',size:'ca. 5–10 µm',color:'--c-chl',
+  task:'Hier findet die Fotosynthese statt. Der grüne Farbstoff Chlorophyll fängt Sonnenlicht ein. Mit dieser Energie baut der Chloroplast aus Kohlenstoffdioxid und Wasser Traubenzucker auf. Dabei entsteht Sauerstoff.',
+  city:'Solarküche: kocht mit Sonnenenergie Zucker, das Essen für die ganze Stadt.',
+  without:'Die Pflanze könnte keine eigene Nahrung herstellen, und es entstünde kein Sauerstoff.',
+  profi:'Nur Zellen, die Licht bekommen, haben Chloroplasten. Deshalb ist die Zwiebelhaut nicht grün: Die Zwiebel wächst unter der Erde. Eine Blattzelle enthält oft 20 bis 100 Chloroplasten. Innen liegen gestapelte Membranscheiben (Thylakoide), in denen das Chlorophyll sitzt.'},
+ mitochondrium:{name:'Mitochondrien',fach:'Mitochondrium, Mz. Mitochondrien',plant:false,lm:'nicht sichtbar (zu klein)',size:'ca. 1–3 µm lang',color:'--c-mit',
+  task:'Die Kraftwerke der Zelle. Hier wird Traubenzucker mithilfe von Sauerstoff abgebaut. Dabei wird Energie frei, die die Zelle für alle ihre Arbeiten braucht. Das nennt man Zellatmung.',
+  city:'Kraftwerk: verbrennt Brennstoff (Zucker) und liefert Strom für die ganze Stadt.',
+  without:'Die Zelle hätte keine Energie. Auch Pflanzen brauchen Mitochondrien, denn sie atmen Tag und Nacht.',
+  profi:'Die innere Membran ist stark gefaltet. Das vergrößert die Fläche, an der Energie gewonnen wird. Die Energie wird im Stoff ATP gespeichert, einer Art Akku der Zelle.'},
+ er:{name:'Endoplasmatisches Retikulum',fach:'kurz: ER',plant:false,lm:'nicht sichtbar',size:'Netz aus Membrankanälen',color:'--c-er',
+  task:'Ein Netz aus flachen Kanälen und Säckchen, das die Zelle durchzieht. Hier werden Stoffe hergestellt, verändert und durch die Zelle transportiert.',
+  city:'Straßen- und Kanalnetz mit Werkstätten am Straßenrand.',
+  without:'Viele Stoffe könnten nicht hergestellt oder nicht an ihren Zielort gebracht werden.',
+  profi:'Das raue ER ist mit Ribosomen besetzt und stellt Eiweiße her. Das glatte ER hat keine Ribosomen und stellt zum Beispiel Fette her.'},
+ golgi:{name:'Golgi-Apparat',fach:'Golgi-Apparat (Dictyosomen)',plant:false,lm:'nicht sichtbar',size:'Stapel flacher Säckchen',color:'--c-gol',
+  task:'Ein Stapel flacher Membransäckchen. Er nimmt Stoffe vom ER entgegen, verändert sie, verpackt sie in kleine Bläschen und schickt sie an ihren Zielort, zum Beispiel an die Zellmembran.',
+  city:'Post und Paketzentrum: sortieren, verpacken, verschicken.',
+  without:'Stoffe würden nicht richtig verpackt und kämen nicht an. In der Pflanzenzelle fehlte Baumaterial für die Zellwand.',
+  profi:'Die Transportbläschen heißen Vesikel. In Pflanzenzellen liefert der Golgi-Apparat Bausteine für die Zellwand. Benannt ist er nach dem italienischen Arzt Camillo Golgi.'},
+ ribosom:{name:'Ribosomen',fach:'Ribosom',plant:false,lm:'nicht sichtbar (viel zu klein)',size:'ca. 25 nm',color:'--c-rib',
+  task:'Winzige Körnchen, die frei im Zellplasma liegen oder am ER sitzen. Sie lesen die Baupläne aus dem Zellkern ab und bauen danach Eiweiße (Proteine) zusammen.',
+  city:'Handwerksbetriebe: bauen nach Plan die Bauteile der Stadt.',
+  without:'Die Zelle könnte keine Eiweiße bauen. Ohne Eiweiße gibt es keine Pumpen in der Membran und keine Helfer für den Stoffwechsel.',
+  profi:'Eine Zelle hat viele Tausend bis Millionen Ribosomen. Sie sind so klein, dass man sie nur im Elektronenmikroskop erkennt.'}
+};
+const ORDER=['zellwand','membran','cytoplasma','zellkern','vakuole','chloroplast','mitochondrium','er','golgi','ribosom'];
+const EM_ONLY=new Set(['mitochondrium','er','golgi','ribosom']);
+
+/* ---------- CELL DRAWING ---------- */
+const svg=document.getElementById('cell');
+const PLANT_BODY=rr(38,38,564,384,17);
+const ANIMAL_BODY='M78,118 C 130,42 330,34 462,62 C 590,90 612,250 566,344 C 520,432 300,440 172,410 C 54,382 28,200 78,118 Z';
+const groups={};
+function grp(key,extra){const g=el('g',{class:'org '+(extra||''),'data-key':key,tabindex:'0',role:'button','aria-label':ORG[key].name},svg);groups[key]=g;return g;}
+
+// scale bar
+const sb=el('g',{},svg);
+el('line',{x1:490,y1:458,x2:603,y2:458,style:'stroke:var(--ink);stroke-width:3'},sb);
+el('text',{x:546,y:476,'text-anchor':'middle',style:'fill:var(--ink)'},sb).textContent='10 µm';
+
+const gCyto=grp('cytoplasma');
+const cytoPath=el('path',{d:PLANT_BODY,style:'fill:var(--c-cyto)'},gCyto);
+
+const gVac=grp('vakuole','plant-only');
+el('path',{d:'M300,120 C 360,95 470,100 505,140 C 540,185 535,300 500,338 C 460,378 340,380 295,350 C 250,318 245,150 300,120 Z',style:'fill:var(--c-vac);stroke:var(--c-vac-d);stroke-width:2.5'},gVac);
+el('path',{d:'M320,140 C 360,122 430,122 460,140',style:'fill:none;stroke:var(--surface);stroke-width:5;stroke-linecap:round;opacity:.55'},gVac);
+
+const gER=grp('er','em-only');
+[200,220,240,260].forEach(y=>el('path',{d:`M176,${y} q 8,-9 16,0 t 16,0 t 16,0 t 16,0`,style:'fill:none;stroke:var(--c-er);stroke-width:4.5;stroke-linecap:round'},gER));
+
+const gGol=grp('golgi','em-only');
+[322,332,342,352].forEach((y,i)=>el('path',{d:`M${200+i*2},${y} q ${20-i*2},-10 ${40-i*4},0`,style:'fill:none;stroke:var(--c-gol);stroke-width:5;stroke-linecap:round'},gGol));
+[[250,317,4],[252,356,3.5],[192,314,3]].forEach(c=>el('circle',{cx:c[0],cy:c[1],r:c[2],style:'fill:var(--c-gol)'},gGol));
+
+const gMit=grp('mitochondrium','em-only');
+function mito(x,y,a,cls){const g=el('g',{transform:`translate(${x},${y}) rotate(${a})`,class:cls||''},gMit);
+ el('rect',{x:-16,y:-8,width:32,height:16,rx:8,style:'fill:var(--c-mit);stroke:var(--c-mit-d);stroke-width:1.5'},g);
+ el('path',{d:'M-11,0 l3,-4.5 l3,9 l3,-9 l3,9 l3,-9 l3,9 l3,-9 l2,4.5',style:'fill:none;stroke:var(--c-mit-d);stroke-width:1.4;stroke-linejoin:round'},g);}
+[[120,150,25],[236,104,-20],[112,332,-30],[522,368,-10]].forEach(m=>mito(...m));
+[[380,180,15,'animal-only'],[430,290,-35,'animal-only'],[320,265,60,'animal-only'],[470,220,80,'animal-only']].forEach(m=>mito(...m));
+
+const gChl=grp('chloroplast','plant-only');
+[[92,70,-15],[190,64,4],[290,66,-6],[390,64,5],[490,70,-4],[566,112,60],[572,212,88],[570,310,95],[545,394,-35],[450,400,4],[350,402,-4],[165,402,6]].forEach(([x,y,a])=>{
+ const g=el('g',{transform:`translate(${x},${y}) rotate(${a})`},gChl);
+ el('ellipse',{rx:23,ry:11.5,style:'fill:var(--c-chl);stroke:var(--c-chl-d);stroke-width:1.5'},g);
+ [-12,-3,6].forEach(dx=>el('rect',{x:dx,y:-6,width:5,height:12,rx:1.5,style:'fill:var(--c-chl-d)'},g));
+});
+
+const gNuc=grp('zellkern');
+el('circle',{cx:125,cy:235,r:46,style:'fill:var(--c-nuc);stroke:var(--c-nuc-d);stroke-width:3.5;stroke-dasharray:14 3'},gNuc);
+el('circle',{cx:125,cy:235,r:41,style:'fill:none;stroke:var(--c-nuc-d);stroke-width:1;opacity:.6'},gNuc);
+el('circle',{cx:136,cy:226,r:13,style:'fill:var(--c-nuc-d)'},gNuc);
+[[104,220],[110,255],[132,260],[146,245],[100,238],[120,212]].forEach(p=>el('circle',{cx:p[0],cy:p[1],r:2.2,style:'fill:var(--c-nuc-d);opacity:.7'},gNuc));
+
+const gRib=grp('ribosom','em-only');
+const ribs=[[150,110],[160,300],[255,160],[250,290],[95,120],[58,210],[540,150],[546,258],[430,386],[300,386],[210,150],[190,380],[68,300]];
+[200,220].forEach(y=>{ribs.push([184,y-8.5],[216,y-8.5],[200,y+8.5],[232,y+8.5]);});
+ribs.forEach(p=>{el('circle',{cx:p[0],cy:p[1],r:8,style:'fill:transparent'},gRib);el('circle',{cx:p[0],cy:p[1],r:2.8,style:'fill:var(--c-rib)'},gRib);});
+
+const gMem=grp('membran');
+const memPath=el('path',{d:PLANT_BODY,style:'fill:none;stroke:var(--c-mem);stroke-width:3'},gMem);
+const memHit=el('path',{d:PLANT_BODY,'pointer-events':'stroke',style:'fill:none;stroke:transparent;stroke-width:14'},gMem);
+
+const gWall=grp('zellwand','plant-only');
+el('path',{d:rr(20,20,600,420,30)+rr(34,34,572,392,20),'fill-rule':'evenodd',style:'fill:var(--c-wall);stroke:var(--c-wall-d);stroke-width:1.5'},gWall);
+// cellulose fibre hint
+el('path',{d:rr(27,27,586,406,25),style:'fill:none;stroke:var(--c-wall-d);stroke-width:1;stroke-dasharray:2 6;opacity:.6'},gWall);
+
+// hand-lettered annotation layer (poster style leader lines)
+const LABELS=[
+ ['zellwand','Zellwand',-14,95,[[-8,90],[27,90]],'plant-only'],
+ ['membran','Zellmembran',-14,135,[[-8,130],[38,130]],''],
+ ['er','ER (Kanalnetz)',-14,178,[[-8,173],[178,173],[182,195]],'em-only'],
+ ['zellkern','Zellkern',-14,245,[[-8,240],[80,240]],''],
+ ['ribosom','Ribosom',-14,300,[[-8,295],[65,299]],'em-only'],
+ ['mitochondrium','Mitochondrium',-14,345,[[-8,340],[99,338]],'em-only'],
+ ['golgi','Golgi-Apparat',-14,385,[[-8,380],[160,380],[203,353]],'em-only'],
+ ['chloroplast','Chloroplasten',654,75,[[648,70],[514,70]],'plant-only'],
+ ['cytoplasma','Zellplasma',654,165,[[648,160],[548,160]],''],
+ ['vakuole','Vakuole',654,275,[[648,270],[528,270]],'plant-only']
+];
+const labG=el('g',{class:'labels'},svg);const labEls={};
+LABELS.forEach(([k,t,x,y,pts,cls])=>{const g=el('g',{class:'lab '+cls,'data-key':k},labG);
+ const pl=el('polyline',{points:pts.map(q=>q.join(',')).join(' ')},g);
+ const e=pts[pts.length-1];const c=el('circle',{cx:e[0],cy:e[1],r:3},g);
+ el('text',{x:x,y:y,'text-anchor':x<0?'end':'start'},g).textContent=t;
+ g.addEventListener('click',()=>onOrg(k));labEls[k]={pl,c};});
+
+/* ---------- STATE / UI ---------- */
+const st={mode:'explore',type:'plant',view:'model',sel:'chloroplast',labels:window.innerWidth>=700};
+function setLabels(on){st.labels=on;const show=on&&st.mode!=='game';svg.classList.toggle('nolabels',!show);svg.setAttribute('viewBox',show?'-150 -10 940 500':'0 0 640 480');}
+const stage=document.getElementById('stage'),caption=document.getElementById('caption'),legend=document.getElementById('legend');
+
+ORDER.forEach(k=>{const b=document.createElement('button');b.dataset.key=k;b.innerHTML=`<span class="sw" style="background:var(${ORG[k].color})"></span>${ORG[k].name}`;b.addEventListener('click',()=>select(k));legend.appendChild(b);});
+
+function hidden(k){return (st.type==='animal'&&(k==='zellwand'||k==='chloroplast'||k==='vakuole'))||(st.view==='lm'&&EM_ONLY.has(k));}
+
+function select(k){
+ st.sel=k;const o=ORG[k];
+ ORDER.forEach(x=>groups[x].classList.toggle('sel',x===k));svg.classList.add('has-sel');
+ labG.querySelectorAll('.lab').forEach(g=>g.classList.toggle('on',g.dataset.key===k));
+ legend.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.key===k));
+ document.getElementById('p-sw').style.background=`var(${o.color})`;
+ document.getElementById('p-name').textContent=o.name;
+ document.getElementById('p-fach').textContent=o.fach;
+ document.getElementById('p-facts').innerHTML=(o.plant?'<span class="chip plant">nur Pflanzenzelle</span>':'<span class="chip">Pflanze &amp; Tier</span>')+`<span class="chip">Lichtmikroskop: ${o.lm}</span><span class="chip">${o.size}</span>`;
+ document.getElementById('p-task').textContent=o.task;
+ document.getElementById('p-city').textContent=o.city;
+ document.getElementById('p-without').textContent=o.without;
+ document.getElementById('p-profi').textContent=o.profi;
+ const h=document.getElementById('p-hidden');
+ if(hidden(k)){h.hidden=false;h.textContent=st.type==='animal'&&ORG[k].plant?'Dieser Bestandteil fehlt in der Tierzelle.':'In dieser Ansicht nicht zu sehen: zu klein für das Lichtmikroskop.';}else h.hidden=true;
+}
+
+function applyView(){
+ svg.classList.toggle('animal',st.type==='animal');
+ svg.classList.toggle('lm',st.view==='lm');
+ stage.classList.toggle('lm',st.view==='lm');stage.classList.toggle('em',st.view==='em');
+ const d=st.type==='animal'?ANIMAL_BODY:PLANT_BODY;[cytoPath,memPath,memHit].forEach(p=>p.setAttribute('d',d));
+ sb.style.display=st.type==='animal'?'none':'';
+ const mp=st.type==='animal'?[[-8,130],[74,130]]:[[-8,130],[38,130]];labEls.membran.pl.setAttribute('points',mp.map(q=>q.join(',')).join(' '));labEls.membran.c.setAttribute('cx',mp[1][0]);
+ legend.querySelectorAll('button').forEach(b=>b.classList.toggle('off',hidden(b.dataset.key)));
+ svg.setAttribute('aria-label',st.type==='animal'?'Interaktive Tierzelle':'Interaktive Pflanzenzelle');
+ let c;
+ if(st.view==='lm')c='Lichtmikroskop: Du siehst nur Dinge, die größer als etwa 0,2 µm sind. ER, Golgi-Apparat, Ribosomen und Mitochondrien erkennst du im Schulmikroskop nicht.';
+ else if(st.view==='em')c='Elektronenmikroskop: Es zeigt auch winzige Strukturen. Seine Bilder sind schwarz-weiß; Farben werden erst nachträglich ergänzt.';
+ else c='Modell: Die Farben helfen beim Unterscheiden. In echt ist eine Zelle fast durchsichtig, nur die Chloroplasten sind grün.';
+ if(st.type==='animal')c='Tierzelle: keine Zellwand, keine Chloroplasten, keine große Vakuole. Deshalb ist sie weich und oft rundlich. '+c;
+ caption.textContent=c;
+ if(st.mode==='explore')select(st.sel);
+}
+
+function seg(id,cb){const s=document.getElementById(id);s.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;s.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));cb(b.dataset.v);});return s;}
+function setSeg(id,v){document.getElementById(id).querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.v===v));}
+seg('seg-type',v=>{st.type=v;applyView();});
+seg('seg-view',v=>{st.view=v;applyView();});
+seg('seg-mode',v=>{st.mode=v;v==='game'?startGame():stopGame();setLabels(st.labels);});
+seg('seg-lab',v=>setLabels(v==='on'));setSeg('seg-lab',st.labels?'on':'off');setLabels(st.labels);
+
+function onOrg(k){ if(st.mode==='game')answer(k); else select(k); }
+ORDER.forEach(k=>{const g=groups[k];g.addEventListener('click',()=>onOrg(k));g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();onOrg(k);}});});
+
+/* ---------- GAME ---------- */
+const TASKS=[
+ ['Wo wird mit Sonnenlicht Zucker hergestellt?','chloroplast'],
+ ['Wer entscheidet, welche Stoffe in die Zelle hineindürfen?','membran'],
+ ['Wo liegen die Baupläne (die Erbinformation) der Zelle?','zellkern'],
+ ['Wo wird Zucker abgebaut, um Energie zu gewinnen?','mitochondrium'],
+ ['Welcher Wasserspeicher macht die Pflanze prall und fest?','vakuole'],
+ ['Welche feste Hülle aus Cellulose gibt der Zelle ihre Form?','zellwand'],
+ ['Wer verpackt Stoffe in Bläschen und verschickt sie?','golgi'],
+ ['Welche winzigen Körnchen bauen Eiweiße zusammen?','ribosom'],
+ ['Welches Kanalnetz durchzieht die Zelle wie ein Straßennetz?','er'],
+ ['In welcher geleeartigen Masse liegen alle Organellen?','cytoplasma']
+];
+const game={order:[],i:0,score:0,tries:0,lock:false};
+const $=id=>document.getElementById(id);
+function startGame(){
+ st.type='plant';st.view='model';setSeg('seg-type','plant');setSeg('seg-view','model');applyView();
+ ORDER.forEach(x=>groups[x].classList.remove('sel','hint'));svg.classList.remove('has-sel');
+ $('panel').hidden=true;$('game').hidden=false;legend.setAttribute('aria-disabled','true');
+ ['seg-type','seg-view','seg-lab'].forEach(i=>document.getElementById(i).style.pointerEvents='none');
+ game.order=TASKS.slice().sort(()=>Math.random()-.5);game.i=0;game.score=0;showTask();
+}
+function stopGame(){
+ $('panel').hidden=false;$('game').hidden=true;legend.removeAttribute('aria-disabled');
+ ['seg-type','seg-view','seg-lab'].forEach(i=>document.getElementById(i).style.pointerEvents='');
+ ORDER.forEach(x=>groups[x].classList.remove('hint','hit','miss'));select(st.sel);
+}
+function showTask(){
+ game.tries=0;game.lock=false;ORDER.forEach(x=>groups[x].classList.remove('hint','hit','miss'));
+ $('g-bar').style.width=(game.i/game.order.length*100)+'%';
+ if(game.i>=game.order.length){
+  $('g-count').textContent='Geschafft!';$('g-task').textContent=`${game.score} von ${game.order.length} beim ersten Versuch richtig.`;
+  $('g-fb').className='feedback';$('g-fb').textContent=game.score>=8?'Stark! Du kennst dich in der Zellstadt aus.':'Schau dir die Bestandteile im Modus „Entdecken“ noch einmal an und versuche es erneut.';
+  $('g-skip').hidden=true;$('g-score').textContent='';return;}
+ $('g-skip').hidden=false;
+ $('g-count').textContent=`Aufgabe ${game.i+1} von ${game.order.length}`;
+ $('g-task').textContent=game.order[game.i][0];
+ $('g-fb').className='feedback';$('g-fb').textContent='Tippe in der Zelle auf den richtigen Bestandteil.';
+ $('g-score').textContent=`Punkte: ${game.score}`;
+}
+function flash(k,c){const g=groups[k];g.classList.add(c);setTimeout(()=>g.classList.remove(c),900);}
+function answer(k){
+ if(game.lock||game.i>=game.order.length)return;
+ const want=game.order[game.i][1];
+ if(k===want){game.lock=true;if(game.tries===0)game.score++;flash(k,'hit');groups[k].classList.remove('hint');
+  $('g-fb').className='feedback good';$('g-fb').textContent=`Richtig: ${ORG[k].name}!`;
+  $('g-score').textContent=`Punkte: ${game.score}`;
+  setTimeout(()=>{game.i++;showTask();},1300);
+ } else {game.tries++;flash(k,'miss');
+  $('g-fb').className='feedback bad';$('g-fb').textContent=`Das ist: ${ORG[k].name}. Versuch es noch einmal.`;
+  if(game.tries>=2){groups[want].classList.add('hint');$('g-fb').textContent+=' Tipp: Achte auf das blinkende Teil.';}
+ }
+}
+$('g-skip').addEventListener('click',()=>{game.i++;showTask();});
+$('g-restart').addEventListener('click',startGame);
+
+applyView();
+
+/* ---------- PHOTOSYNTHESIS ---------- */
+const ph=document.getElementById('photo'),parts=document.getElementById('ph-parts');
+const P={}; ['light','co2','h2o','sugar','o2out','o2in','co2out','energy','tostore','fromstore'].forEach(k=>{const p=document.getElementById('p-'+k);P[k]={el:p,len:p.getTotalLength(),acc:0};});
+const TYPE={light:'sun',co2:'co2',h2o:'h2o',sugar:'sugar',o2out:'o2',o2in:'o2',co2out:'co2',energy:'energy',tostore:'sugar',fromstore:'sugar'};
+const COL={sun:'var(--sun)',co2:'var(--p-co2)',h2o:'var(--p-h2o)',o2:'var(--p-o2)',sugar:'var(--c-gol)',energy:'var(--sun)'};
+let light=100,store=60,particles=[],running=false,last=0;
+function mkPart(type){const g=el('g',{},parts);
+ if(type==='sugar')el('polygon',{points:'6,0 3,5.2 -3,5.2 -6,0 -3,-5.2 3,-5.2',style:`fill:${COL.sugar};stroke:var(--c-mit-d);stroke-width:1`},g);
+ else if(type==='energy')el('polygon',{points:'-2,-8 4,-1 0,-1 2,8 -4,1 0,1',style:'fill:var(--sun);stroke:var(--c-mit-d);stroke-width:1'},g);
+ else el('circle',{r:type==='sun'?3.5:5,style:`fill:${COL[type]};stroke:var(--surface);stroke-width:1`},g);
+ return g;}
+function rates(){const Pr=light/10;const R=2;const Reff=(store<=0.2&&Pr<R)?Pr:R;return{Pr,R,Reff};}
+function update(dt){
+ const {Pr,Reff}=rates();
+ store=Math.max(0,Math.min(100,store+(Pr-Reff)*dt*0.6));
+ if(!reduce&&dt>0){
+  const k=0.45;
+  const r={light:Pr*k*1.3,co2:Pr*k,h2o:Pr*k,o2out:Pr*k,sugar:Math.min(Pr,Reff)*k,tostore:Math.max(0,Pr-Reff)*k,fromstore:Math.max(0,Reff-Pr)*k,o2in:Reff*k,co2out:Reff*k,energy:Reff*k};
+  for(const s in r){const p=P[s];p.acc+=r[s]*dt;while(p.acc>=1&&particles.length<160){p.acc-=1;particles.push({s,t:0,g:mkPart(TYPE[s])});}}
+  for(let i=particles.length-1;i>=0;i--){const q=particles[i];const p=P[q.s];q.t+=dt*75/p.len;
+   if(q.t>=1){q.g.remove();particles.splice(i,1);continue;}
+   const pt=p.el.getPointAtLength(q.t*p.len);q.g.setAttribute('transform',`translate(${pt.x.toFixed(1)},${pt.y.toFixed(1)})`);
+   q.g.style.opacity=q.t>.85?(1-q.t)/.15:1;}
+ }
+ renderPhoto();
+}
+function renderPhoto(){
+ const {Pr,Reff}=rates();
+ document.getElementById('ph-night').setAttribute('opacity',((1-light/100)*0.75).toFixed(2));
+ document.getElementById('ph-sun').setAttribute('opacity',(0.15+light/100*0.85).toFixed(2));
+ document.getElementById('ph-store').setAttribute('width',(108*store/100).toFixed(1));
+ $('m-p').style.width=Pr*10+'%';$('m-pv').textContent=Pr.toFixed(1).replace('.',',');
+ $('m-r').style.width=Reff*10+'%';$('m-rv').textContent=Reff.toFixed(1).replace('.',',');
+ $('m-s').style.width=store+'%';$('m-sv').textContent=Math.round(store);
+ const net=Pr-Reff,o=$('m-o2'),w=Math.min(50,Math.abs(net)/8*50);
+ if(net>=0){o.style.left='50%';o.style.width=w+'%';o.style.background='var(--good)';}else{o.style.left=(50-w)+'%';o.style.width=w+'%';o.style.background='var(--bad)';}
+ $('eq-p').style.opacity=0.35+0.65*Math.min(1,Pr/10);$('eq-r').style.opacity=Reff>0?1:.35;
+ let s;
+ if(Reff===0&&Pr===0)s='Der Zuckervorrat ist aufgebraucht. Ohne Zucker keine Energie: Eine Pflanze, die sehr lange im Dunkeln steht, verhungert. Schalte das Licht wieder ein!';
+ else if(Pr===0)s='Nacht: Keine Fotosynthese, weil Licht fehlt. Die Zelle atmet aber weiter. Sie nimmt Sauerstoff auf, gibt Kohlenstoffdioxid ab und lebt von ihrem Stärke-Vorrat.';
+ else if(Math.abs(net)<0.3)s='Gleichstand: Die Fotosynthese erzeugt genau so viel Sauerstoff, wie die Zellatmung verbraucht. Von außen sieht es aus, als würde das Blatt gar nichts tun.';
+ else if(net<0)s='Wenig Licht: Die Fotosynthese ist schwächer als die Zellatmung. Das Blatt nimmt unterm Strich Sauerstoff auf und muss auf seinen Vorrat zurückgreifen.';
+ else s='Viel Licht: Die Fotosynthese ist stärker als die Zellatmung. Das Blatt gibt Sauerstoff ab und legt aus überschüssigem Zucker einen Stärke-Vorrat an. Die Zellatmung läuft trotzdem weiter.';
+ $('ph-status').textContent=s;
+}
+function loop(ts){if(!running)return;const dt=last?Math.min(.05,(ts-last)/1000):0;last=ts;update(dt);requestAnimationFrame(loop);}
+new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting&&!running){running=true;last=0;requestAnimationFrame(loop);}else if(!e.isIntersecting)running=false;});}).observe(ph);
+const lr=$('light');
+function setLight(v){light=+v;lr.value=v;$('light-out').textContent=v+' %';renderPhoto();}
+lr.addEventListener('input',e=>setLight(e.target.value));
+$('light-presets').addEventListener('click',e=>{const b=e.target.closest('button');if(b)setLight(b.dataset.v);});
+renderPhoto();
+
+/* ---------- WATER ---------- */
+const W=document.getElementById('water');
+const WS={gut:{vac:1,gap:0,droop:0,arr:1},trocken:{vac:.72,gap:0,droop:.8,arr:.25},salz:{vac:.4,gap:1,droop:1,arr:0}};
+const WT={
+ gut:['Prall gefüllt: Turgor','Die Vakuole ist voll Wasser. Sie drückt das Zellplasma fest gegen die Zellwand, so wie die Luft in einem Fahrradreifen. Die Zellwand hält dagegen. Diesen Innendruck nennt man Turgor. Viele pralle Zellen zusammen lassen die Pflanze aufrecht stehen.','Vergleich: Ein aufgepumpter Luftballon in einem Pappkarton macht den Karton stabil.'],
+ trocken:['Zu wenig Wasser: Die Pflanze welkt','Bekommt die Pflanze zu wenig Wasser, geben die Vakuolen Wasser ab und werden kleiner. Der Druck auf die Zellwände sinkt, die Zellen werden weich. Die Pflanze lässt Blätter und Stängel hängen. Gießt man sie rechtzeitig, füllen sich die Vakuolen wieder und die Pflanze richtet sich auf.','Vergleich: Ein Fahrradreifen ohne Luft ist schlapp, obwohl der Mantel noch ganz ist.'],
+ salz:['In Salzwasser: Plasmolyse','Liegt die Zelle in Salzwasser, wandert Wasser aus der Vakuole nach draußen, dorthin, wo mehr Salz gelöst ist. Das nennt man Osmose. Die Vakuole schrumpft so stark, dass sich das Zellplasma mit der Membran von der Zellwand ablöst. Die Zellwand behält ihre Form, und in die Lücke dringt Salzwasser ein.','Versuch: Rote Zwiebelhaut in Salzlösung legen und mikroskopieren. Der rote Zellsaft zeigt gut, wie die Vakuole schrumpft. In Leitungswasser füllt sie sich wieder.']
+};
+let wCur={...WS.gut},wTo={...WS.gut},wRaf=null;
+const wg={};
+(function buildWater(){
+ // plant
+ el('rect',{x:30,y:236,width:200,height:58,rx:22,style:'fill:var(--soil)'},W);
+ el('path',{d:'M130,236 L131,290 M130,240 C 128,256 120,270 102,288 M131,242 C 140,258 152,272 172,286 M127,252 C 110,258 92,262 70,274 M134,256 C 156,258 178,264 198,270 M112,270 l-8,10 M158,266 l6,12',style:'fill:none;stroke:var(--petal);stroke-width:2;stroke-linecap:round;opacity:.9'},W);
+ wg.drops=el('g',{},W);[[60,258],[92,280],[168,256],[200,284],[150,282],[80,246]].forEach(([x,y])=>el('path',{d:`M${x},${y-6} C ${x+4},${y-1} ${x+4},${y+3} ${x},${y+3} C ${x-4},${y+3} ${x-4},${y-1} ${x},${y-6} Z`,style:'fill:var(--p-h2o)'},wg.drops));
+ wg.salts=el('g',{},W);[[72,266],[118,284],[186,262],[210,250]].forEach(([x,y])=>el('rect',{x:x-3,y:y-3,width:6,height:6,transform:`rotate(20 ${x} ${y})`,style:'fill:var(--petal)'},wg.salts));
+ wg.stem=el('path',{style:'fill:none;stroke:var(--leaf);stroke-width:7;stroke-linecap:round'},W);
+ wg.stem2=el('path',{style:'fill:none;stroke:var(--leaf-d);stroke-width:1.5;stroke-linecap:round'},W);
+ const mkLeaf=sz=>{const g=el('g',{},W);el('path',{d:`M0,0 C ${sz*.3},${-sz*.42} ${sz*.8},${-sz*.42} ${sz*1.1},0 C ${sz*.8},${sz*.42} ${sz*.3},${sz*.42} 0,0 Z`,style:'fill:var(--leaf);stroke:var(--leaf-d);stroke-width:1.5'},g);
+  el('path',{d:`M2,0 L${sz*1.02},0 M${sz*.35},0 l${sz*.14},${-sz*.16} M${sz*.6},0 l${sz*.14},${-sz*.16} M${sz*.35},0 l${sz*.14},${sz*.16} M${sz*.6},0 l${sz*.14},${sz*.16}`,style:'fill:none;stroke:var(--leaf-d);stroke-width:1.3;stroke-linecap:round'},g);return g;};
+ wg.leafL=mkLeaf(46);wg.leafR=mkLeaf(46);wg.leafL2=mkLeaf(38);wg.leafR2=mkLeaf(38);
+ wg.flower=el('g',{},W);
+ for(let i=0;i<10;i++)el('path',{d:'M0,0 C 6,-6 20,-6 24,0 C 20,6 6,6 0,0 Z',transform:`rotate(${i*36})`,style:'fill:var(--petal);stroke:var(--c-wall-d);stroke-width:1'},wg.flower);
+ el('circle',{r:9,style:'fill:var(--accent)'},wg.flower);
+ [[-3,-3],[3,-2],[0,3]].forEach(([x,y])=>el('circle',{cx:x,cy:y,r:1.6,style:'fill:var(--sun)'},wg.flower));
+ // magnifier link
+ el('path',{d:'M215,110 L322,70 M215,130 L322,250',style:'fill:none;stroke:var(--muted);stroke-width:1.5;stroke-dasharray:4 5'},W);
+ el('circle',{cx:205,cy:120,r:14,style:'fill:none;stroke:var(--ink);stroke-width:2.5'},W);
+ // cell
+ wg.salt=el('rect',{x:336,y:36,width:268,height:228,rx:12,style:'fill:var(--salt)'},W);
+ wg.proto=el('rect',{style:'fill:var(--c-cyto);stroke:var(--c-mem);stroke-width:2.5'},W);
+ wg.vac=el('rect',{style:'fill:var(--c-vac);stroke:var(--c-vac-d);stroke-width:2'},W);
+ wg.nuc=el('circle',{r:12,style:'fill:var(--c-nuc);stroke:var(--c-nuc-d);stroke-width:2'},W);
+ wg.chl=[];for(let i=0;i<8;i++)wg.chl.push(el('ellipse',{rx:10,ry:5,style:'fill:var(--c-chl);stroke:var(--c-chl-d);stroke-width:1'},W));
+ const defs=el('defs',{},W);const mk=el('marker',{id:'arr',viewBox:'0 0 10 10',refX:'8',refY:'5',markerWidth:'6',markerHeight:'6',orient:'auto-start-reverse'},defs);
+ el('path',{d:'M0,0 L10,5 L0,10 Z',style:'fill:var(--c-vac-d)'},mk);
+ wg.arrows=[];for(let i=0;i<6;i++)wg.arrows.push(el('line',{'marker-end':'url(#arr)',style:'stroke:var(--c-vac-d);stroke-width:3'},W));
+ el('rect',{x:330,y:30,width:280,height:240,rx:16,style:'fill:none;stroke:var(--c-wall);stroke-width:12'},W);
+ el('text',{x:470,y:20,'text-anchor':'middle'},W).textContent='Zellwand';
+ wg.vlabel=el('text',{'text-anchor':'middle'},W);wg.vlabel.textContent='Vakuole';
+ wg.glabel=el('text',{x:470,y:292,'text-anchor':'middle'},W);wg.glabel.textContent='Lücke: Salzwasser zwischen Wand und Membran';
+})();
+const lerp=(a,b,t)=>a+(b-a)*t;
+function drawWater(s){
+ // plant
+ const d=s.droop,tx=130+80*d,ty=52+118*d,cx=130,cy=150+10*d;
+ const sd=`M130,236 Q${cx},${cy} ${tx},${ty}`;wg.stem.setAttribute('d',sd);wg.stem2.setAttribute('d',sd);
+ wg.drops.style.opacity=(0.15+0.85*Math.max(s.arr,s.gap*.7)).toFixed(2);wg.salts.style.opacity=s.gap.toFixed(2);
+ const bez=t=>({x:(1-t)*(1-t)*130+2*(1-t)*t*cx+t*t*tx,y:(1-t)*(1-t)*232+2*(1-t)*t*cy+t*t*ty});
+ const leaf=(e,t,a)=>{const p=bez(t);e.setAttribute('transform',`translate(${p.x.toFixed(1)},${p.y.toFixed(1)}) rotate(${a.toFixed(1)})`);};
+ leaf(wg.leafR,.45,-30+85*d);leaf(wg.leafL,.45,-150-85*d);leaf(wg.leafR2,.72,-40+95*d);leaf(wg.leafL2,.72,-140-95*d);
+ wg.flower.setAttribute('transform',`translate(${tx.toFixed(1)},${ty.toFixed(1)}) rotate(${(d*90).toFixed(1)})`);
+ // cell
+ const g=s.gap,px=lerp(338,382,g),py=lerp(38,82,g),pw=lerp(264,176,g),ph=lerp(224,136,g),prx=lerp(12,50,g);
+ Object.entries({x:px,y:py,width:pw,height:ph,rx:prx}).forEach(([k,v])=>wg.proto.setAttribute(k,v.toFixed(1)));
+ wg.salt.style.opacity=(g*0.9).toFixed(2);wg.glabel.style.opacity=g.toFixed(2);
+ const ax=px+40,aw=pw-58,ay=py+18,ah=ph-36;const vw=aw*s.vac,vh=ah*s.vac,vx=ax+(aw-vw)/2,vy=ay+(ah-vh)/2;
+ Object.entries({x:vx,y:vy,width:vw,height:vh,rx:Math.min(vw,vh)*.35}).forEach(([k,v])=>wg.vac.setAttribute(k,v.toFixed(1)));
+ wg.vlabel.setAttribute('x',(vx+vw/2).toFixed(1));wg.vlabel.setAttribute('y',(vy+vh/2+4).toFixed(1));
+ wg.nuc.setAttribute('cx',(px+22).toFixed(1));wg.nuc.setAttribute('cy',(py+ph/2).toFixed(1));
+ const pts=[[.3,0],[.55,0],[.8,0],[.3,1],[.55,1],[.8,1],[1,.33],[1,.67]];
+ pts.forEach((q,i)=>{let x,y,a;if(q[0]===1&&i>=6){x=px+pw-9;y=py+ph*q[1];a=90;}else{x=px+pw*q[0];y=q[1]?py+ph-8:py+8;a=0;}wg.chl[i].setAttribute('transform',`translate(${x.toFixed(1)},${y.toFixed(1)}) rotate(${a})`);});
+ // pressure arrows from vacuole edge toward membrane
+ const cxv=vx+vw/2,cyv=vy+vh/2;
+ const dirs=[[0,-1,-.25],[0,-1,.25],[0,1,-.25],[0,1,.25],[-1,0,0],[1,0,0]];
+ dirs.forEach((dv,i)=>{const a=wg.arrows[i];const len=24*s.arr;
+  let x1,y1;if(dv[1]){x1=cxv+vw*dv[2];y1=dv[1]<0?vy:vy+vh;}else{x1=dv[0]<0?vx:vx+vw;y1=cyv;}
+  a.setAttribute('x1',x1.toFixed(1));a.setAttribute('y1',y1.toFixed(1));a.setAttribute('x2',(x1+dv[0]*len).toFixed(1));a.setAttribute('y2',(y1+dv[1]*len).toFixed(1));
+  a.style.opacity=s.arr<.05?0:Math.min(1,.3+s.arr);});
+}
+function setWater(v){
+ const t=WT[v];$('w-title').textContent=t[0];$('w-text').textContent=t[1];$('w-tip').textContent=t[2];
+ wTo={...WS[v]};
+ if(reduce){wCur={...wTo};drawWater(wCur);return;}
+ const from={...wCur},t0=performance.now(),dur=1400;cancelAnimationFrame(wRaf);
+ const step=ts=>{const k=Math.min(1,(ts-t0)/dur),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;for(const key in wCur)wCur[key]=lerp(from[key],wTo[key],e);drawWater(wCur);if(k<1)wRaf=requestAnimationFrame(step);};
+ wRaf=requestAnimationFrame(step);
+}
+seg('seg-water',setWater);drawWater(wCur);setWater('gut');
+
+/* ---------- SIZE LADDER ---------- */
+const ITEMS=[
+ ['Zellmembran (Dicke)','ca. 8 nm',8e-9,'--c-mem'],
+ ['Ribosom','ca. 25 nm',2.5e-8,'--c-rib'],
+ ['Mitochondrium','ca. 1–3 µm',2e-6,'--c-mit'],
+ ['Chloroplast','ca. 5–10 µm',7e-6,'--c-chl'],
+ ['Zellkern','ca. 5–20 µm',1.2e-5,'--c-nuc-d'],
+ ['Blattzelle','ca. 50 µm',5e-5,'--c-chl-d'],
+ ['Menschliches Haar (Dicke)','ca. 0,07 mm',7e-5,'--muted'],
+ ['Zwiebelhautzelle (Länge)','ca. 0,3 mm',3e-4,'--c-wall-d'],
+ ['Ameise','ca. 5 mm',5e-3,'--muted']
+];
+const pos=v=>(Math.log10(v)+9)/7*100;
+const eyeP=pos(1e-4),lmP=pos(2e-7);
+const lad=document.getElementById('ladder');
+ITEMS.forEach(([n,s,v,c])=>{
+ const zone=v>=1e-4?`left:${eyeP}%;right:0;background:var(--c-chl);opacity:.3`:v>=2e-7?`left:${lmP}%;width:${eyeP-lmP}%;background:var(--accent);opacity:.25`:`left:0;width:${lmP}%;background:var(--c-nuc-d);opacity:.25`;
+ const r=document.createElement('div');r.className='lrow';
+ r.innerHTML=`<div class="lname">${n}<small>${s}</small></div><div class="ltrack"><span class="zone" style="${zone}"></span><span class="lim" style="left:${lmP}%"></span><span class="lim" style="left:${eyeP}%"></span><span class="dot" style="left:${pos(v)}%;background:var(${c})"></span></div>`;
+ lad.appendChild(r);
+});
+const ax=document.createElement('div');ax.className='lrow';
+const ticks=['1 nm','10 nm','100 nm','1 µm','10 µm','100 µm','1 mm','1 cm'];
+ax.innerHTML='<div class="lname"></div><div class="axis">'+ticks.map((t,i)=>`<span class="${i%2?'odd':''}" style="left:${i/7*100}%">${t}</span>`).join('')+'</div>';
+lad.appendChild(ax);
+const lim=document.createElement('div');lim.className='lrow';
+lim.innerHTML=`<div class="lname"></div><div class="axis" style="height:auto;min-height:34px"><span style="left:${lmP}%;top:0;font-size:.7rem">↑ Grenze Lichtmikroskop</span><span style="left:${eyeP}%;top:16px;font-size:.7rem">↑ Grenze Auge</span></div>`;
+lad.appendChild(lim);
+
+/* ---------- QUIZ ---------- */
+const QZ=[
+ ['Atmen Pflanzen?',['Nein, Pflanzen machen nur Fotosynthese.','Ja, aber nur nachts.','Ja, Tag und Nacht, in ihren Mitochondrien.','Nur ihre Wurzeln atmen.'],2,'Pflanzenzellen haben Mitochondrien und betreiben ständig Zellatmung. Tagsüber ist die Fotosynthese meist stärker, deshalb gibt ein Blatt dann unterm Strich Sauerstoff ab.'],
+ ['Du mikroskopierst Zwiebelhaut. Warum siehst du keine Chloroplasten?',['Chloroplasten sind zu klein für das Lichtmikroskop.','Die Zwiebel wächst unter der Erde. Ohne Licht bildet sie keine Chloroplasten.','Die Färbung zerstört sie.','Zwiebeln sind keine richtigen Pflanzen.'],1,'Chloroplasten sind 5–10 µm groß und im Lichtmikroskop gut zu sehen, z. B. bei der Wasserpest. Die Zwiebelschuppen wachsen aber ohne Licht.'],
+ ['Welche drei Bestandteile hat nur die Pflanzenzelle?',['Zellkern, Zellwand, Mitochondrien','Zellwand, große Vakuole, Chloroplasten','Zellmembran, Vakuole, Ribosomen','Chloroplasten, Golgi-Apparat, Zellkern'],1,'Zellkern, Mitochondrien, Membran, Ribosomen und Golgi-Apparat haben auch Tierzellen.'],
+ ['Wer ist der „Türsteher“, der auswählt, welche Stoffe in die Zelle dürfen?',['die Zellwand','die Zellmembran','die Vakuole','der Zellkern'],1,'Die Zellwand ist stabil, aber für Wasser und gelöste Stoffe fast frei durchlässig. Die Auswahl trifft die Zellmembran.'],
+ ['Warum wird eine vergessene Topfpflanze schlapp?',['Die Zellwände lösen sich auf.','Die Chloroplasten gehen aus.','Die Vakuolen verlieren Wasser, der Druck auf die Zellwände sinkt.','Die Zellkerne schrumpfen.'],2,'Ohne Wasser fehlt der Turgor, also der Innendruck der Vakuole. Die Zellwände bleiben, aber die Zellen werden weich.'],
+ ['Warum siehst du Ribosomen nicht im Schulmikroskop?',['Sie sind durchsichtig.','Es gibt sie nur in Tierzellen.','Sie sind nur etwa 25 nm groß. Das Lichtmikroskop zeigt erst Dinge ab etwa 0,2 µm (200 nm).','Sie verstecken sich im Zellkern.'],2,'Für Ribosomen braucht man ein Elektronenmikroskop. Schau dir dazu die Größenleiter in Teil 4 an.'],
+ ['Rote Zwiebelhaut kommt in Salzwasser. Was passiert?',['Die Zelle nimmt Salz auf und platzt.','Nichts, die Zellwand schützt die Zelle.','Wasser strömt aus der Vakuole, das Zellplasma löst sich von der Zellwand (Plasmolyse).','Die Zellwand schrumpft mit.'],2,'Wasser wandert dorthin, wo mehr Salz gelöst ist (Osmose). Die Zellwand ist fest und behält ihre Form.']
+];
+let qRight=0,qDone=0;
+function buildQuiz(){
+ const box=$('quizbox');box.innerHTML='';qRight=0;qDone=0;updScore();
+ QZ.forEach((q,qi)=>{
+  const d=document.createElement('div');d.className='q';
+  d.innerHTML=`<h3><span class="qn">${qi+1}</span> ${q[0]}</h3><div class="opts">${q[1].map((o,i)=>`<button data-i="${i}">${o}</button>`).join('')}</div><p class="expl" hidden></p>`;
+  d.querySelector('.opts').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.disabled)return;
+   const i=+b.dataset.i,bs=d.querySelectorAll('.opts button');bs.forEach(x=>x.disabled=true);
+   bs[q[2]].classList.add('right');if(i!==q[2])b.classList.add('wrong');else qRight++;qDone++;
+   const ex=d.querySelector('.expl');ex.hidden=false;ex.innerHTML=(i===q[2]?'<b style="color:var(--good)">Richtig.</b> ':'<b style="color:var(--bad)">Nicht ganz.</b> ')+q[3];updScore();});
+  box.appendChild(d);
+ });
+}
+function updScore(){$('q-score').textContent=`${qRight} von ${QZ.length} richtig`+(qDone===QZ.length?(qRight===QZ.length?' · Perfekt!':' · Schau dir die Erklärungen an.'):'');}
+$('q-reset').addEventListener('click',buildQuiz);
+buildQuiz();
+})();
+</script>
+
+</body></html>

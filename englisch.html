@@ -1,0 +1,793 @@
+<!doctype html><html><head><meta charset=utf8><script src="/api/config"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="/sync.js"></script><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body><nav id="lw-bar" aria-label="Lernwelt" style="all:initial;display:flex;align-items:center;gap:10px;box-sizing:border-box;width:100%;padding:6px max(12px,env(safe-area-inset-right,0px)) 6px max(12px,env(safe-area-inset-left,0px));background:#20304a;color:#f3f0e6;font:600 14px/1.2 system-ui,-apple-system,Segoe UI,sans-serif;position:relative;z-index:9999"><a href="index.html" style="all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:#f3f0e6;color:#20304a;font:700 14px/1 system-ui,-apple-system,Segoe UI,sans-serif">&#8249; Lernwelt</a><span style="all:unset;font:600 14px/1.2 system-ui,-apple-system,Segoe UI,sans-serif;color:#f3f0e6;opacity:.85">Englisch · English trainer</span></nav>
+<title>English trainer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800;900&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* Layout: eine Spalte im Stil eines grünen Englischbuchs – grünes Kopfband, grüner Karteikasten, Karten mit grünem Reiter */
+:root{
+  --bg:#eef4e6; --paper:#ffffff; --ink:#1f2a1a; --muted:#5a6a4f; --line:#cfe0bd;
+  --navy:#3f8f1f; --navy-soft:#e4f1d3; --onnavy:#ffffff; --rule:#7cc13a;
+  --green:#6cb52d; --green-dk:#2f6f17; --sun:#f6c623;
+  --ok:#2c7d2a; --ok-bg:#e2f3dc; --bad:#c0392b; --bad-bg:#fbe6e3; --chip:#dcebc9;
+  --f-d:'Nunito', 'Segoe UI', system-ui, sans-serif;
+  --f-b:'Atkinson Hyperlegible', 'Segoe UI', system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121a0f; --paper:#1b2617; --ink:#e9f2e1; --muted:#a3b597; --line:#2f4227;
+  --navy:#8fd45a; --navy-soft:#24361b; --onnavy:#0f1a0a; --rule:#7cc13a;
+  --green:#4f8f22; --green-dk:#2b5a16; --sun:#f6c623;
+  --ok:#7fd67a; --ok-bg:#183319; --bad:#f08a7e; --bad-bg:#3a1d1a; --chip:#273a1e; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121a0f; --paper:#1b2617; --ink:#e9f2e1; --muted:#a3b597; --line:#2f4227;
+  --navy:#8fd45a; --navy-soft:#24361b; --onnavy:#0f1a0a; --rule:#7cc13a;
+  --green:#4f8f22; --green-dk:#2b5a16; --sun:#f6c623;
+  --ok:#7fd67a; --ok-bg:#183319; --bad:#f08a7e; --bad-bg:#3a1d1a; --chip:#273a1e; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-b);font-size:17px;line-height:1.5;padding:0 16px}
+.wrap{max-width:680px;margin:0 auto;padding-block:20px 48px;display:flex;flex-direction:column;gap:18px}
+header{background:var(--green);color:#fff;border-radius:0 0 18px 18px;margin:-20px -16px 0;padding:22px 20px 18px;display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;position:relative;overflow:hidden}
+header::after{content:"";position:absolute;right:-30px;top:-40px;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,.14)}
+header .vol{position:relative;z-index:1;font-family:var(--f-d);font-weight:900;font-size:2.6rem;line-height:1;background:#fff;color:var(--green-dk);border-radius:12px;padding:4px 14px}
+h1{font-family:var(--f-d);font-weight:900;font-size:1.9rem;letter-spacing:-.01em;margin:0;line-height:1.05;position:relative;z-index:1}
+h1 small{display:block;font-family:var(--f-b);font-weight:400;font-size:.88rem;color:rgba(255,255,255,.9);letter-spacing:0;margin-top:4px}
+h2{font-family:var(--f-d);font-weight:700;font-size:1.15rem;margin:0;text-wrap:balance}
+.lbl{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid var(--navy);outline-offset:2px}
+
+/* Karteikasten */
+.box{background:var(--green);border-radius:16px;padding:14px 12px 0;color:#fff;box-shadow:0 12px 24px -16px rgba(30,70,10,.6)}
+.box-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:10px;flex-wrap:wrap;padding:0 4px}
+.box-head h2{color:#fff;font-weight:900}
+.box-head .small{color:rgba(255,255,255,.88)}
+.fächer{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;align-items:end;background:var(--green-dk);border-radius:10px 10px 0 0;padding:10px 6px 0}
+.fach{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0}
+.tab{background:#fff;color:var(--green-dk);font-family:var(--f-d);font-weight:900;font-size:.8rem;border-radius:6px 6px 0 0;padding:1px 6px;width:100%;max-width:64px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fach.f0 .tab{background:var(--sun);color:#3b2e00}
+.stack{width:100%;max-width:64px;height:78px;display:flex;flex-direction:column;justify-content:flex-end;padding:0 3px;background:rgba(0,0,0,.18);margin-top:-4px}
+.cards{border-radius:2px 2px 0 0;background:repeating-linear-gradient(to top,#ffffff 0 3px,#cfe0bd 3px 4px);transition:height .4s}
+.fach.f5 .cards{background:repeating-linear-gradient(to top,#fff6c8 0 3px,var(--sun) 3px 4px)}
+.front{background:var(--green);margin:0 -12px;border-radius:0 0 16px 16px;border-top:4px solid rgba(255,255,255,.35);display:grid;grid-template-columns:repeat(6,1fr);gap:6px;padding:8px 18px 12px}
+.front div{display:flex;flex-direction:column;align-items:center;min-width:0}
+.front .n{font-family:var(--f-d);font-weight:900;font-variant-numeric:tabular-nums;font-size:1.15rem;line-height:1.1}
+.front .t{font-size:.66rem;color:rgba(255,255,255,.9);text-align:center;line-height:1.15}
+
+/* Auswahl */
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:16px}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.seg button{border:2px solid var(--line);background:var(--paper);border-radius:12px;padding:12px 8px;text-align:center;display:flex;flex-direction:column;gap:2px}
+.seg button b{font-family:var(--f-d);font-size:1.05rem}
+.seg button span{font-size:.78rem;color:var(--muted)}
+.seg button[aria-pressed="true"]{border-color:var(--navy);background:var(--navy-soft)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1.5px solid transparent;background:var(--chip);border-radius:999px;padding:5px 12px;font-size:.88rem}
+.chip[aria-pressed="true"]{background:var(--navy);color:var(--onnavy)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.go{background:var(--navy);color:var(--onnavy);border:none;border-radius:12px;padding:14px 22px;font-family:var(--f-d);font-weight:700;font-size:1.1rem}
+.ghost{background:none;border:1.5px solid var(--line);border-radius:10px;padding:8px 14px;font-size:.9rem;color:var(--muted)}
+.small{font-size:.85rem;color:var(--muted)}
+
+/* Karteikarte */
+.progress{height:8px;background:var(--chip);border-radius:99px;overflow:hidden}
+.progress i{display:block;height:100%;background:var(--navy);transition:width .3s}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:.9rem;color:var(--muted)}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:6px;box-shadow:0 10px 24px -14px rgba(20,35,60,.35);overflow:hidden}
+.card-top{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 18px;background:var(--green);color:#fff}
+.tag{font-family:var(--f-d);font-size:.85rem;font-weight:900;letter-spacing:.03em;color:#fff}
+.fachtag{font-family:var(--f-d);font-weight:900;font-size:.85rem;background:#fff;color:var(--green-dk);border-radius:6px;padding:2px 8px}
+.card-body{padding:20px 18px 22px;display:flex;flex-direction:column;gap:16px;background-image:repeating-linear-gradient(to bottom,transparent 0 35px,var(--line) 35px 36px);background-position:0 18px}
+.instr{font-size:.92rem;color:var(--muted);margin:0}
+.prompt{font-family:var(--f-d);font-weight:700;font-size:clamp(1.45rem,5vw,2rem);line-height:1.2;margin:0;text-wrap:balance;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.prompt .gap{display:inline-block;min-width:3.2em;border-bottom:3px solid var(--navy);text-align:center;color:var(--navy)}
+.say{border:1.5px solid var(--line);background:var(--paper);border-radius:99px;width:40px;height:40px;display:inline-grid;place-items:center;flex:none}
+.say svg{width:20px;height:20px;fill:var(--navy)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opts.one{grid-template-columns:1fr}
+.opt{border:2px solid var(--line);background:var(--paper);border-radius:12px;padding:12px 14px;text-align:left;font-size:1.02rem;min-height:52px}
+@media (hover:hover) and (pointer:fine){.opt:hover:not(:disabled){border-color:var(--navy)}}
+.opt.ok{border-color:var(--ok);background:var(--ok-bg)}
+.opt.bad{border-color:var(--bad);background:var(--bad-bg)}
+.opt:disabled{cursor:default}
+.inp{display:flex;gap:8px;flex-wrap:wrap}
+.inp input{flex:1 1 200px;min-width:0;font:inherit;font-size:1.25rem;padding:12px 14px;border:2px solid var(--line);border-radius:12px;background:var(--paper);color:var(--ink)}
+.inp input.ok{border-color:var(--ok);background:var(--ok-bg)}
+.inp input.bad{border-color:var(--bad);background:var(--bad-bg)}
+.check{background:var(--navy);color:var(--onnavy);border:none;border-radius:12px;padding:12px 18px;font-weight:700}
+.slots{min-height:56px;border:2px dashed var(--line);border-radius:12px;padding:8px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.pool{display:flex;flex-wrap:wrap;gap:8px}
+.tile{border:2px solid var(--line);background:var(--paper);border-radius:9px;padding:6px 12px;font-size:1.15rem;font-weight:700;min-width:42px}
+.tile.l{font-family:var(--f-d);text-transform:none}
+.slots .tile{background:var(--navy-soft);border-color:var(--navy)}
+.flipback{border-top:1px dashed var(--line);padding-top:14px;font-size:1.3rem}
+.fb{border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.fb.ok{background:var(--ok-bg);color:var(--ink);border:1.5px solid var(--ok)}
+.fb.bad{background:var(--bad-bg);color:var(--ink);border:1.5px solid var(--bad)}
+.fb strong{font-family:var(--f-d)}
+.fb .ex{font-size:.92rem;color:var(--muted)}
+.card{border-radius:12px;border:2px solid var(--green)}
+.go,.next,.check{box-shadow:0 3px 0 var(--green-dk)}
+.go:active,.next:active,.check:active{transform:translateY(2px);box-shadow:0 1px 0 var(--green-dk)}
+.panel{border:2px solid var(--line)}
+.lbl{color:var(--navy)}
+.sol{font-size:1.2rem;font-weight:700;letter-spacing:.02em}
+.sol .x{color:var(--bad);text-decoration:underline wavy;text-underline-offset:4px}
+.next{align-self:flex-end;background:var(--navy);color:var(--onnavy);border:none;border-radius:12px;padding:12px 22px;font-family:var(--f-d);font-weight:700;font-size:1.05rem}
+.end{display:flex;flex-direction:column;gap:14px}
+.score{font-family:var(--f-d);font-weight:800;font-size:3rem;line-height:1;font-variant-numeric:tabular-nums}
+.list{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:4px}
+@media (max-width:460px){.opts{grid-template-columns:1fr}.seg button span{display:none}.fach .t{font-size:.6rem}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>English trainer<small>Vokabeln S. 170–180 · Grammatik G1, G2, G3, G6</small></h1>
+    <span class="vol" aria-label="Klasse 5">5</span>
+  </header>
+  <section class="box" aria-label="Karteikasten">
+    <div class="box-head"><h2>Dein Karteikasten</h2><span class="small" id="boxinfo"></span></div>
+    <div class="fächer" id="faecher"></div>
+    <div class="front" id="front"></div>
+  </section>
+  <main id="screen"></main>
+</div>
+
+<script>
+/* ===== Daten ===== */
+const VRAW=[
+['S. 170','Hello!',`Hello.|Hallo.
+My name is …|Ich heiße …
+to be|sein
+What's your name?|Wie heißt du?
+Hi.|Hi.; Hallo.
+I'm …|Ich bin …
+Where are you from?|Woher kommst du?
+I'm from …|Ich bin aus …
+How old are you?|Wie alt bist du?
+but|aber
+I live in …|Ich wohne in …
+to live|wohnen; leben
+Me too.|Ich auch.
+See you!|Bis dann!
+to see|sehen
+Bye!|Tschüss!
+new|neu
+friend|Freund/in
+Nice to meet you.|Nett, dich kennenzulernen.
+How are you?|Wie geht es dir?
+I'm the same.|Mir geht's genauso.
+Come with me.|Komm mit.
+Let's be friends.|Lasst uns Freunde sein.
+Let's have some fun.|Lasst uns Spaß haben.
+It's time for fun.|Es ist Zeit für Spaß.
+You live near me.|Du wohnst in meiner Nähe.
+You go to my school.|Du gehst in meine Schule.
+You can speak English.|Du sprichst Englisch.
+This is cool.|Das ist cool.
+Clap your hands.|Klatsch in die Hände.
+Tap your feet.|Stampf mit den Füßen.
+Feel the beat.|Fühl den Rhythmus.`],
+['S. 171','Welcome to London!',`welcome (to)|willkommen (in)
+What can you hear?|Was kannst du hören?
+to hear|hören
+the|der, die, das
+I can …|Ich kann …
+a|ein/e
+boat|Boot
+flower|Blume
+girl|Mädchen
+on|auf; an
+skates (pl)|Inlineskates; Rollschuhe
+boy|Junge
+mother|Mutter
+father|Vater
+dog|Hund
+cat|Katze
+bird|Vogel
+butterfly|Schmetterling
+bee|Biene
+tree|Baum
+grass|Gras
+bike|Fahrrad
+to have a picnic|ein Picknick machen
+to read|lesen
+book|Buch
+to play|spielen
+to ride|fahren; reiten
+to talk to|reden mit`],
+['S. 172','In the park',`parrot|Papagei
+pigeon|Taube
+a dog on a leash|ein Hund an der Leine
+clouds|Wolken
+river|Fluss
+blue sky|blauer Himmel
+merry-go-round|Karussell
+jeans|Jeans
+a red T-shirt|ein rotes T-Shirt
+green trousers|eine grüne Hose
+a helmet|ein Helm
+white trainers|weiße Turnschuhe
+a football|ein Fußball
+a skateboard|ein Skateboard
+a food truck|ein Imbisswagen
+a plane|ein Flugzeug
+a ship|ein Schiff
+a baby|ein Baby
+a man|ein Mann
+a woman|eine Frau
+have a snack|eine Kleinigkeit essen
+eat a sandwich|ein Sandwich essen
+play football|Fußball spielen
+read comics|Comics lesen
+ride a bike|Fahrrad fahren
+talk to friends|mit Freunden sprechen
+meet friends|Freunde treffen
+sit on a bench|auf einer Bank sitzen
+number|Zahl; Nummer
+colour|Farbe
+shorts (pl)|Shorts; kurze Hose`],
+['S. 173','Zahlen, Farben, Freunde',`zero|null (0)
+one|eins (1)
+two|zwei (2)
+three|drei (3)
+four|vier (4)
+five|fünf (5)
+six|sechs (6)
+seven|sieben (7)
+eight|acht (8)
+nine|neun (9)
+ten|zehn (10)
+eleven|elf (11)
+twelve|zwölf (12)
+black|schwarz
+blue|blau
+brown|braun
+green|grün
+grey|grau
+orange|orange
+pink|pink; rosa
+purple|lila
+red|rot
+white|weiß
+yellow|gelb
+My favourite …|Mein/e Lieblings-…
+I like …|Mir gefällt …; Ich mag …
+to like|mögen; gern haben
+to take photos|Fotos machen
+great|großartig; toll; super
+big|groß
+sister|Schwester
+best|beste/-r/-s
+and|und
+we're|wir sind
+twin|Zwilling
+to have|haben
+funny|lustig; witzig
+football|Fußball (das Spiel)
+food|Essen; Lebensmittel`],
+['S. 174','Freunde & Hobbys',`to cook|kochen
+netball|Korbball
+he's|er ist
+good|gut
+brother|Bruder
+Who is it?|Wer ist es?
+or|oder
+hobby|Hobby
+You too?|Du auch?
+to watch|beobachten; (sich) ansehen
+you're|du bist
+My turn.|Ich bin dran.
+to draw|zeichnen
+picture|Bild; Foto
+pet|Haustier
+game|Spiel
+to sing|singen
+horse|Pferd
+to dance|tanzen
+house|Haus`],
+['S. 175','Bis morgen!',`bored|gelangweilt
+Let's …|Lass(t) uns …
+to go (to)|gehen (zu); fahren (nach)
+fine|gut; in Ordnung
+Thanks.|Danke.
+this|dies; diese/-r/-s
+she|sie (Einzahl)
+here|hier
+tomorrow|morgen
+the first day of school|der erste Schultag
+yes|ja
+Come on!|Komm schon!
+to come|kommen
+It's time for …|Es ist Zeit für …
+ice cream|Eis; Eiscreme
+can't|kann nicht
+me|mich; mir`],
+['S. 176','Schulsachen',`thing|Ding; Sache
+exercise book|Übungsheft; Heft
+marker|Leuchtstift
+pen|Füller; Kugelschreiber
+pencil|Bleistift
+pencil case|Federmäppchen
+rubber|Radiergummi
+ruler|Lineal
+schoolbag|Schultasche
+crayon|Buntstift
+glue|Klebestift
+scissors|Schere
+sharpener|Spitzer`],
+['S. 176/177','Unit 1 Check-in',`year|Jahr; Schuljahr
+to look at|anschauen; ansehen
+us|uns
+to look|schauen; aussehen
+over there|da drüben
+nervous|nervös; aufgeregt
+Don't worry!|Keine Sorge!
+to sit|sitzen
+together|zusammen
+sports ground|Sportplatz
+why|warum
+Mrs|Frau (Anrede)
+teacher|Lehrer/in
+please|bitte
+to take|nehmen; mitnehmen
+home|nach Hause
+crazy|verrückt
+Look!|Schau mal!
+That's …|Das ist …
+in front of|vor
+happy|glücklich; froh
+to think|denken; glauben
+angry|wütend; böse
+surprised|überrascht
+sad|traurig
+uniform|Uniform
+boring|langweilig
+ugly|hässlich
+silly|dumm; albern
+to look for|suchen nach
+no|kein/e
+today|heute
+bedroom|Schlafzimmer
+under|unter
+bed|Bett`],
+['S. 178/179','Station 1',`Good morning.|Guten Morgen.
+tutor|Klassenlehrer/in
+no|nein
+not|nicht
+friendly|freundlich; nett
+to help|helfen
+question|Frage
+planner|Handbuch; Kalender
+timetable|Stundenplan
+map|Stadtplan; Landkarte
+rule|Regel
+Don't be late for school.|Komm nicht zu spät zur Schule.
+lesson|Unterrichtsstunde
+strict|streng
+library|Bibliothek; Bücherei
+an|ein/e (vor Vokal-Laut)
+assembly|Versammlung
+hall|Halle; Saal
+gym|Turnhalle
+recording studio|Tonstudio
+to show|zeigen
+tour|Rundgang; Tour
+to have lunch|zu Mittag essen
+cafeteria|Cafeteria
+Excuse me!|Entschuldigung!
+art|Kunst
+room|Zimmer; Raum
+to say|sagen
+there|da; dort
+student|Schüler/in
+to want|wollen; mögen
+drink|Getränk
+classroom|Klassenzimmer
+What's wrong?|Was ist los?
+scary|gruselig; unheimlich
+everything|alles
+mum|Mama
+parents (pl)|Eltern
+divorced|geschieden
+alone|allein
+easy|einfach; leicht
+after|nach (zeitlich)
+dad|Papa
+to be right|recht haben
+family|Familie`],
+['S. 180','Station 2',`word|Wort
+place|Ort; Platz
+people (pl)|Leute; Menschen
+nice|schön; nett
+there is / there are|da ist / da sind; es gibt
+class|Klasse
+media centre|Medienzentrum
+table|Tisch
+headphones (pl)|Kopfhörer
+to use|benutzen
+break|Pause
+power socket|Steckdose
+reading corner|Leseecke
+newspaper|Zeitung
+magazine|Zeitschrift
+to find|finden
+man|Mann
+men (pl)|Männer
+behind|hinter
+information desk|Infotheke
+noticeboard|schwarzes Brett
+next to|neben
+door|Tür
+wall|Wand; Mauer
+chair|Stuhl
+clock|Uhr
+desk|Schreibtisch`]];
+const SECS=VRAW.map(([p,n])=>({p,n}));
+const V=[];
+VRAW.forEach(([p,n,txt],si)=>txt.split('\n').forEach(l=>{const [en,de]=l.split('|');V.push({id:'v'+V.length,en,de,s:si})}));
+
+const TOP={G1:'G1 · a/an & Plural',G2:'G2 · to be',G3:'G3 · there is/are',G6:'G6 · Pronomen & my/your…'};
+const EXD={
+ G1:'a vor Konsonant-Laut, an vor Vokal-Laut (a, e, i, o, u). Plural meistens +s, nach s, sh, ch, x +es.',
+ G2:"I am · you/we/they are · he/she/it is. Verneint: I'm not, isn't, aren't.",
+ G3:'1 Ding: There is … · 2 und mehr: There are … · Keine: There is no … / There are no …',
+ G6:'I–my · you–your · he–his · she–her · it–its · we–our · they–their. Das Possessiv richtet sich nach dem Besitzer.'};
+const DEF={G1:['a','an'],G2:['am','is','are'],G3:['is','are'],G6:['He','She','It','They']};
+const PL_ES='Nach s, ss, sh, ch, x hängst du -es an.',PL_IES='Konsonant + y wird zu -ies.',PL_IRR='Unregelmäßiger Plural – auswendig lernen!',PL_S='Meistens einfach +s.',PL_YS='Vokal + y: nur +s.';
+const SND=['[s] scharf wie eine Schlange','[z] summend wie eine Fliege','[ɪz] eigene Silbe'];
+const GRAW=[
+['G2','c','I ___ eleven.','am'],['G2','c','Sherlock ___ a dog.','is'],['G2','c','Ruby and Ryan ___ twins.','are'],
+['G2','c','We ___ from Greenwich.','are'],['G2','c','___ you ten?','Are'],['G2','c','My pencil case ___ purple.','is'],
+['G2','c','___ I late?','Am'],['G2','c','You and Karam ___ my best friends.','are'],['G2','c','It ___ Friday today.','is'],
+['G2','t','Schreibe die Kurzform: I am',"I'm"],['G2','t','Schreibe die Kurzform: she is',"she's"],
+['G2','t','Schreibe die Kurzform: we are',"we're"],['G2','t','Schreibe die Kurzform: they are',"they're"],
+['G2','t','Schreibe die Kurzform: it is',"it's"],
+['G2','t','Schreibe die Kurzform: I am not',"I'm not",null,"Für ich gibt es nur I'm not. „I amn't“ gibt es nicht."],
+['G2','t','Schreibe die Kurzform: he is not',["he isn't","he's not"]],
+['G2','t','Schreibe die Kurzform: you are not',["you aren't","you're not"]],
+['G2','t','Verneine: Karam is from Poland.',["Karam isn't from Poland","Karam is not from Poland","Karam's not from Poland"]],
+['G2','t',"Verneine: I'm ten.",["I'm not ten","I am not ten"]],
+['G2','t','Verneine: The walls are green.',["The walls aren't green","The walls are not green"]],
+['G2','c','Are you ten? (✘)',"No, I'm not.",["No, I'm not.","No, I amn't.","No, you aren't."],"Fragst du mit you, antwortest du mit I. Und: nur I'm not."],
+['G2','c','Is Sherlock a dog? (✔)','Yes, he is.',['Yes, he is.',"Yes, he's.",'Yes, Sherlock is.'],'Bei Yes keine Kurzform – und in der Kurzantwort steht ein Pronomen, kein Name.'],
+['G2','c','Are Ruby and Ryan twins? (✔)','Yes, they are.',['Yes, they are.',"Yes, they're.",'Yes, we are.'],'Bei Yes keine Kurzform. Ruby and Ryan → they.'],
+['G2','c','Is Lily sad? (✘)',"No, she isn't.",["No, she isn't.","No, Lily isn't.","No, she not."],'In der Kurzantwort steht das Pronomen: Lily → she.'],
+['G2','c','Are you and Karam friends? (✔)','Yes, we are.',['Yes, we are.','Yes, you are.',"Yes, we're."],'Du und Karam = wir → we. Bei Yes keine Kurzform.'],
+['G2','c','Is Mrs Wilson strict? (✘)',"No, she isn't.",["No, she isn't.","No, he isn't.","No, she aren't."]],
+['G2','c','Am I late? (✘)',"No, you aren't.",["No, you aren't.","No, I'm not.","No, you isn't."],'Fragt jemand mit I, antwortest du mit you.'],
+['G2','c',"___ are you from? – I'm from Leipzig.",'Where',['Where','What','Who','Why'],'Where = wo / woher'],
+['G2','c',"___ old are you? – I'm eleven.",'How',['How','What','Who','Where'],'How old = wie alt'],
+['G2','c',"___ is it? – It's Ryan.",'Who',['Who','What','Where','How'],'Who = wer'],
+['G2','c',"___ are you sad? – My dog isn't here.",'Why',['Why','Who','Where','How'],'Why = warum'],
+['G2','c','___ is your name? – My name is Lily.','What',['What','Who','How','Where'],"What's your name? = Wie heißt du?"],
+['G2','c',"What ___ is your pencil case? – It's green.",'colour',['colour','old','name','number'],'What colour = welche Farbe'],
+['G6','c','Ryan is eleven. → ___ is eleven.','He'],['G6','c','Ruby is my friend. → ___ is my friend.','She'],
+['G6','c','The book is red. → ___ is red.','It'],
+['G6','c','Ruby and Ryan are twins. → ___ are twins.','They',['We','You','They','He']],
+['G6','c','Lily and I are in the library. → ___ are in the library.','We',['We','They','You','I'],'Lily und ich = wir → we.'],
+['G6','c','You and Karam are late. → ___ are late.','You',['You','We','They','He'],'Du und Karam = ihr → you.'],
+['G6','c','The pencils are in the pencil case. → ___ are in the pencil case.','They',['It','They','We','Its']],
+['G6','c',"I'm Karam. ___ favourite hobby is football.",'My',['My','Your','His','Our']],
+['G6','c','This is Ryan. ___ sister is Ruby.','His',['His','Her','Their','Its'],'Ryan ist ein Junge → his.'],
+['G6','c','This is Lily. ___ bike is pink.','Her',['His','Her','Its','Our'],'Lily ist ein Mädchen → her.'],
+['G6','c','We live in Greenwich. ___ house is big.','Our',['Our','Their','We','Your']],
+['G6','c','Ruby and Ryan are twins. ___ dog is Sherlock.','Their',['Their','There',"They're",'His'],'their = ihr (von mehreren). there = da, dort.'],
+['G6','c','The school is big. ___ library is great.','Its',['Its',"It's",'His','Our'],"its = sein/ihr (von einer Sache). it's = it is."],
+['G6','c','"Karam, is this ___ pen?"','your',['your',"you're",'his','my'],"your = dein. you're = you are."],
+['G6','c','Mrs Wilson is nice. ___ classroom is blue.','Her',['Her','His','She','Their']],
+['G6','c','Ryan: „He is ___ dog!“ – Ruby: „No, he is OUR dog!“','my',['my','our','his','your']],
+['G6','c',"___ my best friend.","You're",['Your',"You're"],"You're = you are."],
+['G6','c','___ time for school.',"It's",["It's",'Its'],"It's = it is."],
+['G6','c','___ is a dog under the table.','There',['There','Their',"They're"],'There is … = da ist / es gibt.'],
+['G6','c','Ruby and Ryan? ___ twins.',"They're",['There','Their',"They're"],"They're = they are."],
+['G6','t','Ruby and Ryan have a dog. ___ dog is Sherlock.','Their'],
+['G6','t','I have a dog. ___ name is Rocky.',['Its','His'],null,'Für ein Tier passt its. Bei Haustieren mit Namen sagt das Buch auch he/his.'],
+['G6','t','We are in class 5b. ___ tutor is Mrs Wilson.','Our'],
+['G6','t','Lily is new. ___ sister is Sophie.','Her'],
+['G6','t','Karam is my friend. ___ is eleven.','He'],
+['G1','c','___ dog','a'],['G1','c','___ orange T-shirt','an'],['G1','c','___ animal','an'],
+['G1','c','___ uniform','a',null,'uniform spricht man „ju…“ – das ist ein Konsonant-Laut, also a uniform.'],
+['G1','c','___ exercise book','an'],['G1','c','___ big house','a'],['G1','c','___ ugly photo','an'],
+['G1','c','___ helmet','a'],['G1','c','___ art lesson','an'],['G1','c','___ ice cream','an'],
+['G1','c','___ yellow flower','a'],['G1','c','___ English book','an'],['G1','c','___ old bike','an'],
+['G1','c','a dog → ___ orange dog','an',['a','an','the'],'Das Adjektiv entscheidet mit: orange beginnt mit Vokal-Laut.'],
+['G1','c','an animal → ___ big animal','a',['a','an','the'],'Das Adjektiv entscheidet mit: big beginnt mit Konsonant-Laut.'],
+['G1','t','Plural: dog','dogs',null,PL_S],['G1','t','Plural: class','classes',null,PL_ES],['G1','t','Plural: hobby','hobbies',null,PL_IES],
+['G1','t','Plural: man','men',null,PL_IRR],['G1','t','Plural: woman','women',null,PL_IRR],['G1','t','Plural: sandwich','sandwiches',null,PL_ES],
+['G1','t','Plural: baby','babies',null,PL_IES],['G1','t','Plural: library','libraries',null,PL_IES],['G1','t','Plural: boy','boys',null,PL_YS],
+['G1','t','Plural: butterfly','butterflies',null,PL_IES],['G1','t','Plural: person','people',null,PL_IRR],['G1','t','Plural: family','families',null,PL_IES],
+['G1','t','Plural: bench','benches',null,PL_ES],['G1','t','Plural: pencil case','pencil cases',null,PL_S],
+['G1','c','Wie klingt das Plural-s? books',SND[0],SND,'Nach p, t, k, f klingt es scharf.'],
+['G1','c','Wie klingt das Plural-s? dogs',SND[1],SND,'Nach Vokalen und b, d, g, l, m, n, r summt es.'],
+['G1','c','Wie klingt das Plural-s? classes',SND[2],SND,'Nach s, sh, ch, x, ce, ge bekommt das Plural eine eigene Silbe.'],
+['G1','c','Wie klingt das Plural-s? trees',SND[1],SND,'Nach einem Vokal summt es.'],
+['G1','c','Wie klingt das Plural-s? maps',SND[0],SND,'Nach p klingt es scharf.'],
+['G1','c','Wie klingt das Plural-s? pencil cases',SND[2],SND,'Nach -ce bekommt das Plural eine eigene Silbe.'],
+['G3','c','There ___ a clock on the wall.','is'],['G3','c','There ___ two chairs in my room.','are'],
+['G3','c','There ___ twenty desks in the classroom.','are'],['G3','c','There ___ a reading corner in the library.','is'],
+['G3','c','Sshhh! There ___ people in the library.','are',null,'people ist Mehrzahl → are.'],
+['G3','c','___ there a dog under the table?','Is'],['G3','c','___ there any students?','Are'],
+['G3','c','Is there a noticeboard? (✔)','Yes, there is.',['Yes, there is.',"Yes, there's.",'Yes, it is.'],'Bei Yes keine Kurzform.'],
+['G3','c','Are there two dogs? (✘)',"No, there aren't.",["No, there aren't.","No, there isn't.","No, they aren't."]],
+['G3','c','Is there a bed? (✘)',"No, there isn't.",["No, there isn't.","No, there aren't.","No, it isn't."]],
+['G3','c','Kein Lehrer da: There ___ teacher in the classroom.','is no',['is no','are no',"isn't no"]],
+['G3','c','Keine Bücher da: There ___ books on the desk.','are no',['are no','is no','not are']],
+['G3','c','How many chairs ___ there? – There are two.','are'],
+['G3','t','There ___ a cat on the chair.','is'],['G3','t','There ___ three pencils on the table.','are'],
+['G3','t','Keine Katze: There ___ cat in my bedroom.','is no'],
+['G3','t','Keine Schüler: There ___ students in the classroom.','are no'],
+['G3','t','___ there a clock on the wall?','Is']];
+const G=GRAW.map(([g,t,q,a,o,ex],i)=>{
+  let opts=o;
+  if(t==='c'&&!opts){opts=DEF[g].slice();const cap=a[0]===a[0].toUpperCase()&&/[a-z]/i.test(a[0]);opts=opts.map(x=>cap?x[0].toUpperCase()+x.slice(1):x.toLowerCase());}
+  return {id:'g'+i,g,t,q,a:Array.isArray(a)?a:[a],opts,ex:ex||EXD[g]};
+});
+const ALL={};V.forEach(v=>ALL[v.id]=v);G.forEach(x=>ALL[x.id]=x);
+
+/* ===== Speicher ===== */
+const KEY='englisch-kartei-5-v1';
+let S={box:{},mode:'v',secs:SECS.map((_,i)=>i),tops:['G1','G2','G3','G6'],len:10};
+try{const s=JSON.parse(localStorage.getItem(KEY)||'null');if(s&&s.box)S=Object.assign(S,s)}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+const bx=id=>S.box[id]||0;
+
+/* ===== Helfer ===== */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const rnd=a=>a[Math.random()*a.length|0];
+const apos=s=>s.replace(/[’‘`´]/g,"'");
+const strip=s=>apos(s).replace(/\(pl\)/g,'').replace(/…/g,'').replace(/[.!?]/g,'').replace(/\s*,\s*/g,', ').replace(/\s+/g,' ').trim();
+const clean=en=>strip(en.replace(/\([^)]*\)/g,''));
+function variants(en){
+  const base=strip(en.replace(/\(pl\)/g,''));
+  const out=new Set([clean(en),strip(base.replace(/[()]/g,''))]);
+  [...out].forEach(v=>{if(v.includes(' / '))v.split(' / ').forEach(p=>out.add(p.trim()))});
+  [...out].forEach(v=>{if(v.startsWith('to '))out.add(v.slice(3));else if(/^[a-z]/.test(v)&&!v.includes(' ')&&en.startsWith('to '))out.add('to '+v)});
+  return [...out];
+}
+const pool=()=>{const ids=[];if(S.mode!=='g')V.forEach(v=>{if(S.secs.includes(v.s))ids.push(v.id)});if(S.mode!=='v')G.forEach(x=>{if(S.tops.includes(x.g))ids.push(x.id)});return ids};
+const canSay='speechSynthesis' in window;
+function say(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t.replace(/…/g,'').replace(/\(pl\)/g,''));u.lang='en-GB';u.rate=.9;speechSynthesis.speak(u)}catch(e){}}
+const SPK='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/></svg>';
+const sayBtn=t=>canSay?`<button class="say" type="button" data-say="${esc(t)}" aria-label="Anhören">${SPK}</button>`:'';
+
+/* Rechtschreib-Vergleich: markiert in der richtigen Lösung, welche Buchstaben gefehlt haben oder falsch waren */
+function diffHTML(typed,target){
+  const a=apos(typed).toLowerCase(),b=target,bl=b.toLowerCase(),n=a.length,m=b.length;
+  const d=Array.from({length:n+1},(_,i)=>Array.from({length:m+1},(_,j)=>i?(j?0:i):j));
+  for(let i=1;i<=n;i++)for(let j=1;j<=m;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===bl[j-1]?0:1));
+  const mark=new Array(m).fill(true);let i=n,j=m;
+  while(i>0||j>0){
+    if(i>0&&j>0&&d[i][j]===d[i-1][j-1]+(a[i-1]===bl[j-1]?0:1)){if(a[i-1]!==bl[j-1])mark[j-1]=false;i--;j--}
+    else if(j>0&&d[i][j]===d[i][j-1]+1){mark[j-1]=false;j--}
+    else i--;
+  }
+  return [...b].map((c,k)=>mark[k]?esc(c):`<span class="x">${esc(c)}</span>`).join('');
+}
+const lev=(a,b)=>{const d=Array.from({length:a.length+1},(_,i)=>[i]);for(let j=1;j<=b.length;j++)d[0][j]=j;for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[a.length][b.length]};
+
+/* ===== Karteikasten-Anzeige ===== */
+function renderBox(){
+  const ids=pool(),c=[0,0,0,0,0,0];ids.forEach(id=>c[bx(id)]++);
+  const max=Math.max(1,...c),names=['neu','Fach 1','Fach 2','Fach 3','Fach 4','Fach 5'],hint=['noch nie geübt','oft üben','üben','wird besser','fast sicher','sicher'];
+  $('#faecher').innerHTML=c.map((n,i)=>`<div class="fach f${i}"><span class="tab">${i?i:'neu'}</span><div class="stack"><div class="cards" style="height:${n?Math.max(4,Math.round(n/max*70)):0}px"></div></div></div>`).join('');
+  $('#front').innerHTML=c.map((n,i)=>`<div><span class="n">${n}</span><span class="t">${hint[i]}</span></div>`).join('');
+  $('#boxinfo').textContent=`${ids.length} Karten in deiner Auswahl · richtig → ein Fach weiter, falsch → zurück in Fach 1`;
+}
+
+/* ===== Startbildschirm ===== */
+function start(){
+  R=null;renderBox();
+  const m=S.mode;
+  $('#screen').innerHTML=`<section class="panel">
+    <div><div class="lbl">Was möchtest du üben?</div></div>
+    <div class="seg" role="group" aria-label="Schwerpunkt">
+      <button type="button" id="m-v" data-mode="v" aria-pressed="${m==='v'}"><b>Vokabeln</b><span>S. 170–180</span></button>
+      <button type="button" id="m-g" data-mode="g" aria-pressed="${m==='g'}"><b>Grammatik</b><span>G1 · G2 · G3 · G6</span></button>
+      <button type="button" id="m-b" data-mode="b" aria-pressed="${m==='b'}"><b>Beides</b><span>gemischt</span></button>
+    </div>
+    ${m!=='g'?`<div class="row" style="justify-content:space-between"><span class="lbl">Vokabel-Seiten</span><button class="ghost" type="button" id="allsec">${S.secs.length===SECS.length?'keine':'alle'}</button></div>
+    <div class="chips">${SECS.map((s,i)=>`<button type="button" class="chip" data-sec="${i}" aria-pressed="${S.secs.includes(i)}">${s.p} · ${esc(s.n)}</button>`).join('')}</div>`:''}
+    ${m!=='v'?`<div class="lbl">Grammatik-Themen</div>
+    <div class="chips">${Object.entries(TOP).map(([k,t])=>`<button type="button" class="chip" data-top="${k}" aria-pressed="${S.tops.includes(k)}">${esc(t)}</button>`).join('')}</div>`:''}
+    <div class="lbl">Karten pro Runde</div>
+    <div class="chips">${[10,15,20].map(n=>`<button type="button" class="chip" data-len="${n}" aria-pressed="${S.len===n}">${n}</button>`).join('')}</div>
+    <div class="row" style="justify-content:space-between">
+      <button class="go" type="button" id="go">Los geht's</button>
+      <button class="ghost" type="button" id="reset">Kasten leeren</button>
+    </div>
+    <p class="small" id="note" style="margin:0">Neue Karten übst du zuerst mit Multiple Choice. Je weiter hinten eine Karte im Kasten steht, desto öfter musst du sie selbst schreiben.</p>
+  </section>`;
+  document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{S.mode=b.dataset.mode;save();start()});
+  document.querySelectorAll('[data-sec]').forEach(b=>b.onclick=()=>{const i=+b.dataset.sec;S.secs=S.secs.includes(i)?S.secs.filter(x=>x!==i):[...S.secs,i];save();start()});
+  document.querySelectorAll('[data-top]').forEach(b=>b.onclick=()=>{const k=b.dataset.top;S.tops=S.tops.includes(k)?S.tops.filter(x=>x!==k):[...S.tops,k];save();start()});
+  document.querySelectorAll('[data-len]').forEach(b=>b.onclick=()=>{S.len=+b.dataset.len;save();start()});
+  const all=$('#allsec');if(all)all.onclick=()=>{S.secs=S.secs.length===SECS.length?[]:SECS.map((_,i)=>i);save();start()};
+  let armed=false;
+  $('#reset').onclick=e=>{if(!armed){armed=true;e.target.textContent='Wirklich leeren?';return}S.box={};save();start()};
+  $('#go').onclick=()=>{if(!pool().length){$('#note').textContent='Wähle mindestens eine Seite oder ein Grammatik-Thema aus.';return}startRound()};
+}
+
+/* ===== Runde ===== */
+let R=null;
+function startRound(){
+  const ids=pool(),Wt=[6,16,8,4,2,1];let cand=ids.map(id=>({id,w:Wt[bx(id)]}));
+  const out=[],maxNew=Math.ceil(S.len*.6);let nNew=0;
+  while(out.length<S.len&&cand.length){
+    const tot=cand.reduce((s,c)=>s+c.w,0);let r=Math.random()*tot,k=0;
+    while(r>cand[k].w){r-=cand[k].w;k++}
+    const c=cand.splice(k,1)[0];
+    if(bx(c.id)===0){if(nNew>=maxNew)continue;nNew++}
+    out.push(c.id);
+  }
+  R={q:out,i:0,right:0,first:out.length,missed:[],retried:new Set()};
+  task();
+}
+function vocabType(v,b){
+  const c=clean(v.en),core=c.startsWith('to ')?c.slice(3):c,words=c.split(' ');
+  const can={flip:1,mcED:1,mcDE:1,type:c.length<=26?1:0,
+    tiles:/^[A-Za-z'-]{3,12}$/.test(core)?1:0, words:words.length>=3&&words.length<=8?1:0};
+  const plan=b<=1?['mcED','mcED','mcDE']:b===2?['mcDE','mcED','tiles','words']:b===3?['type','tiles','words','mcDE']:['type','type','words'];
+  const ok=plan.filter(t=>can[t]);return rnd(ok.length?ok:['mcED']);
+}
+function task(){
+  renderBox();
+  if(R.i>=R.q.length)return end();
+  const id=R.q[R.i],it=ALL[id],b=bx(id),isV=id[0]==='v';
+  let kind=isV?vocabType(it,b):it.t;
+  if(!isV&&it.t==='c'&&b>=3&&it.q.includes('___')&&/^[A-Za-z']+$/.test(it.a[0])&&!it.opts.includes(SND[0]))kind='t';
+  const tag=isV?`Vokabel · ${SECS[it.s].p}`:TOP[it.g];
+  const fach=b?`Fach ${b}`:'neu';
+  const pct=Math.round(R.i/R.q.length*100);
+  $('#screen').innerHTML=`<div class="topbar"><span>Karte ${R.i+1} von ${R.q.length}${R.i>=R.first?' · Wiederholung':''}</span><button class="ghost" type="button" id="quit">Beenden</button></div>
+  <div class="progress" aria-hidden="true"><i style="width:${pct}%"></i></div>
+  <article class="card"><div class="card-top"><span class="tag">${esc(tag)}</span><span class="fachtag">${fach}</span></div>
+  <div class="card-body" id="cb"></div></article>`;
+  $('#quit').onclick=start;
+  const cb=$('#cb');
+  if(isV)VT[kind](cb,it);else GT[kind](cb,it);
+}
+function bindSay(root){root.querySelectorAll('[data-say]').forEach(b=>b.onclick=()=>say(b.dataset.say))}
+
+/* Bewertung + Rückmeldung */
+function grade(id,ok,html){
+  const b=bx(id);
+  if(R.i<R.first||!R.retried.has(id)){S.box[id]=ok?Math.min(5,Math.max(1,b)+1):1}
+  else if(ok&&b<1)S.box[id]=1;
+  save();
+  if(ok)R.right+=R.i<R.first?1:0;
+  else{if(!R.missed.includes(id))R.missed.push(id);if(!R.retried.has(id)){R.retried.add(id);R.q.push(id)}}
+  const fb=document.createElement('div');
+  fb.className='fb '+(ok?'ok':'bad');fb.setAttribute('role','status');
+  fb.innerHTML=html+(!ok&&R.retried.has(id)&&R.q.lastIndexOf(id)>R.i?'<span class="ex">Diese Karte kommt am Ende der Runde noch einmal.</span>':'');
+  const cb=$('#cb');cb.appendChild(fb);
+  const nx=document.createElement('button');nx.className='next';nx.type='button';nx.textContent=R.i+1>=R.q.length?'Ergebnis':'Weiter';
+  nx.onclick=()=>{R.i++;task();if(document.activeElement&&document.activeElement.blur)document.activeElement.blur()};cb.appendChild(nx);nx.focus({preventScroll:true});
+  renderBox();
+}
+const praise=()=>rnd(['Richtig!','Super!','Genau!','Prima!','Stimmt!']);
+
+/* ===== Vokabel-Aufgaben ===== */
+function distract(v,key){
+  const same=V.filter(x=>x.s===v.s&&x[key]!==v[key]&&x.en!==v.en),other=V.filter(x=>x.s!==v.s&&x[key]!==v[key]);
+  const pick=shuffle(same).slice(0,3);while(pick.length<3)pick.push(rnd(other));
+  return shuffle([v,...pick]);
+}
+function mc(cb,v,key,instr,prompt,speak){
+  const o=distract(v,key);
+  cb.innerHTML=`<p class="instr">${instr}</p><p class="prompt">${esc(prompt)} ${speak?sayBtn(v.en):''}</p>
+  <div class="opts">${o.map((x,i)=>`<button class="opt" type="button" data-i="${i}">${esc(x[key])}</button>`).join('')}</div>`;
+  bindSay(cb);
+  cb.querySelectorAll('.opt').forEach(btn=>btn.onclick=()=>{
+    const x=o[+btn.dataset.i],ok=x[key]===v[key];
+    cb.querySelectorAll('.opt').forEach(b=>{b.disabled=true;if(o[+b.dataset.i][key]===v[key])b.classList.add('ok')});
+    if(!ok)btn.classList.add('bad');
+    if(key==='en'&&ok&&canSay)say(v.en);
+    grade(v.id,ok,ok?`<strong>${praise()}</strong><span>${esc(v.en)} = ${esc(v.de)}</span>`:`<strong>Nicht ganz.</strong><span><b>${esc(v.en)}</b> heißt ${esc(v.de)}.</span>`);
+  });
+}
+const VT={
+  flip(cb,v){
+    cb.innerHTML=`<p class="instr">Weißt du, was das heißt? Sag es laut und dreh dann die Karte um.</p>
+    <p class="prompt">${esc(v.en)} ${sayBtn(v.en)}</p><div id="fl"><button class="check" type="button" id="turn">Karte umdrehen</button></div>`;
+    bindSay(cb);
+    $('#turn').onclick=()=>{
+      $('#fl').innerHTML=`<div class="flipback">${esc(v.de)}</div><p class="instr" style="margin-top:12px">Hast du es gewusst? Sei ehrlich – nur so hilft der Karteikasten.</p>
+      <div class="opts"><button class="opt" type="button" id="y">Gewusst ✔</button><button class="opt" type="button" id="n">Noch nicht ✘</button></div>`;
+      const fin=ok=>{cb.querySelectorAll('.opt').forEach(b=>b.disabled=true);(ok?$('#y'):$('#n')).classList.add(ok?'ok':'bad');
+        grade(v.id,ok,ok?`<strong>${praise()}</strong><span>Die Karte rückt ein Fach weiter.</span>`:`<strong>Kein Problem.</strong><span>Merk dir: <b>${esc(v.en)}</b> = ${esc(v.de)}</span>`)};
+      $('#y').onclick=()=>fin(true);$('#n').onclick=()=>fin(false);
+    };
+  },
+  mcED(cb,v){mc(cb,v,'de','Was heißt das auf Deutsch?',v.en,true)},
+  mcDE(cb,v){mc(cb,v,'en','Was heißt das auf Englisch?',v.de,false)},
+  type(cb,v){
+    const target=clean(v.en),acc=new Set();V.filter(x=>x.de===v.de).forEach(x=>variants(x.en).forEach(a=>acc.add(a)));
+    cb.innerHTML=`<p class="instr">Schreibe das englische Wort. Achte auf die Rechtschreibung!</p><p class="prompt">${esc(v.de)}</p>
+    <form class="inp" id="f"><input id="ans" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Deine Antwort auf Englisch"><button class="check" type="submit">Prüfen</button></form>`;
+    const inp=$('#ans');inp.focus({preventScroll:true});
+    $('#f').onsubmit=e=>{e.preventDefault();const raw=strip(inp.value);if(!raw)return;inp.disabled=true;e.target.querySelector('button').disabled=true;
+      const lo=raw.toLowerCase(),hit=[...acc].find(a=>a.toLowerCase()===lo);
+      if(hit){inp.classList.add('ok');if(canSay)say(v.en);
+        const caseNote=hit!==raw?`<span class="ex">Achte auf Groß- und Kleinschreibung: <b>${esc(hit)}</b></span>`:'';
+        const toNote=target.startsWith('to ')&&!lo.startsWith('to ')?`<span class="ex">Verben lernst du mit <b>to</b>: ${esc(target)}</span>`:'';
+        grade(v.id,true,`<strong>${praise()}</strong><span>${esc(target)}</span>${caseNote}${toNote}`);
+      }else{inp.classList.add('bad');const close=lev(lo,target.toLowerCase())<=2;
+        grade(v.id,false,`<strong>${close?'Fast! Schau genau auf die Buchstaben:':'Richtig wäre:'}</strong><span class="sol">${diffHTML(raw,target)}</span><span class="ex">Du hast geschrieben: ${esc(raw)}</span>`)}};
+  },
+  tiles(cb,v){
+    const c=clean(v.en),pre=c.startsWith('to ')?'to ':'',core=c.slice(pre.length);
+    tileGame(cb,v.id,[...core],`Bilde das Wort aus den Buchstaben. Klick sie in der richtigen Reihenfolge an.`,v.de,core,pre,'',true,v.en);
+  },
+  words(cb,v){const c=clean(v.en);tileGame(cb,v.id,c.split(' '),'Bring die Wörter in die richtige Reihenfolge.',v.de,c,'',' ',false,v.en)}
+};
+function tileGame(cb,id,parts,instr,prompt,target,prefix,joiner,letters,speak){
+  let order;do{order=shuffle(parts.map((p,i)=>i))}while(parts.length>1&&order.every((x,i)=>parts[x]===parts[i]));
+  const placed=[];
+  cb.innerHTML=`<p class="instr">${instr}</p><p class="prompt">${esc(prompt)}</p>
+  <div class="slots" id="sl" aria-label="Deine Lösung">${prefix?`<span class="small">${esc(prefix)}</span>`:''}</div><div class="pool" id="pl"></div>`;
+  const draw=()=>{
+    $('#sl').innerHTML=(prefix?`<span class="tile l" style="opacity:.6">${esc(prefix.trim())}</span>`:'')+placed.map((k,i)=>`<button type="button" class="tile${letters?' l':''}" data-p="${i}" aria-label="${esc(parts[k])} entfernen">${esc(parts[k])}</button>`).join('');
+    $('#pl').innerHTML=order.map(k=>placed.includes(k)?'':`<button type="button" class="tile${letters?' l':''}" data-k="${k}">${esc(parts[k])}</button>`).join('');
+    cb.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{placed.splice(+b.dataset.p,1);draw()});
+    cb.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{placed.push(+b.dataset.k);draw();if(placed.length===parts.length)done()});
+  };
+  const done=()=>{cb.querySelectorAll('.tile').forEach(b=>b.disabled=true);
+    const got=placed.map(k=>parts[k]).join(joiner),ok=got===target;
+    if(ok&&canSay)say(speak);
+    grade(id,ok,ok?`<strong>${praise()}</strong><span>${esc(prefix+target)}</span>`:`<strong>Nicht ganz. Richtig ist:</strong><span class="sol">${esc(prefix+target)}</span>`)};
+  draw();
+}
+
+/* ===== Grammatik-Aufgaben ===== */
+const showQ=q=>esc(q).replace('___','<span class="gap">&nbsp;?&nbsp;</span>');
+const fillQ=(q,a)=>esc(q).replace('___',`<b>${esc(a)}</b>`);
+const GT={
+  c(cb,it){
+    const o=shuffle(it.opts),long=o.some(x=>x.length>14);
+    cb.innerHTML=`<p class="instr">Klick die richtige Lösung an.</p><p class="prompt">${showQ(it.q)}</p>
+    <div class="opts${long?' one':''}">${o.map((x,i)=>`<button class="opt" type="button" data-i="${i}">${esc(x)}</button>`).join('')}</div>`;
+    cb.querySelectorAll('.opt').forEach(btn=>btn.onclick=()=>{
+      const x=o[+btn.dataset.i],ok=it.a.includes(x);
+      cb.querySelectorAll('.opt').forEach(b=>{b.disabled=true;if(it.a.includes(o[+b.dataset.i]))b.classList.add('ok')});
+      if(!ok)btn.classList.add('bad');
+      const full=it.q.includes('___')?`<span>${fillQ(it.q,it.a[0])}</span>`:`<span><b>${esc(it.a[0])}</b></span>`;
+      grade(it.id,ok,`<strong>${ok?praise():'Nicht ganz.'}</strong>${full}<span class="ex">${esc(it.ex)}</span>`);
+    });
+  },
+  t(cb,it){
+    cb.innerHTML=`<p class="instr">${it.q.includes('___')?'Schreibe das fehlende Wort.':'Schreibe die Lösung.'}</p><p class="prompt">${showQ(it.q)}</p>
+    <form class="inp" id="f"><input id="ans" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Deine Antwort"><button class="check" type="submit">Prüfen</button></form>`;
+    const inp=$('#ans');inp.focus({preventScroll:true});
+    $('#f').onsubmit=e=>{e.preventDefault();const raw=strip(inp.value);if(!raw)return;inp.disabled=true;e.target.querySelector('button').disabled=true;
+      const lo=raw.toLowerCase(),hit=it.a.map(strip).find(a=>a.toLowerCase()===lo),target=strip(it.a[0]);
+      const full=it.q.includes('___')?`<span>${fillQ(it.q,it.a[0])}</span>`:'';
+      if(hit){inp.classList.add('ok');
+        const cn=hit!==raw&&/^[A-Z]|\bI\b/.test(hit)?`<span class="ex">Achte auf Groß- und Kleinschreibung: <b>${esc(hit)}</b></span>`:'';
+        grade(it.id,true,`<strong>${praise()}</strong>${full}${cn}<span class="ex">${esc(it.ex)}</span>`);
+      }else{inp.classList.add('bad');
+        grade(it.id,false,`<strong>Richtig wäre:</strong><span class="sol">${diffHTML(raw,target)}</span>${it.a.length>1?`<span class="ex">Auch richtig: ${it.a.slice(1).map(esc).join(' · ')}</span>`:''}<span class="ex">${esc(it.ex)}</span>`)}};
+  }
+};
+
+/* ===== Ende ===== */
+function end(){
+  renderBox();
+  const n=R.first,r=R.right,ids=pool(),sure=ids.filter(id=>bx(id)===5).length;
+  const msg=r===n?'Alles richtig – stark!':r>=n*.8?'Sehr gut gemacht!':r>=n*.5?'Gut! Die falschen Karten stehen jetzt in Fach 1.':'Dranbleiben – morgen sitzt es schon besser.';
+  $('#screen').innerHTML=`<section class="panel end">
+    <div class="lbl">Runde geschafft</div>
+    <div class="score">${r}<span style="font-size:1.4rem;color:var(--muted)"> / ${n}</span></div>
+    <h2>${msg}</h2>
+    <p class="small" style="margin:0">${sure} von ${ids.length} Karten sind schon in Fach 5.</p>
+    ${R.missed.length?`<div><div class="lbl" style="margin-bottom:6px">Diese Karten übst du am besten noch einmal</div><ul class="list">${R.missed.map(id=>{const x=ALL[id];return `<li>${id[0]==='v'?`<b>${esc(x.en)}</b> – ${esc(x.de)}`:(x.q.includes('___')?fillQ(x.q,x.a[0]):`${esc(x.q)} → <b>${esc(x.a[0])}</b>`)}</li>`}).join('')}</ul></div>`:''}
+    <div class="row"><button class="go" type="button" id="again">Neue Runde</button><button class="ghost" type="button" id="menu">Auswahl ändern</button></div>
+  </section>`;
+  $('#again').onclick=startRound;$('#menu').onclick=start;$('#again').focus({preventScroll:true});
+}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'){const nx=document.querySelector('.next');if(nx&&document.activeElement!==nx&&!(document.activeElement&&document.activeElement.tagName==='INPUT'&&!document.activeElement.disabled)){e.preventDefault();nx.click()}}});
+start();
+</script>
+
+</body></html>

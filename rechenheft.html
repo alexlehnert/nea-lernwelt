@@ -1,0 +1,969 @@
+<!doctype html><html><head><meta charset=utf8><script src="/api/config"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="/sync.js"></script><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body><nav id="lw-bar" aria-label="Lernwelt" style="all:initial;display:flex;align-items:center;gap:10px;box-sizing:border-box;width:100%;padding:6px max(12px,env(safe-area-inset-right,0px)) 6px max(12px,env(safe-area-inset-left,0px));background:#20304a;color:#f3f0e6;font:600 14px/1.2 system-ui,-apple-system,Segoe UI,sans-serif;position:relative;z-index:9999"><a href="index.html" style="all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:#f3f0e6;color:#20304a;font:700 14px/1 system-ui,-apple-system,Segoe UI,sans-serif">&#8249; Lernwelt</a><span style="all:unset;font:600 14px/1.2 system-ui,-apple-system,Segoe UI,sans-serif;color:#f3f0e6;opacity:.85">Mathe · Rechenheft</span></nav>
+<title>Rechenheft</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* Layout: ein blaues Karo-Heft – blauer Umschlag als Kopf, Karopapier als Grund, Rotstift für Merksätze und Korrekturen */
+:root{
+  --bg:#eef2f8; --grid:#d9e2ef; --paper:#ffffff; --grid2:#eaf0f8; --ink:#1b2333; --muted:#5a6578; --line:#cdd7e6;
+  --cover:#1f4fb5; --cover-dk:#163a87; --onc:#ffffff; --blue:#1f4fb5; --blue-soft:#e6eefb;
+  --red:#d2332a; --red-soft:#fdecea; --ok:#23824a; --ok-bg:#e3f4e9; --bad:#c9372c; --bad-bg:#fbe7e5; --hl:#ffe680; --chip:#e3eaf5;
+  --f-h:'Kalam','Segoe Print','Comic Sans MS',cursive; --f-b:'Atkinson Hyperlegible','Segoe UI',system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){color-scheme:dark;
+  --bg:#0f1520; --grid:#1b2536; --paper:#172031; --grid2:#1c273a; --ink:#e8edf6; --muted:#9fabc0; --line:#2e3a52;
+  --cover:#2350b8; --cover-dk:#173a86; --blue:#8fb2ff; --blue-soft:#1d2b47;
+  --red:#ff7f74; --red-soft:#3a1f22; --ok:#74d39a; --ok-bg:#16301f; --bad:#ff8a7e; --bad-bg:#3a1d1a; --hl:#6b5a12; --chip:#22304a}}
+:root[data-theme="dark"]{color-scheme:dark;
+  --bg:#0f1520; --grid:#1b2536; --paper:#172031; --grid2:#1c273a; --ink:#e8edf6; --muted:#9fabc0; --line:#2e3a52;
+  --cover:#2350b8; --cover-dk:#173a86; --blue:#8fb2ff; --blue-soft:#1d2b47;
+  --red:#ff7f74; --red-soft:#3a1f22; --ok:#74d39a; --ok-bg:#16301f; --bad:#ff8a7e; --bad-bg:#3a1d1a; --hl:#6b5a12; --chip:#22304a}
+*{box-sizing:border-box}
+body{background:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:20px 20px;color:var(--ink);font-family:var(--f-b);font-size:17px;line-height:1.5;padding-inline:16px}
+.wrap{max-width:680px;margin:0 auto;padding-block:20px 48px;display:flex;flex-direction:column;gap:16px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+h1,h2,h3{font-family:var(--f-h);margin:0;line-height:1.15}
+h2{font-size:1.45rem}
+.small{font-size:.86rem;color:var(--muted)}
+.lbl{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--blue)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+
+/* Umschlag */
+header.cover{background:var(--cover);color:var(--onc);border-radius:0 0 18px 18px;margin:-20px -16px 0;padding:20px 20px 18px;display:flex;align-items:center;justify-content:space-between;gap:14px;position:relative;overflow:hidden;background-image:repeating-linear-gradient(90deg,rgba(255,255,255,.05) 0 2px,transparent 2px 9px)}
+header.cover h1{font-size:2.3rem;font-weight:700;color:#fff}
+header.cover p{margin:2px 0 0;color:rgba(255,255,255,.85);font-size:.92rem}
+.sticker{background:#fff;color:#1b2333;border-radius:8px;padding:6px 12px 8px;transform:rotate(-3deg);box-shadow:0 4px 0 rgba(0,0,0,.18);min-width:118px;flex:none}
+.sticker .l{font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:#5a6578;border-bottom:1px solid #b9c4d6;display:flex;justify-content:space-between;gap:8px}
+.sticker b{font-family:var(--f-h);font-size:1.35rem;color:#1f4fb5;font-weight:700;line-height:1.3}
+.sticker .k{font-family:var(--f-h);font-size:1rem;color:#d2332a}
+
+/* Register */
+.reg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.reg button{border:2px solid var(--line);background:var(--paper);border-radius:14px;padding:10px 12px;display:flex;align-items:center;gap:10px;text-align:left}
+.reg button b{font-family:var(--f-h);font-size:1.35rem;line-height:1}
+.reg button span{display:block;font-size:.76rem;color:var(--muted)}
+.reg button .ic{font-family:var(--f-h);font-weight:700;font-size:1.3rem;width:44px;height:44px;border-radius:10px;display:grid;place-items:center;background:var(--chip);color:var(--blue);flex:none}
+.reg button[aria-pressed="true"]{border-color:var(--cover);background:var(--blue-soft)}
+.reg button[aria-pressed="true"] .ic{background:var(--cover);color:#fff}
+
+/* Karteikasten */
+.box{background:var(--cover);border-radius:16px;padding:14px 12px 0;color:#fff;box-shadow:0 12px 24px -16px rgba(10,30,80,.6)}
+.box-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:10px;flex-wrap:wrap;padding:0 4px}
+.box-head h2{color:#fff;font-size:1.3rem}
+.box-head .small{color:rgba(255,255,255,.85)}
+.faecher{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;align-items:end;background:var(--cover-dk);border-radius:10px 10px 0 0;padding:10px 6px 0}
+.fach{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0}
+.tab{background:#fff;color:#163a87;font-weight:700;font-size:.78rem;border-radius:6px 6px 0 0;padding:1px 6px;width:100%;max-width:64px;text-align:center}
+.fach.f0 .tab{background:#ffd23f;color:#3b2e00}
+.stack{width:100%;max-width:64px;height:70px;display:flex;flex-direction:column;justify-content:flex-end;padding:0 3px;background:rgba(0,0,0,.18);margin-top:-4px}
+.cards{border-radius:2px 2px 0 0;background:repeating-linear-gradient(to top,#fff 0 3px,#c7d6f0 3px 4px);transition:height .4s}
+.fach.f5 .cards{background:repeating-linear-gradient(to top,#fff6c8 0 3px,#ffd23f 3px 4px)}
+.front{background:var(--cover);margin:0 -12px;border-radius:0 0 16px 16px;border-top:4px solid rgba(255,255,255,.3);display:grid;grid-template-columns:repeat(6,1fr);gap:6px;padding:8px 18px 12px}
+.front div{display:flex;flex-direction:column;align-items:center;min-width:0}
+.front .n{font-weight:700;font-variant-numeric:tabular-nums;font-size:1.1rem;line-height:1.1}
+.front .t{font-size:.64rem;color:rgba(255,255,255,.88);text-align:center;line-height:1.15}
+
+/* Panels */
+.panel{background:var(--paper);border:2px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:14px}
+.stations{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.st{border:2px solid var(--line);background:var(--paper);border-radius:12px;padding:12px;text-align:left;display:flex;flex-direction:column;gap:2px;min-width:0}
+.st b{font-family:var(--f-h);font-size:1.15rem;line-height:1.15;color:var(--blue)}
+.st span{font-size:.8rem;color:var(--muted)}
+.st:hover{border-color:var(--cover)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1.5px solid transparent;background:var(--chip);border-radius:999px;padding:5px 12px;font-size:.88rem}
+.chip[aria-pressed="true"]{background:var(--cover);color:#fff}
+.go{background:var(--cover);color:#fff;border:none;border-radius:12px;padding:14px 22px;font-weight:700;font-size:1.1rem;box-shadow:0 3px 0 var(--cover-dk)}
+.go:active,.next:active,.check:active{transform:translateY(2px);box-shadow:0 1px 0 var(--cover-dk)}
+.ghost{background:var(--paper);border:1.5px solid var(--line);border-radius:10px;padding:8px 14px;font-size:.9rem;color:var(--muted)}
+
+/* Karte */
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:.9rem;color:var(--muted)}
+.progress{height:8px;background:var(--chip);border-radius:99px;overflow:hidden}
+.progress i{display:block;height:100%;background:var(--cover);transition:width .3s}
+.card{background:var(--paper);border:2px solid var(--cover);border-radius:12px;overflow:hidden;box-shadow:0 10px 24px -14px rgba(20,35,60,.35)}
+.card-top{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 16px;background:var(--cover);color:#fff}
+.card-top .tag{font-weight:700;font-size:.85rem}
+.fachtag{font-weight:700;font-size:.8rem;background:#fff;color:#163a87;border-radius:6px;padding:2px 8px}
+.card-body{padding:18px 16px 20px;display:flex;flex-direction:column;gap:16px;background-image:linear-gradient(var(--grid2) 1px,transparent 1px),linear-gradient(90deg,var(--grid2) 1px,transparent 1px);background-size:22px 22px}
+.instr{font-size:.92rem;color:var(--muted);margin:0}
+.prompt{font-family:var(--f-h);font-weight:700;font-size:clamp(1.4rem,5.4vw,1.9rem);line-height:1.25;margin:0;text-wrap:balance}
+.prompt.big{font-size:clamp(2rem,9vw,2.8rem);text-align:center}
+sup{font-size:.62em;line-height:0;vertical-align:.9em;margin-left:1px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opts.one{grid-template-columns:1fr}
+.opt{border:2px solid var(--line);background:var(--paper);border-radius:12px;padding:12px 14px;text-align:left;font-size:1.02rem;min-height:52px}
+.opt.m{font-family:var(--f-h);font-size:1.35rem;text-align:center;font-weight:700}
+@media (hover:hover) and (pointer:fine){.opt:hover:not(:disabled){border-color:var(--cover)}}
+.opt.ok{border-color:var(--ok);background:var(--ok-bg)}
+.opt.bad{border-color:var(--bad);background:var(--bad-bg)}
+.opt.sel{border-color:var(--red);background:var(--red-soft)}
+.opt.sel .m2{text-decoration:line-through;text-decoration-color:var(--red);text-decoration-thickness:3px}
+.opt:disabled{cursor:default}
+.fb{border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.fb.ok{background:var(--ok-bg);border:1.5px solid var(--ok)}
+.fb.bad{background:var(--bad-bg);border:1.5px solid var(--bad)}
+.fb strong{font-family:var(--f-h);font-size:1.15rem}
+.fb .exl{font-size:.94rem;color:var(--muted)}
+.fb .m{font-family:var(--f-h);font-size:1.25rem}
+.next,.check{align-self:flex-end;background:var(--cover);color:#fff;border:none;border-radius:12px;padding:12px 22px;font-weight:700;font-size:1.05rem;box-shadow:0 3px 0 var(--cover-dk)}
+.check{align-self:auto}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.shake{animation:shake .3s}
+
+/* Mathe-Ausdrücke */
+.ex{font-family:var(--f-h);font-weight:700;display:inline-flex;flex-wrap:wrap;align-items:baseline;gap:.18em}
+.ex .op{color:var(--blue)}
+.ex sup{align-self:flex-start;vertical-align:baseline;line-height:1;font-size:.6em;margin-left:-.1em}
+.ex .ob.sup{align-self:flex-start;vertical-align:baseline;margin-top:-.2em}
+.ex .par{color:var(--muted)}
+.ex .var,.ex .box{display:inline-grid;place-items:center;min-width:1.25em;padding:0 .15em;border:2px solid var(--red);border-radius:6px;color:var(--red);line-height:1.15;background:var(--red-soft)}
+.ex .hl,.ex sup.hl{background:var(--hl);border-radius:4px;padding:0 3px}
+.ex.lg{font-size:clamp(1.9rem,8vw,2.6rem)}
+.ob{border:2px solid var(--cover);background:var(--paper);color:var(--blue);border-radius:10px;min-width:44px;min-height:44px;padding:0 8px;font-family:var(--f-h);font-weight:700;font-size:1em;line-height:1}
+.ob.sup{min-width:36px;min-height:34px;font-size:.8em;vertical-align:.7em;border-style:dashed}
+.ob.sup sup{font-size:1em;vertical-align:0;margin:0}
+.ob.hint{background:var(--hl);border-color:var(--red)}
+.ob.wrong{border-color:var(--bad);background:var(--bad-bg)}
+.hist{display:flex;flex-direction:column;gap:4px}
+.hist .ex{font-size:1.35rem}
+.rule{font-size:.8rem;border:1.5px solid var(--cover);color:var(--blue);border-radius:99px;padding:0 8px;font-family:var(--f-b);font-weight:400;align-self:center;margin-left:6px;white-space:nowrap}
+.ladder{display:flex;gap:6px;flex-wrap:wrap}
+.ladder span{font-size:.82rem;border:1.5px solid var(--line);border-radius:99px;padding:2px 10px;color:var(--muted)}
+.ladder span b{font-family:var(--f-h);color:var(--red)}
+.ladder span.on{border-color:var(--red);background:var(--red-soft);color:var(--ink)}
+
+/* Tippen auf Teile */
+.parts{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:flex-start;font-family:var(--f-h);font-weight:700;font-size:2.4rem}
+.part{border:2px dashed var(--line);background:var(--paper);border-radius:12px;min-width:56px;min-height:60px;padding:0 10px;font-family:var(--f-h);font-weight:700;font-size:1em;line-height:1}
+.part.s{font-size:.55em;min-width:44px;min-height:44px;margin-top:-6px}
+.part.ok{border:2px solid var(--ok);background:var(--ok-bg)}
+.part.bad{border:2px solid var(--bad);background:var(--bad-bg)}
+
+/* Ziffernblock */
+.ansrow{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap}
+.field{min-width:120px;min-height:58px;border:2.5px solid var(--line);border-radius:12px;background:var(--paper);display:grid;place-items:center;font-family:var(--f-h);font-weight:700;font-size:2rem;padding:0 12px;font-variant-numeric:tabular-nums}
+.field.act{border-color:var(--cover);box-shadow:0 0 0 3px var(--blue-soft)}
+.field.ok{border-color:var(--ok);background:var(--ok-bg)}
+.field.bad{border-color:var(--bad);background:var(--bad-bg)}
+.field .ph{color:var(--line)}
+.powin{display:flex;align-items:flex-start;gap:4px}
+.powin .fb0{min-width:96px;min-height:72px;font-size:2.4rem;margin-top:22px}
+.powin .fe{min-width:62px;min-height:48px;font-size:1.5rem}
+.powlab{display:flex;justify-content:center;gap:28px;font-size:.78rem;color:var(--muted)}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:340px;width:100%;margin:0 auto}
+.pad button{min-height:52px;border:2px solid var(--line);background:var(--paper);border-radius:12px;font-size:1.35rem;font-weight:700}
+.pad button:active{background:var(--chip)}
+.pad .okk{background:var(--cover);border-color:var(--cover);color:#fff;font-size:1.05rem}
+.pad .wide{grid-column:1/-1;font-size:1rem;color:var(--blue);border-color:var(--cover);border-style:dashed}
+.pad button:disabled{opacity:.4}
+
+/* Sortieren */
+.slots{min-height:64px;border:2px dashed var(--line);border-radius:12px;padding:8px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center}
+.pool{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.tile{border:2px solid var(--line);background:var(--paper);border-radius:10px;padding:6px 14px;font-family:var(--f-h);font-weight:700;font-size:1.5rem;min-width:62px}
+.slots .tile{background:var(--blue-soft);border-color:var(--cover)}
+.lt{font-family:var(--f-h);color:var(--muted);font-size:1.4rem}
+
+/* Stationen */
+.back{align-self:flex-start}
+.stepper{display:flex;align-items:center;gap:8px}
+.stepper button{width:44px;height:44px;border-radius:12px;border:2px solid var(--line);background:var(--paper);font-size:1.4rem;font-weight:700}
+.stepper .v{font-family:var(--f-h);font-weight:700;font-size:1.6rem;min-width:40px;text-align:center}
+.ctrl{display:grid;grid-template-columns:auto 1fr;gap:10px 14px;align-items:center}
+.pbig{display:flex;justify-content:center;align-items:flex-start;gap:6px;margin:4px 0}
+.pcol{display:flex;flex-direction:column;align-items:center;gap:2px}
+.pB{font-family:var(--f-h);font-weight:700;font-size:4.2rem;line-height:1;margin-top:26px;color:var(--ink)}
+.pE{font-family:var(--f-h);font-weight:700;font-size:2.1rem;line-height:1;color:var(--red)}
+.plab{font-size:.72rem;text-align:center;color:var(--muted);line-height:1.2}
+.pcol.b .plab{color:var(--ink)}
+.pcol.e .plab{color:var(--red)}
+.facs{display:flex;flex-direction:column;align-items:center;gap:2px}
+.facs .ex{font-size:1.6rem;justify-content:center}
+.brace{height:12px;width:100%;border:2.5px solid var(--red);border-top:none;border-radius:0 0 14px 14px}
+.bracel{font-family:var(--f-h);color:var(--red);font-size:1.15rem}
+.chain{display:flex;flex-direction:column;align-items:center;gap:2px}
+.chain .ex{font-size:1.4rem}
+.val{font-family:var(--f-h);font-weight:700;font-size:2.2rem;text-align:center;color:var(--blue);font-variant-numeric:tabular-nums}
+.merk{border:2.5px solid var(--red);border-radius:14px 10px 16px 12px;padding:12px 14px;background:var(--paper)}
+.merk h3{color:var(--red);font-size:1.3rem;margin-bottom:6px}
+.merk p,.merk li{margin:0 0 6px}
+.merk ul{margin:0;padding-left:20px}
+.note{border-left:4px solid var(--red);padding:4px 0 4px 12px}
+.trap{background:var(--red-soft);border-radius:10px;padding:8px 12px}
+.ladderv{display:flex;flex-direction:column;gap:0;align-items:stretch}
+.lrow{display:grid;grid-template-columns:1fr 1fr;align-items:center;border:2px solid var(--line);border-radius:12px;padding:6px 14px;background:var(--paper)}
+.lrow .ex{font-size:1.6rem}
+.lrow .lv{font-family:var(--f-h);font-weight:700;font-size:1.6rem;text-align:right;font-variant-numeric:tabular-nums}
+.lrow.cur{border-color:var(--cover);background:var(--blue-soft);box-shadow:0 0 0 3px var(--blue-soft)}
+.lrow.hid .lv{color:var(--line)}
+.lgap{display:flex;justify-content:center;gap:24px;font-family:var(--f-h);font-size:.95rem;color:var(--muted);padding:2px 0}
+.lgap .u{color:var(--blue)} .lgap .d{color:var(--red)}
+.paper{width:240px;max-width:100%;aspect-ratio:3/2;margin:0 auto;border:2.5px solid var(--ink);border-radius:4px;display:grid;background:#fffdf3;overflow:hidden}
+.paper i{border:1px dashed #b8a978}
+.zeros{font-family:var(--f-h);font-weight:700;font-size:1.8rem;text-align:center;word-break:break-all}
+.zeros span{color:var(--red)}
+.names{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 14px;margin:6px 0}
+.names .c{display:flex;flex-direction:column;align-items:center;gap:2px}
+.names .v{font-family:var(--f-h);font-weight:700;font-size:2.4rem;line-height:1.1}
+.names .o{font-family:var(--f-h);font-size:2.4rem;color:var(--blue);line-height:1.1}
+.names .nm{font-size:.95rem;color:var(--red);display:flex;flex-direction:column;align-items:center;line-height:1.1}
+.names .nm::before{content:"↑";font-size:1.1rem}
+.screen{border:2.5px solid var(--ink);border-radius:12px;padding:8px 12px;min-height:62px;display:flex;align-items:center;background:var(--blue-soft);overflow-x:auto}
+.screen .ex{font-size:1.8rem}
+.bpad{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.bpad button{min-height:44px;border:2px solid var(--line);background:var(--paper);border-radius:10px;font-family:var(--f-h);font-weight:700;font-size:1.3rem;padding:0}
+.bpad .x{color:var(--red);border-color:var(--red)} .bpad .o{color:var(--blue)} .bpad .eq{color:var(--bad)}
+.msg.ok{color:var(--ok)} .msg.bad{color:var(--bad)}
+input[type=range]{width:100%;accent-color:var(--red);height:30px}
+.end .score{font-family:var(--f-h);font-weight:700;font-size:3rem;line-height:1}
+.list{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:4px}
+
+/* Auswendig-Quiz */
+.pqt{background:var(--paper);border:2.5px solid var(--red);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.pqt h2{color:var(--red);font-size:1.35rem}
+.pqgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.pqc{border:2px solid var(--line);border-radius:10px;padding:4px 2px 5px;text-align:center;background:var(--paper);min-width:0}
+.pqc .ex{font-size:1.15rem;justify-content:center}
+.pqc .dots{display:flex;justify-content:center;gap:3px;margin-top:2px}
+.pqc .dots i{width:8px;height:8px;border-radius:50%;border:1.5px solid var(--muted)}
+.pqc .dots i.on{background:var(--ok);border-color:var(--ok)}
+.pqc.s3{border-color:var(--ok);background:var(--ok-bg)}
+.days{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.days i{width:30px;height:30px;border-radius:50%;border:2px dashed var(--line);display:grid;place-items:center;font-style:normal;font-weight:700;font-size:.85rem;color:var(--muted)}
+.days i.on{border:2px solid var(--red);background:var(--red-soft);color:var(--red)}
+.say{font-family:var(--f-h);font-size:1.15rem;color:var(--red)}
+@media (max-width:460px){.opts{grid-template-columns:1fr}.front .t{font-size:.56rem}.stations{grid-template-columns:1fr 1fr}.parts{font-size:2rem}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="cover">
+    <div><h1>Rechenheft</h1><p>Terme &amp; Potenzen · Klasse 5</p></div>
+    <div class="sticker" aria-hidden="true"><div class="l"><span>Fach</span><span>Kl.</span></div><div class="row" style="justify-content:space-between;gap:8px"><b>Mathe</b><span class="k">5</span></div></div>
+  </header>
+  <main id="screen" style="display:flex;flex-direction:column;gap:16px"></main>
+</div>
+
+<script>
+(function(){
+/* ===== Helfer ===== */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const rnd=a=>a[Math.random()*a.length|0];
+const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const fmtN=n=>{const s=String(n);if(!/^\d+$/.test(s)||s.length<5)return s;return s.replace(/\B(?=(\d{3})+(?!\d))/g,' ')};
+const M=s=>esc(s).replace(/(\d+|[a-z]|\))\^(\d+|[a-z])/g,'$1<sup>$2</sup>');
+
+/* ===== Rechnen mit Ausdrücken ===== */
+const PR={'^':3,'·':2,':':2,'+':1,'−':1};
+const tok=s=>s.replace(/\s+/g,'').match(/\d+|[a-z]|[+−·:^()]/g);
+function calc(a,o,b){a=+a;b=+b;return o==='+'?a+b:o==='−'?a-b:o==='·'?a*b:o===':'?a/b:Math.pow(a,b)}
+function cleanP(t){let ch=true;while(ch){ch=false;for(let i=0;i+2<t.length;i++)if(t[i]==='('&&t[i+2]===')'&&/^\d/.test(t[i+1])){t.splice(i,3,t[i+1]);ch=true;break}}return t}
+function nextOp(t){let lo=0,hi=t.length;const j=t.indexOf(')');if(j>=0){hi=j;lo=t.lastIndexOf('(',j)+1}
+  let best=-1,bp=0;for(let k=lo;k<hi;k++){const p=PR[t[k]];if(p&&p>bp){best=k;bp=p}}return best}
+function ruleOf(t,k){
+  const j=t.indexOf(')');if(j>=0&&k<j&&k>t.lastIndexOf('(',j))return 'Klammer zuerst';
+  if(t[k]==='^')return 'Potenz vor Punkt vor Strich';
+  const ops=t.filter(x=>PR[x]);
+  if(PR[t[k]]===2&&ops.some(x=>PR[x]===1))return 'Punkt vor Strich';
+  return ops.length>1?'von links nach rechts':'';
+}
+function applyOp(t,k){const o=t.slice();o.splice(k-1,3,String(calc(t[k-1],t[k],t[k+1])));return cleanP(o)}
+function stepsOf(t){t=cleanP(t.slice());const out=[];let g=0;while(t.length>1&&g++<30){const k=nextOp(t);if(k<0)break;const rule=ruleOf(t,k),before=t;t=applyOp(t,k);out.push({before,k,t,rule})}return out}
+function subst(s,vars){return tok(s).map(x=>vars&&x in vars?String(vars[x]):x)}
+function evalS(s,vars){const st=stepsOf(subst(s,vars));return st.length?+st[st.length-1].t[0]:+subst(s,vars)[0]}
+function atom(x){x=String(x);if(x[0]==='#')return `<span class="box">${fmtN(x.slice(1))}</span>`;if(/^[a-z]$/.test(x))return `<span class="var">${x}</span>`;return fmtN(x)}
+function R(t,o){o=o||{};let h='';for(let i=0;i<t.length;i++){const x=t[i];
+  if(x==='^'){const e=t[i+1];h+=o.tap?`<button type="button" class="ob sup" data-k="${i}" aria-label="hoch ${esc(e)}"><sup>${atom(e)}</sup></button>`:`<sup class="${o.hl===i?'hl':''}">${atom(e)}</sup>`;i++;continue}
+  if(PR[x])h+=o.tap?`<button type="button" class="ob" data-k="${i}">${x}</button>`:`<span class="op${o.hl===i?' hl':''}">${x}</span>`;
+  else if(x==='('||x===')')h+=`<span class="par">${x}</span>`;
+  else h+=`<span class="n">${atom(x)}</span>`}
+  return `<span class="ex${o.lg?' lg':''}">${h}</span>`}
+function stepsHTML(t,lastHL){const st=stepsOf(t);return `<div class="hist">`+st.map((s,i)=>`<div class="row" style="gap:6px"><span class="ex"><span class="op">=</span></span>${R(s.t)}${s.rule?`<span class="rule">${s.rule}</span>`:''}</div>`).join('')+`</div>`}
+const NAMES={'+':'Summe','−':'Differenz','·':'Produkt',':':'Quotient','^':'Potenz'};
+function lastOp(s){const st=stepsOf(tok(s));const l=st[st.length-1];return {op:l.before[l.k],before:l.before,k:l.k}}
+
+/* ===== Aufgaben ===== */
+const TOP={
+ p:{P1:'Begriffe',P2:'Produkt ↔ Potenz',P3:'Berechnen',P4:'Hoch 0, hoch 1 & Co.',P5:'Fehler & Vergleich',P6:'Potenz vor Punkt vor Strich'},
+ t:{T1:'Was ist ein Term?',T2:'Namen der Teile',T3:'Einsetzen',T4:'Reihenfolge',T5:'Sachaufgaben',T6:'Termnamen'}};
+const I=[];
+const add=(a,g,k,o)=>I.push(Object.assign({id:a+I.length,a,g,k},o));
+const MC=(a,g,q,opts,ex,o)=>add(a,g,'mc',Object.assign({q,opts,ex},o||{}));
+const TF=(a,g,q,ans,ex,labels)=>add(a,g,'tf',{q,ans,ex,labels});
+const NUM=(a,g,q,ans,ex,o)=>add(a,g,'num',Object.assign({q,ans,ex},o||{}));
+const PW=(a,g,q,b,e,ex)=>add(a,g,'pow',{q,b,e,ex});
+const TAP=(a,g,q,parts,ans,ex)=>add(a,g,'tap',{q,parts,ans,ex});
+const ORD=(a,g,expr)=>add(a,g,'order',{expr});
+const SPOT=(a,g,rows)=>add(a,g,'spot',{rows});
+const SORT=(a,g,list)=>add(a,g,'sort',{list});
+const SUB=(a,g,term,vars)=>add(a,g,'sub',{term,vars});
+const NUMX=(a,g,expr)=>NUM(a,g,'Berechne: '+expr,evalS(expr),null,{expr});
+
+/* Potenzen – Begriffe */
+const EXB='Die Basis (Grundzahl) ist die große Zahl unten. Sie wird mit sich selbst malgenommen.';
+const EXE='Der Exponent (Hochzahl) steht klein oben rechts. Er zählt, wie oft die Basis als Faktor vorkommt.';
+TAP('p','P1','Tippe auf die Basis.',['7','^3'],[0],EXB);
+TAP('p','P1','Tippe auf den Exponenten.',['7','^3'],[1],EXE);
+TAP('p','P1','Tippe auf die Hochzahl.',['2','^5'],[1],EXE);
+TAP('p','P1','Tippe auf die Grundzahl.',['10','^4'],[0],EXB);
+TAP('p','P1','Tippe auf den Exponenten.',['12','^2'],[1],EXE);
+MC('p','P1','Wie liest man 6^4?',['6 hoch 4','4 hoch 6','6 mal 4','6 plus 4'],'6^4 liest man „6 hoch 4“.');
+MC('p','P1','In 3^5 ist die 3 die …',['Basis','Exponent','Potenz','Summe'],'3^5 ist eine Potenz, 3 ist ihre Basis und 5 ihr Exponent.');
+MC('p','P1','In 3^5 ist die 5 der …',['Exponent','Basis','Faktor','Quotient'],'Die 5 steht oben: Exponent (Hochzahl).');
+MC('p','P1','Was gibt der Exponent an?',['wie oft die Basis als Faktor vorkommt','welche Zahl malgenommen wird','das Ergebnis der Rechnung','wie oft man die Basis addiert'],'3^5 = 3 · 3 · 3 · 3 · 3: Der Exponent 5 zählt die Faktoren.',{one:1});
+MC('p','P1','Ein anderes Wort für Exponent ist …',['Hochzahl','Grundzahl','Faktor','Summand'],'Exponent = Hochzahl, Basis = Grundzahl.');
+MC('p','P1','Ein anderes Wort für Basis ist …',['Grundzahl','Hochzahl','Produkt','Potenz'],'Basis = Grundzahl, Exponent = Hochzahl.');
+MC('p','P1','Wie heißt der ganze Ausdruck 3^5?',['Potenz','Basis','Exponent','Differenz'],'3^5 ist eine Potenz. Die 3 ist ihre Basis, die 5 ihr Exponent.');
+TF('p','P1','In 2^7 ist die 7 die Basis.',false,'Die 7 steht oben: Sie ist der Exponent. Die Basis ist 2.');
+MC('p','P1','„Potenziere 3 mit 6“ bedeutet …',['3^6','6^3','3 · 6','6 · 6 · 6'],'Die erste Zahl ist die Basis, „mit 6“ ist der Exponent: 3^6.',{m:1});
+MC('p','P1','Was bedeutet a^n?',['a wird n-mal mit sich selbst malgenommen','a wird mit n malgenommen','a wird n-mal addiert','n wird a-mal mit sich selbst malgenommen'],'a^n = a · a · … · a mit n Faktoren.',{one:1});
+
+/* Potenzen – Produkt ↔ Potenz */
+const EXP='Die Basis ist der Faktor, der sich wiederholt. Der Exponent zählt, wie oft er vorkommt.';
+[['7 · 7 · 7',7,3],['4 · 4 · 4 · 4 · 4',4,5],['5 · 5 · … · 5 (8 Faktoren)',5,8],['3 · 3 · … · 3 (12 Faktoren)',3,12],['25 Faktoren, jeder Faktor ist 2',2,25],['2 Faktoren, jeder Faktor ist 25',25,2],['6 · 6 · 6 · 6',6,4],['10 · 10 · 10',10,3]]
+ .forEach(([q,b,e])=>PW('p','P2','Schreibe als Potenz: '+q,b,e,EXP));
+[['Potenziere 11 mit 2.',11,2],['Die 5. Potenz von 5.',5,5],['Die 3. Potenz von 7.',7,3],['Die 6. Potenz von 10.',10,6],['Potenziere 8 mit 3.',8,3]]
+ .forEach(([q,b,e])=>PW('p','P2',q+' Schreibe als Potenz.',b,e,'„Potenziere a mit n“ und „die n-te Potenz von a“ bedeuten beide a^n.'));
+MC('p','P2','Welches Produkt gehört zu 2^4?',['2 · 2 · 2 · 2','2 · 4','4 · 4','2 + 2 + 2 + 2'],'Basis 2, vier Faktoren: 2 · 2 · 2 · 2 = 16.',{m:1});
+MC('p','P2','Welches Produkt gehört zu 3^2?',['3 · 3','3 · 2','2 · 2 · 2','3 + 3'],'Basis 3, zwei Faktoren: 3 · 3 = 9.',{m:1});
+MC('p','P2','Kann man 4 · 4 · 5 als eine einzige Potenz schreiben?',['Nein, die Faktoren sind nicht alle gleich.','Ja: 4^3','Ja: 5^3','Ja: 3^4'],'Eine Potenz geht nur, wenn alle Faktoren gleich sind. 4 · 4 · 5 = 4^2 · 5.',{one:1});
+
+/* Potenzen – Berechnen */
+[[5,4],[4,3],[3,4],[2,7],[7,2],[5,3],[3,5],[6,3],[10,3],[15,2],[11,3],[100,2],[2,5],[4,2],[8,2],[3,3],[2,10],[12,2],[20,2],[3,6],[8,3],[11,2],[5,5],[7,3],[9,2]]
+ .forEach(([b,e])=>NUM('p','P3',`Berechne: ${b}^${e}`,Math.pow(b,e),null,{pw:[b,e]}));
+
+/* Potenzen – Sonderfälle */
+[[9,1],[35,1],[0,6],[1,7],[0,400],[1,100],[5,0],[7,0],[10,5],[10,6]].forEach(([b,e])=>NUM('p','P4',`Berechne: ${b}^${e}`,Math.pow(b,e),null,{pw:[b,e]}));
+NUM('p','P4','Wie viele Nullen hat 10^7, wenn du es ausschreibst?',7,'10^7 = 10 000 000: eine 1 mit 7 Nullen. Der Exponent verrät die Anzahl der Nullen.');
+TF('p','P4','a^0 = 0',false,'Ausnahme: a^0 = 1 (für a ≠ 0). In der Potenz-Treppe teilst du a^1 = a durch a und erhältst 1.');
+TF('p','P4','a^1 = a',true,'Nur ein einziger Faktor: a^1 = a.');
+TF('p','P4','0^5 = 0',true,'0 · 0 · 0 · 0 · 0 = 0.');
+TF('p','P4','1^20 = 20',false,'1 · 1 · … · 1 bleibt immer 1. Also 1^20 = 1.');
+MC('p','P4','Warum ist 5^0 = 1?',['Weil 5^1 : 5 = 5 : 5 = 1','Weil 5 · 0 = 1','Weil 5 − 5 = 1','Stimmt gar nicht, 5^0 = 0'],'In der Potenz-Treppe teilst du bei jedem Schritt nach unten durch 5: 5^1 = 5, dann 5 : 5 = 1. Also 5^0 = 1.',{one:1});
+
+/* Potenzen – Fehler & Vergleich */
+MC('p','P5','Wer hat recht? 5^2 = ?',['Nina: 25','Dirk: 10','Tobias: 32'],'5^2 = 5 · 5 = 25. Dirk hat 5 · 2 gerechnet. Tobias hat 2^5 = 32 gerechnet und Basis und Exponent vertauscht.',{m:1});
+MC('p','P5','Wer hat recht? 3^3 = ?',['Tobias: 27','Dirk: 9','Nina: 6'],'3^3 = 3 · 3 · 3 = 27. Dirk hat nur 3 · 3 gerechnet, Nina 3 + 3.',{m:1});
+MC('p','P5','Wer hat recht? 4^1 = ?',['Tobias: 4','Dirk: 1','Nina: 0'],'Hoch 1 heißt: nur ein Faktor. 4^1 = 4.',{m:1});
+MC('p','P5','Wer hat recht? 10^5 = ?',['Keiner! Richtig ist 100 000.','Tobias: 1000','Dirk: 105','Nina: 50'],'10^5 ist eine 1 mit 5 Nullen: 100 000. Tobias hat nur 3 Nullen, Dirk hat 10 und 5 nebeneinander geschrieben, Nina hat 10 · 5 gerechnet.',{one:1});
+SPOT('p','P5',[['2^3 = 6',1,'2^3 = 2 · 2 · 2 = 8, nicht 2 · 3.'],['3^2 = 9',0,'3 · 3 = 9.'],['10^2 = 100',0,'10 · 10 = 100.'],['4^0 = 0',1,'Ausnahme: 4^0 = 1.']]);
+SPOT('p','P5',[['5^4 = 626',1,'Rechenfehler: 5 · 5 · 5 · 5 = 25 · 5 · 5 = 125 · 5 = 625.'],['1^9 = 1',0,'1 mal 1 bleibt 1.'],['2^4 = 4^2',0,'Beide sind 16.'],['0^3 = 3',1,'0 · 0 · 0 = 0.']]);
+SPOT('p','P5',[['3^4 = 12',1,'3^4 = 3 · 3 · 3 · 3 = 81.'],['2^10 = 1024',0,'Stimmt: 2^10 = 1024.'],['6^1 = 6',0,'Hoch 1 ist die Zahl selbst.'],['7^2 = 14',1,'7^2 = 7 · 7 = 49.']]);
+SORT('p','P5',[['2^5',32],['5^2',25],['3^3',27],['4^2',16]]);
+SORT('p','P5',[['2^3',8],['3^2',9],['1^10',1],['10^1',10]]);
+SORT('p','P5',[['2^7',128],['7^2',49],['11^2',121],['5^3',125]]);
+MC('p','P5','Was ist größer: 2^3 oder 3^2?',['3^2','2^3','beide gleich groß'],'2^3 = 8 und 3^2 = 9.',{m:1});
+MC('p','P5','Was ist größer: 2^4 oder 4^2?',['beide gleich groß','2^4','4^2'],'2^4 = 16 und 4^2 = 16. Das ist ein seltener Zufall!',{m:1});
+MC('p','P5','Was ist größer: 2^10 oder 10^2?',['2^10','10^2','beide gleich groß'],'2^10 = 1024 und 10^2 = 100.',{m:1});
+
+/* Potenzen – Reihenfolge */
+['2 + 3^2','(2 + 3)^2','2 · 3^2','4^2 − 2^3','10 + 2 · 5^2','(4 − 2)^3 · 5','3^2 + 4^2','100 : 5^2'].forEach(e=>ORD('p','P6',e));
+['2 + 3^2','(2 + 3)^2','2 · 4^2','10^2 − 10','5 + 2^3 · 2'].forEach(e=>NUMX('p','P6',e));
+MC('p','P6','Was rechnest du bei 2 · 3^2 zuerst?',['die Potenz 3^2','2 · 3','das ist egal'],'Potenz vor Punkt: zuerst 3^2 = 9, dann 2 · 9 = 18.',{m:1});
+MC('p','P6','Welche Reihenfolge stimmt?',['Klammer → Potenz → Punkt → Strich','Punkt → Potenz → Klammer → Strich','Strich → Punkt → Potenz → Klammer','immer von links nach rechts'],'Merkwort: KlaPoPS – Klammer, Potenz, Punkt, Strich.',{one:1});
+
+/* Terme – Was ist ein Term? */
+const TL=['Ja, ein Term','Kein Term'];
+[['8 + 5',1,'Zwei Zahlen und ein Rechenzeichen.'],['12',1,'Auch eine einzelne Zahl ist schon ein Term.'],['3 · x',1,'x ist ein Platzhalter für eine Zahl.'],['7 + 3 = 10',0,'Mit = ist es eine Gleichung. Links und rechts davon stehen aber Terme.'],['5 + · 2',0,'Zwei Rechenzeichen hintereinander: Dazwischen fehlt eine Zahl.'],['(4 + 2) · 6',1,'Klammern sind erlaubt, wenn sie als Paar vorkommen.'],['9 −',0,'Am Ende fehlt etwas. 9 minus was?'],['(10 : 2',0,'Die Klammer wird geöffnet, aber nie geschlossen.'],['a + b',1,'Buchstaben stehen für Zahlen.'],['2^3 + x',1,'Auch Potenzen dürfen in einem Term stehen.'],['x = 4',0,'Da ist ein =. Das ist eine Gleichung.']]
+ .forEach(([q,a,ex])=>TF('t','T1',q,!!a,ex,TL));
+MC('t','T1','Was darf in einem Term nicht vorkommen?',['=','x','( )','·'],'Ein Term hat kein Gleichheitszeichen. Mit = wird daraus eine Gleichung.',{m:1});
+MC('t','T1','Was ist ein Term?',['ein sinnvoller Rechenausdruck aus Zahlen, Variablen, Rechenzeichen und Klammern','eine Rechnung mit Gleichheitszeichen','immer nur eine einzelne Zahl','ein Text ohne Zahlen'],'Ein Term ist wie ein Rechen-Rezept: Er sagt, was du rechnen sollst.',{one:1});
+MC('t','T1','Wie nennt man das x im Term 3 · x?',['Variable (Platzhalter)','Summand','Basis','Ergebnis'],'x ist eine Variable: eine Schachtel, in die man Zahlen einsetzt.');
+
+/* Terme – Namen der Teile */
+const AM='ABC-Trick: M kommt vor S. Der Minuend steht vorne, der Subtrahend dahinter.';
+const AD='ABC-Trick: Divid-e-nd vor Divis-o-r (e vor o). Der Dividend steht vorne und wird geteilt.';
+TAP('t','T2','Tippe auf den Subtrahenden.',['12','−','5','=','7'],[2],AM);
+TAP('t','T2','Tippe auf den Minuenden.',['12','−','5','=','7'],[0],AM);
+TAP('t','T2','Tippe auf die Differenz.',['12','−','5','=','7'],[4],'Das Ergebnis einer Minus-Aufgabe heißt Differenz.');
+TAP('t','T2','Tippe auf das Produkt.',['6','·','4','=','24'],[4],'Faktor · Faktor = Produkt.');
+TAP('t','T2','Tippe auf einen Faktor.',['6','·','4','=','24'],[0,2],'Beide Zahlen beim Malnehmen heißen Faktor.');
+TAP('t','T2','Tippe auf den Divisor.',['24',':','6','=','4'],[2],AD);
+TAP('t','T2','Tippe auf den Dividenden.',['24',':','6','=','4'],[0],AD);
+TAP('t','T2','Tippe auf den Quotienten.',['24',':','6','=','4'],[4],'Dividend : Divisor = Quotient.');
+TAP('t','T2','Tippe auf die Summe.',['7','+','5','=','12'],[4],'Summand + Summand = Summe.');
+TAP('t','T2','Tippe auf einen Summanden.',['7','+','5','=','12'],[0,2],'Beide Zahlen beim Plusrechnen heißen Summand.');
+MC('t','T2','Wie heißt das Ergebnis einer Division?',['Quotient','Differenz','Produkt','Summe'],'Dividend : Divisor = Quotient.');
+MC('t','T2','Wie heißt das Ergebnis einer Subtraktion?',['Differenz','Quotient','Summe','Produkt'],'Minuend − Subtrahend = Differenz.');
+MC('t','T2','Wie heißt das Ergebnis einer Multiplikation?',['Produkt','Summe','Quotient','Potenz'],'Faktor · Faktor = Produkt.');
+MC('t','T2','Wie heißt das Ergebnis einer Addition?',['Summe','Differenz','Produkt','Summand'],'Summand + Summand = Summe.');
+MC('t','T2','Welche Zahl wird bei einer Division geteilt?',['Dividend','Divisor','Quotient','Faktor'],AD);
+TF('t','T2','Bei 20 − 8 ist die 8 der Minuend.',false,AM+' Hier ist 20 der Minuend und 8 der Subtrahend.');
+MC('t','T2','Wie heißen die Zahlen 6 und 4 in 6 · 4?',['Faktoren','Summanden','Dividenden','Basen'],'Beim Malnehmen heißen beide Zahlen Faktor.');
+
+/* Terme – Einsetzen */
+[['2 · x + 3',{x:4}],['(x + 2) · 3',{x:5}],['20 − 2 · x',{x:7}],['x · x + 1',{x:6}],['x + x + x',{x:9}],['5 · x − 4',{x:3}],['x^2 + 1',{x:3}],['2^x',{x:5}],['3 · x^2',{x:2}],['(a + b) · 2',{a:3,b:4}],['10 · x − x',{x:6}]].forEach(([t,v])=>SUB('t','T3',t,v));
+MC('t','T3','Was bedeutet 2x?',['2 · x','2 + x','x^2','20 + x'],'2x ist die Kurzform für 2 · x.',{m:1});
+TF('t','T3','In x + x + x setzt man überall dieselbe Zahl ein.',true,'Gleicher Buchstabe, gleiche Zahl.');
+NUM('t','T3','Für n Quadrate aus Streichhölzern brauchst du 3 · n + 1 Hölzer. Wie viele sind es bei 20 Quadraten?',61,'3 · 20 + 1 = 60 + 1 = 61.');
+
+/* Terme – Reihenfolge */
+['3 + 4 · 2','(3 + 4) · 2','20 − 12 : 4','(20 − 12) : 4','18 − 6 − 2','36 : (2 + 7)','5 · 4 − 2 · 3','48 : 6 : 2'].forEach(e=>ORD('t','T4',e));
+['6 + 6 · 6','(6 + 6) · 6','100 − 10 · 5','24 : (8 − 2)'].forEach(e=>NUMX('t','T4',e));
+MC('t','T4','Was rechnest du bei 3 + 4 · 2 zuerst?',['4 · 2','3 + 4','das ist egal'],'Punkt vor Strich: zuerst 4 · 2 = 8, dann 3 + 8 = 11.',{m:1});
+
+/* Terme – Sachaufgaben */
+[['Tom hat x Sticker. Lena hat 5 Sticker mehr als Tom. Wie viele hat Lena?',['x + 5','x − 5','5 · x'],'„Mehr als“ heißt dazuzählen.'],
+ ['Ein Kinoticket kostet 7 €. Was zahlen x Kinder zusammen?',['7 · x','7 + x','x : 7'],'Jedes Kind zahlt 7 €: 7 · x.'],
+ ['30 Gummibärchen werden gerecht an x Kinder verteilt. Wie viele bekommt jedes Kind?',['30 : x','30 − x','x : 30'],'Gerecht verteilen heißt teilen: 30 : x.'],
+ ['Mia hat 20 € gespart. Sie kauft ein Buch für x €. Wie viel hat sie noch?',['20 − x','x − 20','20 + x'],'Von den 20 € geht der Preis weg.'],
+ ['Jedes der x Kinder zahlt 4 € für den Bus, der Lehrer zahlt zusätzlich 10 €. Was kostet die Fahrt?',['4 · x + 10','4 + x + 10','(4 + 10) · x'],'x Kinder je 4 € = 4 · x, plus 10 €.'],
+ ['Eine Kugel Eis kostet 2 €, Sahne obendrauf 1 €. Was kosten x Kugeln mit Sahne?',['2 · x + 1','2 + x + 1','(2 + 1) · x'],'Jede Kugel 2 € = 2 · x, die Sahne einmal 1 €.'],
+ ['Ein Quadrat hat die Seitenlänge a. Welcher Term passt zu a · a?',['a^2','2 · a','a + a','a^4'],'a · a sind zwei gleiche Faktoren: a^2.'],
+ ['Paul ist x Jahre alt. Seine Mutter ist dreimal so alt. Wie alt ist sie?',['3 · x','x + 3','x : 3'],'Dreimal so alt: 3 · x.']]
+ .forEach(([q,o,ex])=>MC('t','T5',q,o,ex,{m:1}));
+
+/* Terme – Termnamen */
+[['(4 + 6) · 3','Produkt'],['4 + 6 · 3','Summe'],['20 − 12 : 4','Differenz'],['(20 − 12) : 4','Quotient'],['5 · 4 − 2','Differenz'],['36 : (2 + 7)','Quotient'],['3 · (10 − 4)','Produkt'],['(2 + 3)^2','Potenz'],['2 + 3^2','Summe'],['2 · 3^2','Produkt']]
+ .forEach(([e,a])=>{const base=['Summe','Differenz','Produkt','Quotient'];if(e.includes('^'))base.push('Potenz');MC('t','T6','Wie heißt dieser Term?',[a,...base.filter(x=>x!==a)],null,{expr:e,tname:1})});
+
+const ALL={};I.forEach(x=>ALL[x.id]=x);
+
+/* ===== Speicher ===== */
+const KEY='mathe-rechenheft-5-v1';
+let S={box:{},pq:{},pqDays:[],pqMode:'b',area:'p',tops:{p:Object.keys(TOP.p),t:Object.keys(TOP.t)},len:10};
+try{const s=JSON.parse(localStorage.getItem(KEY)||'null');if(s&&s.box)S=Object.assign(S,s)}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const bx=id=>S.box[id]||0;
+const pool=()=>I.filter(x=>x.a===S.area&&S.tops[S.area].includes(x.g)).map(x=>x.id);
+
+/* ===== Karteikasten ===== */
+function boxHTML(){
+  const ids=pool(),c=[0,0,0,0,0,0];ids.forEach(id=>c[bx(id)]++);const mx=Math.max(1,...c);
+  const hint=['noch nie geübt','oft üben','üben','wird besser','fast sicher','sicher'];
+  return `<section class="box" aria-label="Karteikasten"><div class="box-head"><h2>Karteikasten ${S.area==='p'?'Potenzen':'Terme'}</h2><span class="small">${ids.length} Karten · richtig → ein Fach weiter</span></div>
+  <div class="faecher">${c.map((n,i)=>`<div class="fach f${i}"><span class="tab">${i||'neu'}</span><div class="stack"><div class="cards" style="height:${n?Math.max(4,Math.round(n/mx*62)):0}px"></div></div></div>`).join('')}</div>
+  <div class="front">${c.map((n,i)=>`<div><span class="n">${n}</span><span class="t">${hint[i]}</span></div>`).join('')}</div></section>`;
+}
+
+/* ===== Startseite ===== */
+const STATIONS={
+ p:[['pb','Potenz-Baukasten','Basis und Exponent selbst einstellen'],['pt','Potenz-Treppe','Warum ist 5⁰ = 1?'],['pf','Falten & Nullen','Zweier- und Zehnerpotenzen'],['pm','Merkzettel','Alles Wichtige zu Potenzen']],
+ t:[['tb','Term-Baukasten','Bau Terme und prüfe sie'],['tm','Term-Maschine','Zahlen einsetzen'],['tn','Namen der Teile','Summand, Minuend, Faktor …'],['tr','Rechen-Reihenfolge','KlaPoPS zum Antippen'],['tz','Merkzettel','Alles Wichtige zu Termen']]};
+let PAD=null;
+function home(){
+  PAD=null;Rd=null;
+  const a=S.area;
+  $('#screen').innerHTML=`<div class="reg" role="group" aria-label="Bereich">
+    <button type="button" data-area="t" aria-pressed="${a==='t'}"><span class="ic">x</span><div><b>Terme</b><span>Rechen-Rezepte</span></div></button>
+    <button type="button" data-area="p" aria-pressed="${a==='p'}"><span class="ic">aⁿ</span><div><b>Potenzen</b><span>hoch, Basis, Exponent</span></div></button>
+  </div>
+  ${a==='p'?pqTeaser():''}
+  ${boxHTML()}
+  <section class="panel"><div><div class="lbl">Entdecken</div><p class="small" style="margin:2px 0 0">Erst ausprobieren und verstehen, dann üben.</p></div>
+    <div class="stations">${STATIONS[a].map(([id,n,d])=>`<button type="button" class="st" data-st="${id}"><b>${n}</b><span>${d}</span></button>`).join('')}</div></section>
+  <section class="panel"><div class="lbl">Üben mit dem Karteikasten</div>
+    <div class="chips">${Object.entries(TOP[a]).map(([k,t])=>`<button type="button" class="chip" data-top="${k}" aria-pressed="${S.tops[a].includes(k)}">${t}</button>`).join('')}</div>
+    <div class="lbl">Karten pro Runde</div>
+    <div class="chips">${[10,15,20].map(n=>`<button type="button" class="chip" data-len="${n}" aria-pressed="${S.len===n}">${n}</button>`).join('')}</div>
+    <div class="row" style="justify-content:space-between"><button class="go" type="button" id="go">Los geht's</button><button class="ghost" type="button" id="reset">Kasten leeren</button></div>
+    <p class="small" id="note" style="margin:0">Falsche Karten wandern zurück in Fach 1 und kommen am Ende der Runde noch einmal.</p>
+  </section>`;
+  document.querySelectorAll('[data-area]').forEach(b=>b.onclick=()=>{S.area=b.dataset.area;save();home()});
+  document.querySelectorAll('[data-st]').forEach(b=>b.onclick=()=>station(b.dataset.st));
+  const pqb=$('#pqgo');if(pqb)pqb.onclick=pqHome;
+  document.querySelectorAll('[data-top]').forEach(b=>b.onclick=()=>{const k=b.dataset.top,l=S.tops[a];S.tops[a]=l.includes(k)?l.filter(x=>x!==k):[...l,k];save();home()});
+  document.querySelectorAll('[data-len]').forEach(b=>b.onclick=()=>{S.len=+b.dataset.len;save();home()});
+  let armed=false;$('#reset').onclick=e=>{if(!armed){armed=true;e.target.textContent='Wirklich leeren?';return}I.forEach(x=>{if(x.a===a)delete S.box[x.id]});save();home()};
+  $('#go').onclick=()=>{if(!pool().length){$('#note').textContent='Wähle mindestens ein Thema aus.';return}startRound()};
+}
+
+/* ===== Runde ===== */
+let Rd=null;
+function startRound(){
+  const W=[6,16,8,4,2,1];let cand=pool().map(id=>({id,w:W[bx(id)]}));const out=[],maxNew=Math.ceil(S.len*.6);let nNew=0;
+  while(out.length<S.len&&cand.length){const tot=cand.reduce((s,c)=>s+c.w,0);let r=Math.random()*tot,k=0;while(r>cand[k].w){r-=cand[k].w;k++}
+    const c=cand.splice(k,1)[0];if(bx(c.id)===0){if(nNew>=maxNew)continue;nNew++}out.push(c.id)}
+  Rd={q:out,i:0,right:0,first:out.length,missed:[],retried:new Set()};task();
+}
+function task(){
+  PAD=null;
+  if(Rd.i>=Rd.q.length)return endRound();
+  const it=ALL[Rd.q[Rd.i]],b=bx(it.id);
+  $('#screen').innerHTML=`<div class="topbar"><span>Karte ${Rd.i+1} von ${Rd.q.length}${Rd.i>=Rd.first?' · Wiederholung':''}</span><button class="ghost" type="button" id="quit">Beenden</button></div>
+  <div class="progress" aria-hidden="true"><i style="width:${Math.round(Rd.i/Rd.q.length*100)}%"></i></div>
+  <article class="card"><div class="card-top"><span class="tag">${it.a==='p'?'Potenzen':'Terme'} · ${TOP[it.a][it.g]}</span><span class="fachtag">${b?'Fach '+b:'neu'}</span></div><div class="card-body" id="cb"></div></article>`;
+  $('#quit').onclick=home;
+  K[it.k]($('#cb'),it);
+  window.scrollTo({top:0});
+}
+const praise=()=>rnd(['Richtig!','Super!','Genau!','Prima!','Stark!']);
+function grade(id,ok,html){
+  const b=bx(id);
+  if(Rd.i<Rd.first||!Rd.retried.has(id))S.box[id]=ok?Math.min(5,Math.max(1,b)+1):1;
+  save();
+  if(ok&&Rd.i<Rd.first)Rd.right++;
+  if(!ok){if(!Rd.missed.includes(id))Rd.missed.push(id);if(!Rd.retried.has(id)){Rd.retried.add(id);Rd.q.push(id)}}
+  PAD=null;
+  const cb=$('#cb'),fb=document.createElement('div');fb.className='fb '+(ok?'ok':'bad');fb.setAttribute('role','status');
+  fb.innerHTML=html+(!ok&&Rd.q.lastIndexOf(id)>Rd.i?'<span class="exl">Diese Karte kommt am Ende der Runde noch einmal.</span>':'');
+  cb.appendChild(fb);
+  const nx=document.createElement('button');nx.type='button';nx.className='next';nx.textContent=Rd.i+1>=Rd.q.length?'Ergebnis':'Weiter';
+  nx.onclick=()=>{Rd.i++;task()};cb.appendChild(nx);nx.focus({preventScroll:true});
+  fb.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function endRound(){
+  const n=Rd.first,r=Rd.right,ids=pool(),sure=ids.filter(id=>bx(id)===5).length;
+  const msg=r===n?'Alles richtig – stark!':r>=n*.8?'Sehr gut gemacht!':r>=n*.5?'Gut! Die falschen Karten stehen jetzt in Fach 1.':'Dranbleiben – morgen sitzt es schon besser.';
+  $('#screen').innerHTML=`${boxHTML()}<section class="panel end"><div class="lbl">Runde geschafft</div>
+  <div class="score">${r}<span style="font-size:1.4rem;color:var(--muted)"> / ${n}</span></div><h2>${msg}</h2>
+  <p class="small" style="margin:0">${sure} von ${ids.length} Karten sind schon in Fach 5.</p>
+  ${Rd.missed.length?`<div><div class="lbl" style="margin-bottom:6px">Diese Karten übst du am besten noch einmal</div><ul class="list">${Rd.missed.map(id=>`<li>${summary(ALL[id])}</li>`).join('')}</ul></div>`:''}
+  <div class="row"><button class="go" type="button" id="again">Neue Runde</button><button class="ghost" type="button" id="menu">Zur Übersicht</button></div></section>`;
+  $('#again').onclick=startRound;$('#menu').onclick=home;
+}
+function summary(it){
+  if(it.k==='num')return M(it.expr||it.q.replace('Berechne: ',''))+' = <b>'+fmtN(it.ans)+'</b>';
+  if(it.k==='pow')return esc(it.q.replace('Schreibe als Potenz: ',''))+' → <b>'+M(it.b+'^'+it.e)+'</b>';
+  if(it.k==='order')return M(it.expr)+' = <b>'+fmtN(evalS(it.expr))+'</b>';
+  if(it.k==='sub')return M(it.term)+' mit '+Object.entries(it.vars).map(([k,v])=>k+' = '+v).join(', ')+' → <b>'+fmtN(evalS(it.term,it.vars))+'</b>';
+  if(it.k==='sort')return it.list.slice().sort((a,b)=>a[1]-b[1]).map(x=>M(x[0])).join(' &lt; ');
+  if(it.k==='spot')return 'Fehler finden: '+it.rows.filter(r=>r[1]).map(r=>M(r[0])).join(', ')+' sind falsch';
+  if(it.k==='tap')return esc(it.q)+' ('+it.parts.map(p=>p[0]==='^'?'<sup>'+p.slice(1)+'</sup>':esc(p)).join(' ')+')';
+  if(it.k==='tf')return M(it.q)+' → <b>'+(it.labels?(it.ans?it.labels[0]:it.labels[1]):(it.ans?'stimmt':'stimmt nicht'))+'</b>';
+  if(it.tname)return M(it.expr)+' ist eine <b>'+it.opts[0]+'</b>';
+  return M(it.q)+' → <b>'+M(it.opts[0])+'</b>';
+}
+
+/* ===== Ziffernblock ===== */
+function pad(host,fields,onOK,two){
+  PAD={v:fields.map(()=>''),act:0,fields,onOK,two,done:false};
+  host.innerHTML=`<div class="pad" role="group" aria-label="Ziffernblock">${two?`<button type="button" class="wide" data-key="sw">↗ zur Hochzahl</button>`:''}${[1,2,3,4,5,6,7,8,9].map(n=>`<button type="button" data-key="${n}">${n}</button>`).join('')}<button type="button" data-key="del" aria-label="Löschen">⌫</button><button type="button" data-key="0">0</button><button type="button" class="okk" data-key="ok">Prüfen</button></div>`;
+  host.querySelectorAll('[data-key]').forEach(b=>b.onclick=()=>key(b.dataset.key));
+  fields.forEach((f,i)=>{f.onclick=()=>{if(PAD&&!PAD.done){PAD.act=i;drawPad()}}});
+  drawPad();
+}
+function drawPad(){if(!PAD)return;PAD.fields.forEach((f,i)=>{f.classList.toggle('act',i===PAD.act&&!PAD.done);f.innerHTML=PAD.v[i]?fmtN(PAD.v[i]):'<span class="ph">?</span>'});
+  const sw=document.querySelector('[data-key="sw"]');if(sw)sw.textContent=PAD.act?'↙ zurück zur Basis':'↗ zur Hochzahl'}
+function key(k){
+  if(!PAD||PAD.done)return;const v=PAD.v,a=PAD.act;
+  if(k==='sw'){PAD.act=a?0:1}
+  else if(k==='del')v[a]=v[a].slice(0,-1);
+  else if(k==='ok'){if(v.some(x=>x==='')){const i=v.findIndex(x=>x==='');PAD.act=i;drawPad();PAD.fields[i].classList.add('shake');setTimeout(()=>PAD&&PAD.fields[i].classList.remove('shake'),350);return}
+    PAD.done=true;document.querySelectorAll('.pad button').forEach(b=>b.disabled=true);drawPad();PAD.onOK(v.map(Number));return}
+  else if(/^\d$/.test(k)&&v[a].length<11){v[a]=(v[a]==='0'?'':v[a])+k;}
+  drawPad();
+}
+document.addEventListener('keydown',e=>{
+  if(PAD&&!PAD.done){if(/^\d$/.test(e.key)){key(e.key);e.preventDefault()}else if(e.key==='Backspace'){key('del');e.preventDefault()}else if(e.key==='Enter'){key('ok');e.preventDefault()}else if(PAD.two&&(e.key==='^'||e.key==='ArrowUp'||e.key==='ArrowDown'||e.key==='Tab')){key('sw');e.preventDefault()}return}
+  if(e.key==='Enter'){const nx=document.querySelector('.next');if(nx&&document.activeElement!==nx){e.preventDefault();nx.click()}}
+});
+
+/* ===== Aufgabentypen ===== */
+function chainHTML(b,e){
+  if(e===0)return `${b}<sup>0</sup> = 1 · Ausnahme: Hoch 0 ergibt immer 1.`;
+  if(e===1)return `${b}<sup>1</sup> = ${b} · Nur ein Faktor.`;
+  const f=e<=8?Array(e).fill(b).join(' · '):`${b} · ${b} · … · ${b} (${e} Faktoren)`;
+  let h=`${b}<sup>${e}</sup> = ${f}`;
+  if(e<=6&&b>1){let v=b;for(let i=2;i<=e;i++){v*=b;h+=` = ${fmtN(v)}${i<e?' · '+Array(e-i).fill(b).join(' · '):''}`}}
+  else h+=` = ${fmtN(Math.pow(b,e))}`;
+  return h;
+}
+function diag(b,e,v){
+  const ans=Math.pow(b,e);
+  if(e===0)return 'Ausnahme: Hoch 0 ergibt immer 1. Schau dir dazu die Potenz-Treppe an.';
+  if(e===1)return 'Hoch 1 heißt: nur ein Faktor. Das Ergebnis ist die Basis selbst.';
+  if(b===0)return '0 mal 0 mal … bleibt immer 0.';
+  if(b===1)return '1 mal 1 mal … bleibt immer 1.';
+  if(v===b*e&&b*e!==ans)return `Falle! Du hast Basis · Exponent gerechnet (${b} · ${e}). Der Exponent sagt aber, wie oft die ${b} mit sich selbst malgenommen wird.`;
+  if(v===b+e&&b+e!==ans)return `Du hast ${b} + ${e} gerechnet. Bei Potenzen wird malgenommen.`;
+  if(v===Math.pow(e,b)&&e!==b)return `Du hast Basis und Exponent vertauscht und ${e}<sup>${b}</sup> gerechnet.`;
+  if(b===10)return `Zehnerpotenz: eine 1 mit ${e} Nullen.`;
+  return 'Rechne Schritt für Schritt und nimm immer das letzte Ergebnis mal die Basis.';
+}
+function partsHTML(parts,cls){return parts.map((p,i)=>p[0]==='^'?`<button type="button" class="part s ${cls||''}" data-i="${i}">${esc(p.slice(1))}</button>`:`<button type="button" class="part ${cls||''}" data-i="${i}">${esc(p)}</button>`).join('')}
+const K={
+  mc(cb,it){
+    const o=shuffle(it.opts),mathy=it.m||it.tname;
+    cb.innerHTML=`<p class="prompt">${M(it.q)}</p>${it.expr?`<div style="text-align:center">${R(tok(it.expr),{lg:1})}</div>`:''}
+    <div class="opts${it.one||o.some(x=>x.length>22)?' one':''}">${o.map((x,i)=>`<button class="opt${mathy?' m':''}" type="button" data-i="${i}">${M(x)}</button>`).join('')}</div>`;
+    cb.querySelectorAll('.opt').forEach(btn=>btn.onclick=()=>{
+      const x=o[+btn.dataset.i],ok=x===it.opts[0];
+      cb.querySelectorAll('.opt').forEach(b=>{b.disabled=true;if(o[+b.dataset.i]===it.opts[0])b.classList.add('ok')});
+      if(!ok)btn.classList.add('bad');
+      let ex=it.ex?M(it.ex):'';
+      if(it.tname){const l=lastOp(it.expr);ex=`Zuletzt rechnest du <b>${l.op==='^'?'hoch':l.op}</b>, also ist der Term eine <b>${NAMES[l.op]}</b>.`+`<div style="margin-top:4px">${R(tok(it.expr))}</div>`+stepsHTML(tok(it.expr))}
+      grade(it.id,ok,`<strong>${ok?praise():'Nicht ganz. Richtig ist: '+M(it.opts[0])}</strong><span class="exl">${ex}</span>`);
+    });
+  },
+  tf(cb,it){
+    const L=it.labels||['Stimmt','Stimmt nicht'];
+    cb.innerHTML=`<p class="instr">${it.labels?'Ist das ein Term?':'Stimmt das?'}</p><p class="prompt big">${M(it.q)}</p>
+    <div class="opts"><button class="opt m" type="button" data-v="1">${L[0]}</button><button class="opt m" type="button" data-v="0">${L[1]}</button></div>`;
+    cb.querySelectorAll('.opt').forEach(btn=>btn.onclick=()=>{
+      const v=btn.dataset.v==='1',ok=v===it.ans;
+      cb.querySelectorAll('.opt').forEach(b=>{b.disabled=true;if((b.dataset.v==='1')===it.ans)b.classList.add('ok')});
+      if(!ok)btn.classList.add('bad');
+      grade(it.id,ok,`<strong>${ok?praise():'Nicht ganz.'}</strong><span class="exl">${M(it.ex)}</span>`);
+    });
+  },
+  num(cb,it){
+    cb.innerHTML=`<p class="prompt">${M(it.q)}</p><div class="ansrow"><span class="ex" style="font-size:2rem">=</span><div class="field" id="f0"></div></div><div id="pd"></div>`;
+    const f=$('#f0');
+    pad($('#pd'),[f],([v])=>{
+      const ok=v===it.ans;f.classList.add(ok?'ok':'bad');
+      let ex='';
+      if(it.pw){const [b,e]=it.pw;ex=(ok?'':`<span>${diag(b,e,v)}</span>`)+`<span class="m">${chainHTML(b,e)}</span>`}
+      else if(it.expr){ex=`<div>${R(tok(it.expr))}</div>${stepsHTML(tok(it.expr))}`}
+      else ex=M(it.ex);
+      grade(it.id,ok,`<strong>${ok?praise():'Richtig wäre: '+fmtN(it.ans)}</strong><div class="exl">${ex}</div>`);
+    });
+  },
+  pow(cb,it){
+    cb.innerHTML=`<p class="prompt">${M(it.q)}</p>
+    <div class="ansrow"><div class="powin"><div class="field fb0" id="fb" aria-label="Basis"></div><div class="field fe" id="fe" aria-label="Exponent"></div></div></div>
+    <div class="powlab"><span>tippe hier: Basis</span><span style="color:var(--red)">↗ Exponent</span></div><div id="pd"></div>`;
+    pad($('#pd'),[$('#fb'),$('#fe')],([b,e])=>{
+      const ok=b===it.b&&e===it.e;
+      $('#fb').classList.add(b===it.b?'ok':'bad');$('#fe').classList.add(e===it.e?'ok':'bad');
+      const sw=b===it.e&&e===it.b&&!ok?'<span>Basis und Exponent sind vertauscht! </span>':'';
+      grade(it.id,ok,`<strong>${ok?praise():'Richtig wäre: '+M(it.b+'^'+it.e)}</strong><span class="exl">${sw}${M(it.ex)}</span>`);
+    },true);
+  },
+  tap(cb,it){
+    cb.innerHTML=`<p class="prompt">${esc(it.q)}</p><div class="parts">${partsHTML(it.parts)}</div>`;
+    cb.querySelectorAll('.part').forEach(b=>b.onclick=()=>{
+      const i=+b.dataset.i,ok=it.ans.includes(i);
+      cb.querySelectorAll('.part').forEach(x=>{x.disabled=true;if(it.ans.includes(+x.dataset.i))x.classList.add('ok')});
+      if(!ok)b.classList.add('bad');
+      grade(it.id,ok,`<strong>${ok?praise():'Nicht ganz.'}</strong><span class="exl">${M(it.ex)}</span>`);
+    });
+  },
+  order(cb,it){orderWidget(cb,tok(it.expr),(mist,v)=>grade(it.id,mist===0,mist===0?`<strong>${praise()} Ergebnis: ${fmtN(v)}</strong><span class="exl">Du hast die Reihenfolge immer richtig gewählt.</span>`:`<strong>Ergebnis: ${fmtN(v)}</strong><span class="exl">Bei ${mist} Schritt${mist>1?'en':''} war die Reihenfolge falsch. Merke: KlaPoPS – Klammer, Potenz, Punkt, Strich.</span>`))},
+  spot(cb,it){
+    const rows=shuffle(it.rows),sel=new Set();
+    cb.innerHTML=`<p class="instr">Fehler-Detektiv: Tippe alle <b>falschen</b> Rechnungen an. Dann drück auf Prüfen.</p>
+    <div class="opts">${rows.map((r,i)=>`<button type="button" class="opt m" data-i="${i}" aria-pressed="false"><span class="m2">${M(r[0])}</span></button>`).join('')}</div>
+    <button class="check" type="button" id="chk">Prüfen</button>`;
+    cb.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{const i=+b.dataset.i;sel.has(i)?sel.delete(i):sel.add(i);b.classList.toggle('sel',sel.has(i));b.setAttribute('aria-pressed',sel.has(i))});
+    $('#chk').onclick=()=>{
+      $('#chk').remove();let ok=true;
+      cb.querySelectorAll('.opt').forEach(b=>{const i=+b.dataset.i,wrong=!!rows[i][1],picked=sel.has(i);b.disabled=true;if(wrong!==picked)ok=false;b.classList.remove('sel');b.classList.add(wrong===picked?'ok':'bad')});
+      grade(it.id,ok,`<strong>${ok?praise()+' Alle Fehler gefunden.':'Nicht ganz.'}</strong><ul class="list exl">${rows.map(r=>`<li>${M(r[0])}: ${r[1]?'<b>falsch</b>':'richtig'} – ${M(r[2])}</li>`).join('')}</ul>`);
+    };
+  },
+  sort(cb,it){
+    const order=shuffle(it.list.map((_,i)=>i)),placed=[];
+    cb.innerHTML=`<p class="instr">Sortiere von <b>klein nach groß</b>. Tippe die Potenzen der Reihe nach an.</p><div class="slots" id="sl"></div><div class="pool" id="pl"></div>`;
+    const draw=()=>{
+      $('#sl').innerHTML=placed.length?placed.map((k,i)=>(i?'<span class="lt">&lt;</span>':'')+`<button type="button" class="tile" data-p="${i}">${M(it.list[k][0])}</button>`).join(''):'<span class="small">kleinste zuerst …</span>';
+      $('#pl').innerHTML=order.filter(k=>!placed.includes(k)).map(k=>`<button type="button" class="tile" data-k="${k}">${M(it.list[k][0])}</button>`).join('');
+      cb.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{placed.splice(+b.dataset.p,1);draw()});
+      cb.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{placed.push(+b.dataset.k);draw();if(placed.length===it.list.length)done()});
+    };
+    const done=()=>{cb.querySelectorAll('.tile').forEach(b=>b.disabled=true);
+      const vals=placed.map(k=>it.list[k][1]),ok=vals.every((v,i)=>!i||v>=vals[i-1]);
+      const sorted=it.list.slice().sort((a,b)=>a[1]-b[1]);
+      grade(it.id,ok,`<strong>${ok?praise():'Nicht ganz. So stimmt es:'}</strong><span class="m">${sorted.map(x=>M(x[0])+' = '+fmtN(x[1])).join(' &lt; ')}</span>`)};
+    draw();
+  },
+  sub(cb,it){
+    const vs=Object.entries(it.vars);
+    cb.innerHTML=`<p class="instr">Setze ein und rechne aus.</p><div style="text-align:center">${R(tok(it.term),{lg:1})}</div>
+    <p class="prompt" style="text-align:center">${vs.map(([k,v])=>`<span class="ex"><span class="var">${k}</span> = ${v}</span>`).join(' &nbsp; ')}</p>
+    <div class="ansrow"><span class="ex" style="font-size:2rem">=</span><div class="field" id="f0"></div></div><div id="pd"></div>`;
+    const f=$('#f0'),ans=evalS(it.term,it.vars);
+    pad($('#pd'),[f],([v])=>{const ok=v===ans;f.classList.add(ok?'ok':'bad');
+      const shown=tok(it.term).map(x=>x in it.vars?'#'+it.vars[x]:x);
+      grade(it.id,ok,`<strong>${ok?praise():'Richtig wäre: '+fmtN(ans)}</strong><div class="exl"><div>${R(shown)}</div>${stepsHTML(subst(it.term,it.vars))}</div>`)});
+  }
+};
+
+/* Reihenfolge-Widget (auch für die Station) */
+function orderWidget(cb,t0,onDone,free){
+  let t=cleanP(t0.slice()),mist=0,wrongNow=false;const hist=[];
+  const ladderHTML=k=>{const r=k<0?'':ruleOf(t,k),op=t[k];const on=i=>(i===0&&r==='Klammer zuerst')||(i===1&&r!=='Klammer zuerst'&&op==='^')||(i===2&&r!=='Klammer zuerst'&&PR[op]===2)||(i===3&&r!=='Klammer zuerst'&&PR[op]===1);
+    return `<div class="ladder">${['Klammer','Potenz','Punkt','Strich'].map((n,i)=>`<span class="${free&&on(i)?'on':''}"><b>${i+1}</b> ${n}</span>`).join('')}</div>`};
+  const draw=()=>{
+    const k=nextOp(t);
+    cb.innerHTML=`<p class="instr">Tippe auf die Rechnung, die du <b>zuerst</b> machst. Bei Potenzen tippst du auf die Hochzahl.</p>${ladderHTML(k)}
+    <div style="text-align:center;font-size:clamp(1.9rem,8vw,2.5rem)">${R(t,{tap:1})}</div>
+    <div class="hist">${hist.map(h=>`<div class="row" style="gap:6px"><span class="ex"><span class="op">=</span></span>${R(h.t)}${h.rule?`<span class="rule">${h.rule}</span>`:''}</div>`).join('')}</div><div id="ohint" class="small" aria-live="polite"></div>`;
+    cb.querySelectorAll('.ob').forEach(b=>b.onclick=()=>{
+      const kk=+b.dataset.k;
+      if(kk===k){const rule=ruleOf(t,k);t=applyOp(t,k);hist.push({t,rule});wrongNow=false;
+        if(t.length===1){draw();cb.querySelectorAll('.ob').forEach(x=>x.disabled=true);onDone(mist,+t[0]);return}
+        draw();
+      }else{if(!wrongNow)mist++;wrongNow=true;b.classList.add('wrong','shake');
+        const right=cb.querySelector(`.ob[data-k="${k}"]`);right.classList.add('hint');
+        $('#ohint').innerHTML=`<span style="color:var(--bad)">Noch nicht!</span> Hier gilt: <b>${ruleOf(t,k)||'von links nach rechts'}</b>. Die gelbe Rechnung ist dran.`}
+    });
+  };
+  draw();
+}
+
+
+/* ===== Auswendig-Quiz: 2er- und 10er-Potenzen ===== */
+const SAY=['','zehn','hundert','tausend','zehntausend','hunderttausend','eine Million','zehn Millionen','hundert Millionen','eine Milliarde','zehn Milliarden'];
+const FACTS=[];[2,10].forEach(b=>{for(let n=1;n<=10;n++)FACTS.push({b,n,id:b+'-'+n,v:Math.pow(b,n)})});
+const pqs=f=>S.pq[f.id]||0;
+const today=()=>{const d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()};
+function pqTeaser(){const sure=FACTS.filter(f=>pqs(f)>=3).length;
+  return `<section class="pqt"><div class="row" style="justify-content:space-between"><h2>Auswendig-Quiz</h2><span class="small">${sure} von 20 sicher</span></div>
+  <p class="small" style="margin:0">2<sup>1</sup> bis 2<sup>10</sup> und 10<sup>1</sup> bis 10<sup>10</sup> – in 5 Tagen auswendig.</p>
+  <button class="go" type="button" id="pqgo" style="background:var(--red);box-shadow:0 3px 0 #8f1f18;align-self:flex-start">Zum Quiz</button></section>`}
+function pqGrid(){return `<div class="pqgrid">${FACTS.map(f=>{const sc=pqs(f);return `<div class="pqc s${sc}" title="${f.b} hoch ${f.n} = ${f.v}"><span class="ex">${f.b}<sup>${f.n}</sup></span><div class="dots">${[1,2,3].map(i=>`<i class="${sc>=i?'on':''}"></i>`).join('')}</div></div>`}).join('')}</div>`}
+function pqHome(){
+  PAD=null;Rd=null;const sure=FACTS.filter(f=>pqs(f)>=3).length,days=S.pqDays||[];
+  $('#screen').innerHTML=`<button class="ghost back" type="button" id="bk">← Zur Übersicht</button>
+  <section class="pqt"><div><div class="lbl" style="color:var(--red)">Auswendig-Quiz</div><h2>2er- und 10er-Potenzen</h2></div>
+  <p class="small" style="margin:0">Jede Potenz braucht <b>3 grüne Punkte</b>: dreimal hintereinander richtig. Ein Fehler setzt sie wieder auf null.</p>
+  ${pqGrid()}
+  <div class="row" style="justify-content:space-between"><b>${sure} von 20 sicher</b><div class="days" aria-label="Geübte Tage">${[0,1,2,3,4].map(i=>`<i class="${i<days.length?'on':''}">${i+1}</i>`).join('')}<span class="small">Tage geübt</span></div></div>
+  <div class="lbl">Was möchtest du üben?</div>
+  <div class="chips">${[['b','Beide'],['2','nur 2er'],['10','nur 10er']].map(([k,t])=>`<button type="button" class="chip" data-pm="${k}" aria-pressed="${S.pqMode===k}">${t}</button>`).join('')}</div>
+  <div class="row"><button class="go" type="button" id="pqs" style="background:var(--red);box-shadow:0 3px 0 #8f1f18">10 Fragen starten</button><button class="ghost" type="button" id="pqr">Punkte zurücksetzen</button></div>
+  <p class="small" id="pqn" style="margin:0">Tipp: Schau dir das Merkblatt an, bevor du anfängst. Potenzen mit wenig Punkten kommen öfter dran.</p></section>`;
+  $('#bk').onclick=home;
+  document.querySelectorAll('[data-pm]').forEach(b=>b.onclick=()=>{S.pqMode=b.dataset.pm;save();pqHome()});
+  let armed=false;$('#pqr').onclick=e=>{if(!armed){armed=true;e.target.textContent='Wirklich zurücksetzen?';return}S.pq={};S.pqDays=[];save();pqHome()};
+  $('#pqs').onclick=pqStart;window.scrollTo({top:0});
+}
+let PQ=null;
+function pqStart(){
+  const pool=FACTS.filter(f=>S.pqMode==='b'||String(f.b)===S.pqMode);
+  const q=[];let last=null;
+  for(let i=0;i<10;i++){let c=pool.filter(f=>f!==last);const W=c.map(f=>Math.pow(4-Math.min(3,pqs(f)),2)+.5);
+    let r=Math.random()*W.reduce((a,b)=>a+b,0),k=0;while(r>W[k]){r-=W[k];k++}last=c[k];q.push(c[k])}
+  PQ={q,i:0,right:0,miss:[]};pqTask();
+}
+function pqType(f){
+  const t=['val','val','exp'];
+  if(f.b===2&&f.n>=3)t.push('seq');
+  if(f.b===10){t.push('say','pick');if(f.n>=3)t.push('sayrev')}
+  return rnd(t);
+}
+function pqTask(){
+  PAD=null;
+  if(PQ.i>=PQ.q.length)return pqEnd();
+  const f=PQ.q[PQ.i],ty=pqType(f),sc=pqs(f);
+  $('#screen').innerHTML=`<div class="topbar"><span>Frage ${PQ.i+1} von ${PQ.q.length}</span><button class="ghost" type="button" id="quit">Beenden</button></div>
+  <div class="progress" aria-hidden="true"><i style="width:${PQ.i*10}%;background:var(--red)"></i></div>
+  <article class="card" style="border-color:var(--red)"><div class="card-top" style="background:var(--red)"><span class="tag">Auswendig-Quiz · ${f.b}er-Potenzen</span><span class="fachtag" style="color:var(--red)">${'●'.repeat(sc)+'○'.repeat(3-sc)}</span></div><div class="card-body" id="cb"></div></article>`;
+  $('#quit').onclick=pqHome;
+  const cb=$('#cb');
+  const field=(pre,post)=>`<div class="ansrow"><span class="ex" style="font-size:2rem">${pre}</span><div class="field" id="f0"></div>${post?`<span class="ex" style="font-size:2rem">${post}</span>`:''}</div><div id="pd"></div>`;
+  if(ty==='val'){cb.innerHTML=`<p class="instr">Wie viel ist das?</p>${field(`${f.b}<sup>${f.n}</sup> =`)}`;pad($('#pd'),[$('#f0')],([v])=>pqDone(f,v===f.v,$('#f0')))}
+  else if(ty==='exp'){cb.innerHTML=`<p class="instr">Welche Hochzahl fehlt?</p><p class="prompt big">${fmtN(f.v)} = ${f.b}<sup style="color:var(--red)">?</sup></p>${field(`Exponent:`)}`;pad($('#pd'),[$('#f0')],([v])=>pqDone(f,v===f.n,$('#f0')))}
+  else if(ty==='seq'){const a=Math.pow(2,f.n-2),b=Math.pow(2,f.n-1);cb.innerHTML=`<p class="instr">Setze die Verdopplungs-Reihe fort.</p><p class="prompt big">${a}, ${b}, ?</p>${field(`${f.b}<sup>${f.n}</sup> =`)}`;pad($('#pd'),[$('#f0')],([v])=>pqDone(f,v===f.v,$('#f0')))}
+  else if(ty==='sayrev'){cb.innerHTML=`<p class="instr">Schreibe als Zehnerpotenz.</p><p class="prompt big say" style="font-size:clamp(1.8rem,8vw,2.4rem)">„${SAY[f.n]}“</p>${field(`10<sup style="color:var(--red)">?</sup> &nbsp; Exponent:`)}`;pad($('#pd'),[$('#f0')],([v])=>pqDone(f,v===f.n,$('#f0')))}
+  else{
+    let opts,right;
+    if(ty==='say'){right=SAY[f.n];const near=[f.n-3,f.n+3,f.n-1,f.n+1,f.n-2,f.n+2].filter(n=>n>=1&&n<=10);opts=shuffle([right,...near.slice(0,3).map(n=>SAY[n])]);
+      cb.innerHTML=`<p class="instr">Wie spricht man diese Zahl aus?</p><p class="prompt big">10<sup>${f.n}</sup> = ${fmtN(f.v)}</p>`}
+    else{right=fmtN(f.v);const near=[f.n-1,f.n+1,f.n-2,f.n+2].filter(n=>n>=1&&n<=10);opts=shuffle([right,...near.slice(0,3).map(n=>fmtN(Math.pow(10,n)))]);
+      cb.innerHTML=`<p class="instr">Welche Zahl ist das? Zähl die Nullen!</p><p class="prompt big">10<sup>${f.n}</sup></p>`}
+    cb.innerHTML+=`<div class="opts one">${opts.map((o,i)=>`<button class="opt m" type="button" data-i="${i}">${o}</button>`).join('')}</div>`;
+    cb.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{const ok=opts[+b.dataset.i]===right;
+      cb.querySelectorAll('.opt').forEach(x=>{x.disabled=true;if(opts[+x.dataset.i]===right)x.classList.add('ok')});if(!ok)b.classList.add('bad');pqDone(f,ok)});
+  }
+  window.scrollTo({top:0});
+}
+function pqDone(f,ok,fld){
+  PAD=null;if(fld)fld.classList.add(ok?'ok':'bad');
+  S.pq[f.id]=ok?Math.min(3,pqs(f)+1):0;
+  const d=today();S.pqDays=S.pqDays||[];if(!S.pqDays.includes(d))S.pqDays.push(d);
+  save();
+  if(ok)PQ.right++;else if(!PQ.miss.includes(f))PQ.miss.push(f);
+  let tip='';
+  if(f.b===2)tip=f.n>1?`Merktipp: 2<sup>${f.n-1}</sup> = ${Math.pow(2,f.n-1)}, verdoppelt ergibt ${f.v}.`:'2 hoch 1 ist einfach 2.';
+  else tip=`Gesprochen: <b>„${SAY[f.n]}“</b> · eine 1 mit ${f.n} Null${f.n>1?'en':''}.`;
+  const sc=pqs(f);
+  const cb=$('#cb'),fb=document.createElement('div');fb.className='fb '+(ok?'ok':'bad');fb.setAttribute('role','status');
+  fb.innerHTML=`<strong>${ok?praise():'Nicht ganz.'}</strong><span class="m">${f.b}<sup>${f.n}</sup> = ${fmtN(f.v)}</span><span class="exl">${tip}</span><span class="exl">${ok?(sc>=3?'Diese Potenz sitzt: 3 grüne Punkte!':`Noch ${3-sc}-mal richtig, dann sitzt sie.`):'Die Punkte für diese Potenz starten wieder bei null.'}</span>`;
+  cb.appendChild(fb);
+  const nx=document.createElement('button');nx.type='button';nx.className='next';nx.style.background='var(--red)';nx.style.boxShadow='0 3px 0 #8f1f18';nx.textContent=PQ.i+1>=PQ.q.length?'Ergebnis':'Weiter';
+  nx.onclick=()=>{PQ.i++;pqTask()};cb.appendChild(nx);nx.focus({preventScroll:true});fb.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function pqEnd(){
+  const r=PQ.right,sure=FACTS.filter(f=>pqs(f)>=3).length;
+  const msg=r===10?'Alles richtig – stark!':r>=8?'Sehr gut!':r>=5?'Gut! Die Fehler übst du in der nächsten Runde.':'Dranbleiben – schau noch einmal aufs Merkblatt.';
+  $('#screen').innerHTML=`<section class="pqt end"><div class="lbl" style="color:var(--red)">Runde geschafft</div>
+  <div class="score">${r}<span style="font-size:1.4rem;color:var(--muted)"> / 10</span></div><h2 style="color:var(--ink)">${msg}</h2>
+  <p class="small" style="margin:0"><b>${sure} von 20</b> Potenzen sitzen schon.</p>${pqGrid()}
+  ${PQ.miss.length?`<div><div class="lbl" style="margin-bottom:6px;color:var(--red)">Das übst du noch einmal</div><ul class="list">${PQ.miss.map(f=>`<li><b>${f.b}<sup>${f.n}</sup> = ${fmtN(f.v)}</b>${f.b===10?' · '+SAY[f.n]:''}</li>`).join('')}</ul></div>`:''}
+  <div class="row"><button class="go" type="button" id="again" style="background:var(--red);box-shadow:0 3px 0 #8f1f18">Noch eine Runde</button><button class="ghost" type="button" id="menu">Zum Quiz-Start</button></div></section>`;
+  $('#again').onclick=pqStart;$('#menu').onclick=pqHome;
+}
+
+/* ===== Stationen ===== */
+function station(id){
+  PAD=null;
+  const all=[...STATIONS.p,...STATIONS.t],st=all.find(s=>s[0]===id);
+  $('#screen').innerHTML=`<button class="ghost back" type="button" id="bk">← Zur Übersicht</button><section class="panel" id="sp"><div><div class="lbl">Entdecken</div><h2>${st[1]}</h2></div><div id="sc" style="display:flex;flex-direction:column;gap:14px"></div></section>`;
+  $('#bk').onclick=home;window.scrollTo({top:0});
+  ST[id]($('#sc'));
+}
+const stepper=(id,v,lab)=>`<span>${lab}</span><div class="stepper"><button type="button" data-s="${id}" data-d="-1" aria-label="${lab} kleiner">−</button><span class="v">${v}</span><button type="button" data-s="${id}" data-d="1" aria-label="${lab} größer">+</button></div>`;
+let PB={b:5,e:4},PT={b:5,e:3,seen:new Set([3])},PF={n:2,z:3},TM={i:0,x:4},TN={op:'−',a:12,b:5},TR={i:0},TB=['(','3','+','4',')','·','2'];
+const ST={
+ pb(sc){
+  const {b,e}=PB,v=Math.pow(b,e);
+  let fac='';
+  if(e>=2){const n=Math.min(e,10);fac=`<div class="facs"><span class="ex">${Array(n).fill(b).join(' · ')}${e>10?' …':''}</span><div class="brace"></div><span class="bracel">${e} Faktoren</span></div>`}
+  let note='';
+  if(b===0&&e===0)note='<p class="note">0<sup>0</sup> lassen wir weg – das ist ein Sonderfall für später.</p>';
+  else if(e===0)note=`<p class="note"><b>Ausnahme: ${b}<sup>0</sup> = 1.</b> Kein Faktor, und trotzdem 1! Warum? Schau in die <b>Potenz-Treppe</b>.</p>`;
+  else if(e===1)note=`<p class="note">Hoch 1 heißt: nur ein Faktor. Also ${b}<sup>1</sup> = ${b}.</p>`;
+  else if(b===0)note='<p class="note">0 mal 0 mal … bleibt 0.</p>';
+  else if(b===1)note='<p class="note">1 mal 1 mal … bleibt 1.</p>';
+  const trap=e>=2&&b*e!==v?`<p class="trap"><b style="color:var(--red)">Vorsicht Falle:</b> ${b}<sup>${e}</sup> ist <b>nicht</b> ${b} · ${e} = ${b*e}!</p>`:'';
+  sc.innerHTML=`<p class="small" style="margin:0">Stell Basis und Exponent ein und schau, was passiert.</p>
+  <div class="pbig" aria-live="polite"><div class="pcol b"><span class="pB">${b}</span><span class="plab">Basis<br>(Grundzahl)</span></div><div class="pcol e"><span class="pE">${e}</span><span class="plab">Exponent<br>(Hochzahl)</span></div></div>
+  <p style="text-align:center;margin:0">lies: <b>„${b} hoch ${e}“</b></p>
+  <div class="ctrl">${stepper('b',b,'Basis')}${stepper('e',e,'Exponent')}</div>
+  ${fac}${e>=2&&b>1&&e<=6?`<div class="chain"><span class="ex m" style="font-family:var(--f-h)">${(()=>{let v=b,h='';for(let i=2;i<=e;i++){v*=b;h+=' = '+fmtN(v)+(i<e?' · '+Array(e-i).fill(b).join(' · '):'')}return h.slice(1)})()}</span></div>`:''}
+  ${b===0&&e===0?'':`<div class="val">${b}<sup>${e}</sup> = ${fmtN(v)}</div>`}${note}${trap}
+  <p class="small" style="margin:0">${b}<sup>${e}</sup> heißt <b>Potenz</b>. ${b} ist die <b>Basis</b>, ${e} der <b>Exponent</b>. Der Exponent gibt an, wie oft die Basis mit sich selbst malgenommen wird.</p>`;
+  sc.querySelectorAll('[data-s]').forEach(x=>x.onclick=()=>{const k=x.dataset.s,d=+x.dataset.d;PB[k]=Math.max(0,Math.min(k==='b'?12:10,PB[k]+d));ST.pb(sc)});
+ },
+ pt(sc){
+  const {b,e}=PT;PT.seen.add(e);
+  let rows='';
+  for(let k=6;k>=0;k--){const seen=PT.seen.has(k);
+    rows+=`<div class="lrow${k===e?' cur':''}${seen?'':' hid'}"><span class="ex">${b}<sup>${k}</sup></span><span class="lv">${seen?fmtN(Math.pow(b,k)):'?'}</span></div>`;
+    if(k>0)rows+=`<div class="lgap"><span class="u">↑ · ${b}</span><span class="d">↓ : ${b}</span></div>`}
+  const msg=e===0?`<p class="merk" style="margin:0"><b style="color:var(--red)">Geschafft!</b> ${b}<sup>1</sup> : ${b} = ${b} : ${b} = 1. Also ist <b>${b}<sup>0</sup> = 1</b>. Das klappt mit jeder Basis außer 0: <b>a<sup>0</sup> = 1</b>.</p>`
+    :e===1?`<p class="note">${b}<sup>1</sup> = ${b}: Hoch 1 ist die Zahl selbst. Was kommt heraus, wenn du noch einmal durch ${b} teilst?</p>`
+    :`<p class="note">Nach oben nimmst du jedes Mal · ${b}. Nach unten teilst du jedes Mal durch ${b}. Geh bis ganz nach unten!</p>`;
+  sc.innerHTML=`<p class="small" style="margin:0">Wie im Heft: Jede Stufe nach oben ist · ${b}, jede Stufe nach unten ist : ${b}. Rate vorher, was hinter dem Fragezeichen steht!</p>
+  <div class="chips">${[2,3,5,10].map(x=>`<button type="button" class="chip" data-b="${x}" aria-pressed="${x===b}">Basis ${x}</button>`).join('')}</div>
+  <div class="row" style="justify-content:center"><button class="go" type="button" id="up" ${e>=6?'disabled':''}>↑ · ${b}</button><button class="go" type="button" id="dn" style="background:var(--red);box-shadow:0 3px 0 #8f1f18" ${e<=0?'disabled':''}>↓ : ${b}</button></div>
+  <div class="ladderv">${rows}</div>${msg}`;
+  sc.querySelectorAll('[data-b]').forEach(x=>x.onclick=()=>{PT={b:+x.dataset.b,e:3,seen:new Set([3])};ST.pt(sc)});
+  $('#up').onclick=()=>{PT.e=Math.min(6,PT.e+1);ST.pt(sc)};$('#dn').onclick=()=>{PT.e=Math.max(0,PT.e-1);ST.pt(sc)};
+ },
+ pf(sc){
+  const {n,z}=PF,c=1<<Math.ceil(n/2),r=1<<Math.floor(n/2),L=1<<n;
+  sc.innerHTML=`<div class="lbl">Papier falten</div>
+  <p class="small" style="margin:0">Jedes Mal Falten verdoppelt die Lagen: 2 · 2 · 2 · … Das sind Zweierpotenzen.</p>
+  <div class="paper" style="grid-template-columns:repeat(${c},1fr);grid-template-rows:repeat(${r},1fr)">${'<i></i>'.repeat(L)}</div>
+  <div class="row" style="justify-content:center"><button class="ghost" type="button" id="fu" ${n<=0?'disabled':''}>Auffalten</button><button class="go" type="button" id="ff" ${n>=8?'disabled':''}>Falten</button></div>
+  <div class="val">${n}-mal gefaltet: 2<sup>${n}</sup> = ${L} Lagen</div>
+  <p class="note">${n===0?'Noch nicht gefaltet: 1 Lage. Auch hier passt die Ausnahme 2<sup>0</sup> = 1!':n>=7?'Probier es mit echtem Papier: Mehr als 7-mal schafft fast niemand – dann sind es schon 128 Lagen!':'Wie viele Lagen sind es nach dem nächsten Falten? Rate zuerst!'}</p>
+  <div class="lbl" style="margin-top:8px">Zehnerpotenzen</div>
+  <div class="ctrl">${stepper('z',z,'Exponent')}</div>
+  <div class="zeros">10<sup>${z}</sup> = 1<span>${'0'.repeat(z)}</span></div>
+  <p class="note">Bei 10<sup>${z}</sup> zählt der Exponent die <b style="color:var(--red)">Nullen</b>: eine 1 mit ${z} Null${z===1?'':'en'}.</p>`;
+  $('#ff').onclick=()=>{PF.n++;ST.pf(sc)};$('#fu').onclick=()=>{PF.n--;ST.pf(sc)};
+  sc.querySelectorAll('[data-s]').forEach(x=>x.onclick=()=>{PF.z=Math.max(0,Math.min(9,PF.z+ +x.dataset.d));ST.pf(sc)});
+ },
+ pm(sc){
+  sc.innerHTML=`<div class="merk"><h3>Definition</h3>
+  <p>a<sup>n</sup> bedeutet: a wird n-mal mit sich selbst malgenommen.</p>
+  <p style="font-family:var(--f-h);font-size:1.4rem;text-align:center">a<sup>n</sup> = a · a · … · a <span style="color:var(--red)">(n Faktoren)</span></p>
+  <ul><li>a<sup>n</sup> heißt <b>Potenz</b> (lies: „a hoch n“)</li><li>a heißt <b>Basis</b> (Grundzahl)</li><li>n heißt <b>Exponent</b> (Hochzahl)</li></ul></div>
+  <div class="merk"><h3>Besondere Fälle</h3><ul>
+  <li>a<sup>1</sup> = a &nbsp;·&nbsp; z. B. 9<sup>1</sup> = 9</li><li>a<sup>0</sup> = 1 &nbsp;·&nbsp; <b>Ausnahme!</b> z. B. 5<sup>0</sup> = 1</li>
+  <li>0<sup>n</sup> = 0 &nbsp;·&nbsp; z. B. 0<sup>400</sup> = 0</li><li>1<sup>n</sup> = 1 &nbsp;·&nbsp; z. B. 1<sup>7</sup> = 1</li>
+  <li>10<sup>n</sup> = 1 mit n Nullen &nbsp;·&nbsp; z. B. 10<sup>5</sup> = 100 000</li></ul></div>
+  <div class="merk"><h3>Rechenreihenfolge: KlaPoPS</h3><p><b>Kla</b>mmer → <b>Po</b>tenz → <b>P</b>unkt → <b>S</b>trich</p>
+  <p style="font-family:var(--f-h);font-size:1.25rem">2 + 3<sup>2</sup> = 2 + 9 = 11 &nbsp;·&nbsp; (2 + 3)<sup>2</sup> = 5<sup>2</sup> = 25</p></div>
+  <div class="merk"><h3>Typische Fallen</h3><ul>
+  <li>2<sup>3</sup> ist <b>nicht</b> 2 · 3. Richtig: 2 · 2 · 2 = 8</li><li>Basis und Exponent nicht vertauschen: 2<sup>5</sup> = 32, aber 5<sup>2</sup> = 25</li>
+  <li>Schritt für Schritt rechnen: 5<sup>4</sup> = 25 · 5 · 5 = 125 · 5 = 625</li></ul></div>`;
+ },
+ tb(sc){
+  const keys=['1','2','3','4','5','6','7','8','9','0','x','=','+','−','·',':','(',')'];
+  const draw=()=>{const r=judge(TB);
+    sc.innerHTML=`<p class="small" style="margin:0">Tippe auf die Bausteine. Der Baukasten sagt dir sofort, ob du einen Term gebaut hast.</p>
+    <div class="screen" aria-live="polite">${TB.length?R(TB):'<span class="small">Hier erscheint dein Term …</span>'}</div>
+    <p class="msg ${r.c}" style="margin:0">${r.h}</p>
+    <div class="bpad">${keys.map(k=>`<button type="button" data-k="${k}" class="${k==='x'?'x':k==='='?'eq':/\d/.test(k)?'':'o'}">${k}</button>`).join('')}</div>
+    <div class="row"><button class="ghost" type="button" id="tbb">⌫ Zurück</button><button class="ghost" type="button" id="tbc">Alles löschen</button><button class="ghost" type="button" id="tbi">Beispiel</button></div>`;
+    sc.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{const k=b.dataset.k,l=TB[TB.length-1];if(/\d/.test(k)&&l&&/^\d+$/.test(l)){if(l.length<3)TB[TB.length-1]=l+k}else if(TB.length<16)TB.push(k);draw()});
+    $('#tbb').onclick=()=>{const l=TB[TB.length-1];if(l&&/^\d{2,}$/.test(l))TB[TB.length-1]=l.slice(0,-1);else TB.pop();draw()};
+    $('#tbc').onclick=()=>{TB=[];draw()};
+    $('#tbi').onclick=()=>{TB=tok(rnd(['5 · x + 1','(8 − 3) · 4','12 : 3 + x','9 = 9','3 + · 4','(2 + 6']));draw()};
+  };draw();
+ },
+ tm(sc){
+  const terms=['2 · x + 3','x + x + x','(x + 2) · 3','20 − 2 · x','x^2 + 1','2^x'];
+  const upd=()=>{const t=terms[TM.i],x=TM.x,shown=tok(t).map(s=>s==='x'?'#'+x:s),res=evalS(t,{x}),nx=tok(t).filter(s=>s==='x').length;
+    $('#mxl').innerHTML='x = <b style="color:var(--red)">'+x+'</b>';
+    $('#tmv').innerHTML=`<div style="text-align:center">${R(tok(t),{lg:1})}</div>
+    <div class="row" style="gap:6px"><span class="ex" style="font-size:1.4rem"><span class="op">=</span></span><span style="font-size:1.4rem">${R(shown)}</span><span class="rule">x = ${x} einsetzen</span></div>
+    ${stepsHTML(subst(t,{x}))}
+    <div class="val">Ergebnis: ${fmtN(res)}</div>${nx>1?`<p class="note">Hier gibt es ${nx} Schachteln x – alle bekommen die ${x}.</p>`:''}`;
+    sc.querySelectorAll('[data-i]').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.i===TM.i));};
+  sc.innerHTML=`<p class="small" style="margin:0">x ist eine Schachtel. Leg mit dem Regler eine Zahl hinein. Überall, wo x steht, kommt <b>dieselbe</b> Zahl hin.</p>
+    <div class="chips">${terms.map((s,i)=>`<button type="button" class="chip" data-i="${i}">${M(s)}</button>`).join('')}</div>
+    <div class="row"><label for="mx" id="mxl" style="font-family:var(--f-h);font-size:1.4rem"></label><input type="range" id="mx" min="0" max="10" value="${TM.x}" style="flex:1"></div>
+    <div id="tmv" style="display:flex;flex-direction:column;gap:10px" aria-live="polite"></div>`;
+  sc.querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{TM.i=+b.dataset.i;upd()});
+  $('#mx').oninput=e=>{TM.x=+e.target.value;upd()};
+  upd();
+ },
+ tn(sc){
+  const INF={'+':['Summand','Summand','Summe','Beim Plusrechnen heißen beide Zahlen Summand. Das Ergebnis ist die Summe.'],
+   '−':['Minuend','Subtrahend','Differenz','ABC-Trick: M vor S – der Minuend steht vorne, der Subtrahend dahinter.'],
+   '·':['Faktor','Faktor','Produkt','Beide Zahlen heißen Faktor. Du darfst sie sogar tauschen.'],
+   ':':['Dividend','Divisor','Quotient','ABC-Trick: Divid-e-nd vor Divis-o-r (e vor o). Der Dividend wird geteilt, der Divisor teilt.'],
+   '^':['Basis','Exponent','Potenz','Das Ergebnis nennt man Potenzwert, den Ausdruck a^n Potenz.']};
+  const draw=()=>{const {op,a,b}=TN,n=INF[op],res=calc(a,op,b);
+    const mid=op==='^'?`<div class="c"><span class="v">${a}<sup style="color:var(--red)">${b}</sup></span><span class="nm">${n[0]} / ${n[1]}</span></div>`
+      :`<div class="c"><span class="v">${a}</span><span class="nm">${n[0]}</span></div><div class="c"><span class="o">${op}</span></div><div class="c"><span class="v">${b}</span><span class="nm">${n[1]}</span></div>`;
+    sc.innerHTML=`<div class="chips">${['+','−','·',':','^'].map(o=>`<button type="button" class="chip" style="font-size:1.1rem;min-width:46px" data-o="${o}" aria-pressed="${o===op}">${o==='^'?'a<sup>n</sup>':o}</button>`).join('')}</div>
+    <div class="names">${mid}<div class="c"><span class="o">=</span></div><div class="c"><span class="v">${fmtN(res)}</span><span class="nm">${op==='^'?'Potenzwert':n[2]}</span></div></div>
+    <p class="note">${M(n[3])}</p><p class="small" style="margin:0">Übrigens: Schon der Term <b>${op==='^'?a+'<sup>'+b+'</sup>':a+' '+op+' '+b}</b> ohne Ergebnis heißt <b>${n[2]}</b>.</p>
+    <button class="ghost" type="button" id="nz" style="align-self:flex-start">Neue Zahlen</button>`;
+    sc.querySelectorAll('[data-o]').forEach(x=>x.onclick=()=>{TN.op=x.dataset.o;roll();draw()});
+    $('#nz').onclick=()=>{roll();draw()};
+  };
+  const roll=()=>{const o=TN.op;if(o==='+'){TN.a=ri(3,60);TN.b=ri(2,40)}else if(o==='−'){TN.a=ri(12,80);TN.b=ri(2,TN.a-1)}else if(o==='·'){TN.a=ri(2,10);TN.b=ri(2,10)}else if(o===':'){TN.b=ri(2,10);TN.a=TN.b*ri(2,10)}else{TN.a=ri(2,6);TN.b=ri(2,4)}};
+  draw();
+ },
+ tr(sc){
+  const ex=['3 + 4 · 2','(3 + 4) · 2','2 + 3^2','(2 + 3)^2','20 − 12 : 4','2 · 3^2 − 4','18 − 6 − 2'];
+  const run=()=>{const host=document.createElement('div');host.style.cssText='display:flex;flex-direction:column;gap:12px';
+    sc.innerHTML=`<p class="small" style="margin:0">Die Reihenfolge merkst du dir mit <b style="color:var(--red)">KlaPoPS</b>: Klammer, Potenz, Punkt, Strich. Bei gleichen Stufen rechnest du von links nach rechts.</p>`;
+    sc.appendChild(host);
+    orderWidget(host,tok(ex[TR.i]),(m,v)=>{const d=document.createElement('div');d.className='fb '+(m?'bad':'ok');d.innerHTML=`<strong>Ergebnis: ${fmtN(v)}</strong><span class="exl">${m?'Beim nächsten Mal klappt es ohne Fehler!':'Alles in der richtigen Reihenfolge!'}</span>`;host.appendChild(d);
+      const b=document.createElement('button');b.className='go';b.type='button';b.textContent='Nächstes Beispiel';b.onclick=()=>{TR.i=(TR.i+1)%ex.length;run()};host.appendChild(b)},true);
+  };run();
+ },
+ tz(sc){
+  sc.innerHTML=`<div class="merk"><h3>Was ist ein Term?</h3><p>Ein <b>Term</b> ist ein sinnvoller Rechenausdruck aus Zahlen, Variablen (Buchstaben), Rechenzeichen und Klammern. Er ist wie ein Rechen-Rezept.</p>
+  <p><b>Kein = im Term!</b> 7 + 3 = 10 ist eine Gleichung. 7 + 3 und 10 sind Terme.</p></div>
+  <div class="merk"><h3>Einsetzen</h3><p>Eine Variable wie x ist eine Schachtel für eine Zahl. Gleicher Buchstabe → gleiche Zahl. 2x heißt 2 · x.</p>
+  <p style="font-family:var(--f-h);font-size:1.25rem">2 · x + 3 mit x = 4: 2 · 4 + 3 = 8 + 3 = 11</p></div>
+  <div class="merk"><h3>Namen der Teile</h3><ul>
+  <li><b>Summand + Summand = Summe</b></li><li><b>Minuend − Subtrahend = Differenz</b> (M vor S)</li>
+  <li><b>Faktor · Faktor = Produkt</b></li><li><b>Dividend : Divisor = Quotient</b> (e vor o)</li><li>a<sup>n</sup>: <b>Basis</b> hoch <b>Exponent</b> = <b>Potenz</b></li></ul></div>
+  <div class="merk"><h3>Reihenfolge & Termname</h3><p><b>KlaPoPS:</b> Klammer → Potenz → Punkt → Strich, sonst von links nach rechts.</p>
+  <p>Der Term heißt nach der Rechnung, die du <b>zuletzt</b> machst: (4 + 6) · 3 ist ein Produkt, 4 + 6 · 3 ist eine Summe.</p></div>`;
+ }
+};
+function judge(t){
+  const ok=h=>({c:'ok',h:'✓ '+h}),bad=h=>({c:'bad',h});const OPS=['+','−','·',':'];
+  if(!t.length)return{c:'',h:'Tippe auf die Bausteine.'};
+  if(t.includes('='))return bad('Da ist ein = drin. Dann ist es eine Gleichung, kein Term.');
+  if(OPS.includes(t[0])||t[0]===')')return bad('Ein Term fängt mit einer Zahl, einem Buchstaben oder mit ( an.');
+  for(let i=0;i<t.length-1;i++){const a=t[i],b=t[i+1];
+    if(OPS.includes(a)&&OPS.includes(b))return bad('Zwei Rechenzeichen hintereinander. Dazwischen fehlt eine Zahl.');
+    if(a==='('&&b===')')return bad('Leere Klammern ergeben keinen Sinn.');
+    if(a==='('&&OPS.includes(b))return bad('Nach ( muss eine Zahl oder ein Buchstabe kommen.');
+    if(OPS.includes(a)&&b===')')return bad('Vor ) fehlt noch eine Zahl.');
+    if((/^\d/.test(a)||a==='x'||a===')')&&(b==='x'||b==='('||/^\d/.test(b)&&a!==')'&&!/^\d/.test(a)))return bad('Zwischen zwei Bausteinen fehlt ein Rechenzeichen. Schreib z. B. 3 · x statt 3x.');
+    if(a===')'&&/^\d/.test(b))return bad('Nach ) fehlt ein Rechenzeichen.');}
+  const l=t[t.length-1];if(OPS.includes(l)||l==='(')return bad('Am Ende fehlt noch eine Zahl oder ein Buchstabe.');
+  let d=0;for(const x of t){if(x==='(')d++;if(x===')')d--;if(d<0)return bad('Hier wird eine Klammer geschlossen, die nie geöffnet wurde.')}
+  if(d>0)return bad('Es fehlt noch eine Klammer zu ). Klammern gibt es immer als Paar.');
+  const hasX=t.includes('x');const tt=t.map(x=>x==='x'?'2':x);const st=stepsOf(tt);
+  const name=st.length?` Er ist eine <b>${NAMES[st[st.length-1].before[st[st.length-1].k]]}</b>.`:' Eine einzelne Zahl ist auch ein Term.';
+  if(hasX)return ok('Das ist ein Term!'+name+' Er enthält die Variable x – setz eine Zahl ein, dann hat er einen Wert.');
+  const v=st.length?+st[st.length-1].t[0]:+t[0];
+  if(!isFinite(v))return bad('Das ist zwar ein Term, aber durch 0 kann man nicht teilen.');
+  return ok('Das ist ein Term!'+name+' Sein Wert ist <b>'+(Number.isInteger(v)?fmtN(v):String(Math.round(v*100)/100).replace('.',','))+'</b>.');
+}
+
+home();
+})();
+</script>
+
+</body></html>

@@ -1,0 +1,904 @@
+<!doctype html><html><head><meta charset=utf8><script src="/api/config"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="/sync.js"></script><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body><nav id="lw-bar" aria-label="Lernwelt" style="all:initial;display:flex;align-items:center;gap:10px;box-sizing:border-box;width:100%;padding:6px max(12px,env(safe-area-inset-right,0px)) 6px max(12px,env(safe-area-inset-left,0px));background:#20304a;color:#f3f0e6;font:600 14px/1.2 system-ui,-apple-system,Segoe UI,sans-serif;position:relative;z-index:9999"><a href="index.html" style="all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:#f3f0e6;color:#20304a;font:700 14px/1 system-ui,-apple-system,Segoe UI,sans-serif">&#8249; Lernwelt</a><span style="all:unset;font:600 14px/1.2 system-ui,-apple-system,Segoe UI,sans-serif;color:#f3f0e6;opacity:.85">Mathe · Terme verstehen</span></nav>
+<title>Terme verstehen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Patrick+Hand&display=swap">
+<style>
+:root{
+  --paper:#ffffff; --ink:#1f2433; --muted:#5b6275; --line:#cfd4e0;
+  --blue:#2358b8; --blue-soft:#e9f0fc;
+  --green:#2c8540; --green-soft:#e6f4e8;
+  --orange:#d9650f; --orange-soft:#fdefe2;
+  --purple:#6a47b8; --purple-soft:#f1ecfb;
+  --hl:#ffe36b; --red:#cc3333; --ok:#2c8540;
+  --on-c:#ffffff;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --paper:#161a24; --ink:#eef0f6; --muted:#a9afbf; --line:#3a4256;
+    --blue:#86acf5; --blue-soft:#1d2842;
+    --green:#74cf86; --green-soft:#19301f;
+    --orange:#ffa860; --orange-soft:#3a2716;
+    --purple:#b7a0f7; --purple-soft:#282140;
+    --hl:#6d5a12; --red:#ff8080; --ok:#74cf86;
+    --on-c:#161a24;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --paper:#161a24; --ink:#eef0f6; --muted:#a9afbf; --line:#3a4256;
+  --blue:#86acf5; --blue-soft:#1d2842;
+  --green:#74cf86; --green-soft:#19301f;
+  --orange:#ffa860; --orange-soft:#3a2716;
+  --purple:#b7a0f7; --purple-soft:#282140;
+  --hl:#6d5a12; --red:#ff8080; --ok:#74cf86;
+  --on-c:#161a24;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:'Patrick Hand','Comic Sans MS','Segoe Print',cursive,system-ui;font-size:19px;line-height:1.45;padding-inline:16px}
+.wrap{max-width:1000px;margin:0 auto;padding-block:18px 96px}
+h1,h2,h3,.kalam{font-family:'Kalam','Patrick Hand','Comic Sans MS',cursive}
+p{margin:0 0 10px}
+.hl{background:linear-gradient(transparent 55%,var(--hl) 55%);padding:0 2px}
+b{font-weight:700}
+
+/* Kopf */
+header.top{display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap;text-align:center}
+header.top h1{font-size:clamp(60px,13vw,104px);line-height:1;margin:6px 0 0;letter-spacing:1px}
+header.top .sub{font-size:20px;color:var(--muted);margin-top:2px}
+.doodle{width:74px;height:74px;flex:none}
+.intro{max-width:640px;margin:10px auto 0;text-align:center;font-size:20px}
+nav.jump{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:16px}
+nav.jump a{color:var(--ink);text-decoration:none;border:2px solid var(--line);border-radius:14px 10px 15px 11px;padding:4px 12px}
+nav.jump a:hover{border-color:var(--ink)}
+nav.jump a span{font-family:Kalam,cursive;font-weight:700;margin-right:4px}
+
+/* Abschnitte */
+.sec{--c:var(--blue);--cs:var(--blue-soft);border:2.5px solid var(--c);border-radius:28px 20px 30px 18px;padding:20px;margin-block:30px;background:var(--paper);scroll-margin-top:12px}
+.sec.green{--c:var(--green);--cs:var(--green-soft)}
+.sec.orange{--c:var(--orange);--cs:var(--orange-soft)}
+.sec.purple{--c:var(--purple);--cs:var(--purple-soft)}
+.sec-head{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.secnum{width:46px;height:46px;border-radius:50%;background:var(--c);color:var(--on-c);font-family:Kalam,cursive;font-weight:700;font-size:26px;display:grid;place-items:center;flex:none}
+.sec-head h2{margin:0;font-size:clamp(24px,5vw,32px);color:var(--c);border:2px solid var(--c);border-radius:14px 18px 12px 16px;padding:0 16px;line-height:1.5}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+@media (max-width:760px){.grid2,.grid3{grid-template-columns:1fr}}
+.panel{border:2px dashed var(--line);border-radius:18px 14px 20px 12px;padding:16px;min-width:0}
+.panel.solid{border-style:solid;border-color:var(--c);background:var(--cs)}
+.panel h3{margin:0 0 8px;font-size:23px;line-height:1.25}
+.panel h3::before{content:"• ";color:var(--c)}
+.stack{display:flex;flex-direction:column;gap:18px}
+.muted{color:var(--muted)}
+.small{font-size:17px}
+.bubble{position:relative;border:2px solid var(--ink);border-radius:22px 18px 24px 16px;padding:10px 14px;background:var(--paper)}
+.rule{border-left:4px solid var(--c);padding:4px 0 4px 12px;margin:10px 0}
+.warn{border:2px solid var(--red);color:var(--ink);border-radius:14px 12px 16px 10px;padding:8px 12px;margin-top:10px}
+.warn b{color:var(--red)}
+
+/* Bausteine */
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-grid;place-items:center;min-width:40px;height:40px;padding:0 10px;border:2px solid var(--ink);border-radius:10px 13px 9px 12px;font-size:22px;background:var(--paper);color:var(--ink)}
+.chip.c-num{border-color:var(--blue);color:var(--blue)}
+.chip.c-var{border-color:var(--orange);color:var(--orange);background:var(--orange-soft)}
+.chip.c-op{border-color:var(--green);color:var(--green)}
+.chip.c-par{border-color:var(--purple);color:var(--purple)}
+.chip.c-eq{border-color:var(--red);color:var(--red)}
+button.chip{cursor:pointer;font-family:inherit;box-shadow:2px 2px 0 currentColor;transition:transform .08s}
+button.chip:active{transform:translate(2px,2px);box-shadow:none}
+
+/* Buttons */
+.btn{font:inherit;font-size:19px;border:2px solid var(--ink);border-radius:12px 15px 11px 14px;background:var(--paper);color:var(--ink);padding:5px 14px;box-shadow:2px 3px 0 var(--ink);cursor:pointer;transition:transform .08s}
+.btn:active{transform:translate(2px,3px);box-shadow:0 0 0 var(--ink)}
+.btn.primary{background:var(--c,var(--blue));border-color:var(--c,var(--blue));color:var(--on-c);box-shadow:2px 3px 0 var(--ink)}
+.btn.sel{background:var(--cs);border-color:var(--c)}
+.btn:disabled{opacity:.45;cursor:default}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+
+/* Terme darstellen */
+.expr{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:30px;line-height:1.2;min-height:48px}
+.expr.sm{font-size:24px;min-height:38px}
+.tk.op{color:var(--c,var(--green))}
+.tk.par{color:var(--purple)}
+.tk.box{display:inline-grid;place-items:center;min-width:44px;height:44px;padding:0 6px;border:2.5px solid var(--orange);border-radius:9px 11px 8px 10px;color:var(--orange);background:var(--orange-soft);font-weight:700}
+.expr.sm .tk.box{min-width:36px;height:36px}
+.tk.box.pop{animation:pop .35s ease-out}
+@keyframes pop{0%{transform:scale(.4) translateY(-14px)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+.tk.last{background:var(--hl);border-radius:6px;padding:0 4px}
+.tag{display:inline-block;font-size:15px;border:1.5px solid var(--c,var(--blue));color:var(--c,var(--blue));border-radius:10px;padding:0 8px;margin-left:8px;vertical-align:middle;white-space:nowrap}
+.steps{display:flex;flex-direction:column;gap:6px;margin-top:6px}
+.steps .expr{font-size:26px}
+.lbl{font-size:16px;color:var(--muted);min-width:0}
+
+/* Feedback */
+.fb{min-height:28px;margin-top:10px}
+.fb.ok{color:var(--ok)}
+.fb.bad{color:var(--red)}
+.fb.warn2{color:var(--orange)}
+.fb .ic{font-family:Kalam,cursive;font-weight:700;margin-right:4px}
+
+/* Baukasten */
+.screen{border:2.5px solid var(--ink);border-radius:14px 18px 12px 16px;padding:10px 12px;background:var(--cs);min-height:70px;display:flex;align-items:center;overflow-x:auto}
+.pad{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:12px}
+.pad .chip{width:100%;min-width:0}
+@media (max-width:420px){.pad{grid-template-columns:repeat(5,1fr)}}
+
+/* Kartenspiel */
+.card{border:2.5px solid var(--ink);border-radius:20px 16px 22px 14px;padding:22px 16px;text-align:center;font-size:40px;font-family:Kalam,cursive;background:var(--cs);margin:10px 0}
+.dots{display:flex;gap:6px;flex-wrap:wrap}
+.dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--line)}
+.dot.ok{background:var(--ok);border-color:var(--ok)}
+.dot.bad{background:var(--red);border-color:var(--red)}
+.dot.now{border-color:var(--ink)}
+
+/* Maschine */
+.machine{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center}
+.m-in,.m-out{text-align:center}
+.m-in .big,.m-out .big{font-family:Kalam,cursive;font-size:44px;font-weight:700;line-height:1}
+.m-in .big{color:var(--orange)}
+.m-out .big{color:var(--c)}
+.m-body{border:2.5px solid var(--c);border-radius:16px 22px 14px 20px;padding:10px;background:var(--cs);text-align:center;position:relative;min-width:0}
+.m-body .expr{justify-content:center}
+.arrow{font-family:Kalam,cursive;font-size:30px;color:var(--muted)}
+@media (max-width:560px){.machine{grid-template-columns:1fr}.arrow{transform:rotate(90deg);justify-self:center}}
+input[type=range]{width:100%;accent-color:var(--orange);height:28px}
+.slider-row{display:flex;align-items:center;gap:12px;margin-top:12px}
+.slider-row label{white-space:nowrap}
+
+/* Tabelle */
+.tbl-wrap{overflow-x:auto}
+table.wt{border-collapse:collapse;font-size:21px;margin-top:8px}
+table.wt th,table.wt td{border:2px solid var(--ink);padding:4px 8px;text-align:center;min-width:64px}
+table.wt th{background:var(--cs);font-weight:400}
+table.wt input{width:58px;font:inherit;font-size:21px;text-align:center;border:none;background:transparent;color:var(--ink)}
+table.wt td.ok{background:var(--green-soft)}
+table.wt td.bad{background:color-mix(in srgb,var(--red) 16%,var(--paper))}
+.hint{font-size:15px;color:var(--red);display:block;line-height:1.2}
+
+/* Alltag */
+.svgbox{display:flex;justify-content:center}
+.svgbox svg{max-width:100%;height:auto}
+.counter{display:flex;align-items:center;gap:12px}
+.counter .val{font-family:Kalam,cursive;font-size:34px;font-weight:700;min-width:34px;text-align:center;color:var(--orange)}
+.check{display:flex;align-items:center;gap:8px;cursor:pointer}
+.check input{width:22px;height:22px;accent-color:var(--orange)}
+.ans{font:inherit;font-size:20px;width:90px;padding:4px 8px;border:2px solid var(--ink);border-radius:10px;background:var(--paper);color:var(--ink)}
+.mc{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.mc .btn{text-align:left}
+.mc .btn.right{border-color:var(--ok);background:var(--green-soft)}
+.mc .btn.wrong{border-color:var(--red);text-decoration:line-through}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:17px}
+.legend i{display:inline-block;width:22px;height:6px;border-radius:3px;vertical-align:middle;margin-right:6px}
+
+/* Namen */
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tabs .btn{min-width:56px;font-size:24px;padding:2px 12px}
+.eqn{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:center;gap:10px 14px;margin:18px 0 6px}
+.eqn .col{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0}
+.eqn .v{font-family:Kalam,cursive;font-size:40px;font-weight:700;line-height:1.1}
+.eqn .o{font-family:Kalam,cursive;font-size:44px;color:var(--c);line-height:1.1}
+.eqn .v input{width:84px;font:inherit;font-size:40px;text-align:center;border:none;border-bottom:3px dashed var(--c);background:transparent;color:var(--ink);padding:0}
+.eqn .name{font-size:20px;color:var(--c);display:flex;flex-direction:column;align-items:center;line-height:1.1}
+.eqn .name::before{content:"↑";font-size:22px}
+.eqn .res{border:2.5px solid var(--c);border-radius:12px 16px 10px 14px;padding:0 10px;background:var(--cs)}
+.slot{min-width:92px;min-height:40px;border:2.5px dashed var(--c);border-radius:12px;display:grid;place-items:center;font-size:19px;cursor:pointer;background:var(--paper);color:var(--ink);font-family:inherit;padding:2px 8px}
+.slot.ok{border-style:solid;border-color:var(--ok);background:var(--green-soft)}
+.slot.bad{border-style:solid;border-color:var(--red)}
+.bank{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:12px}
+.bank .btn{font-size:19px}
+.bank .btn.sel{outline:3px solid var(--c);outline-offset:1px}
+
+/* Schluss */
+.merk{border:2.5px solid var(--ink);border-radius:26px 20px 28px 18px;padding:18px 20px;background:var(--paper);margin-top:30px}
+.merk h2{margin:0 0 8px;font-size:30px}
+.merk ul{margin:0;padding-left:22px}
+.merk li{margin:4px 0}
+.banner{display:block;width:max-content;max-width:100%;margin:22px auto 0;border:2px solid var(--ink);border-radius:18px 14px 20px 12px;padding:4px 18px;font-family:Kalam,cursive;font-size:22px;text-align:center}
+
+/* Sterne */
+.stars{position:fixed;right:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));background:var(--paper);border:2.5px solid var(--ink);border-radius:18px 14px 20px 12px;padding:4px 14px 4px 10px;display:flex;align-items:center;gap:6px;box-shadow:2px 3px 0 var(--ink);font-size:20px;z-index:5}
+.stars svg{width:26px;height:26px}
+.stars.bump{animation:pop .4s ease-out}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation:none!important;transition:none!important}
+}
+</style>
+
+<div class="wrap">
+
+<header class="top">
+  <svg class="doodle" viewBox="0 0 80 80" aria-hidden="true">
+    <g fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M40 14c-12 0-20 9-20 19 0 8 5 12 8 16 2 3 2 6 2 9h20c0-3 0-6 2-9 3-4 8-8 8-16 0-10-8-19-20-19z" fill="var(--hl)"/>
+      <path d="M31 64h18M33 70h14"/>
+      <path d="M40 4v4M14 12l3 3M66 12l-3 3M6 34h4M70 34h4"/>
+    </g>
+  </svg>
+  <div>
+    <h1>Terme</h1>
+    <div class="sub">Mathe · Klasse 5 · Lernseite zum Ausprobieren</div>
+  </div>
+  <svg class="doodle" viewBox="0 0 80 80" aria-hidden="true">
+    <g fill="none" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M12 30l28-12 28 12-28 12z" fill="var(--orange-soft)"/>
+      <path d="M12 30v28l28 12V42"/>
+      <path d="M68 30v28L40 70"/>
+    </g>
+    <text x="54" y="58" text-anchor="middle" font-family="Kalam,cursive" font-size="22" font-weight="700" fill="var(--orange)">x</text>
+  </svg>
+</header>
+<p class="intro">Hier darfst du alles antippen, verschieben und ausprobieren. Kaputt machen kannst du nichts! Für jede richtige Aufgabe bekommst du einen Stern.</p>
+<nav class="jump" aria-label="Abschnitte">
+  <a href="#was"><span>1</span>Was ist ein Term?</a>
+  <a href="#einsetzen"><span>2</span>Zahlen einsetzen</a>
+  <a href="#alltag"><span>3</span>Terme im Alltag</a>
+  <a href="#namen"><span>4</span>Wie heißen die Teile?</a>
+</nav>
+
+<!-- 1 -->
+<section class="sec" id="was">
+  <div class="sec-head"><div class="secnum">1</div><h2>Was ist ein Term?</h2></div>
+  <div class="grid2">
+    <div class="stack">
+      <div class="panel">
+        <h3>Ein Term ist ein Rechen-Rezept</h3>
+        <div class="bubble">
+          <p>Ein Kuchen-Rezept sagt dir, <b>was</b> du machen sollst. Der Kuchen ist aber noch nicht gebacken.</p>
+          <p style="margin:0">Genauso ist es beim Term: <span class="expr sm" style="display:inline-flex"><span class="tk num">3</span><span class="tk op">·</span><span class="tk num">4</span><span class="tk op">+</span><span class="tk num">2</span></span> sagt dir, was du rechnen sollst. Das Ergebnis steht noch nicht da.</p>
+        </div>
+        <p class="rule" style="margin-top:12px">Ein <span class="hl">Term</span> ist ein sinnvoller Rechenausdruck aus Zahlen, Buchstaben, Rechenzeichen und Klammern.</p>
+      </div>
+      <div class="panel">
+        <h3>Diese Bausteine darf ein Term haben</h3>
+        <div class="stack" style="gap:10px">
+          <div class="row"><span class="chips"><span class="chip c-num">3</span><span class="chip c-num">12</span><span class="chip c-num">100</span></span><span>Zahlen</span></div>
+          <div class="row"><span class="chips"><span class="chip c-var">x</span><span class="chip c-var">a</span><span class="chip c-var">n</span></span><span>Buchstaben (Platzhalter für Zahlen)</span></div>
+          <div class="row"><span class="chips"><span class="chip c-op">+</span><span class="chip c-op">−</span><span class="chip c-op">·</span><span class="chip c-op">:</span></span><span>Rechenzeichen</span></div>
+          <div class="row"><span class="chips"><span class="chip c-par">(</span><span class="chip c-par">)</span></span><span>Klammern, immer als Paar</span></div>
+        </div>
+        <div class="warn"><b>Kein = im Term!</b> <span style="white-space:nowrap">7 + 3 = 10</span> ist eine <b>Gleichung</b>. Links und rechts vom = stehen aber zwei Terme: <b>7 + 3</b> und <b>10</b>.</div>
+      </div>
+    </div>
+
+    <div class="panel solid">
+      <h3>Term-Baukasten</h3>
+      <p class="small">Tippe auf die Bausteine. Der Baukasten sagt dir sofort, ob du einen Term gebaut hast.</p>
+      <div class="screen" aria-live="polite"><div class="expr" id="bExpr"></div></div>
+      <div class="fb" id="bFb" aria-live="polite"></div>
+      <div class="pad" id="bPad"></div>
+      <div class="row" style="margin-top:12px">
+        <button class="btn" id="bBack" type="button">⌫ Zurück</button>
+        <button class="btn" id="bClear" type="button">Alles löschen</button>
+        <button class="btn" id="bIdea" type="button">Idee geben</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-top:18px">
+    <h3>Spiel: Term oder kein Term?</h3>
+    <div class="dots" id="qDots"></div>
+    <div class="card" id="qCard"></div>
+    <div class="row" id="qBtns">
+      <button class="btn primary" type="button" id="qYes">Ja, das ist ein Term</button>
+      <button class="btn" type="button" id="qNo">Nein, kein Term</button>
+    </div>
+    <div class="fb" id="qFb" aria-live="polite"></div>
+    <div class="row"><button class="btn" type="button" id="qNext" hidden>Weiter →</button></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="sec green" id="einsetzen">
+  <div class="sec-head"><div class="secnum">2</div><h2>Zahlen einsetzen</h2></div>
+  <div class="grid2">
+    <div class="panel">
+      <h3>Der Buchstabe ist eine Schachtel</h3>
+      <div class="row" style="flex-wrap:nowrap;align-items:flex-start">
+        <svg viewBox="0 0 90 80" width="90" height="80" aria-hidden="true" style="flex:none">
+          <g fill="none" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round">
+            <path d="M10 30l35-14 35 14-35 14z" fill="var(--orange-soft)"/>
+            <path d="M10 30v32l35 14V44M80 30v32L45 76"/>
+          </g>
+          <text x="62" y="62" text-anchor="middle" font-family="Kalam,cursive" font-size="24" font-weight="700" fill="var(--orange)">x</text>
+        </svg>
+        <p style="margin:0">Stell dir <span class="tk box" style="min-width:32px;height:32px;display:inline-grid">x</span> wie eine Schachtel vor. Auf der Schachtel steht ein Name, zum Beispiel x. Du darfst <b>jede Zahl</b> hineinlegen. Das nennt man <span class="hl">einsetzen</span>.</p>
+      </div>
+      <p class="rule">Überall, wo derselbe Buchstabe steht, kommt <b>dieselbe Zahl</b> hinein.</p>
+      <p class="rule">Nach dem Einsetzen rechnest du wie immer: <b>Klammer zuerst</b>, dann <b>Punkt vor Strich</b>.</p>
+      <p class="small muted">Profi-Tipp: 2 · x schreibt man oft kürzer als 2x.</p>
+    </div>
+
+    <div class="panel solid">
+      <h3>Die Term-Maschine</h3>
+      <p class="small">Such dir einen Term aus. Schieb dann den Regler und leg eine Zahl in die Schachtel.</p>
+      <div class="row" id="mChoice" role="group" aria-label="Term auswählen"></div>
+      <div class="slider-row">
+        <label for="mX">x =</label>
+        <input type="range" id="mX" min="0" max="10" value="4">
+      </div>
+      <div class="machine" style="margin-top:10px">
+        <div class="m-in"><div class="lbl">Zahl rein</div><div class="big" id="mIn">4</div></div>
+        <div class="arrow" aria-hidden="true">→</div>
+        <div class="m-body"><div class="lbl">Term</div><div class="expr" id="mTerm"></div></div>
+      </div>
+      <div class="steps" id="mSteps" aria-live="polite"></div>
+      <div class="machine" style="margin-top:8px;grid-template-columns:1fr auto">
+        <div class="lbl" id="mNote"></div>
+        <div class="m-out"><div class="lbl">Ergebnis raus</div><div class="big" id="mOut"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-top:18px">
+    <h3>Wertetabelle ausfüllen</h3>
+    <p class="small">Setz jede Zahl aus der oberen Zeile für x ein und rechne aus. Schreib das Ergebnis darunter.</p>
+    <div class="row"><span>Term:</span><div class="expr sm" id="wTerm"></div></div>
+    <div class="tbl-wrap"><table class="wt" id="wTable"></table></div>
+    <div class="row" style="margin-top:12px">
+      <button class="btn primary" type="button" id="wCheck">Prüfen</button>
+      <button class="btn" type="button" id="wNew">Neuer Term</button>
+    </div>
+    <div class="fb" id="wFb" aria-live="polite"></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="sec orange" id="alltag">
+  <div class="sec-head"><div class="secnum">3</div><h2>Terme im Alltag</h2></div>
+  <div class="grid2">
+    <div class="panel">
+      <h3>In der Eisdiele</h3>
+      <p class="small">Eine Kugel Eis kostet <b>2 €</b>. Die Anzahl der Kugeln ist unsere Schachtel x.</p>
+      <div class="row" style="justify-content:space-between;align-items:flex-end">
+        <div class="svgbox"><svg id="iceSvg" viewBox="0 0 160 250" width="150" height="235" role="img" aria-label="Eistüte"></svg></div>
+        <div class="stack" style="gap:12px">
+          <div class="counter">
+            <button class="btn" type="button" id="iceMinus" aria-label="Eine Kugel weniger">−</button>
+            <div class="val" id="iceN" aria-live="polite">2</div>
+            <button class="btn" type="button" id="icePlus" aria-label="Eine Kugel mehr">+</button>
+          </div>
+          <div class="lbl">Kugeln</div>
+          <label class="check"><input type="checkbox" id="iceCream"> Sahne obendrauf (1 €)</label>
+        </div>
+      </div>
+      <div class="rule">
+        <div class="row"><span>Term:</span><div class="expr sm" id="iceTerm"></div></div>
+        <div class="row"><span>Einsetzen:</span><div class="expr sm" id="iceSub"></div></div>
+      </div>
+      <p class="small muted" style="margin:0">Der Term bleibt immer gleich. Nur die Zahl in der Schachtel ändert sich.</p>
+    </div>
+
+    <div class="panel">
+      <h3>Streichholz-Quadrate</h3>
+      <p class="small">Leg Quadrate aus Streichhölzern in eine Reihe. Wie viele Hölzer brauchst du?</p>
+      <div class="svgbox" style="overflow-x:auto"><svg id="matchSvg" viewBox="0 0 440 90" width="440" height="90" role="img" aria-label="Streichholz-Quadrate"></svg></div>
+      <div class="legend"><span><i style="background:var(--orange)"></i>1 Start-Holz</span><span><i style="background:var(--blue)"></i>je 3 neue pro Quadrat</span></div>
+      <div class="slider-row"><label for="mqN">Quadrate:</label><input type="range" id="mqN" min="1" max="8" value="4"><span class="kalam" id="mqNv" style="font-size:26px;font-weight:700">4</span></div>
+      <div class="rule">
+        <div class="row"><span>Term:</span><div class="expr sm" id="mqTerm"></div></div>
+        <div class="row"><span>Einsetzen:</span><div class="expr sm" id="mqSub"></div></div>
+      </div>
+      <p style="margin-top:10px"><b>Jetzt du:</b> Wie viele Streichhölzer brauchst du für <b>20 Quadrate</b>? Zeichnen dauert lange, der Term ist schneller!</p>
+      <div class="row"><label for="mqAns">Hölzer:</label><input class="ans" id="mqAns" inputmode="numeric" autocomplete="off"><button class="btn primary" type="button" id="mqCheck">Prüfen</button></div>
+      <div class="fb" id="mqFb" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-top:18px">
+    <h3>Welcher Term passt zur Geschichte?</h3>
+    <div class="dots" id="sDots"></div>
+    <p id="sText" style="font-size:22px;margin-top:10px"></p>
+    <div class="mc" id="sOpts"></div>
+    <div class="fb" id="sFb" aria-live="polite"></div>
+    <div class="row"><button class="btn" type="button" id="sNext" hidden>Nächste Geschichte →</button></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="sec purple" id="namen">
+  <div class="sec-head"><div class="secnum">4</div><h2>Wie heißen die Teile?</h2></div>
+  <div class="panel solid">
+    <h3>Die vier Grundrechenarten</h3>
+    <p class="small">Wähle eine Rechenart. Du kannst die Zahlen in den Kästchen ändern.</p>
+    <div class="tabs" id="nTabs" role="tablist" aria-label="Rechenart"></div>
+    <div class="eqn" id="nEqn"></div>
+    <p class="rule" id="nTip"></p>
+  </div>
+
+  <div class="grid2" style="margin-top:18px">
+    <div class="panel">
+      <h3>Beschrifte die Rechnung</h3>
+      <p class="small">Tippe erst auf ein Wort und dann auf das passende Kästchen.</p>
+      <div class="eqn" id="gEqn"></div>
+      <div class="bank" id="gBank"></div>
+      <div class="row" style="margin-top:12px;justify-content:center">
+        <button class="btn primary" type="button" id="gCheck">Prüfen</button>
+        <button class="btn" type="button" id="gNew">Neue Aufgabe</button>
+      </div>
+      <div class="fb" id="gFb" aria-live="polite" style="text-align:center"></div>
+    </div>
+
+    <div class="panel">
+      <h3>Profi-Level: Term-Detektiv</h3>
+      <p class="rule">Ein Term bekommt seinen Namen von der Rechnung, die du <span class="hl">zuletzt</span> rechnest.</p>
+      <p class="small muted">Beispiel: 7 + 5 ist eine Summe. (7 + 5) · 2 ist ein Produkt, weil du zuletzt malnimmst.</p>
+      <div class="dots" id="dDots"></div>
+      <div class="card" style="font-size:34px"><div class="expr" id="dTerm" style="justify-content:center"></div></div>
+      <div class="row" id="dBtns"></div>
+      <div class="fb" id="dFb" aria-live="polite"></div>
+      <div class="steps" id="dSteps"></div>
+      <div class="row" style="margin-top:8px"><button class="btn" type="button" id="dNext" hidden>Nächster Term →</button></div>
+    </div>
+  </div>
+</section>
+
+<div class="merk">
+  <h2>Mein Merkzettel</h2>
+  <ul>
+    <li>Ein <span class="hl">Term</span> ist ein Rechen-Rezept aus Zahlen, Buchstaben, Rechenzeichen und Klammern. <b>Kein =</b>!</li>
+    <li>Ein Buchstabe wie <b>x</b> ist eine Schachtel für eine Zahl. Zahl hineinlegen = <b>einsetzen</b>.</li>
+    <li>Gleicher Buchstabe → gleiche Zahl. Dann: Klammer zuerst, Punkt vor Strich.</li>
+    <li><b>Summand + Summand = Summe</b> · <b>Minuend − Subtrahend = Differenz</b></li>
+    <li><b>Faktor · Faktor = Produkt</b> · <b>Dividend : Divisor = Quotient</b></li>
+  </ul>
+  <p id="finalStars" style="margin:12px 0 0"></p>
+</div>
+<div class="banner">Term = Rechen-Rezept für jede Zahl!</div>
+
+</div>
+
+<div class="stars" id="stars" aria-live="polite">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9z" fill="var(--hl)" stroke="var(--ink)" stroke-width="1.6" stroke-linejoin="round"/></svg>
+  <span id="starN">0</span>
+</div>
+
+<script>
+(function(){
+const $ = s => document.querySelector(s);
+const OPS = ['+','−','·',':'];
+const NAMES = {'+':'Summe','−':'Differenz','·':'Produkt',':':'Quotient'};
+const isNum = t => /^\d+(\.\d+)?$/.test(String(t));
+const rnd = (a,b) => a + Math.floor(Math.random()*(b-a+1));
+const shuffle = a => { a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
+function calc(a,op,b){a=+a;b=+b;switch(op){case '+':return a+b;case '−':return a-b;case '·':return a*b;case ':':return a/b;}}
+function fmt(n){ if(typeof n!=='number' && !isNum(n)) return String(n); if(Number.isInteger(+n)) return String(+n); return String(Math.round(n*100)/100).replace('.',','); }
+const T = s => s.split(' ');
+
+/* Sterne */
+const earned = new Set();
+function award(id){
+  if(earned.has(id)) return;
+  earned.add(id);
+  $('#starN').textContent = earned.size;
+  const s=$('#stars'); s.classList.remove('bump'); void s.offsetWidth; s.classList.add('bump');
+  $('#finalStars').textContent = 'Du hast schon ' + earned.size + (earned.size===1?' Stern':' Sterne') + ' gesammelt. Super!';
+}
+$('#finalStars').textContent = 'Sammle Sterne, indem du die Aufgaben oben löst.';
+
+/* Terme anzeigen */
+function renderTokens(arr, opt){
+  opt = opt || {};
+  return arr.map((t,i) => {
+    t = String(t);
+    const last = opt.last === i ? ' last' : '';
+    if(t[0]==='#') return '<span class="tk box filled'+(opt.pop?' pop':'')+'">'+fmt(t.slice(1))+'</span>';
+    if(/^[a-z]$/.test(t)) return '<span class="tk box">'+t+'</span>';
+    if(OPS.includes(t)) return '<span class="tk op'+last+'">'+t+'</span>';
+    if(t==='='||t==='(' ||t===')') return '<span class="tk par">'+t+'</span>';
+    return '<span class="tk num">'+fmt(t)+'</span>';
+  }).join('');
+}
+
+/* Parser */
+function parse(toks){
+  let p=0;
+  const peek=()=>toks[p];
+  function expr(){let n=term();while(peek()==='+'||peek()==='−'){const op=toks[p++];n={op,l:n,r:term()};}return n;}
+  function term(){let n=factor();while(peek()==='·'||peek()===':'){const op=toks[p++];n={op,l:n,r:factor()};}return n;}
+  function factor(){const t=toks[p];if(t===undefined)throw 'end';if(isNum(t)){p++;return{num:+t};}if(t==='x'){p++;return{v:1};}
+    if(t==='('){p++;const e=expr();if(toks[p]!==')')throw 'paren';p++;return{paren:e};}throw 'bad';}
+  const tree=expr(); if(p<toks.length) throw 'rest'; return tree;
+}
+function evalTree(n,x){ if('num' in n) return n.num; if(n.v) return x; if(n.paren) return evalTree(n.paren,x); return calc(evalTree(n.l,x),n.op,evalTree(n.r,x)); }
+function hasVar(n){ if(n.v) return true; if(n.paren) return hasVar(n.paren); if(n.op) return hasVar(n.l)||hasVar(n.r); return false; }
+function rootOp(n){ while(n.paren) n=n.paren; return n.op||null; }
+
+/* Schrittweise rechnen */
+function cleanup(arr){
+  let changed=true;
+  while(changed){changed=false;
+    for(let i=0;i+2<arr.length;i++){
+      if(arr[i]==='('&&arr[i+2]===')'&&isNum(arr[i+1])){arr.splice(i,3,arr[i+1]);changed=true;break;}
+    }}
+  return arr;
+}
+function reduceFlat(seg){
+  const hasLine = seg.some(t=>t==='+'||t==='−');
+  let k = seg.findIndex(t=>t==='·'||t===':'), rule;
+  if(k>=0) rule = hasLine ? 'Punkt vor Strich' : (seg.length>3 ? 'von links nach rechts' : '');
+  else { k = seg.findIndex(t=>t==='+'||t==='−'); rule = seg.length>3 ? 'von links nach rechts' : ''; }
+  const out=seg.slice(); out.splice(k-1,3,String(calc(seg[k-1],seg[k],seg[k+1])));
+  return {seg:out, rule};
+}
+function stepsOf(tokens){
+  let arr = cleanup(tokens.map(String)); const out=[]; let guard=0;
+  while(arr.length>1 && guard++<30){
+    const j = arr.indexOf(')');
+    if(j>=0){
+      const i = arr.lastIndexOf('(', j);
+      const r = reduceFlat(arr.slice(i+1,j));
+      arr = cleanup([...arr.slice(0,i),'(',...r.seg,')',...arr.slice(j+1)]);
+      out.push({t:arr.slice(), rule:'Klammer zuerst'});
+    } else {
+      const r = reduceFlat(arr); arr=r.seg; out.push({t:arr.slice(), rule:r.rule});
+    }
+  }
+  return out;
+}
+const tagHtml = r => r ? '<span class="tag">'+r+'</span>' : '';
+
+/* ===== 1: Baukasten ===== */
+let bt = T('( 3 + 4 ) · 2');
+const padKeys = ['1','2','3','4','5','x','6','7','8','9','0','=','+','−','·',':','(',')'];
+$('#bPad').innerHTML = padKeys.map(k=>{
+  const c = /\d/.test(k)?'c-num':k==='x'?'c-var':OPS.includes(k)?'c-op':k==='='?'c-eq':'c-par';
+  return '<button type="button" class="chip '+c+'" data-k="'+k+'" aria-label="Baustein '+k+'">'+k+'</button>';
+}).join('');
+$('#bPad').addEventListener('click', e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  const k=b.dataset.k, last=bt[bt.length-1];
+  if(/\d/.test(k) && last && /^\d+$/.test(last)){ if(last.length<3) bt[bt.length-1]=last+k; }
+  else if(bt.length<18) bt.push(k);
+  drawBuilder();
+});
+$('#bBack').onclick=()=>{ const l=bt[bt.length-1]; if(l && /^\d{2,}$/.test(l)) bt[bt.length-1]=l.slice(0,-1); else bt.pop(); drawBuilder(); };
+$('#bClear').onclick=()=>{ bt=[]; drawBuilder(); };
+const ideas=['5 · x + 1','( 8 − 3 ) · 4','12 : 3 + x','x + x','9 = 9','3 + · 4','( 2 + 6'];
+let ideaI=0;
+$('#bIdea').onclick=()=>{ bt=T(ideas[ideaI++%ideas.length]); drawBuilder(); };
+
+function judge(t){
+  const ok=(h)=>({cls:'ok',h}), bad=(h)=>({cls:'bad',h});
+  if(!t.length) return {cls:'',h:'Tippe auf die Bausteine und bau einen Term.'};
+  if(t.includes('=')) return bad('Da ist ein = drin. Dann ist es eine <b>Gleichung</b>, kein Term. Nimm das = wieder weg.');
+  const first=t[0], last=t[t.length-1];
+  if(OPS.includes(first)||first===')') return bad('Ein Term fängt mit einer Zahl, einem Buchstaben oder mit ( an.');
+  for(let i=0;i<t.length-1;i++){
+    const a=t[i], b=t[i+1];
+    if(OPS.includes(a)&&OPS.includes(b)) return bad('Zwei Rechenzeichen hintereinander. Dazwischen fehlt eine Zahl.');
+    if(a==='('&&b===')') return bad('Leere Klammern ergeben keinen Sinn. Da muss etwas hinein.');
+    if(a==='('&&OPS.includes(b)) return bad('Nach ( muss eine Zahl oder ein Buchstabe kommen.');
+    if(OPS.includes(a)&&b===')') return bad('Vor ) fehlt noch eine Zahl.');
+    if((a==='x'||a===')')&&/^\d/.test(b)) return bad('Zwischen '+a+' und '+b+' fehlt ein Rechenzeichen.');
+  }
+  if(OPS.includes(last)||last==='(') return bad('Am Ende fehlt noch etwas: eine Zahl oder ein Buchstabe.');
+  let d=0; for(const x of t){ if(x==='(')d++; if(x===')')d--; if(d<0) return bad('Hier wird eine Klammer geschlossen, die nie geöffnet wurde.'); }
+  if(d>0) return bad('Es fehlt noch eine Klammer zu <b>)</b>. Klammern gibt es immer als Paar.');
+  // Kurzform 3x oder 2(…) erlauben
+  const pt=[]; let short=false;
+  t.forEach((x,i)=>{ const prev=pt[pt.length-1]; if(i>0 && (x==='x'||x==='(') && (/^\d/.test(prev)||prev==='x'||prev===')')){pt.push('·');short=true;} pt.push(x); });
+  let tree; try{ tree=parse(pt); }catch(e){ return bad('Das ist noch kein Term. Schau dir die Reihenfolge der Bausteine an.'); }
+  const shortNote = short ? '<br><span class="small muted">Wo kein Rechenzeichen steht, ist ein Malpunkt gemeint: 3x heißt 3 · x.</span>' : '';
+  const op=rootOp(tree);
+  const name = op ? ' Er ist eine <b>'+NAMES[op]+'</b> (mehr dazu in Abschnitt 4).' : '';
+  if(hasVar(tree)){ award('builder-var'); return ok('<span class="ic">✓</span>Super, das ist ein Term!'+name+' Er hat eine Schachtel x. Setz eine Zahl ein, dann bekommst du ein Ergebnis (Abschnitt 2).'+shortNote); }
+  const v=evalTree(tree,0);
+  if(!isFinite(v)) return {cls:'warn2',h:'Das ist ein Term, aber durch 0 kann man nicht teilen. Er hat keinen Wert.'};
+  award('builder-num');
+  const val = Number.isInteger(v) ? v : fmt(v)+' (keine ganze Zahl)';
+  return ok('<span class="ic">✓</span>Super, das ist ein Term!'+name+' Sein Wert ist <b>'+val+'</b>.'+shortNote);
+}
+function drawBuilder(){
+  $('#bExpr').innerHTML = bt.length ? renderTokens(bt) : '<span class="muted small">Hier erscheint dein Term …</span>';
+  const r=judge(bt); const fb=$('#bFb'); fb.className='fb '+r.cls; fb.innerHTML=r.h;
+}
+drawBuilder();
+
+/* ===== 1: Term oder kein Term? ===== */
+const qs=[
+  {t:'8 + 5',a:true,why:'Zwei Zahlen und ein Rechenzeichen. Das ist ein Term.'},
+  {t:'12',a:true,why:'Auch eine einzelne Zahl ist schon ein Term.'},
+  {t:'3 · x',a:true,why:'x ist eine Schachtel für eine Zahl. Das ist erlaubt.'},
+  {t:'7 + 3 = 10',a:false,why:'Da ist ein =. Das ist eine Gleichung. Links und rechts davon stehen aber Terme.'},
+  {t:'5 + · 2',a:false,why:'Zwei Rechenzeichen hintereinander. Dazwischen fehlt eine Zahl.'},
+  {t:'(4 + 2) · 6',a:true,why:'Klammern sind erlaubt, wenn sie als Paar vorkommen.'},
+  {t:'9 −',a:false,why:'Am Ende fehlt etwas. 9 minus was?'},
+  {t:'(10 : 2',a:false,why:'Die Klammer wird geöffnet, aber nie geschlossen.'},
+  {t:'a + b',a:true,why:'Buchstaben stehen für Zahlen. Das ist ein Term.'}
+];
+let qi=0, qRes=[];
+function drawQ(){
+  $('#qDots').innerHTML = qs.map((_,i)=>'<span class="dot '+(qRes[i]===true?'ok':qRes[i]===false?'bad':i===qi?'now':'')+'"></span>').join('');
+  if(qi>=qs.length){
+    const n=qRes.filter(Boolean).length;
+    $('#qCard').innerHTML='Geschafft! <br>'+n+' von '+qs.length+' richtig';
+    $('#qBtns').hidden=true; $('#qFb').className='fb'; $('#qFb').textContent = n===qs.length?'Perfekt! Du erkennst Terme sofort.':'Gut gemacht! Probier es ruhig nochmal.';
+    $('#qNext').hidden=false; $('#qNext').textContent='Nochmal spielen';
+    if(n===qs.length) award('termcheck-all');
+    return;
+  }
+  $('#qCard').textContent=qs[qi].t; $('#qBtns').hidden=false; $('#qFb').innerHTML=''; $('#qNext').hidden=true;
+  $('#qYes').disabled=$('#qNo').disabled=false;
+}
+function answerQ(ans){
+  const q=qs[qi], right=ans===q.a; qRes[qi]=right;
+  $('#qYes').disabled=$('#qNo').disabled=true;
+  const fb=$('#qFb'); fb.className='fb '+(right?'ok':'bad');
+  fb.innerHTML='<span class="ic">'+(right?'✓ Richtig!':'✗ Nicht ganz.')+'</span> '+q.why;
+  if(right) award('tc'+qi);
+  $('#qNext').hidden=false; $('#qNext').textContent = qi===qs.length-1?'Ergebnis zeigen →':'Weiter →';
+  $('#qDots').children[qi].className='dot '+(right?'ok':'bad');
+}
+$('#qYes').onclick=()=>answerQ(true);
+$('#qNo').onclick=()=>answerQ(false);
+$('#qNext').onclick=()=>{ if(qi>=qs.length){qi=0;qRes=[];} else qi++; drawQ(); };
+drawQ();
+
+/* ===== 2: Term-Maschine ===== */
+const mTerms=['2 · x + 3','x + x + x','( x + 2 ) · 3','20 − 2 · x','x · x + 1'];
+let mSel=0;
+$('#mChoice').innerHTML = mTerms.map((t,i)=>'<button type="button" class="btn'+(i===0?' sel':'')+'" data-i="'+i+'" aria-pressed="'+(i===0)+'">'+t.replace(/\( /g,'(').replace(/ \)/g,')')+'</button>').join('');
+$('#mChoice').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;mSel=+b.dataset.i;
+  [...$('#mChoice').children].forEach((c,i)=>{c.classList.toggle('sel',i===mSel);c.setAttribute('aria-pressed',i===mSel);});drawMachine(true);});
+$('#mX').addEventListener('input',()=>drawMachine(true));
+function drawMachine(pop){
+  const x=+$('#mX').value, toks=T(mTerms[mSel]);
+  $('#mIn').textContent=x;
+  $('#mTerm').innerHTML=renderTokens(toks);
+  const sub=toks.map(t=>t==='x'?'#'+x:t);
+  let h='<div class="expr"><span class="lbl" style="min-width:24px">=</span>'+renderTokens(sub,{pop})+'<span class="tag">x = '+x+' einsetzen</span></div>';
+  const st=stepsOf(toks.map(t=>t==='x'?String(x):t));
+  st.forEach(s=>{ h+='<div class="expr"><span class="lbl" style="min-width:24px">=</span>'+renderTokens(s.t)+tagHtml(s.rule)+'</div>'; });
+  $('#mSteps').innerHTML=h;
+  $('#mOut').textContent=fmt(st.length?st[st.length-1].t[0]:x);
+  const nx=toks.filter(t=>t==='x').length;
+  $('#mNote').innerHTML = nx>1 ? 'Hier gibt es '+nx+' Schachteln x. Alle bekommen <b>dieselbe Zahl</b>!' : 'Schieb den Regler: Der Term bleibt gleich, nur die Zahl ändert sich.';
+  if(pop) award('machine');
+}
+drawMachine(false);
+
+/* ===== 2: Wertetabelle ===== */
+const wTerms=['3 · x + 2','( x + 1 ) · 2','10 + 5 · x','4 · x − 1','x · x','20 − 3 · x'];
+let wSel=0; const wXs=[1,2,3,4,5];
+function drawTable(){
+  const toks=T(wTerms[wSel]);
+  $('#wTerm').innerHTML=renderTokens(toks);
+  let h='<tr><th>x</th>'+wXs.map(x=>'<th>'+x+'</th>').join('')+'</tr><tr><th>Wert</th>';
+  h+=wXs.map((x,i)=>'<td id="wc'+i+'"><input id="wt'+i+'" inputmode="numeric" autocomplete="off" aria-label="Wert für x = '+x+'"><span class="hint"></span></td>').join('')+'</tr>';
+  $('#wTable').innerHTML=h; $('#wFb').innerHTML='';
+}
+$('#wCheck').onclick=()=>{
+  const toks=T(wTerms[wSel]); const tree=parse(toks); let good=0;
+  wXs.forEach((x,i)=>{
+    const cell=$('#wc'+i), inp=$('#wt'+i), hint=cell.querySelector('.hint');
+    const want=evalTree(tree,x), got=inp.value.trim();
+    cell.classList.remove('ok','bad'); hint.textContent='';
+    if(got==='') return;
+    if(+got.replace(',','.')===want){cell.classList.add('ok');good++;}
+    else {cell.classList.add('bad'); hint.textContent=toks.map(t=>t==='x'?x:t).join(' ').replace(/\( /g,'(').replace(/ \)/g,')');}
+  });
+  const fb=$('#wFb');
+  if(good===wXs.length){fb.className='fb ok';fb.innerHTML='<span class="ic">✓</span>Alles richtig! Du bist ein Einsetz-Profi.';award('wt-'+wSel);}
+  else {fb.className='fb bad';fb.innerHTML=good+' von '+wXs.length+' richtig. Bei den roten Feldern steht, was du rechnen musst. Denk an Punkt vor Strich!';}
+};
+$('#wNew').onclick=()=>{ wSel=(wSel+1)%wTerms.length; drawTable(); };
+drawTable();
+
+/* ===== 3: Eisdiele ===== */
+let iceN=2;
+const scoopCols=['#f6c1d0','#8b5a3c','#f3e3a2','#b5e0b0','#f4a261','#cdb4f0'];
+function drawIce(){
+  const cream=$('#iceCream').checked;
+  let s='<g stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round">';
+  s+='<path d="M52 150 L80 244 L108 150 Z" fill="#e9b872"/>';
+  s+='<path d="M60 162 L100 162 M64 178 L96 178 M69 196 L91 196 M73 212 L87 212" stroke-width="1.5" fill="none"/>';
+  for(let i=0;i<iceN;i++){ const y=140-i*24; s+='<circle cx="80" cy="'+y+'" r="27" fill="'+scoopCols[i%scoopCols.length]+'"/>'; }
+  if(cream){ const y=140-(iceN-1)*24-24; s+='<path d="M60 '+(y+6)+' q20 -34 40 0 q-4 -10 -20 -8 q-16 -2 -20 8z" fill="#ffffff"/><circle cx="80" cy="'+(y-18)+'" r="5" fill="#d33"/>'; }
+  s+='</g>';
+  $('#iceSvg').innerHTML=s;
+  $('#iceSvg').setAttribute('aria-label','Eistüte mit '+iceN+' Kugeln'+(cream?' und Sahne':''));
+  $('#iceN').textContent=iceN;
+  const toks = cream ? T('2 · x + 1') : T('2 · x');
+  $('#iceTerm').innerHTML=renderTokens(toks)+'<span class="small muted">&nbsp;€</span>';
+  const sub=toks.map(t=>t==='x'?'#'+iceN:t);
+  const st=stepsOf(toks.map(t=>t==='x'?String(iceN):t));
+  $('#iceSub').innerHTML=renderTokens(sub)+st.map(x=>'<span class="tk op">=</span>'+renderTokens(x.t)).join('')+'<span class="small muted">&nbsp;€</span>';
+  $('#iceMinus').disabled=iceN<=1; $('#icePlus').disabled=iceN>=6;
+}
+$('#iceMinus').onclick=()=>{ if(iceN>1){iceN--;drawIce();} };
+$('#icePlus').onclick=()=>{ if(iceN<6){iceN++;drawIce();award('ice');} };
+$('#iceCream').onchange=drawIce;
+drawIce();
+
+/* ===== 3: Streichhölzer ===== */
+function match(x1,y1,x2,y2,col){
+  const head = '<circle cx="'+x2+'" cy="'+y2+'" r="4.5" fill="#c0392b"/>';
+  return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="'+col+'" stroke-width="5" stroke-linecap="round"/>'+head;
+}
+function drawMatches(){
+  const n=+$('#mqN').value, s=48, ox=14, oy=18, g=4;
+  $('#mqNv').textContent=n;
+  const w=ox*2+n*s; $('#matchSvg').setAttribute('viewBox','0 0 '+Math.max(w,120)+' 90'); $('#matchSvg').setAttribute('width',Math.max(w,120));
+  let h='';
+  h+=match(ox,oy+s-g,ox,oy+g,'var(--orange)');
+  for(let i=0;i<n;i++){
+    const x=ox+i*s;
+    h+=match(x+g,oy,x+s-g,oy,'var(--blue)');
+    h+=match(x+g,oy+s,x+s-g,oy+s,'var(--blue)');
+    h+=match(x+s,oy+s-g,x+s,oy+g,'var(--blue)');
+  }
+  $('#matchSvg').innerHTML=h;
+  $('#matchSvg').setAttribute('aria-label',n+' Quadrate aus '+(3*n+1)+' Streichhölzern');
+  const toks=T('3 · n + 1');
+  $('#mqTerm').innerHTML=renderTokens(toks);
+  const sub=toks.map(t=>t==='n'?'#'+n:t);
+  const st=stepsOf(toks.map(t=>t==='n'?String(n):t));
+  $('#mqSub').innerHTML=renderTokens(sub)+st.map(x=>'<span class="tk op">=</span>'+renderTokens(x.t)).join('')+'<span class="small muted">&nbsp;Hölzer, zähl nach!</span>';
+}
+$('#mqN').addEventListener('input',drawMatches);
+drawMatches();
+$('#mqCheck').onclick=()=>{
+  const v=+$('#mqAns').value.trim(), fb=$('#mqFb');
+  if(!$('#mqAns').value.trim()){fb.className='fb';fb.textContent='Schreib zuerst eine Zahl hinein.';return;}
+  if(v===61){fb.className='fb ok';fb.innerHTML='<span class="ic">✓</span>Genau! 3 · 20 + 1 = 60 + 1 = 61. Und für 100 Quadrate? 3 · 100 + 1 = 301. Der Term funktioniert für jede Zahl!';award('match');}
+  else {fb.className='fb bad';fb.innerHTML='Noch nicht. Leg 20 in die Schachtel n: 3 · <span class="tk box" style="display:inline-grid;min-width:30px;height:30px">20</span> + 1. Punkt vor Strich!';}
+};
+
+/* ===== 3: Geschichten ===== */
+const stories=[
+  {t:'Tom hat x Sticker. Lena hat 5 Sticker mehr als Tom. Wie viele Sticker hat Lena?',o:['x + 5','x − 5','5 · x'],a:0,why:'„Mehr als“ heißt: dazuzählen. Lena hat x + 5 Sticker.'},
+  {t:'Ein Kinoticket kostet 7 €. Wie viel zahlen x Kinder zusammen?',o:['7 + x','7 · x','x : 7'],a:1,why:'Jedes Kind zahlt 7 €. Bei x Kindern sind das 7 · x Euro.'},
+  {t:'30 Gummibärchen werden gerecht an x Kinder verteilt. Wie viele bekommt jedes Kind?',o:['30 − x','x : 30','30 : x'],a:2,why:'Gerecht verteilen heißt teilen. Die 30 wird durch x geteilt: 30 : x.'},
+  {t:'Mia hat 20 € gespart. Sie kauft ein Buch für x €. Wie viel Geld hat sie noch?',o:['20 − x','x − 20','20 + x'],a:0,why:'Von den 20 € geht der Preis x weg: 20 − x.'},
+  {t:'Die Klasse fährt mit dem Bus. Jedes der x Kinder zahlt 4 €, der Lehrer zahlt zusätzlich 10 €. Wie viel kostet die Fahrt insgesamt?',o:['4 + x + 10','4 · x + 10','(4 + 10) · x'],a:1,why:'x Kinder zahlen je 4 €, das sind 4 · x. Dazu kommen die 10 € vom Lehrer: 4 · x + 10.'}
+];
+let si=0, sRes=[];
+function drawStory(){
+  $('#sDots').innerHTML=stories.map((_,i)=>'<span class="dot '+(sRes[i]===true?'ok':sRes[i]===false?'bad':i===si?'now':'')+'"></span>').join('');
+  if(si>=stories.length){
+    const n=sRes.filter(Boolean).length;
+    $('#sText').textContent='Fertig! '+n+' von '+stories.length+' Geschichten richtig übersetzt.';
+    $('#sOpts').innerHTML=''; $('#sFb').innerHTML=''; $('#sNext').hidden=false; $('#sNext').textContent='Nochmal';
+    return;
+  }
+  const s=stories[si];
+  $('#sText').textContent=s.t;
+  $('#sOpts').innerHTML=s.o.map((o,i)=>'<button type="button" class="btn" data-i="'+i+'">'+o+'</button>').join('');
+  $('#sFb').innerHTML=''; $('#sNext').hidden=true;
+}
+$('#sOpts').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b||b.disabled) return;
+  const s=stories[si], i=+b.dataset.i, right=i===s.a;
+  if(sRes[si]===undefined) sRes[si]=right;
+  if(right){
+    b.classList.add('right'); [...$('#sOpts').children].forEach(c=>c.disabled=true);
+    $('#sFb').className='fb ok'; $('#sFb').innerHTML='<span class="ic">✓ Richtig!</span> '+s.why;
+    if(sRes[si]) award('story'+si);
+    $('#sNext').hidden=false; $('#sNext').textContent= si===stories.length-1?'Ergebnis zeigen →':'Nächste Geschichte →';
+  } else {
+    b.classList.add('wrong'); b.disabled=true;
+    $('#sFb').className='fb bad'; $('#sFb').innerHTML='Nicht ganz. Lies die Geschichte nochmal langsam. Welche Wörter verraten die Rechenart?';
+  }
+  $('#sDots').children[si].className='dot '+(sRes[si]?'ok':'bad');
+});
+$('#sNext').onclick=()=>{ if(si>=stories.length){si=0;sRes=[];} else si++; drawStory(); };
+drawStory();
+
+/* ===== 4: Rechenarten ===== */
+const OPINFO={
+  '+':{n:['Summand','Summand','Summe'],d:[7,5],tip:'<b>Summand + Summand = Summe.</b> Beim Plusrechnen heißen beide Zahlen gleich. Tipp: Die Summe ist das, was zusammenkommt, wie beim Sammeln.'},
+  '−':{n:['Minuend','Subtrahend','Differenz'],d:[12,5],tip:'<b>Minuend − Subtrahend = Differenz.</b> ABC-Trick: M kommt im Alphabet vor S, also steht der <b>M</b>inuend vorne und der <b>S</b>ubtrahend dahinter. Die Differenz ist der Unterschied.'},
+  '·':{n:['Faktor','Faktor','Produkt'],d:[4,6],tip:'<b>Faktor · Faktor = Produkt.</b> Beide Zahlen heißen gleich. Du darfst sie sogar tauschen: 4 · 6 = 6 · 4.'},
+  ':':{n:['Dividend','Divisor','Quotient'],d:[24,6],tip:'<b>Dividend : Divisor = Quotient.</b> ABC-Trick: Divid<b>e</b>nd kommt vor Divis<b>o</b>r, denn e steht im Alphabet vor o. Der Dividend wird geteilt, der Divisor teilt.'}
+};
+let nOp='+', nA=7, nB=5;
+$('#nTabs').innerHTML=OPS.map(o=>'<button type="button" class="btn'+(o==='+'?' sel':'')+'" role="tab" aria-selected="'+(o==='+')+'" data-o="'+o+'" aria-label="'+NAMES[o]+'">'+o+'</button>').join('');
+$('#nTabs').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;nOp=b.dataset.o;[nA,nB]=OPINFO[nOp].d;
+  [...$('#nTabs').children].forEach(c=>{const on=c.dataset.o===nOp;c.classList.toggle('sel',on);c.setAttribute('aria-selected',on);});drawNames();award('tab'+nOp);});
+function drawNames(){
+  const info=OPINFO[nOp];
+  $('#nEqn').innerHTML=
+    '<div class="col"><div class="v"><input id="nA" inputmode="numeric" value="'+nA+'" aria-label="'+info.n[0]+'"></div><div class="name">'+info.n[0]+'</div></div>'+
+    '<div class="col"><div class="o">'+nOp+'</div></div>'+
+    '<div class="col"><div class="v"><input id="nB" inputmode="numeric" value="'+nB+'" aria-label="'+info.n[1]+'"></div><div class="name">'+info.n[1]+'</div></div>'+
+    '<div class="col"><div class="o">=</div></div>'+
+    '<div class="col"><div class="v res" id="nR"></div><div class="name">'+info.n[2]+'</div></div>';
+  $('#nA').addEventListener('input',e=>{nA=parseInt(e.target.value)||0;drawRes();});
+  $('#nB').addEventListener('input',e=>{nB=parseInt(e.target.value)||0;drawRes();});
+  drawRes();
+}
+function drawRes(){
+  const info=OPINFO[nOp]; let r, extra='';
+  if(nOp==='−'&&nB>nA){r='?';extra='<br><span class="small">Der Subtrahend ist größer als der Minuend. Das lernst du erst später. Nimm eine kleinere Zahl.</span>';}
+  else if(nOp===':'&&nB===0){r='?';extra='<br><span class="small">Durch 0 kann man nicht teilen!</span>';}
+  else if(nOp===':'&&nA%nB!==0){r=Math.floor(nA/nB)+' R '+(nA%nB);extra='<br><span class="small">Geht nicht glatt auf: Es bleibt ein Rest (R).</span>';}
+  else r=calc(nA,nOp,nB);
+  $('#nR').textContent=r;
+  $('#nTip').innerHTML=info.tip+'<br><span class="small muted">Übrigens: Schon der Term '+nA+' '+nOp+' '+nB+' allein heißt <b>'+info.n[2]+'</b>, auch ohne Ergebnis.</span>'+extra;
+}
+drawNames();
+
+/* ===== 4: Beschriften ===== */
+const ALLN=['Summand','Summe','Minuend','Subtrahend','Differenz','Faktor','Produkt','Dividend','Divisor','Quotient'];
+let g={}, gPick=null;
+function newGame(){
+  const op=OPS[rnd(0,3)]; let a,b;
+  if(op==='+'){a=rnd(3,60);b=rnd(2,40);}
+  else if(op==='−'){a=rnd(12,80);b=rnd(2,a-1);}
+  else if(op==='·'){a=rnd(2,10);b=rnd(2,10);}
+  else {b=rnd(2,10);a=b*rnd(2,10);}
+  const want=OPINFO[op].n;
+  const uniq=[...new Set(want)];
+  const others=shuffle(ALLN.filter(x=>!uniq.includes(x))).slice(0,6-uniq.length);
+  g={op,a,b,res:calc(a,op,b),want,fill:[null,null,null],bank:shuffle(uniq.concat(others))};
+  gPick=null; drawGame(); $('#gFb').innerHTML='';
+}
+function drawGame(){
+  const slot=i=>'<button type="button" class="slot" data-s="'+i+'" aria-label="Kästchen '+(i+1)+'">'+(g.fill[i]||'?')+'</button>';
+  $('#gEqn').innerHTML=
+    '<div class="col"><div class="v">'+g.a+'</div>'+slot(0)+'</div>'+
+    '<div class="col"><div class="o">'+g.op+'</div></div>'+
+    '<div class="col"><div class="v">'+g.b+'</div>'+slot(1)+'</div>'+
+    '<div class="col"><div class="o">=</div></div>'+
+    '<div class="col"><div class="v">'+g.res+'</div>'+slot(2)+'</div>';
+  $('#gBank').innerHTML=g.bank.map(w=>'<button type="button" class="btn'+(w===gPick?' sel':'')+'" data-w="'+w+'" aria-pressed="'+(w===gPick)+'">'+w+'</button>').join('');
+}
+$('#gBank').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;gPick=b.dataset.w;drawGame();
+  $('#gFb').className='fb';$('#gFb').textContent='Jetzt tippe auf das Kästchen, wo „'+gPick+'“ hingehört.';});
+$('#gEqn').addEventListener('click',e=>{const b=e.target.closest('.slot');if(!b)return;
+  if(!gPick){$('#gFb').className='fb';$('#gFb').textContent='Tippe zuerst unten auf ein Wort.';return;}
+  g.fill[+b.dataset.s]=gPick; drawGame(); $('#gFb').textContent='';});
+$('#gCheck').onclick=()=>{
+  let good=0;
+  [...$('#gEqn').querySelectorAll('.slot')].forEach((s,i)=>{const ok=g.fill[i]===g.want[i];s.classList.add(ok?'ok':'bad');if(ok)good++;});
+  const fb=$('#gFb');
+  if(good===3){fb.className='fb ok';fb.innerHTML='<span class="ic">✓</span>Alles richtig beschriftet! Klick auf „Neue Aufgabe“.';award('g'+g.op+g.a+g.b);}
+  else {fb.className='fb bad';fb.innerHTML=good+' von 3 richtig. Schau oben bei der Rechenart '+g.op+' nach.';}
+};
+$('#gNew').onclick=newGame;
+newGame();
+
+/* ===== 4: Term-Detektiv ===== */
+const dTerms=['( 4 + 6 ) · 3','4 + 6 · 3','20 − 12 : 4','( 20 − 12 ) : 4','5 · 4 − 2','36 : ( 2 + 7 )','8 + 2 − 3','3 · ( 10 − 4 )'];
+let di=0, dRes=[];
+$('#dBtns').innerHTML=OPS.map(o=>'<button type="button" class="btn" data-o="'+o+'">'+NAMES[o]+'</button>').join('');
+function drawDet(){
+  $('#dDots').innerHTML=dTerms.map((_,i)=>'<span class="dot '+(dRes[i]===true?'ok':dRes[i]===false?'bad':i===di?'now':'')+'"></span>').join('');
+  $('#dSteps').innerHTML=''; $('#dFb').innerHTML=''; $('#dNext').hidden=true;
+  if(di>=dTerms.length){
+    const n=dRes.filter(Boolean).length;
+    $('#dTerm').innerHTML='<span>'+n+' von '+dTerms.length+' gelöst!</span>';
+    $('#dBtns').hidden=true; $('#dNext').hidden=false; $('#dNext').textContent='Nochmal';
+    return;
+  }
+  $('#dBtns').hidden=false; [...$('#dBtns').children].forEach(b=>b.disabled=false);
+  $('#dTerm').innerHTML=renderTokens(T(dTerms[di]));
+}
+$('#dBtns').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b||b.disabled) return;
+  const toks=T(dTerms[di]), op=rootOp(parse(toks)), right=b.dataset.o===op;
+  if(dRes[di]===undefined) dRes[di]=right;
+  const fb=$('#dFb');
+  if(!right){ b.disabled=true; fb.className='fb bad'; fb.innerHTML='Nicht ganz. Rechne im Kopf Schritt für Schritt: Was rechnest du ganz am Schluss?'; $('#dDots').children[di].className='dot bad'; return; }
+  [...$('#dBtns').children].forEach(c=>c.disabled=true);
+  fb.className='fb ok'; fb.innerHTML='<span class="ic">✓ Richtig!</span> Zuletzt rechnest du <b>'+op+'</b>, also ist der Term eine <b>'+NAMES[op]+'</b>.';
+  if(dRes[di]) award('det'+di);
+  const st=stepsOf(toks); let h='';
+  st.forEach((s,i)=>{
+    const isLast=i===st.length-2;
+    const opIdx = isLast ? s.t.findIndex(t=>OPS.includes(t)) : -1;
+    h+='<div class="expr sm"><span class="lbl" style="min-width:20px">=</span>'+renderTokens(s.t,{last:opIdx})+(isLast?'<span class="tag">letzter Schritt</span>':tagHtml(s.rule))+'</div>';
+  });
+  $('#dSteps').innerHTML=h;
+  $('#dNext').hidden=false; $('#dNext').textContent= di===dTerms.length-1?'Ergebnis zeigen →':'Nächster Term →';
+  $('#dDots').children[di].className='dot '+(dRes[di]?'ok':'bad');
+});
+$('#dNext').onclick=()=>{ if(di>=dTerms.length){di=0;dRes=[];} else di++; drawDet(); };
+drawDet();
+})();
+</script>
+
+</body></html>

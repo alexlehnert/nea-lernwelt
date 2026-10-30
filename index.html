@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<script src="/api/config"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="/sync.js" data-hub="1"></script>
+<title>Neas Lernwelt</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=Gochi+Hand&display=swap">
+<style>
+/* Layout: ein Regal mit Schulheften – jedes Fach ein farbiger Heftumschlag mit Namensschild, gruppiert nach Fächern wie im Ranzen */
+:root{
+  --bg:#f3f0e6; --paper:#fffdf7; --ink:#20304a; --muted:#5d6475; --line:#ddd6c4;
+  --en:#3f8f1f; --ma:#2c62c9; --bio:#e07a1f; --geo:#c8432f; --mu:#5a3fc0;
+  --on-cover:#ffffff; --label:#fffdf7; --label-ink:#20304a;
+  --f-display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
+  --f-body:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
+  --f-hand:"Gochi Hand","Comic Sans MS",cursive;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#141a26; --paper:#1c2433; --ink:#eef0f4; --muted:#a6adbd; --line:#2e3849;
+  --en:#4f9f2c; --ma:#3d72d6; --bio:#d9771f; --geo:#c9503c; --mu:#6c52d0;
+  --label:#f6f1e3; --label-ink:#20304a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141a26; --paper:#1c2433; --ink:#eef0f4; --muted:#a6adbd; --line:#2e3849;
+  --en:#4f9f2c; --ma:#3d72d6; --bio:#d9771f; --geo:#c9503c; --mu:#6c52d0;
+  --label:#f6f1e3; --label-ink:#20304a; color-scheme:dark}
+*{box-sizing:border-box}
+html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.5}
+.wrap{max-width:920px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 56px;display:flex;flex-direction:column;gap:30px}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--ma);outline-offset:3px}
+
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px 24px}
+.eyebrow{font-size:.8rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(2.2rem,8vw,3.4rem);line-height:1;margin:4px 0 0;letter-spacing:-.02em;text-wrap:balance}
+h1 .hand{font-family:var(--f-hand);font-weight:400;color:var(--bio);font-size:.9em;letter-spacing:0}
+.lead{margin:8px 0 0;color:var(--muted);max-width:52ch}
+.resume{display:inline-flex;align-items:center;gap:10px;text-decoration:none;background:var(--ink);color:var(--bg);border-radius:999px;padding:10px 18px;font-weight:700;min-height:44px}
+.resume small{font-weight:400;opacity:.8}
+
+h2{font-family:var(--f-display);font-weight:800;font-size:1.25rem;margin:0;display:flex;align-items:baseline;gap:10px}
+h2 span{font-family:var(--f-body);font-weight:400;font-size:.9rem;color:var(--muted)}
+section{display:flex;flex-direction:column;gap:14px}
+
+.shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px}
+.heft{--c:var(--ma);position:relative;display:flex;flex-direction:column;gap:14px;text-decoration:none;color:var(--on-cover);
+  background:var(--c);border-radius:6px 14px 14px 6px;padding:16px 16px 18px 26px;min-height:200px;
+  box-shadow:inset 10px 0 0 rgba(0,0,0,.14),0 10px 18px -12px rgba(20,30,50,.55);transition:transform .15s ease}
+.heft::before{content:"";position:absolute;left:14px;top:0;bottom:0;border-left:2px dotted rgba(255,255,255,.35)}
+@media (hover:hover){.heft:hover{transform:translateY(-3px) rotate(-.4deg)}}
+.heft:active{transform:translateY(1px)}
+.heft .top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.fach{font-family:var(--f-display);font-weight:800;font-size:.85rem;letter-spacing:.1em;text-transform:uppercase}
+.state{font-size:.75rem;font-weight:700;border:1.5px solid rgba(255,255,255,.7);border-radius:999px;padding:1px 9px;white-space:nowrap}
+.state.on{background:var(--label);color:var(--label-ink);border-color:var(--label)}
+.label{background:var(--label);color:var(--label-ink);border-radius:8px;padding:10px 12px 12px;display:flex;flex-direction:column;gap:2px;transform:rotate(-1deg);box-shadow:0 2px 0 rgba(0,0,0,.12)}
+.label .name{font-family:var(--f-hand);font-size:1.6rem;line-height:1.05}
+.label .lines{font-size:.88rem;color:#4b5263;border-top:1px solid #d9d2bf;padding-top:6px;margin-top:4px;min-width:0}
+.go{margin-top:auto;font-weight:700;font-size:.95rem;display:flex;align-items:center;gap:6px}
+.go::after{content:"→";transition:transform .15s}
+@media (hover:hover){.heft:hover .go::after{transform:translateX(4px)}}
+.en{--c:var(--en)} .ma{--c:var(--ma)} .bio{--c:var(--bio)} .geo{--c:var(--geo)} .mu{--c:var(--mu)}
+
+.refs{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.ref{display:flex;flex-direction:column;gap:2px;text-decoration:none;background:var(--paper);border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;min-width:0}
+@media (hover:hover){.ref:hover{border-color:var(--ink)}}
+.ref b{font-weight:700}
+.ref span{font-size:.85rem;color:var(--muted)}
+.note{font-size:.88rem;color:var(--muted);margin:0;max-width:70ch}
+.who{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.chip{font-weight:700;background:var(--paper);border:1.5px solid var(--line);border-radius:999px;padding:8px 14px}
+.out{font:inherit;font-weight:700;color:var(--ink);background:none;border:1.5px solid var(--line);border-radius:999px;padding:8px 14px;min-height:44px;cursor:pointer}
+.login{background:var(--paper);border:1.5px solid var(--line);border-radius:16px;padding:22px;max-width:420px;display:flex;flex-direction:column;gap:14px}
+.login h2{font-size:1.4rem}
+.login label{display:flex;flex-direction:column;gap:6px;font-weight:700;font-size:.95rem}
+.login input{font:inherit;font-size:1.1rem;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
+.login button{font:inherit;font-weight:700;font-size:1.05rem;background:var(--ma);color:#fff;border:none;border-radius:999px;padding:12px 22px;min-height:48px;cursor:pointer;align-self:flex-start}
+.login button:disabled{opacity:.6}
+.err{color:var(--geo);font-weight:700;margin:0;min-height:1.4em}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">Klasse 5 · alle Fächer an einem Ort</div>
+      <h1>Neas <span class="hand">Lernwelt</span></h1>
+      <p class="lead">Such dir ein Heft aus. Oben in jeder App kommst du mit „Lernwelt“ wieder hierher zurück. Dein Fortschritt wird in deinem Konto gespeichert, auf jedem Gerät.</p>
+    </div>
+    <div class="who" id="who" hidden>
+      <a class="resume" id="resume" href="#" hidden>Weitermachen <small id="resumeName"></small></a>
+      <span class="chip" id="userName"></span>
+      <button class="out" id="logout" type="button">Abmelden</button>
+    </div>
+  </header>
+
+  <form class="login" id="login" hidden>
+    <h2>Anmelden</h2>
+    <label for="lname">Name<input id="lname" autocomplete="username" autocapitalize="off" spellcheck="false" required></label>
+    <label for="lpw">Passwort<input id="lpw" type="password" autocomplete="current-password" required></label>
+    <button type="submit" id="lbtn">Los geht's</button>
+    <p class="err" id="lerr" role="alert"></p>
+  </form>
+  <p class="note" id="noconfig" hidden>Die Lernwelt ist noch nicht mit Supabase verbunden. Trag in Vercel SUPABASE_URL und SUPABASE_ANON_KEY ein (siehe README).</p>
+
+  <section aria-labelledby="h-faecher" id="faecher" hidden>
+    <h2 id="h-faecher">Deine Hefte <span>7 Lern-Apps</span></h2>
+    <div class="shelf" id="shelf"></div>
+  </section>
+
+  <section aria-labelledby="h-ref" id="refs" hidden>
+    <h2 id="h-ref">Zum Nachschlagen <span>öffnet sich in einem neuen Tab</span></h2>
+    <div class="refs">
+      <a class="ref" href="https://claude.ai/artifact/BWXY5mNJuKSzEBTuy6s5LS" target="_blank" rel="noopener"><b>Merkplakat Terme</b><span>Mathe</span></a>
+      <a class="ref" href="https://claude.ai/artifact/2uFKtcM6oqygmuiCnjhXFK" target="_blank" rel="noopener"><b>Merkblatt: 2er- und 10er-Potenzen</b><span>Mathe</span></a>
+      <a class="ref" href="https://claude.ai/artifact/F3KZTT6ncsVdgLyo42Sh2J" target="_blank" rel="noopener"><b>Lernplan 5. Klasse</b><span>Planen</span></a>
+      <a class="ref" href="https://claude.ai/artifact/5F1gLTMsWZBsAxN6R3kujD" target="_blank" rel="noopener"><b>Lernstrategien für Nea</b><span>Wie lerne ich gut?</span></a>
+    </div>
+  </section>
+</div>
+
+<script>
+const APPS=[
+  {id:'englisch',cls:'en',fach:'Englisch',name:'English trainer',info:'Vokabeln S. 170–180 und Grammatik G1, G2, G3, G6 im Karteikasten',key:'englisch-kartei-5-v1'},
+  {id:'rechenheft',cls:'ma',fach:'Mathe',name:'Rechenheft',info:'Terme und Potenzen üben, Schritt für Schritt',key:'mathe-rechenheft-5-v1'},
+  {id:'terme',cls:'ma',fach:'Mathe',name:'Terme verstehen',info:'Antippen, verschieben, ausprobieren: was ein Term ist'},
+  {id:'bio-expedition',cls:'bio',fach:'Biologie',name:'Bio-Expedition',info:'Zellen, Mikroskopier-Führerschein und Skelett',key:'zellstadt-v1'},
+  {id:'pflanzenzelle',cls:'bio',fach:'Biologie',name:'Expedition Pflanzenzelle',info:'Eine Pflanzenzelle auseinandernehmen und erkunden'},
+  {id:'atlas',cls:'geo',fach:'Erdkunde',name:'Atlas-Detektiv',info:'Kontinente, Ozeane und Arbeiten mit dem Atlas',key:'atlas-detektiv-v1'},
+  {id:'noten',cls:'mu',fach:'Musik',name:'Notenwerkstatt',info:'Noten lesen und Töne sicher erkennen',key:'notenwerkstatt-v1'}
+];
+const LAST='lernwelt-zuletzt';
+const has=k=>{if(!k)return false;try{return !!localStorage.getItem(k)}catch(e){return false}};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function render(){
+  document.getElementById('shelf').innerHTML=APPS.map(a=>{
+    const st=a.key?(has(a.key)?'<span class="state on">angefangen</span>':'<span class="state">neu</span>'):'';
+    return `<a class="heft ${a.cls}" href="${a.id}.html" data-id="${a.id}">
+      <div class="top"><span class="fach">${esc(a.fach)}</span>${st}</div>
+      <div class="label"><span class="name">${esc(a.name)}</span><span class="lines">${esc(a.info)}</span></div>
+      <span class="go">Öffnen</span></a>`;
+  }).join('');
+  document.querySelectorAll('.heft').forEach(el=>el.addEventListener('click',()=>{try{localStorage.setItem(LAST,el.dataset.id)}catch(e){}}));
+  let last=null;try{last=localStorage.getItem(LAST)}catch(e){}
+  const la=APPS.find(a=>a.id===last),r=document.getElementById('resume');
+  if(la){r.href=la.id+'.html';document.getElementById('resumeName').textContent=la.name;r.hidden=false;}else r.hidden=true;
+}
+const $=id=>document.getElementById(id);
+function show(user){
+  const inn=!!user;
+  $('login').hidden=inn;$('faecher').hidden=!inn;$('refs').hidden=!inn;$('who').hidden=!inn;
+  if(inn){const n=(user.email||'').replace(/@lernwelt\.local$/,'');$('userName').textContent=n.charAt(0).toUpperCase()+n.slice(1);render();}
+  else setTimeout(()=>$('lname').focus(),0);
+}
+if(!window.LW||!LW.configured){$('noconfig').hidden=false;}
+else{
+  LW.ready.then(s=>show(s&&s.user),()=>show(null));
+  $('login').addEventListener('submit',e=>{
+    e.preventDefault();$('lerr').textContent='';$('lbtn').disabled=true;
+    LW.signIn($('lname').value,$('lpw').value)
+      .then(s=>{$('lpw').value='';show(s&&s.user)})
+      .catch(()=>{$('lerr').textContent='Name oder Passwort stimmt nicht. Versuch es noch einmal.'})
+      .finally(()=>{$('lbtn').disabled=false});
+  });
+  $('logout').addEventListener('click',()=>LW.signOut().then(()=>show(null)));
+}
+</script>
+</body>
+</html>
