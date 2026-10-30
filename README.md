@@ -54,7 +54,8 @@ Fächer und Hefte stehen in [`hefte.js`](hefte.js).
    <script src="/sync.js"></script>
    ```
 3. Für den Zurück-Knopf die `lw-bar`-Leiste aus einer der vorhandenen Apps direkt nach `<body>` kopieren.
-4. In `hefte.js` einen Eintrag in `LW_HEFTE` anlegen: Fach, Thema, Name, eine Zeile Beschreibung und die Kapitel. Wenn die App etwas in `localStorage` speichert, den Schlüssel als `key` angeben, dann zeigt die Lernwelt „angefangen“ an. Ein neues Fach kommt in `LW_FAECHER` und erscheint, sobald es ein Heft hat.
+4. Für den Lernwelt-Look `tools/looks/<app>.css` anlegen und die App in `tools/lw_look.py` (APPS) eintragen, dann `python3 tools/lw_look.py` ausführen. Das bindet `lernwelt-app.css` ein und stellt die Farben und Schriften der App auf die der Lernwelt um. Benutzt die App die üblichen Übungs-Klassen (`.opt`, `.fb`, `.go`, `.chip` …), reicht `/* @kit */` in der ersten Zeile, dann gelten die gemeinsamen Übungs-Bausteine aus `tools/looks/_kit.css`.
+5. In `hefte.js` einen Eintrag in `LW_HEFTE` anlegen: Fach, Thema, Name, eine Zeile Beschreibung und die Kapitel. Wenn die App etwas in `localStorage` speichert, den Schlüssel als `key` angeben, dann zeigt die Lernwelt „angefangen“ an. Ein neues Fach kommt in `LW_FAECHER` und erscheint, sobald es ein Heft hat.
 
 ## Aufbau der Startseite
 

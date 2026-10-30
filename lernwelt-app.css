@@ -1,0 +1,49 @@
+/*
+ * Lernwelt-Look für die Apps: dieselbe Schrift, dieselben Farben und Formen wie die Lernwelt selbst.
+ * Jede App bindet diese Datei direkt nach ihrem eigenen <style> ein. Danach folgt ein kleiner
+ * <style id="lw-look">, der die Farb-Variablen der App auf die Lernwelt-Farben umstellt.
+ */
+:root{
+  --lw-bg:#F4F2FF; --lw-card:#FFFFFF; --lw-ink:#1E1B3A; --lw-muted:#5E5A7A; --lw-line:#E4E0F5; --lw-soft:#ECE8FB; --lw-shadow:#DCD6F7;
+  --lw-brand:#5B3FE6; --lw-brand-d:#4227B8; --lw-sun:#FFC93C;
+  --lw-ok:#22A35A; --lw-ok-d:#17703D; --lw-ok-bg:#DDF4E5; --lw-ok-ink:#146C38;
+  --lw-bad:#D2452E; --lw-bad-bg:#FCE4DE; --lw-bad-ink:#9A2A17;
+  --lw-ma:#2563EB; --lw-ma-d:#1E40AF; --lw-ma-s:#DBE6FD;
+  --lw-en:#15803D; --lw-en-d:#166534; --lw-en-s:#DCF3E4;
+  --lw-bio:#C2410C; --lw-bio-d:#9A3412; --lw-bio-s:#FBE4D6;
+  --lw-geo:#BE185D; --lw-geo-d:#9D174D; --lw-geo-s:#FCE4EF;
+  --lw-mu:#7C3AED; --lw-mu-d:#5B21B6; --lw-mu-s:#EDE4FD;
+  --lw-f-d:"Fredoka","Trebuchet MS",system-ui,sans-serif;
+  --lw-f-b:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --lw-bg:#15132A; --lw-card:#1F1C3A; --lw-ink:#F1EFFF; --lw-muted:#B4AFD3; --lw-line:#332E5A; --lw-soft:#2A2650; --lw-shadow:#0D0B1F;
+  --lw-brand:#6E55F0; --lw-brand-d:#4A31C4;
+  --lw-ok:#3DBA70; --lw-ok-d:#1F7A45; --lw-ok-bg:#16301F; --lw-ok-ink:#8FE0AE;
+  --lw-bad:#F07A4A; --lw-bad-bg:#3A1D1A; --lw-bad-ink:#FFB59B;
+  --lw-ma:#3B76F0; --lw-ma-d:#2349B8; --lw-ma-s:#1D2B4D;
+  --lw-en:#22994C; --lw-en-d:#166534; --lw-en-s:#173322;
+  --lw-bio:#D9541A; --lw-bio-d:#9A3412; --lw-bio-s:#3A2216;
+  --lw-geo:#D42C72; --lw-geo-d:#9D174D; --lw-geo-s:#3A1828;
+  --lw-mu:#8B55F0; --lw-mu-d:#5B21B6; --lw-mu-s:#2A1F4D;
+}}
+
+/* Leiste oben: Zurück zur Lernwelt, Fach und Heft */
+.lw-bar{display:flex;align-items:center;gap:12px;box-sizing:border-box;width:100%;min-height:64px;
+  padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));
+  background:var(--lw-card);border-bottom:2px solid var(--lw-line);position:relative;z-index:9999;
+  font-family:var(--lw-f-b);color:var(--lw-ink)}
+.lw-bar .lw-back{display:grid;place-items:center;width:44px;height:44px;flex:none;border-radius:14px;
+  border:2px solid var(--lw-line);border-bottom-width:4px;background:var(--lw-card);color:var(--lw-muted);text-decoration:none;box-sizing:border-box}
+.lw-bar .lw-back:active{border-bottom-width:2px;transform:translateY(2px)}
+.lw-bar .lw-back svg{width:20px;height:20px}
+.lw-bar .lw-t{display:flex;flex-direction:column;min-width:0}
+.lw-bar .lw-eyebrow{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--lw-c)}
+.lw-bar .lw-name{font-family:var(--lw-f-d);font-weight:700;font-size:19px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lw-bar a:focus-visible{outline:3px solid var(--lw-brand);outline-offset:2px}
+.lw-ma{--lw-c:var(--lw-ma);--lw-cd:var(--lw-ma-d);--lw-cs:var(--lw-ma-s)}
+.lw-en{--lw-c:var(--lw-en);--lw-cd:var(--lw-en-d);--lw-cs:var(--lw-en-s)}
+.lw-bio{--lw-c:var(--lw-bio);--lw-cd:var(--lw-bio-d);--lw-cs:var(--lw-bio-s)}
+.lw-geo{--lw-c:var(--lw-geo);--lw-cd:var(--lw-geo-d);--lw-cs:var(--lw-geo-s)}
+.lw-mu{--lw-c:var(--lw-mu);--lw-cd:var(--lw-mu-d);--lw-cs:var(--lw-mu-s)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .lw-bar .lw-eyebrow{color:var(--lw-muted)}}

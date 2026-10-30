@@ -1,0 +1,12 @@
+/* @kit */
+/* Biologie bleibt dunkel (die Bilder leuchten), aber in den Nachtfarben der Lernwelt */
+:root:root:root{
+  --lw-bg:#15132A; --lw-card:#1F1C3A; --lw-ink:#F1EFFF; --lw-muted:#B4AFD3; --lw-line:#332E5A; --lw-soft:#2A2650;
+  --lw-ok:#3DBA70; --lw-ok-d:#1F7A45; --lw-ok-bg:#16301F; --lw-ok-ink:#8FE0AE; --lw-bad:#F07A4A; --lw-bad-bg:#3A1D1A; --lw-bad-ink:#FFB59B;
+  --lw-c:#E8722C; --lw-cd:#9A3412; --lw-cs:#3A2216;
+  --paper:#15132A; --surface:#1F1C3A; --surface2:#2A2650; --ink:#F1EFFF; --muted:#B4AFD3; --line:#332E5A;
+  --accent:#F08A24; --accent-d:#B4610F;
+  --good-bg:#16301F; --bad-bg:#3A1D1A;
+  --display:var(--lw-f-d); --hand:var(--lw-f-d); --hand2:var(--lw-f-b); --body:var(--lw-f-b);
+}
+.lw-bar{--lw-card:#1F1C3A;--lw-line:#332E5A;--lw-ink:#F1EFFF;--lw-muted:#B4AFD3}

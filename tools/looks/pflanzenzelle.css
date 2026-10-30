@@ -1,0 +1,28 @@
+
+/* Biologie bleibt dunkel (die Bilder leuchten), aber in den Nachtfarben der Lernwelt */
+:root:root:root{
+  --lw-bg:#15132A; --lw-card:#1F1C3A; --lw-ink:#F1EFFF; --lw-muted:#B4AFD3; --lw-line:#332E5A; --lw-soft:#2A2650;
+  --lw-ok:#3DBA70; --lw-ok-d:#1F7A45; --lw-ok-bg:#16301F; --lw-ok-ink:#8FE0AE; --lw-bad:#F07A4A; --lw-bad-bg:#3A1D1A; --lw-bad-ink:#FFB59B;
+  --lw-c:#E8722C; --lw-cd:#9A3412; --lw-cs:#3A2216;
+  --paper:#15132A; --surface:#1F1C3A; --surface2:#2A2650; --ink:#F1EFFF; --muted:#B4AFD3; --line:#332E5A;
+  --accent:#F08A24; --accent-d:#B4610F;
+  --good-bg:#16301F; --bad-bg:#3A1D1A;
+  --display:var(--lw-f-d); --hand:var(--lw-f-d); --hand2:var(--lw-f-b); --body:var(--lw-f-b);
+}
+.lw-bar{--lw-card:#1F1C3A;--lw-line:#332E5A;--lw-ink:#F1EFFF;--lw-muted:#B4AFD3}
+.panel,.card,.q{background:var(--lw-card);border:2px solid var(--lw-line);border-radius:24px}
+.btn{font-family:var(--lw-f-d);font-weight:700;border:none;border-radius:16px;min-height:44px;padding:8px 18px;background:var(--lw-c);color:#fff;box-shadow:0 4px 0 var(--lw-cd)}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--lw-cd)}
+.btn.ghost{background:var(--lw-card);color:var(--lw-ink);border:2px solid var(--lw-line);border-bottom-width:4px;box-shadow:none}
+.q h3{font-family:var(--lw-f-d);font-weight:600;font-size:1.2rem;color:var(--lw-ink)}
+.q .opts{gap:10px}
+.q .opts button{background:var(--lw-card);color:var(--lw-ink);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:18px;padding:12px 14px;min-height:54px;font-family:var(--lw-f-b);font-size:1rem}
+.q .opts button:not(:disabled):active{transform:translateY(3px);border-bottom-width:2px}
+.q .opts button.right{border:3px solid var(--lw-ok);border-bottom-width:6px;background:var(--lw-ok-bg);color:var(--lw-ok-ink)}
+.q .opts button.wrong{border-color:var(--lw-bad);background:var(--lw-bad-bg);color:var(--lw-bad-ink)}
+.feedback{font-family:var(--lw-f-d);font-size:1.1rem}
+.feedback.good{color:var(--lw-ok-ink)}
+.feedback.bad{color:var(--lw-bad-ink)}
+.progress{height:14px;border:none;background:var(--lw-line)}
+.progress i{background:var(--lw-ok)}
+.chip{font-family:var(--lw-f-b)}

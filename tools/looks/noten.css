@@ -1,0 +1,16 @@
+:root:root:root{
+  --lw-c:var(--lw-mu); --lw-cd:var(--lw-mu-d); --lw-cs:var(--lw-mu-s);
+  --paper:var(--lw-bg); --sheet:var(--lw-card); --ink:var(--lw-ink); --muted:var(--lw-muted); --line:var(--lw-line); --soft:var(--lw-soft);
+  --accent:var(--lw-mu); --accent-d:var(--lw-mu-d);
+  --good:var(--lw-ok); --good-bg:var(--lw-ok-bg); --bad:var(--lw-bad); --bad-bg:var(--lw-bad-bg);
+  --f-d:var(--lw-f-d); --f-b:var(--lw-f-b);
+}
+.hero h1{font-weight:700}
+.btn{font-weight:700;letter-spacing:.04em;text-transform:uppercase;box-shadow:0 5px 0 var(--accent-d)}
+.btn.sec2{text-transform:none;letter-spacing:0}
+.feedback{border-top:none;border-radius:28px 28px 0 0;background:var(--lw-ok-bg);box-shadow:0 -6px 20px rgba(30,27,58,.12)}
+.feedback.bad{background:var(--lw-bad-bg)}
+.feedback h3{color:var(--lw-ok-ink);font-weight:700}
+.feedback.bad h3{color:var(--lw-bad-ink)}
+.feedback .btn{background:var(--lw-ok);box-shadow:0 5px 0 var(--lw-ok-d)}
+.feedback.bad .btn{background:var(--lw-bad);box-shadow:0 5px 0 #9A2A17}

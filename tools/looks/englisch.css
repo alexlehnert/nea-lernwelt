@@ -1,0 +1,10 @@
+/* @kit */
+:root:root:root{
+  --lw-c:var(--lw-en); --lw-cd:var(--lw-en-d); --lw-cs:var(--lw-en-s);
+  --bg:var(--lw-bg); --paper:var(--lw-card); --ink:var(--lw-ink); --muted:var(--lw-muted); --line:var(--lw-line);
+  --navy:var(--lw-en); --navy-soft:var(--lw-en-s); --rule:var(--lw-en); --green:var(--lw-en); --green-dk:var(--lw-en-d); --sun:var(--lw-sun);
+  --ok:var(--lw-ok); --ok-bg:var(--lw-ok-bg); --bad:var(--lw-bad); --bad-bg:var(--lw-bad-bg); --chip:var(--lw-soft);
+  --f-d:var(--lw-f-d); --f-b:var(--lw-f-b);
+}
+.panel,.card{border-radius:20px;border-bottom-width:5px}
+.box{border-radius:22px}

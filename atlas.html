@@ -1,4 +1,4 @@
-<!doctype html><html><head><meta charset=utf8><script src="/api/config"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="/sync.js"></script><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"><link rel="manifest" href="/manifest.webmanifest"><meta name="apple-mobile-web-app-title" content="Lernwelt"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="theme-color" content="#5B3FE6"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body><nav id="lw-bar" aria-label="Lernwelt" style="all:initial;display:flex;align-items:center;gap:10px;box-sizing:border-box;width:100%;padding:6px max(12px,env(safe-area-inset-right,0px)) 6px max(12px,env(safe-area-inset-left,0px));background:#20304a;color:#f3f0e6;font:600 14px/1.2 system-ui,-apple-system,Segoe UI,sans-serif;position:relative;z-index:9999"><a href="index.html" style="all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:#f3f0e6;color:#20304a;font:700 14px/1 system-ui,-apple-system,Segoe UI,sans-serif">&#8249; Lernwelt</a><span style="all:unset;font:600 14px/1.2 system-ui,-apple-system,Segoe UI,sans-serif;color:#f3f0e6;opacity:.85">Erdkunde · Atlas-Detektiv</span></nav>
+<!doctype html><html><head><meta charset=utf8><script src="/api/config"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="/sync.js"></script><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"><link rel="manifest" href="/manifest.webmanifest"><meta name="apple-mobile-web-app-title" content="Lernwelt"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="theme-color" content="#5B3FE6"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body><nav id="lw-bar" class="lw-bar lw-geo" aria-label="Lernwelt"><a class="lw-back" href="index.html" aria-label="Zurück zur Lernwelt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a><span class="lw-t"><span class="lw-eyebrow">Erdkunde</span><span class="lw-name">Atlas-Detektiv</span></span></nav>
 <title>Atlas-Detektiv</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,400..900;1,62..125,400..900&display=swap">
@@ -117,7 +117,50 @@ dl.defs dt{font-weight:800} dl.defs dd{margin:0;color:var(--muted)}
 .maplab{font-family:var(--f-map);font-weight:700;font-stretch:88%;letter-spacing:.07em;text-transform:uppercase;paint-order:stroke;stroke-linejoin:round;pointer-events:none}
 @keyframes pulse{0%,100%{stroke-opacity:1}50%{stroke-opacity:.35}}
 .hlstroke{animation:pulse 1.4s ease-in-out infinite}
-</style>
+</style><!--lw-look--><link rel="stylesheet" href="/lernwelt-app.css"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap"><style id="lw-look">
+:root:root:root{
+  --lw-c:var(--lw-geo); --lw-cd:var(--lw-geo-d); --lw-cs:var(--lw-geo-s);
+  --bg:var(--lw-bg); --surface:var(--lw-card); --ink:var(--lw-ink); --muted:var(--lw-muted); --line:var(--lw-line);
+  --accent:var(--lw-geo); --accent-ink:#fff; --ok:var(--lw-ok); --bad:var(--lw-bad); --chip:var(--lw-soft); --onbg:var(--lw-ink);
+  --f-display:var(--lw-f-d); --f-body:var(--lw-f-b);
+}
+/* Umschlag bleibt als farbige Karte (Erdkunde-Farbe), alles andere hell wie in der Lernwelt */
+.cover{background:var(--lw-geo);color:#fff;border-radius:24px;box-shadow:0 6px 0 var(--lw-geo-d)}
+.cover .eyebrow{color:rgba(255,255,255,.9)}
+.cover h2{font-stretch:normal;letter-spacing:0;text-transform:none;font-weight:700}
+.cover p{color:#fff}
+.card{border-radius:22px;border:2px solid var(--lw-line);border-bottom-width:5px;box-shadow:none}
+.q{font-weight:700;font-stretch:normal}
+.choices{gap:12px}
+.opt{background:var(--lw-card);color:var(--lw-ink);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:18px;min-height:60px;font-family:var(--lw-f-d);font-weight:600;font-stretch:normal;font-size:1.1rem}
+.opt:active{transform:translateY(3px);border-bottom-width:2px}
+.opt.ok{background:var(--lw-ok-bg);border:3px solid var(--lw-ok);border-bottom-width:6px;color:var(--lw-ok-ink)}
+.opt.bad{background:var(--lw-bad-bg);border-color:var(--lw-bad);color:var(--lw-bad-ink)}
+.opt .n{background:var(--lw-ok);color:#fff}
+.feedback{border-radius:22px;padding:16px;background:var(--lw-soft)}
+.feedback.ok{background:var(--lw-ok-bg)}
+.feedback.bad{background:var(--lw-bad-bg)}
+.feedback.ok p:first-child{color:var(--lw-ok-ink)}
+.feedback p:first-child{font-family:var(--lw-f-d);font-weight:700;font-size:1.15rem}
+.btn{border-radius:16px;font-family:var(--lw-f-d);font-weight:700;font-stretch:normal;letter-spacing:.04em;background:var(--lw-card);color:var(--lw-ink);border:2px solid var(--lw-line);border-bottom-width:4px}
+.btn.big{background:var(--lw-c);color:#fff;border:none;box-shadow:0 5px 0 var(--lw-cd)}
+.btn.big:active{box-shadow:0 2px 0 var(--lw-cd)}
+.btn.ghost{color:var(--lw-ink);border:2px solid var(--lw-line)}
+.progress{height:14px;background:var(--lw-line)}
+.progress i{background:var(--lw-ok)}
+.chip{border:2px solid var(--lw-line);border-bottom-width:4px;background:var(--lw-card);color:var(--lw-ink);font-family:var(--lw-f-d);font-weight:700}
+.chip.sel{background:var(--lw-c);border-color:var(--lw-c);color:#fff}
+body{background-image:none}
+.brand h1{color:var(--lw-ink);font-stretch:normal;letter-spacing:.01em;text-transform:none;font-weight:700;font-size:1.6rem}
+.brand small{color:var(--lw-geo)}
+.pill{background:var(--lw-card);border:2px solid var(--lw-line);color:var(--lw-ink)}
+.pill b{color:var(--lw-geo)}
+.topic{background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:18px}
+.topic b{font-family:var(--lw-f-d);font-weight:600;font-stretch:normal}
+.topic[aria-pressed="true"]{border-color:var(--lw-geo);box-shadow:none;background:var(--lw-geo-s)}
+.seg button[aria-pressed="true"]{background:var(--lw-geo);color:#fff}
+.q{text-transform:none;letter-spacing:0}
+</style><!--/lw-look-->
 
 <div class="wrap" id="app" lang="de">
   <header class="top">
