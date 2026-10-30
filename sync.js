@@ -11,7 +11,8 @@
  * - Kapitel-Fortschritt: Eine App meldet mit LW.kapitel(fn) eine Funktion, die [{t, p}] liefert
  *   (Kapitelname, Anteil 0–1). Nach jeder Änderung der App wird sie neu berechnet und unter
  *   lernwelt-fortschritt-<heft> gespeichert.
- * - Lernzeit: Sekunden, in denen eine App sichtbar offen ist, pro Tag unter lernwelt-zeit.
+ * - Lernzeit: Sekunden, in denen eine App sichtbar offen ist, pro Tag unter lernwelt-zeit
+ *   und insgesamt pro Heft unter lernwelt-zeit-heft.
  */
 (function () {
   'use strict';
@@ -24,6 +25,7 @@
   var HEFT = location.pathname.replace(/^.*\//, '').replace(/\.html$/, '');
   var FORT = 'lernwelt-fortschritt-' + HEFT;
   var ZEIT = 'lernwelt-zeit';
+  var ZEIT_HEFT = 'lernwelt-zeit-heft';
 
   if (!C.url || !C.key || !window.supabase) {
     window.LW = { configured: false, ready: Promise.resolve(null) };
@@ -142,11 +144,17 @@
     var z = {};
     try { z = JSON.parse(LS.getItem(ZEIT) || '{}') || {}; } catch (e) {}
     var d = dayKey();
-    z[d] = (z[d] || 0) + secs;
+    var add = secs;
+    z[d] = (z[d] || 0) + add;
     secs = 0;
     var keys = Object.keys(z).sort();
     while (keys.length > 120) delete z[keys.shift()];
     LS.setItem(ZEIT, JSON.stringify(z));
+    // Gesamtzeit pro Heft, für den Eltern-Bereich
+    var h = {};
+    try { h = JSON.parse(LS.getItem(ZEIT_HEFT) || '{}') || {}; } catch (e) {}
+    h[HEFT] = (h[HEFT] || 0) + add;
+    LS.setItem(ZEIT_HEFT, JSON.stringify(h));
   }
   if (!IS_HUB) {
     setInterval(function () {
