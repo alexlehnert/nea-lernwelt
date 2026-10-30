@@ -12,6 +12,7 @@
  *   kapitel  was im Heft drin ist, in der Reihenfolge der App. Die Namen müssen zu dem passen, was die App
  *            über LW.kapitel meldet (Skript am Ende der App-Datei).
  *   anker    optional: Abschnitts-ids der App, damit die Lernwelt direkt ins Kapitel springt
+ *   abzeichen  Name des Abzeichens, das es gibt, wenn alle Kapitel 3 Sterne haben
  */
 window.LW_FAECHER = [
   { id: 'mathe',    cls: 'ma',  name: 'Mathe' },
@@ -23,28 +24,28 @@ window.LW_FAECHER = [
 ];
 
 window.LW_HEFTE = [
-  { id: 'terme', fach: 'mathe', thema: 'Terme', name: 'Terme verstehen',
+  { id: 'terme', abzeichen: 'Term-Entdeckerin', fach: 'mathe', thema: 'Terme', name: 'Terme verstehen',
     info: 'Antippen, verschieben, ausprobieren: was ein Term ist',
     kapitel: ['Was ist ein Term?', 'Zahlen einsetzen', 'Terme im Alltag', 'Wie heißen die Teile?'],
     anker: ['was', 'einsetzen', 'alltag', 'namen'] },
-  { id: 'rechenheft', fach: 'mathe', thema: 'Terme', name: 'Rechenheft',
+  { id: 'rechenheft', abzeichen: 'Potenz-Profi', fach: 'mathe', thema: 'Terme', name: 'Rechenheft',
     info: 'Terme und Potenzen üben, Schritt für Schritt', key: 'mathe-rechenheft-5-v1',
     kapitel: ['Terme üben', 'Potenzen üben', 'Auswendig-Quiz: 2er- und 10er-Potenzen'] },
-  { id: 'englisch', fach: 'englisch', thema: 'Vokabeln und Grammatik', name: 'English trainer',
+  { id: 'englisch', abzeichen: 'Vokabel-Champion', fach: 'englisch', thema: 'Vokabeln und Grammatik', name: 'English trainer',
     info: 'Vokabeln S. 170–180 und Grammatik G1, G2, G3, G6 im Karteikasten', key: 'englisch-kartei-5-v1',
     kapitel: ['Vokabeln S. 170–173', 'Vokabeln S. 174–176', 'Vokabeln S. 176–180', 'G1 · a/an & Plural', 'G2 · to be', 'G3 · there is/are', 'G6 · Pronomen & my/your…'] },
-  { id: 'bio-expedition', fach: 'biologie', thema: 'Zellen und Körper', name: 'Bio-Expedition',
+  { id: 'bio-expedition', abzeichen: 'Bio-Forscherin', fach: 'biologie', thema: 'Zellen und Körper', name: 'Bio-Expedition',
     info: 'Zellen, Mikroskopier-Führerschein und Skelett', key: 'zellstadt-v1',
     kapitel: ['Zellbestandteile', 'Pflanze oder Tier', 'Fotosynthese & Atmung', 'Wasser & Turgor', 'Mikroskop & Größen', 'Mikroskopier-Führerschein',
       'Aufbau & Aufgaben', 'Schädel', 'Rumpfskelett', 'Wirbelsäule'] },
-  { id: 'pflanzenzelle', fach: 'biologie', thema: 'Zellen und Körper', name: 'Expedition Pflanzenzelle',
+  { id: 'pflanzenzelle', abzeichen: 'Zell-Expertin', fach: 'biologie', thema: 'Zellen und Körper', name: 'Expedition Pflanzenzelle',
     info: 'Eine Pflanzenzelle auseinandernehmen und erkunden',
     kapitel: ['Wer wohnt in der Zelle?', 'Ein Tag in der Blattzelle', 'Warum Pflanzen stehen können', 'Wie klein ist eine Zelle?', 'Teste dich'],
     anker: ['entdecken', 'arbeit', 'wasser', 'groesse', 'quiz'] },
-  { id: 'atlas', fach: 'erdkunde', thema: 'Die Erde', name: 'Atlas-Detektiv',
+  { id: 'atlas', abzeichen: 'Atlas-Detektivin', fach: 'erdkunde', thema: 'Die Erde', name: 'Atlas-Detektiv',
     info: 'Kontinente, Ozeane, Himmelsrichtungen und der Globus', key: 'atlas-detektiv-v1',
     kapitel: ['Kontinente & Ozeane', 'Himmelsrichtungen', 'Der Globus'] },
-  { id: 'noten', fach: 'musik', thema: 'Noten', name: 'Notenwerkstatt',
+  { id: 'noten', abzeichen: 'Notenleserin', fach: 'musik', thema: 'Noten', name: 'Notenwerkstatt',
     info: 'Noten lesen und Töne sicher erkennen', key: 'notenwerkstatt-v1',
     kapitel: ['Schlüssel-Werkstatt', 'Noten lesen', 'Noten setzen', 'Klavier-Detektiv', 'Notenrätsel', 'Wissen & Regeln', 'Notenregen', 'Großer Mix'] }
 ];
