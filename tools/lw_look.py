@@ -1,7 +1,7 @@
 """Bindet den Lernwelt-Look in die Apps ein (einmal ausführen, danach wiederholbar).
 
 - ersetzt die Leiste #lw-bar durch die neue Leiste (Zurück, Fach, Heft)
-- fügt nach dem Haupt-<style> der App lernwelt-app.css, die Schriften und <style id="lw-look"> ein
+- fügt nach dem Haupt-<style> der App lernwelt-app.css, lernwelt-app.js, die Schriften und <style id="lw-look"> ein
 Die Regeln für jede App stehen in tools/looks/<app>.css.
 """
 import re, pathlib
@@ -23,13 +23,13 @@ for app, cls in APPS.items():
         fach = re.search(r'class="lw-eyebrow">([^<]*)<', m.group(0)).group(1)
         heft = re.search(r'class="lw-name">([^<]*)<', m.group(0)).group(1)
     bar = (f'<nav id="lw-bar" class="lw-bar lw-{cls}" aria-label="Lernwelt">'
-           f'<a class="lw-back" href="index.html" aria-label="Zurück zur Lernwelt">{BACK}</a>'
+           f'<a class="lw-back" href="index.html#heft-{app}" aria-label="Zurück zum Heft">{BACK}</a>'
            f'<span class="lw-t"><span class="lw-eyebrow">{fach}</span><span class="lw-name">{heft}</span></span></nav>')
     s = s[:m.start()] + bar + s[m.end():]
     look = (ROOT / 'tools' / 'looks' / f'{app}.css').read_text()
     if '@kit' in look:  # die App benutzt die gemeinsamen Übungs-Bausteine (.opt, .fb, .go …)
         look = (ROOT / 'tools' / 'looks' / '_kit.css').read_text() + look
-    block = f'{START}<link rel="stylesheet" href="/lernwelt-app.css">{FONTS}<style id="lw-look">\n{look}</style>{END}'
+    block = f'{START}<link rel="stylesheet" href="/lernwelt-app.css"><script src="/lernwelt-app.js"></script>{FONTS}<style id="lw-look">\n{look}</style>{END}'
     if START in s:
         s = re.sub(re.escape(START) + '.*?' + re.escape(END), lambda _: block, s, flags=re.S)
     else:

@@ -1,6 +1,49 @@
 {
   "headers": [
-    { "source": "/sync.js", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] },
-    { "source": "/(.*).html", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] }
+    {
+      "source": "/sync.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache"
+        }
+      ]
+    },
+    {
+      "source": "/hefte.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache"
+        }
+      ]
+    },
+    {
+      "source": "/lernwelt-app.css",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache"
+        }
+      ]
+    },
+    {
+      "source": "/lernwelt-app.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache"
+        }
+      ]
+    },
+    {
+      "source": "/(.*).html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache"
+        }
+      ]
+    }
   ]
 }

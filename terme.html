@@ -1,4 +1,4 @@
-<!doctype html><html><head><meta charset=utf8><script src="/api/config"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="/sync.js"></script><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"><link rel="manifest" href="/manifest.webmanifest"><meta name="apple-mobile-web-app-title" content="Lernwelt"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="theme-color" content="#5B3FE6"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body><nav id="lw-bar" class="lw-bar lw-ma" aria-label="Lernwelt"><a class="lw-back" href="index.html" aria-label="Zurück zur Lernwelt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a><span class="lw-t"><span class="lw-eyebrow">Mathe</span><span class="lw-name">Terme verstehen</span></span></nav>
+<!doctype html><html><head><meta charset=utf8><script src="/api/config"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="/sync.js"></script><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"><link rel="manifest" href="/manifest.webmanifest"><meta name="apple-mobile-web-app-title" content="Lernwelt"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="theme-color" content="#5B3FE6"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body><nav id="lw-bar" class="lw-bar lw-ma" aria-label="Lernwelt"><a class="lw-back" href="index.html#heft-terme" aria-label="Zurück zum Heft"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a><span class="lw-t"><span class="lw-eyebrow">Mathe</span><span class="lw-name">Terme verstehen</span></span></nav>
 <title>Terme verstehen</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -205,7 +205,7 @@ table.wt td.bad{background:color-mix(in srgb,var(--red) 16%,var(--paper))}
 @media (prefers-reduced-motion: reduce){
   *{animation:none!important;transition:none!important}
 }
-</style><!--lw-look--><link rel="stylesheet" href="/lernwelt-app.css"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap"><style id="lw-look">
+</style><!--lw-look--><link rel="stylesheet" href="/lernwelt-app.css"><script src="/lernwelt-app.js"></script><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap"><style id="lw-look">
 :root:root:root{
   --lw-c:var(--lw-ma); --lw-cd:var(--lw-ma-d); --lw-cs:var(--lw-ma-s);
   --paper:var(--lw-card); --ink:var(--lw-ink); --muted:var(--lw-muted); --line:var(--lw-line);
@@ -232,6 +232,13 @@ button.chip:active{transform:translateY(2px);border-bottom-width:2px}
 .ans{border:2px solid var(--lw-line);border-radius:14px;background:var(--lw-card)}
 .fb{font-family:var(--lw-f-d);font-weight:600;font-size:1.15rem}
 .fb.ok{color:var(--lw-ok-ink)}
+/* Name steht schon in der Leiste oben; die Kapitel-Leiste läuft mit (wie in Pflanzenzelle) */
+header.top{display:none}
+nav.jump{position:sticky;top:0;z-index:20;display:flex;flex-wrap:nowrap;justify-content:flex-start;margin-top:0;gap:8px;overflow-x:auto;margin-inline:-16px;padding:10px 16px;
+  background:var(--lw-bg);border-bottom:2px solid var(--lw-line);scrollbar-width:none}
+nav.jump::-webkit-scrollbar{display:none}
+nav.jump a{flex:none;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+[id]{scroll-margin-top:76px}
 </style><!--/lw-look-->
 
 <div class="wrap">

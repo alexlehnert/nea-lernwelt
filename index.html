@@ -117,6 +117,9 @@ h2.sh{font-size:1.25rem}
 .login img{width:84px;height:84px;border-radius:22px;align-self:flex-start}
 .login label{display:flex;flex-direction:column;gap:6px;font-weight:700;font-size:.95rem}
 .login input{font-size:1.1rem;padding:10px 12px;border:2px solid var(--line);border-radius:14px;background:var(--bg);min-height:50px}
+.pw{position:relative;display:block}.pw input{width:100%;padding-right:54px}
+.pw button{position:absolute;right:4px;top:50%;transform:translateY(-50%);width:44px;height:44px;border:none;background:none;color:var(--muted);display:grid;place-items:center;cursor:pointer;border-radius:12px}
+.pw button svg{width:22px;height:22px}.pw button[aria-pressed="true"]{color:var(--brand,#5B3FE6)}
 .err{color:var(--err);font-weight:700;margin:0;min-height:1.4em}
 
 /* Serie, Tagesziel, Sterne */
@@ -224,6 +227,7 @@ h2.sh{font-size:1.25rem}
 .head.prof .motto{margin:6px 0 0;font-size:.95rem;overflow-wrap:anywhere}
 .row{display:flex;align-items:center;gap:12px;background:var(--card);border:2px solid var(--line);border-radius:18px;padding:12px 14px;text-decoration:none;color:var(--ink)}
 .row .ic{width:40px;height:40px;border-radius:12px}
+.avrow .ic{overflow:hidden;border-radius:50%;flex:none}.avrow .ic > *,.avrow .ic svg{width:100%;height:100%}.avrow div{flex:1;min-width:0}.avrow .gems{display:inline-flex;align-items:center;gap:4px;font-weight:700}
 .row div{flex:1;min-width:0}
 .row span{display:block;font-size:.78rem;color:var(--muted)}
 .row b{font-family:var(--f-display);font-weight:600;font-size:1.05rem}
@@ -307,7 +311,7 @@ dialog.sheet::backdrop{background:rgba(21,19,42,.6)}
     <img src="/icons/icon-192.png" alt="">
     <div class="logo">Neas Lernwelt<small>Klasse 5</small></div>
     <label for="lname">Name<input id="lname" autocomplete="username" autocapitalize="off" spellcheck="false" required></label>
-    <label for="lpw">Passwort<input id="lpw" type="password" autocomplete="current-password" required></label>
+    <label for="lpw">Passwort<span class="pw"><input id="lpw" type="password" autocomplete="current-password" required><button type="button" id="pwShow" aria-label="Passwort anzeigen" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></span></label>
     <button class="btn" type="submit" id="lbtn">Los geht's</button>
     <p class="err" id="lerr" role="alert"></p>
     <p class="note" id="noconfig" hidden>Die Lernwelt ist noch nicht mit Supabase verbunden. Trag in Vercel SUPABASE_URL und SUPABASE_ANON_KEY ein (siehe README).</p>
@@ -610,7 +614,8 @@ const V={
   },
   fach(id){
     const f=fach(id); if(!f) return V.faecher();
-    const hs=HEFTE.filter(h=>h.fach===id),filt=S.filt,q=S.q.toLowerCase();
+    // Suche und Filter erst ab 6 Heften, vorher ist alles auf einen Blick zu sehen
+    const hs=HEFTE.filter(h=>h.fach===id),viele=hs.length>=6,filt=viele?S.filt:'alle',q=viele?S.q.toLowerCase():'';
     const st=h=>started(h)?'angefangen':'neu';
     const show=hs.filter(h=>(filt==='alle'||st(h)===filt)&&(!q||(h.name+' '+h.thema+' '+h.info+' '+(h.kapitel||[]).join(' ')).toLowerCase().includes(q)));
     const themen=[...new Set(show.map(h=>h.thema))];
@@ -620,12 +625,12 @@ const V={
     return `<header class="head ${f.cls}">${backBtn('#faecher','Zurück zu den Fächern')}
         <div class="ftitle"><span class="ic">${I[f.cls]}</span><div><h1>${esc(f.name)}</h1><p>${plural(hs.length,'Lernheft','Lernhefte')}${n?` · ${n} angefangen`:''}</p></div></div></header>
       <div class="pad ${f.cls}">
-      ${hs.length?`<div class="tools"><label class="search">${I.search}<span class="sr">Hefte durchsuchen</span><input id="q" type="search" placeholder="Heft suchen …" value="${esc(S.q)}"></label>
+      ${viele?`<div class="tools"><label class="search">${I.search}<span class="sr">Hefte durchsuchen</span><input id="q" type="search" placeholder="Heft suchen …" value="${esc(S.q)}"></label>
         <div class="chips">${F.map(([k,l])=>`<button class="chip" type="button" data-f="${k}" aria-pressed="${filt===k}">${l}</button>`).join('')}</div></div>`
-        :`<p class="muted">Hier ist noch nichts. Sobald es ein Lernheft für ${esc(f.name)} gibt, taucht es hier auf.</p>`}
+        :hs.length?'':`<p class="muted">Hier ist noch nichts. Sobald es ein Lernheft für ${esc(f.name)} gibt, taucht es hier auf.</p>`}
       ${hs.length&&!show.length?'<p class="muted" style="margin:0">Kein Heft passt dazu.</p>':''}
       ${themen.map(t=>`<section class="sec"><h2 class="rule">${esc(t)}</h2><div class="hefte">
-        ${show.filter(h=>h.thema===t).map(h=>`<a class="heft ${started(h)?'on':''}" href="#heft-${h.id}"><span class="top"><b>${esc(h.name)}</b>${h.key?`<span class="pill ${started(h)?'on':'new'}">${started(h)?'Angefangen':'Neu'}</span>`:''}</span>
+        ${show.filter(h=>h.thema===t).map(h=>`<a class="heft ${started(h)?'on':''}" href="#heft-${h.id}"><span class="top"><b>${esc(h.name)}</b><span class="pill ${started(h)?'on':'new'}">${started(h)?'Angefangen':'Neu'}</span></span>
           <p>${esc(h.info)}</p>${(()=>{const t=stand(h);return started(h)?`<span class="meta"><span class="bar"><i style="width:${Math.round(100*t.done/Math.max(1,t.n))}%"></i></span><b>${t.done} / ${t.n} Kapitel</b></span>`:`<span class="meta">${plural(t.n,'Kapitel','Kapitel')}</span>`})()}</a>`).join('')}</div></section>`).join('')}
       ${refs.length?`<section class="sec"><h2 class="rule">Zum Nachschlagen</h2><div class="refs">${refs.map(refCard).join('')}</div></section>`:''}
       </div>`;
@@ -645,7 +650,7 @@ const V={
         ${h.abzeichen?(()=>{const got=verdient()['heft-'+h.id],f2=fach(h.fach);
           return `<button class="goal" type="button" data-abz="heft-${h.id}"><span class="dot ${got?'bi '+f2.cls:''}">${got?I[f2.cls]:I.trophy}</span><span><b>Abzeichen</b><span class="small muted">„${esc(h.abzeichen)}“ ${got?'gehört dir!':'wartet'}</span></span></button>`})():''}
         </section>
-        <div class="cta"><a class="btn br" href="${t.cur!=null?kapLink(h,t.cur):heftLink(h)}" data-heft="${h.id}">${t.any?'Weiterlernen':'Heft öffnen'} ${I.arrow}</a></div>
+        <div class="cta"><a class="btn br" href="${t.cur!=null?kapLink(h,t.cur):heftLink(h)}" data-heft="${h.id}">${!started(h)?"Los geht's":t.cur!=null?`Weiter mit Kapitel ${t.cur+1}`:'Heft öffnen'} ${I.arrow}</a></div>
       </div>`;
   },
   profil(){
@@ -657,7 +662,7 @@ const V={
     return `<header class="head prof br">
         <span class="deco" style="left:40px;top:calc(36px + env(safe-area-inset-top,0px))">${I.star}</span>
         <span class="deco" style="right:56px;top:calc(92px + env(safe-area-inset-top,0px));transform:scale(.7)">${I.star}</span>
-        <div class="bigav">${avatar()}<a class="pen" href="#avatar" aria-label="Avatar ändern">${I.pen}</a></div>
+        <div class="bigav">${avatar()}<a class="pen" href="#avatar" aria-label="Avatar bearbeiten">${I.pen}</a></div>
         <h1>${esc(displayName())}</h1>${ME.motto?`<p class="motto">„${esc(ME.motto)}“</p>`:''}
       </header>
       <div class="pad">
@@ -665,11 +670,33 @@ const V={
           <div class="stat"><b style="color:var(--bio)">${se}</b><span>Tage in Folge</span></div>
           <div class="stat"><b style="color:var(--new-fg)">${su.st}</b><span>Sterne</span></div>
           <div class="stat"><b style="color:var(--ok)">${Object.keys(verdient()).length}</b><span>Abzeichen</span></div></div>`})()}
+        <a class="row avrow" href="#avatar"><span class="ic">${avatar()}</span><div><span>Figur, Farben und Shop</span><b>Avatar bearbeiten</b></div><span class="gems" aria-label="${bal} Edelsteine">${I.gem}${bal}</span>${I.chev}</a>
         ${(()=>{const m=verdient(),L=abzeichenListe(),n=L.filter(a=>m[a.id]).length;return `<section class="sec" aria-labelledby="h-abz">
           <div class="sec-h"><h2 class="sh" id="h-abz">Meine Abzeichen</h2><span class="small muted">${n} von ${L.length}</span></div>
           <div class="badges">${L.map(a=>badgeHtml(a,m)).join('')}</div></section>`})()}
         ${fn?`<a class="row ${fn.cls}" href="#fach-${fn.id}"><span class="ic">${I[fn.cls]}</span><div><span>Lieblingsfach</span><b>${esc(fn.name)}</b></div>${I.chev}</a>`:''}
-        <section class="panel" id="avatar" aria-labelledby="h-av"><div class="grp"><h2 class="sh" id="h-av">Mein Avatar</h2>
+        <form class="panel" id="about"><h2 class="sh">Über mich</h2><div class="fields">
+          <label for="pSpitz">So soll die Lernwelt mich nennen<input id="pSpitz" maxlength="20" value="${esc(ME.spitz)}" placeholder="${esc(USERNAME)}"></label>
+          <label for="pFach">Lieblingsfach<select id="pFach"><option value="">Noch keins</option>${FAECHER.map(f=>`<option value="${f.id}" ${ME.fach===f.id?'selected':''}>${esc(f.name)}</option>`).join('')}</select></label>
+          <label for="pMotto" class="wide">Mein Motto<input id="pMotto" maxlength="40" value="${esc(ME.motto)}" placeholder="Zum Beispiel: Schritt für Schritt zum Ziel"></label>
+        </div><div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap"><button class="btn" type="submit">Speichern</button><p class="saved" id="saved" role="status"></p></div></form>
+        <section class="panel"><h2 class="sh">Mein Konto</h2><p class="small muted" style="margin:0">Angemeldet als <b>${esc(USERNAME)}</b>. Das Passwort ändern Mama oder Papa.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:10px"><a class="btn ghost" href="#eltern">Für Eltern</a><button class="btn ghost" type="button" id="logout">Abmelden</button></div></section>
+      </div>`;
+  },
+  avatar(){
+    const opt=(k,v,label)=>`<button class="opt" type="button" data-av="${k}" data-v="${v}" aria-pressed="${ME[k]===v}" aria-label="${label}" title="${label}">${figur(Object.assign({},ME,{[k]:v},k==='figur'||k==='augen'?{extra:'nichts'}:{}))}</button>`;
+    const sw=(k,v,label)=>`<button class="opt sw" type="button" data-av="${k}" data-v="${v}" aria-pressed="${ME[k]===v}" aria-label="${label||'Farbe'}"><i style="background:${BG_CSS[v]||v}"></i></button>`;
+    const k=gekauft(),meins=a=>SHOP.filter(i=>i.art===a&&k.includes(i.id)),rest=SHOP.filter(i=>!k.includes(i.id)),bal=edelsteine();
+    const shopOpt=it=>`<button class="opt shop" type="button" data-shop="${it.id}" aria-label="${esc(it.name)}, ${it.preis} Edelsteine">${figur(Object.assign({},ME,{[it.art]:it.id}))}<span class="price">${I.gem}${it.preis}</span></button>`;
+    const fn=fach(ME.fach),bild=get(BILD);
+    return `<header class="head prof br">
+        <div class="toprow" style="justify-content:flex-start;width:100%">${backBtn('#profil','Zurück zum Profil')}<span class="eyebrow">Profil</span></div>
+        <div class="bigav">${avatar()}</div>
+        <h1>Mein Avatar</h1>
+      </header>
+      <div class="pad">
+        <section class="panel" id="avatar" aria-label="Avatar bauen"><div class="grp">
           <div class="seg" role="group" aria-label="Avatar-Art"><button type="button" data-art="figur" aria-pressed="${ME.art==='figur'}">Figur</button><button type="button" data-art="bild" aria-pressed="${ME.art==='bild'}">Eigenes Bild</button></div></div>
         ${ME.art==='bild'?`
         <div class="grp"><div class="upload">${bild?`<span class="av"><img src="${esc(bild)}" alt="Dein Bild"></span>`:`<span class="av"></span>`}
@@ -686,18 +713,26 @@ const V={
           <p class="note">Für jeden Stern bekommst du 1 Edelstein, für jedes Abzeichen 10.</p>
           ${rest.length?`<div class="opts shopopts">${rest.map(shopOpt).join('')}</div>`:'<p class="note">Du hast schon alles gekauft!</p>'}</div>`}
         </section>
-        <form class="panel" id="about"><h2 class="sh">Über mich</h2><div class="fields">
-          <label for="pSpitz">So soll die Lernwelt mich nennen<input id="pSpitz" maxlength="20" value="${esc(ME.spitz)}" placeholder="${esc(USERNAME)}"></label>
-          <label for="pFach">Lieblingsfach<select id="pFach"><option value="">Noch keins</option>${FAECHER.map(f=>`<option value="${f.id}" ${ME.fach===f.id?'selected':''}>${esc(f.name)}</option>`).join('')}</select></label>
-          <label for="pMotto" class="wide">Mein Motto<input id="pMotto" maxlength="40" value="${esc(ME.motto)}" placeholder="Zum Beispiel: Schritt für Schritt zum Ziel"></label>
-        </div><div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap"><button class="btn" type="submit">Speichern</button><p class="saved" id="saved" role="status"></p></div></form>
-        <section class="panel"><h2 class="sh">Mein Konto</h2><p class="small muted" style="margin:0">Angemeldet als <b>${esc(USERNAME)}</b>. Das Passwort ändern Mama oder Papa.</p>
-          <div style="display:flex;flex-wrap:wrap;gap:10px"><a class="btn ghost" href="#eltern">Für Eltern</a><button class="btn ghost" type="button" id="logout">Abmelden</button></div></section>
       </div>`;
   }
 };
 
+/* Eltern-Sperre: eine kleine Rechenaufgabe, gilt bis der Browser-Tab geschlossen wird (sessionStorage, nicht synchronisiert). */
+const ELT_OK='lernwelt-eltern-ok';
+const elternOffen=()=>{try{return sessionStorage.getItem(ELT_OK)==='1'}catch(e){return false}};
+let ELT_Q=null;
+function elternSperre(){
+  if(!ELT_Q){const a=6+Math.floor(Math.random()*4),b=12+Math.floor(Math.random()*8);ELT_Q={a,b}}
+  return `<header class="head br"><div class="toprow" style="justify-content:flex-start">${backBtn('#profil','Zurück zum Profil')}<span class="eyebrow">Profil</span></div>
+      <h1 style="margin-top:14px;font-size:1.9rem;line-height:1.05">Für Eltern</h1><p class="sub">Dieser Bereich ist für Mama und Papa.</p></header>
+    <div class="pad"><form class="panel" id="eGate"><h2 class="sh">Kurze Frage</h2>
+      <div class="fields"><label for="eAns">Wie viel ist ${ELT_Q.a} × ${ELT_Q.b}?<input id="eAns" inputmode="numeric" autocomplete="off" required></label></div>
+      <button class="btn br" type="submit">Öffnen</button><p class="err" id="eErr" role="alert"></p></form></div>`;
+}
+/* Fortschritt eines Hefts löschen: Speicher der App, Kapitel-Fortschritt und besuchte Abschnitte. Abzeichen bleiben. */
+function heftLeeren(h){[h.key,'lernwelt-fortschritt-'+h.id,h.id+'-besucht'].forEach(k=>{if(k)put(k,null)})}
 V.eltern=function(){
+  if(!elternOffen())return elternSperre();
   const z=zeit(),Z=zielMin(),WT=['So','Mo','Di','Mi','Do','Fr','Sa'];
   const tage=[...Array(7)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()-6+i);return {wt:WT[d.getDay()],k:dayKey(d),m:Math.floor((z[dayKey(d)]||0)/60)}});
   const max=Math.max(Z,...tage.map(t=>t.m))*1.1,sum=tage.reduce((a,t)=>a+t.m,0),ok=tage.filter(t=>t.m>=Z).length,zh=zeitHeft(),su=summe();
@@ -714,6 +749,7 @@ V.eltern=function(){
           <span class="wkz" style="bottom:${pct(Z)}"><em>Ziel ${Z}</em></span>
           ${tage.map((t,i)=>`<span class="wkc" title="${t.wt}: ${t.m} Min."><i style="height:${t.m?pct(t.m):'0'}"></i>${i===6&&t.m?`<b style="bottom:${pct(t.m)}">${t.m}</b>`:''}</span>`).join('')}
         </div>
+        ${sum?'':'<p class="note" style="margin:0 0 8px">In den letzten 7 Tagen wurde noch nicht gelernt.</p>'}
         <div class="wkl" aria-hidden="true">${tage.map((t,i)=>`<span>${i===6?'Heute':t.wt}</span>`).join('')}</div>
         <table class="sr"><caption>Lernzeit der letzten 7 Tage</caption><tr><th>Tag</th><th>Minuten</th></tr>${tage.map(t=>`<tr><td>${t.wt} ${datum(t.k)}</td><td>${t.m}</td></tr>`).join('')}</table>
       </section>
@@ -722,25 +758,27 @@ V.eltern=function(){
           return `<div class="erow ${f.cls}"><div class="top"><b>${esc(h.name)}</b><span class="small muted">${esc(f.name)}</span></div>
             <span class="meta"><span class="bar"><i style="width:${Math.round(100*t.done/Math.max(1,t.n))}%"></i></span><b>${t.done} / ${t.n} Kapitel</b></span>
             <span class="small muted">${t.k.reduce((a,x)=>a+sterne(x.p),0)} von ${3*t.n} Sternen${m?` · ${m} Min. gelernt`:''}</span></div>`}).join('')}
-        <p class="note">Lernzeit zählt, solange ein Heft offen und sichtbar ist. Die Zeit pro Heft gibt es erst seit dieser Version, ältere Lernzeit ist nur pro Tag gespeichert.</p>
+        <p class="note">Lernzeit zählt, solange ein Heft offen und auf dem Bildschirm zu sehen ist.</p>
       </section>
       <form class="panel" id="einst"><h2 class="sh">Einstellungen</h2>
         <div class="fields"><label for="eZiel">Tagesziel<select id="eZiel">${[10,15,20,30,45].map(v=>`<option value="${v}" ${v===Z?'selected':''}>${v} Minuten</option>`).join('')}</select></label></div>
         <p class="note">Ein Tag zählt für die Serie, wenn ${esc(displayName())} mindestens 5 Minuten lernt. Ein Kapitel ist geschafft, wenn es 3 Sterne hat.</p>
         <p class="saved" id="esaved" role="status"></p></form>
+      <form class="panel" id="reset"><h2 class="sh">Fortschritt zurücksetzen</h2>
+        <div class="fields"><label for="rHeft">Lernheft<select id="rHeft"><option value="">Heft auswählen</option>${HEFTE.filter(started).map(h=>`<option value="${h.id}">${esc(h.name)}</option>`).join('')}</select></label></div>
+        <p class="note">Löscht Sterne, Karteikasten und Kapitel-Fortschritt in diesem Heft. Abzeichen und Edelsteine-Käufe bleiben.</p>
+        <button class="btn ghost" type="submit" id="rGo">Zurücksetzen</button><p class="saved" id="rsaved" role="status"></p></form>
     </div>`;
 };
 const S={filt:'alle',q:''};
-const VIEWS=['faecher','merkzettel','profil','eltern'];
+const VIEWS=['faecher','merkzettel','profil','avatar','eltern'];
 function route(keepScroll){
   let h=(location.hash||'#start').slice(1),y=window.scrollY,html,act;
-  if(h==='avatar'){h='profil'}
   if(h.startsWith('fach-')){html=V.fach(h.slice(5));act='faecher'}
   else if(h.startsWith('heft-')){html=V.heft(h.slice(5));act='faecher'}
-  else if(VIEWS.includes(h)){html=V[h]();act=h==='eltern'?'profil':h}
+  else if(VIEWS.includes(h)){html=V[h]();act=h==='eltern'||h==='avatar'?'profil':h}
   else{html=V.start();act='start'}
   $('view').innerHTML=html;drawNav(act);
-  if(location.hash==='#avatar'){const a=$('avatar');if(a){a.scrollIntoView();return}}
   window.scrollTo(0,keepScroll?y:0);
 }
 function refocus(sel){const b=document.querySelector(sel);if(b)b.focus({preventScroll:true})}
@@ -762,6 +800,7 @@ document.addEventListener('click',e=>{
   if(e.target.id==='logout'){LW.signOut().then(()=>{location.hash='';show(null)});return}
 });
 document.addEventListener('change',e=>{
+  if(e.target.id==='rHeft'){const b=$('rGo');b.dataset.armed='';b.textContent='Zurücksetzen';return}
   if(e.target.id==='eZiel'){const x=einst();x.ziel=+e.target.value;put(EINST,JSON.stringify(x));const s=$('esaved');if(s)s.textContent='Gespeichert!';return}
   if(e.target.id!=='file'||!e.target.files[0])return;
   shrink(e.target.files[0]).then(d=>{
@@ -770,6 +809,15 @@ document.addEventListener('change',e=>{
   }).catch(()=>{const s=$('saved');if(s){s.style.color='var(--err)';s.textContent='Das Bild konnte nicht geladen werden. Probier ein anderes.'}});
 });
 document.addEventListener('submit',e=>{
+  if(e.target.id==='eGate'){e.preventDefault();
+    if(+$('eAns').value===ELT_Q.a*ELT_Q.b){try{sessionStorage.setItem(ELT_OK,'1')}catch(x){}ELT_Q=null;route()}
+    else{$('eErr').textContent='Das stimmt nicht. Versuch es noch einmal.';$('eAns').value='';$('eAns').focus()}
+    return}
+  if(e.target.id==='reset'){e.preventDefault();
+    const h=heft($('rHeft').value),b=$('rGo');if(!h)return;
+    if(b.dataset.armed!==h.id){b.dataset.armed=h.id;b.textContent=`„${h.name}“ wirklich zurücksetzen?`;return}
+    heftLeeren(h);route(true);const s=$('rsaved');if(s)s.textContent=`„${h.name}“ ist zurückgesetzt.`;
+    return}
   if(e.target.id!=='about')return;
   e.preventDefault();
   ME.spitz=$('pSpitz').value.trim();ME.motto=$('pMotto').value.trim();ME.fach=$('pFach').value;
@@ -780,6 +828,7 @@ document.addEventListener('input',e=>{
   S.q=e.target.value;const pos=e.target.selectionStart;route(true);
   const n=$('q');if(n){n.focus({preventScroll:true});n.setSelectionRange(pos,pos)}
 });
+$('pwShow').addEventListener('click',()=>{const i=$('lpw'),on=i.type==='password';i.type=on?'text':'password';$('pwShow').setAttribute('aria-pressed',on);$('pwShow').setAttribute('aria-label',on?'Passwort verbergen':'Passwort anzeigen')});
 $('abzDlg').addEventListener('close',()=>{const d=$('abzDlg');if(KAUF){const id=KAUF;KAUF=null;if(d.returnValue==='buy')kaufen(id);return}const n=ABZ_Q.shift();if(n)setTimeout(()=>abzZeigen(n,true),150)});
 // Zurück aus einer App (Seite aus dem Zwischenspeicher): Fortschritt neu anzeigen.
 window.addEventListener('pageshow',e=>{if(e.persisted&&!$('app').hidden){route(true);abzFeiern()}});
@@ -801,8 +850,8 @@ else{
   $('login').addEventListener('submit',e=>{
     e.preventDefault();$('lerr').textContent='';$('lbtn').disabled=true;
     LW.signIn($('lname').value,$('lpw').value)
-      .then(s=>{$('lpw').value='';show(s&&s.user)})
-      .catch(()=>{$('lerr').textContent='Name oder Passwort stimmt nicht. Versuch es noch einmal.'})
+      .then(s=>{$('lpw').value='';$('lpw').type='password';show(s&&s.user)})
+      .catch(()=>{$('lerr').textContent='Name oder Passwort stimmt nicht. Versuch es noch einmal oder frag Mama oder Papa.'})
       .finally(()=>{$('lbtn').disabled=false});
   });
 }

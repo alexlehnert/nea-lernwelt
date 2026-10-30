@@ -24,3 +24,10 @@ button.chip:active{transform:translateY(2px);border-bottom-width:2px}
 .ans{border:2px solid var(--lw-line);border-radius:14px;background:var(--lw-card)}
 .fb{font-family:var(--lw-f-d);font-weight:600;font-size:1.15rem}
 .fb.ok{color:var(--lw-ok-ink)}
+/* Name steht schon in der Leiste oben; die Kapitel-Leiste läuft mit (wie in Pflanzenzelle) */
+header.top{display:none}
+nav.jump{position:sticky;top:0;z-index:20;display:flex;flex-wrap:nowrap;justify-content:flex-start;margin-top:0;gap:8px;overflow-x:auto;margin-inline:-16px;padding:10px 16px;
+  background:var(--lw-bg);border-bottom:2px solid var(--lw-line);scrollbar-width:none}
+nav.jump::-webkit-scrollbar{display:none}
+nav.jump a{flex:none;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+[id]{scroll-margin-top:76px}

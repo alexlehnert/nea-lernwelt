@@ -40,3 +40,8 @@ body{background-image:none}
 .topic[aria-pressed="true"]{border-color:var(--lw-geo);box-shadow:none;background:var(--lw-geo-s)}
 .seg button[aria-pressed="true"]{background:var(--lw-geo);color:#fff}
 .q{text-transform:none;letter-spacing:0}
+.topbar{display:flex;align-items:center;gap:12px;padding-top:10px;font-size:.95rem;font-weight:700;color:var(--lw-muted)}
+/* Name steht schon in der Leiste oben */
+#app > header.top{display:none}
+.cover .eyebrow,.cover .band span{font-size:13px}
+.lw-bar{margin-top:-14px}

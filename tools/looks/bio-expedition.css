@@ -1,12 +1,34 @@
 /* @kit */
-/* Biologie bleibt dunkel (die Bilder leuchten), aber in den Nachtfarben der Lernwelt */
+/* Biologie: im Hellmodus hell wie die Lernwelt, im Dunkelmodus in den Nachtfarben der Lernwelt.
+   Die Bilder (Zelle, Skelett, Mikroskop) stehen in beiden Modi auf einer dunklen Bühne, damit sie leuchten. */
 :root:root:root{
+  --lw-c:var(--lw-bio); --lw-cd:var(--lw-bio-d); --lw-cs:var(--lw-bio-s);
+  --paper:var(--lw-bg); --surface:var(--lw-card); --surface2:var(--lw-soft); --ink:var(--lw-ink); --muted:var(--lw-muted); --line:var(--lw-line);
+  --accent:var(--lw-bio); --accent-d:var(--lw-bio-d); --accent-ink:#fff; --good:var(--lw-ok); --bad:var(--lw-bad);
+  --good-bg:var(--lw-ok-bg); --bad-bg:var(--lw-bad-bg);
+  --display:var(--lw-f-d); --hand:var(--lw-f-d); --hand2:var(--lw-f-b); --body:var(--lw-f-b);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:root:root:not([data-theme="light"]){
   --lw-bg:#15132A; --lw-card:#1F1C3A; --lw-ink:#F1EFFF; --lw-muted:#B4AFD3; --lw-line:#332E5A; --lw-soft:#2A2650;
   --lw-ok:#3DBA70; --lw-ok-d:#1F7A45; --lw-ok-bg:#16301F; --lw-ok-ink:#8FE0AE; --lw-bad:#F07A4A; --lw-bad-bg:#3A1D1A; --lw-bad-ink:#FFB59B;
   --lw-c:#E8722C; --lw-cd:#9A3412; --lw-cs:#3A2216;
   --paper:#15132A; --surface:#1F1C3A; --surface2:#2A2650; --ink:#F1EFFF; --muted:#B4AFD3; --line:#332E5A;
-  --accent:#F08A24; --accent-d:#B4610F;
-  --good-bg:#16301F; --bad-bg:#3A1D1A;
-  --display:var(--lw-f-d); --hand:var(--lw-f-d); --hand2:var(--lw-f-b); --body:var(--lw-f-b);
+  --accent:#F08A24; --accent-d:#B4610F; --accent-ink:#1E1C1A;
+  color-scheme:dark;
+}}
+body{background-image:none}
+.stage,.cellbox,.lockwrap{--ink:#F4E6C1;--muted:#C2B597;--line:#5C5446;--surface:#2E2B27;--surface2:#3A362F;background-color:#252321;color:#F4E6C1;border-radius:18px}
+/* Name steht schon in der Leiste oben */
+.wrap > header.top{display:none}
+/* Hellmodus: Flächen und Schriften, die in der App fest dunkel bzw. cremefarben sind */
+@media not (prefers-color-scheme:dark){
+  .panel,.card,.chtabs button{background:var(--lw-card);border-color:var(--lw-line)}
+  .chtabs button[aria-pressed="true"]{background:var(--lw-bio-s);border-color:var(--lw-bio)}
+  .licence{background:linear-gradient(160deg,var(--lw-bio-s),var(--lw-card) 45%)}
+  b{color:inherit}
+  .kicker,.lbl,.chtabs button small,.eqn .op,.eqn .arrow,.eqn .arrow span:first-child,.mc .f::after{color:var(--lw-bio)}
+  .prompt,.mc .b.city,.scard .nm,.info h3,.riddle p,.sortcard p,.wheel output,.stepper output{color:var(--lw-ink)}
+  .stars{color:#E5A400}
+  .plantwrap > #pl{background:#252321;border-radius:18px;--ink:#F4E6C1;--line:#5C5446}
 }
-.lw-bar{--lw-card:#1F1C3A;--lw-line:#332E5A;--lw-ink:#F1EFFF;--lw-muted:#B4AFD3}
