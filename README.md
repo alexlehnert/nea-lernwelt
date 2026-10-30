@@ -2,6 +2,8 @@
 
 Alle Lern-Apps für Klasse 5 an einem Ort, mit Anmeldung. Der Fortschritt wird pro Kind in Supabase gespeichert und ist so auf jedem Gerät da.
 
+Fächer und Hefte stehen in [`hefte.js`](hefte.js).
+
 | Fach | App | Datei |
 |---|---|---|
 | Englisch | English trainer | `englisch.html` |
@@ -52,4 +54,11 @@ Alle Lern-Apps für Klasse 5 an einem Ort, mit Anmeldung. Der Fortschritt wird p
    <script src="/sync.js"></script>
    ```
 3. Für den Zurück-Knopf die `lw-bar`-Leiste aus einer der vorhandenen Apps direkt nach `<body>` kopieren.
-4. In `index.html` die App in die Liste `APPS` eintragen. Wenn die App etwas in `localStorage` speichert, den Schlüssel als `key` angeben, dann zeigt die Startseite „angefangen“ an.
+4. In `hefte.js` einen Eintrag in `LW_HEFTE` anlegen: Fach, Thema, Name, eine Zeile Beschreibung und die Kapitel. Wenn die App etwas in `localStorage` speichert, den Schlüssel als `key` angeben, dann zeigt die Lernwelt „angefangen“ an. Ein neues Fach kommt in `LW_FAECHER` und erscheint, sobald es ein Heft hat.
+
+## Aufbau der Startseite
+
+- **Lernen:** Begrüßung mit Avatar, „Weitermachen“ mit dem zuletzt geöffneten Heft, alle Fächer, Links zum Nachschlagen.
+- **Fächer → Fach:** die Lernhefte des Fachs, nach Thema gruppiert, mit Suche und Filter (angefangen, neu).
+- **Heft:** was im Heft steckt, als Kapitel-Pfad, und der Knopf zum Öffnen.
+- **Profil:** Avatar als Figur (Tier, Farbe, Augen, Mund, Extras, Hintergrund) oder eigenes Bild, Spitzname, Lieblingsfach, Motto, Abmelden. Gespeichert unter `lernwelt-profil` und `lernwelt-avatar-bild` (auf 256 × 256 Pixel verkleinert) und wie alles andere über `sync.js` im Konto.
