@@ -1,0 +1,7 @@
+/* @kit */
+/* Rhythmuswerkstatt ist von Anfang an im Lernwelt-Look gebaut: nur die Fach-Farbe setzen. */
+:root:root:root{--lw-c:var(--lw-mu); --lw-cd:var(--lw-mu-d); --lw-cs:var(--lw-mu-s)}
+.go{width:auto}
+.check{width:100%}
+.check:disabled{opacity:.5;box-shadow:none}
+.go:disabled{opacity:.5}

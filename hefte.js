@@ -52,7 +52,11 @@ window.LW_HEFTE = [
   { id: 'noten', abzeichen: 'Notenleserin', fach: 'musik', thema: 'Noten', name: 'Notenwerkstatt',
     info: 'Noten lesen und Töne sicher erkennen', key: 'notenwerkstatt-v1',
     kapitel: ['Schlüssel-Werkstatt', 'Noten lesen', 'Noten setzen', 'Klavier-Detektiv', 'Notenrätsel', 'Wissen & Regeln', 'Notenregen', 'Großer Mix'],
-    anker: ['clef', 'name', 'place', 'key', 'word', 'quiz', 'rain', 'mix'] }
+    anker: ['clef', 'name', 'place', 'key', 'word', 'quiz', 'rain', 'mix'] },
+  { id: 'rhythmus', abzeichen: 'Rhythmus-Meisterin', fach: 'musik', thema: 'Rhythmus', name: 'Rhythmuswerkstatt',
+    info: 'Notenlängen von der Ganzen bis zur Zweiunddreißigstel: hören, rechnen, klatschen', key: 'rhythmuswerkstatt-v1',
+    kapitel: ['Der Notenbaum', 'Noten-Mathe', 'Pausen', 'Hör-Detektivin', 'Takt-Baumeisterin', 'Klatsch mit!', 'Großer Mix'],
+    anker: ['baum', 'rechnen', 'pausen', 'hoeren', 'takt', 'klatschen', 'mix'] }
 ];
 
 // Merkzettel zum Nachschlagen: öffnen sich in einem neuen Tab. Mit fachId erscheinen sie auch auf der Fach-Seite.
