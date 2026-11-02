@@ -13,6 +13,7 @@ Fächer und Hefte stehen in [`hefte.js`](hefte.js).
 | Biologie | Expedition Pflanzenzelle | `pflanzenzelle.html` |
 | Erdkunde | Atlas-Detektiv | `atlas.html` |
 | Musik | Notenwerkstatt | `noten.html` |
+| Musik | Rhythmuswerkstatt (Notenlängen) | `rhythmus.html` |
 
 ## Einrichten (einmalig, ca. 15 Minuten)
 
