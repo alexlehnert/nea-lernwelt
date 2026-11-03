@@ -20,7 +20,8 @@ window.LW_FAECHER = [
   { id: 'biologie', cls: 'bio', name: 'Biologie' },
   { id: 'erdkunde', cls: 'geo', name: 'Erdkunde' },
   { id: 'musik',    cls: 'mu',  name: 'Musik' },
-  { id: 'deutsch',  cls: 'de',  name: 'Deutsch' }
+  { id: 'deutsch',  cls: 'de',  name: 'Deutsch' },
+  { id: 'ethik',    cls: 'eth', name: 'Ethik' }
 ];
 
 window.LW_HEFTE = [
@@ -60,7 +61,11 @@ window.LW_HEFTE = [
   { id: 'rhythmus', abzeichen: 'Rhythmus-Meisterin', fach: 'musik', thema: 'Rhythmus', name: 'Rhythmuswerkstatt',
     info: 'Notenlängen von der Ganzen bis zur Zweiunddreißigstel: hören, rechnen, klatschen', key: 'rhythmuswerkstatt-v1',
     kapitel: ['Der Notenbaum', 'Noten-Mathe', 'Pausen', 'Hör-Detektivin', 'Takt-Baumeisterin', 'Klatsch mit!', 'Großer Mix'],
-    anker: ['baum', 'rechnen', 'pausen', 'hoeren', 'takt', 'klatschen', 'mix'] }
+    anker: ['baum', 'rechnen', 'pausen', 'hoeren', 'takt', 'klatschen', 'mix'] },
+  { id: 'gewalt', abzeichen: 'Streitschlichterin', fach: 'ethik', thema: 'Gewalt', name: 'Gemeinsam stark',
+    info: 'Gewalt erkennen, fair streiten, Hilfe holen: mit Geschichten und Rollenspielen zum Anhören', key: 'ethik-gewalt-v1',
+    kapitel: ['Was ist Gewalt?', 'Streit ist nicht gleich Gewalt', 'Mobbing und Cybermobbing', 'Ursachen und Gefühle', 'Gewaltfrei Streit lösen', 'Zivilcourage und Hilfe holen', 'Regeln für das Miteinander', 'Großer Mix'],
+    anker: ['was', 'streit', 'mobbing', 'gefuehle', 'loesen', 'hilfe', 'regeln', 'mix'] }
 ];
 
 // Merkzettel zum Nachschlagen: öffnen sich in einem neuen Tab. Mit fachId erscheinen sie auch auf der Fach-Seite.
