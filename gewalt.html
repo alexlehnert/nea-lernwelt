@@ -253,26 +253,60 @@ let S=load();
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 function spitzname(){try{const p=JSON.parse(localStorage.getItem("lernwelt-profil"));if(p&&p.spitz)return p.spitz}catch(e){}return ""}
 
-/* ================= Vorlesen (Sprachausgabe des Geräts) ================= */
-const TTS={ok:"speechSynthesis" in window&&"SpeechSynthesisUtterance" in window,vs:[],v:null,run:0};
-function pickVoices(){if(!TTS.ok)return;const vs=speechSynthesis.getVoices().filter(v=>/^de/i.test(v.lang));
-  const de=vs.filter(v=>/de[-_]DE/i.test(v.lang));TTS.vs=de.length?de:vs;
-  TTS.v=TTS.vs.find(v=>/anna|petra|helena|katja|google/i.test(v.name))||TTS.vs[0]||null}
-if(TTS.ok){pickVoices();speechSynthesis.addEventListener&&speechSynthesis.addEventListener("voiceschanged",pickVoices)}
-function hush(){TTS.run++;if(TTS.ok)speechSynthesis.cancel();document.querySelectorAll(".spk.on").forEach(b=>b.classList.remove("on"))}
-/* spricht einen Text; o = {pitch, rate, voice}; onend kommt auch bei Fehlern, damit Abfolgen weiterlaufen */
+/* ================= Vorlesen (Sprachausgabe des Geräts) =================
+   Robust für iPhone und Android:
+   - Handys sprechen erst nach dem ersten Antippen der Seite. Beim ersten Tipp wird die Sprachausgabe mit einem
+     stummen Satz „aufgeweckt“; vorher wird nicht automatisch vorgelesen (sonst verschluckt das Handy den Text).
+   - Nur Stimmen, die auf dem Gerät liegen (localService): Online-Stimmen brechen lange Texte ab oder bleiben stumm.
+   - Lange Texte werden in Sätze geteilt, jeder Satz ist eine eigene Ansage.
+   - Nach cancel() kurz warten, bevor neu gesprochen wird (sonst geht die neue Ansage oft verloren).
+   - Die Ansage wird festgehalten (sonst räumt iOS sie weg und onend kommt nie), und ein Zeitlimit
+     sorgt dafür, dass Geschichten auch weiterlaufen, wenn das Gerät kein onend meldet. */
+const TTS={ok:"speechSynthesis" in window&&"SpeechSynthesisUtterance" in window,v:null,run:0,keep:null,awake:false,err:0,warned:false};
+function pickVoices(){if(!TTS.ok)return;const all=speechSynthesis.getVoices()||[];
+  let vs=all.filter(v=>/^de([-_]|$)/i.test(v.lang));const dd=vs.filter(v=>/de[-_]DE/i.test(v.lang));if(dd.length)vs=dd;
+  const loc=vs.filter(v=>v.localService);if(loc.length)vs=loc;
+  TTS.v=vs.find(v=>/anna|petra|helena|katja|marlene|vicki/i.test(v.name))||vs.find(v=>v.default)||vs[0]||null}
+if(TTS.ok){pickVoices();if(speechSynthesis.addEventListener)speechSynthesis.addEventListener("voiceschanged",pickVoices);else speechSynthesis.onvoiceschanged=pickVoices}
+function wake(){if(!TTS.ok||TTS.awake)return;TTS.awake=true;
+  try{const u=new SpeechSynthesisUtterance(" ");u.volume=0;u.lang="de-DE";TTS.keep=u;speechSynthesis.speak(u)}catch(e){}
+  pickVoices()}
+["touchend","click","keydown"].forEach(ev=>document.addEventListener(ev,wake,{capture:true,passive:true}));
+document.addEventListener("visibilitychange",()=>{if(document.hidden)hush()});
+const talking=()=>TTS.ok&&(speechSynthesis.speaking||speechSynthesis.pending);
+function stopNow(){if(talking()){speechSynthesis.cancel();TTS.cut=Date.now()}}
+function hush(){TTS.run++;stopNow();document.querySelectorAll(".spk.on").forEach(b=>b.classList.remove("on"))}
+/* Sätze, höchstens ~180 Zeichen pro Ansage */
+function chunks(t){const out=[];(t.match(/[^.!?…]+[.!?…]*["“”»«„]?\s*/g)||[t]).forEach(s=>{s=s.trim();if(!s)return;
+  while(s.length>180){let k=s.lastIndexOf(", ",180);if(k<60)k=s.lastIndexOf(" ",180);if(k<1)k=180;out.push(s.slice(0,k+1));s=s.slice(k+1).trim()}
+  if(s)out.push(s)});
+  /* sehr kurze Stücke an das vorige hängen */
+  return out.reduce((a,s)=>{if(a.length&&(a[a.length-1].length+s.length<120))a[a.length-1]+=" "+s;else a.push(s);return a},[])}
+/* spricht einen Text; o = {pitch, rate}; onend kommt auch bei Fehlern, damit Abfolgen weiterlaufen */
 function speak(text,o,onend){if(typeof o==="function"){onend=o;o={}}o=o||{};
-  if(!TTS.ok){if(onend)onend();return false}
-  const id=++TTS.run;speechSynthesis.cancel();
-  const u=new SpeechSynthesisUtterance(plain(text));u.lang="de-DE";
-  const v=o.voice!=null&&TTS.vs.length?TTS.vs[o.voice%TTS.vs.length]:TTS.v;if(v)u.voice=v;
-  u.rate=S.rate*(o.rate||1);u.pitch=o.pitch||1.05;
-  let fired=false;const fin=()=>{if(fired)return;fired=true;if(id===TTS.run&&onend)onend()};u.onend=fin;u.onerror=fin;
-  speechSynthesis.speak(u);return true}
+  if(!TTS.ok){if(onend)setTimeout(onend,0);return false}
+  const id=++TTS.run,parts=chunks(plain(text));let k=0;
+  const done=()=>{if(id===TTS.run&&onend)onend()};
+  const one=()=>{if(id!==TTS.run)return;if(k>=parts.length){done();return}
+    const u=new SpeechSynthesisUtterance(parts[k++]);u.lang="de-DE";if(TTS.v)u.voice=TTS.v;
+    u.rate=Math.min(1.4,S.rate*(o.rate||1));u.pitch=o.pitch||1.05;TTS.keep=u;
+    let fired=false,started=false;
+    const fin=e=>{if(fired)return;fired=true;clearTimeout(wd);
+      if(e&&e.type==="error"&&!/interrupted|canceled/.test(e.error||"")){TTS.err++;if(!started&&TTS.err>=2&&!TTS.warned){TTS.warned=true;toast("Vorlesen klappt gerade nicht. Ist der Ton an?")}}
+      else if(started)TTS.err=0;
+      one()};
+    u.onstart=()=>{started=true;TTS.lastStart=Date.now()};u.onend=fin;u.onerror=fin;
+    const wd=setTimeout(fin,2500+u.text.length*110/u.rate);
+    if(speechSynthesis.paused)speechSynthesis.resume();
+    speechSynthesis.speak(u)};
+  stopNow();const wait=90-(Date.now()-(TTS.cut||0));wait>0?setTimeout(one,wait):one();
+  return true}
 /* Vorlese-Knopf: spricht, solange er leuchtet; nochmal tippen stoppt */
 function spkBtn(getText){const b=document.createElement("button");b.className="spk";b.type="button";b.setAttribute("aria-label","Vorlesen");b.innerHTML=I.spk;
-  b.onclick=()=>{if(b.classList.contains("on")){hush();return}hush();b.classList.add("on");speak(getText(),()=>b.classList.remove("on"))};return b}
-function autoSay(text,btn){if(!S.auto||!TTS.ok)return;if(btn)btn.classList.add("on");speak(text,()=>{if(btn)btn.classList.remove("on")})}
+  b.onclick=()=>{if(b.classList.contains("on")){hush();return}hush();wake();b.classList.add("on");speak(getText(),()=>b.classList.remove("on"))};return b}
+/* automatisch vorlesen nur, wenn die Seite schon einmal angetippt wurde */
+const canAuto=()=>S.auto&&TTS.ok&&TTS.awake;
+function autoSay(text,btn){if(!canAuto())return;if(btn)btn.classList.add("on");speak(text,()=>{if(btn)btn.classList.remove("on")})}
 
 /* kurze Töne für richtig/falsch */
 let AC=null;
@@ -682,14 +716,18 @@ function home(){hush();R=null;
     ${S.ich?`<span class="small">Meine Ich-Botschaft</span><div class="row"><div class="quote grow">„${esc(S.ich)}“</div></div>`:""}
     ${S.vertrag?`<button class="ghost" id="cert">📜 Mein Klassenvertrag ansehen</button>`:""}</section>`:""}
   <section class="panel"><h3>Vorlesen</h3>
-    ${TTS.ok?`<p class="small">Die Lernwelt liest Karten, Geschichten und Rückmeldungen vor. In Gesprächen spricht jede Figur mit eigener Stimme.</p>
+    ${TTS.ok?`<p class="small">Die Lernwelt liest Karten, Geschichten und Rückmeldungen vor. In Gesprächen spricht jede Figur mit eigener Stimmlage.</p>
     <div class="modes" role="group" aria-label="Automatisch vorlesen">${[[true,"Automatisch"],[false,"Nur auf Knopfdruck"]].map(([v,t])=>`<button data-auto="${v}" aria-pressed="${S.auto===v}">${t}</button>`).join("")}</div>
     <div class="modes" role="group" aria-label="Sprechtempo">${[[.8,"Langsam"],[.95,"Normal"],[1.1,"Schnell"]].map(([v,t])=>`<button data-rate="${v}" aria-pressed="${S.rate===v}">${t}</button>`).join("")}</div>
-    <p class="small">Nichts zu hören? Lauter stellen und auf dem iPhone den Stumm-Schalter an der Seite prüfen.</p>`
+    <button class="ghost" id="ttest">${I.spk}<span>Ton testen</span></button>
+    <p class="small" id="thint">Nichts zu hören? Lauter stellen und auf dem iPhone den Stumm-Schalter an der Seite prüfen.</p>`
     :`<p class="small">Dieser Browser kann leider nicht vorlesen. Alles geht trotzdem, nur zum Lesen.</p>`}
   </section>`;
   app.querySelectorAll(".st[data-ch]").forEach(b=>b.onclick=()=>startRound(b.dataset.ch));
   $("#help").onclick=helpCard;
+  if($("#ttest"))$("#ttest").onclick=()=>{hush();wake();const t0=Date.now();speak("Hallo! So klinge ich, wenn ich vorlese.");
+    setTimeout(()=>{const h=$("#thint");if(!h||(TTS.lastStart||0)>=t0)return;
+      h.innerHTML="Das Gerät hat nicht gesprochen. Prüf den Ton und den Stumm-Schalter. Auf dem iPhone unter <b>Einstellungen → Bedienungshilfen → Gesprochene Inhalte → Stimmen → Deutsch</b> eine Stimme laden. Auf Android die App <b>Sprachausgabe von Google</b> mit Deutsch installieren."},3500)};
   if(S.ich){const r=app.querySelector(".mine .row");r.appendChild(spkBtn(()=>S.ich))}
   if($("#cert"))$("#cert").onclick=()=>certView(home);
   app.querySelectorAll("[data-auto]").forEach(b=>b.onclick=()=>{S.auto=b.dataset.auto==="true";save();home();if(S.auto)speak("Ich lese ab jetzt automatisch vor.")});
@@ -731,7 +769,7 @@ function feedback(ok,html,sayText,graded){if(R.locked)return;R.locked=true;
   if(TTS.ok){const b=document.createElement("button");b.className="ghost";b.type="button";b.innerHTML=I.spk+"<span>Anhören</span>";b.onclick=()=>speak(sayText||plain(html));extra.push(b)}
   const nx=document.createElement("button");nx.className="next";nx.type="button";nx.textContent=R.i+1>=R.steps.length?"Ergebnis":"Weiter";nx.onclick=next;
   lwSheet($("#cb"),ok,[fb,...extra,nx]);
-  if(S.auto)speak(sayText||plain(html))}
+  if(canAuto())speak(sayText||plain(html))}
 const PRAISE=()=>pick(["Richtig!","Genau!","Super!","Stark!","Klasse!"]);
 
 const RENDER={
@@ -872,7 +910,7 @@ const RENDER={
       b.innerHTML=`<span class="ava" style="background:${c.c}">${l.w[0]}</span><span class="bub"><span class="who" style="color:${c.c}">${l.w}${l.think?" denkt":""}</span>${l.photo?`<span class="photo"><span class="e">📷</span>${l.photo}</span>`:l.voice?`<span class="voice">${I.spk.replace('<svg','<svg width="18" height="18"')}<span>Sprachnachricht ${l.voice}</span></span><span class="small">„${esc(l.t)}“</span>`:esc(l.t)}</span>`;
       b.setAttribute("aria-label",l.w+": "+(l.photo||l.t));
       b.onclick=()=>{hush();sayLine(l)};return b};
-    const sayLine=(l,cb2)=>{if(l.n)return speak(l.n,{pitch:1},cb2);if(l.photo)return speak(l.w+" schickt ein Foto. "+l.photo,{pitch:1},cb2);const c=who(l.w);return speak(l.t,{pitch:c.p,voice:c.v,rate:l.think?.95:1},cb2)};
+    const sayLine=(l,cb2)=>{if(l.n)return speak(l.n,{pitch:1},cb2);if(l.photo)return speak(l.w+" schickt ein Foto. "+l.photo,{pitch:1},cb2);const c=who(l.w);return speak(l.t,{pitch:c.p,rate:l.think?.95:1},cb2)};
     const els=[];
     const finish=()=>{if(finished)return;finished=true;skip.remove();
       while(i<t.lines.length){const e=lineEl(t.lines[i++]);body.appendChild(e);els.push(e)}
@@ -885,7 +923,7 @@ const RENDER={
       const show=()=>{if(run!==SCN||finished)return;const e=lineEl(l);body.appendChild(e);els.push(e);els.forEach(x=>x.classList.remove("now"));e.classList.add("now");
         if(t.chat&&!l.n)sfxPling();e.scrollIntoView({block:"nearest",behavior:"smooth"});
         const len=plain(l.n||l.photo||l.t).length;
-        if(S.auto&&TTS.ok)sayLine(l,()=>setTimeout(step,300));else setTimeout(step,900+len*35)};
+        if(canAuto())sayLine(l,()=>setTimeout(step,300));else setTimeout(step,900+len*35)};
       if(t.chat&&!l.n){const ty=document.createElement("div");ty.className="typing";ty.innerHTML="<i></i><i></i><i></i>";body.appendChild(ty);setTimeout(()=>{ty.remove();show()},650)}else show()};
     skip.onclick=()=>{hush();finish()};
     step()},
@@ -912,7 +950,7 @@ function certView(after){hush();const v=S.vertrag;if(!v){after();return}const in
     ${inRound?`<p class="small">Gespeichert! Du findest ihn jederzeit unter „Meine Sachen“. Vielleicht wollt ihr so einen Vertrag ja auch in deiner Klasse machen?</p>`:""}`;
   const say="Unser Klassenvertrag. "+v.r.join(" ")+" Unterschrieben von "+v.n+".";
   const b=document.createElement("button");b.className="ghost";b.type="button";b.innerHTML=I.spk+"<span>Vorlesen</span>";b.onclick=()=>speak(say);$("#crow").appendChild(b);
-  if(inRound){beep([523.25,659.25,783.99],.16);dock(app,"Weiter",after);if(S.auto)speak(say)}
+  if(inRound){beep([523.25,659.25,783.99],.16);dock(app,"Weiter",after);if(canAuto())speak(say)}
   else $("#cbk").onclick=after;
   scrollTo(0,0)}
 
