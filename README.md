@@ -9,6 +9,7 @@ Fächer und Hefte stehen in [`hefte.js`](hefte.js).
 | Englisch | English trainer | `englisch.html` |
 | Mathe | Rechenheft | `rechenheft.html` |
 | Mathe | Terme verstehen | `terme.html` |
+| Mathe | Potenz-Quiz (2er- und 10er-Potenzen bis 20) | `potenzen.html` |
 | Biologie | Bio-Expedition | `bio-expedition.html` |
 | Biologie | Expedition Pflanzenzelle | `pflanzenzelle.html` |
 | Erdkunde | Atlas-Detektiv | `atlas.html` |

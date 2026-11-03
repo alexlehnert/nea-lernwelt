@@ -1,0 +1,462 @@
+<!doctype html><html lang="de"><head><meta charset=utf8><script src="/api/config"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="/sync.js"></script><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"><link rel="manifest" href="/manifest.webmanifest"><meta name="apple-mobile-web-app-title" content="Lernwelt"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="theme-color" content="#5B3FE6"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Potenz-Quiz</title>
+<style>
+/* Potenz-Quiz: 2er- und 10er-Potenzen von Hochzahl 0 bis 20 auswendig lernen, ohne Erklärteil.
+   Jede Potenz sammelt 3 Punkte (dreimal hintereinander richtig). Kapitel = Quizrunden mit Sternen.
+   Vorlesen der Zahlen mit der Sprachausgabe des Geräts (Web Speech API, de-DE).
+   Farben und Schriften kommen aus lernwelt-app.css (hell und dunkel). */
+:root{color-scheme:light dark}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{margin:0;background:var(--lw-bg);color:var(--lw-ink);font-family:var(--lw-f-b);font-size:17px;line-height:1.45;-webkit-tap-highlight-color:transparent;padding-top:env(safe-area-inset-top,0px)}
+.wrap{max-width:640px;margin:0 auto;padding:14px max(16px,env(safe-area-inset-right,0px)) 130px max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px}
+h1,h2,h3{font-family:var(--lw-f-d);font-weight:700;margin:0;line-height:1.15;text-wrap:balance}
+h2{font-size:1.6rem}
+h3{font-size:1.15rem}
+p{margin:0}
+b{font-weight:700}
+sup{font-size:.6em;line-height:0;position:relative;top:-.15em;vertical-align:super}
+button{font:inherit;color:inherit;cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+button:focus-visible{outline:3px solid var(--lw-brand);outline-offset:2px}
+svg{display:block}
+.small{font-size:.88rem;color:var(--lw-muted)}
+.lead{font-size:1.05rem}
+.num{white-space:nowrap;font-variant-numeric:tabular-nums}
+.panel{background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--lw-ma)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.grow{flex:1}
+.ghost{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:8px 14px}
+.ghost svg,.go svg{width:18px;height:18px;flex:none}
+.go{display:inline-flex;align-items:center;justify-content:center;gap:8px}
+
+/* Startseite: Übersicht aller 42 Potenzen */
+.sure{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.sure b{font:700 1.7rem/1 var(--lw-f-d);color:var(--lw-ma)}
+.bar{height:12px;border-radius:99px;background:var(--lw-line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--lw-ok);border-radius:99px}
+.glbl{font-size:13px;font-weight:700;color:var(--lw-muted);margin-top:4px}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.cell{min-height:44px;border-radius:12px;border:2px solid var(--lw-line);background:var(--lw-card);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2px 0;font:700 .95rem/1 var(--lw-f-d);color:var(--lw-ink)}
+.cell .d{display:flex;gap:2px;margin-top:4px}
+.cell .d i{width:5px;height:5px;border-radius:50%;background:var(--lw-line)}
+.cell .d i.on{background:var(--lw-ok)}
+.cell.s3{background:var(--lw-ok-bg);border-color:var(--lw-ok)}
+.cell.s3 .d i.on{background:var(--lw-ok)}
+.cell:active{transform:translateY(2px)}
+.stations{display:flex;flex-direction:column;gap:12px}
+.st{display:flex;align-items:center;gap:14px;text-align:left;width:100%;padding:14px;border-radius:22px;background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:5px}
+.st:active{transform:translateY(3px);border-bottom-width:2px}
+.st .ico{width:56px;height:56px;flex:none;border-radius:16px;background:var(--lw-ma-s);color:var(--lw-ma);display:grid;place-items:center;font:700 1.35rem/1 var(--lw-f-d)}
+.st .ico svg{width:30px;height:30px}
+.st h3{font-size:1.12rem}
+.st p{font-size:.9rem;color:var(--lw-muted);line-height:1.3;margin-top:2px}
+.st .n{font:700 12px var(--lw-f-b);letter-spacing:.1em;text-transform:uppercase;color:var(--lw-ma)}
+.stars{display:flex;gap:2px;margin-top:6px}
+.stars svg{width:20px;height:20px}
+.st.free .ico{background:var(--lw-sun);color:#5B3A00}
+.modes{display:flex;gap:6px;background:var(--lw-soft);border-radius:16px;padding:4px}
+.modes button{flex:1;min-height:44px;border:0;border-radius:12px;background:none;font-weight:700;color:var(--lw-muted)}
+.modes button[aria-pressed="true"]{background:var(--lw-card);color:var(--lw-ink);box-shadow:0 2px 0 var(--lw-shadow)}
+
+/* Runde */
+.topbar{display:flex;align-items:center;gap:12px}
+.track{flex:1;display:flex;gap:4px}
+.track i{flex:1;height:12px;border-radius:99px;background:var(--lw-line)}
+.track i.ok{background:var(--lw-ok)}
+.track i.no{background:var(--lw-bad)}
+.track i.now{background:var(--lw-ma)}
+.q{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.q b{display:block;font:700 1.3rem/1.2 var(--lw-f-d)}
+.q .dots{display:flex;gap:4px;padding-top:6px}
+.q .dots i{width:10px;height:10px;border-radius:50%;background:var(--lw-line)}
+.q .dots i.on{background:var(--lw-ok)}
+.stage{display:flex;flex-direction:column;gap:14px}
+.show{background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:22px;padding:18px 12px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+.eq{font:700 clamp(1.7rem,8.5vw,2.6rem)/1.25 var(--lw-f-d);display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:0 .3em}
+.eq.long{font-size:clamp(1.2rem,5.6vw,1.9rem)}
+.eq .nm{font-size:.8em}
+.eq.long .nm{font-size:1em}
+.slot{display:inline-grid;place-items:center;min-width:1.6em;min-height:1.25em;padding:0 .2em;border-radius:12px;border:2px dashed var(--lw-ma);background:var(--lw-ma-s);color:var(--lw-ma);font-variant-numeric:tabular-nums;white-space:nowrap}
+sup .slot{min-width:1.3em;font-size:1.5em;border-radius:9px;top:-.1em;position:relative}
+.slot.full{border-style:solid}
+.slot.ok{border-color:var(--lw-ok);background:var(--lw-ok-bg);color:var(--lw-ok-ink)}
+.slot.bad{border-color:var(--lw-bad);background:var(--lw-bad-bg);color:var(--lw-bad-ink)}
+.sub{font-size:.95rem;color:var(--lw-muted)}
+.listen{min-width:200px}
+.opts{display:grid;grid-template-columns:1fr;gap:10px}
+.opts.g2{grid-template-columns:1fr 1fr}
+.opt{width:100%;padding:10px 12px;display:flex;align-items:center;justify-content:center;text-align:center;font-variant-numeric:tabular-nums}
+.opt.long{font-size:1rem}
+.opt.pw{font-size:1.5rem}
+.opt:disabled{cursor:default}
+.kp{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.kp button{min-height:56px;border-radius:16px;border:2px solid var(--lw-line);border-bottom-width:5px;background:var(--lw-card);font:700 1.5rem/1 var(--lw-f-d);color:var(--lw-ink);display:grid;place-items:center}
+.kp button:active{transform:translateY(3px);border-bottom-width:2px}
+.kp .del{color:var(--lw-muted)}
+.kp .del svg{width:26px;height:26px}
+.kp .ok{background:var(--lw-ma);border-color:var(--lw-ma-d);color:#fff;font-size:1.15rem;letter-spacing:.04em}
+.kp .ok:disabled{opacity:.45}
+.lw-sheet .ghost{width:100%;min-height:50px}
+.fb .big{font:700 1.5rem/1.2 var(--lw-f-d);color:var(--lw-ink)}
+.fb .big.long{font-size:clamp(1rem,4.6vw,1.3rem)}
+.fb .nm{font:600 1.15rem/1.25 var(--lw-f-d);color:var(--lw-ink)}
+.fb p{margin-top:4px}
+
+/* Ergebnis */
+.result{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;padding-top:20px}
+.bigstars{display:flex;gap:8px}
+.bigstars svg{width:64px;height:64px}
+.bigstars .s1{animation:pop .5s .1s both}.bigstars .s2{animation:pop .5s .35s both}.bigstars .s3{animation:pop .5s .6s both}
+@keyframes pop{0%{transform:scale(0)}70%{transform:scale(1.2)}100%{transform:scale(1)}}
+.result .go,.result .ghost{width:100%}
+.missed{align-self:stretch;text-align:left}
+
+/* Hörtafel */
+.chead{display:flex;align-items:center;gap:12px}
+.backb{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:6px 14px 6px 10px;border-radius:14px;border:2px solid var(--lw-line);border-bottom-width:4px;background:var(--lw-card);font-weight:700;color:var(--lw-muted)}
+.backb svg{width:18px;height:18px}
+.tafel{display:flex;flex-direction:column;gap:6px}
+.hrow{display:grid;grid-template-columns:62px 1fr 26px;align-items:center;gap:8px;width:100%;text-align:left;padding:8px 10px;border-radius:16px;border:2px solid var(--lw-line);background:var(--lw-card);color:var(--lw-ink)}
+.hrow .p{font:700 1.3rem/1 var(--lw-f-d)}
+.hrow .v{font:700 1.05rem/1.2 var(--lw-f-d);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.hrow .v small{display:block;font:400 .88rem/1.25 var(--lw-f-b);color:var(--lw-muted);margin-top:2px}
+.hrow svg{width:20px;height:20px;color:var(--lw-ma)}
+.hrow.on{border-color:var(--lw-ma);background:var(--lw-ma-s)}
+.hrow.fam{border-left:6px solid var(--lw-ma)}
+.lw-sheet .missl{margin:0;padding-left:20px}
+.missed ul{margin:6px 0 0;padding-left:0;list-style:none;display:flex;flex-direction:column;gap:6px}
+#toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,40px);opacity:0;z-index:9500;background:var(--lw-ink);color:var(--lw-bg);padding:10px 18px;border-radius:14px;font-weight:700;max-width:88vw;text-align:center;transition:.25s;pointer-events:none}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style><!--lw-look--><link rel="stylesheet" href="/lernwelt-app.css"><script src="/lernwelt-app.js"></script><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap"><style id="lw-look">
+/* Übungs-Bausteine im Lernwelt-Look (wie im Konzept: Antwortkacheln, grüne Rückmeldung, dicke Knöpfe) */
+.go,.next,.check{background:var(--lw-c);color:#fff;border:none;border-radius:16px;min-height:54px;padding:12px 22px;
+  font-family:var(--lw-f-d);font-weight:700;font-size:1.05rem;letter-spacing:.04em;text-transform:uppercase;box-shadow:0 5px 0 var(--lw-cd)}
+.go:active,.next:active,.check:active{transform:translateY(3px);box-shadow:0 2px 0 var(--lw-cd)}
+.ghost{background:var(--lw-card);color:var(--lw-ink);border:2px solid var(--lw-line);border-bottom-width:4px;border-radius:14px;min-height:44px;font-weight:700}
+.chip{background:var(--lw-card);color:var(--lw-ink);border:2px solid var(--lw-line);border-radius:99px;min-height:40px;padding:6px 14px;font-weight:700}
+.chip[aria-pressed="true"]{background:var(--lw-c);border-color:var(--lw-c);color:#fff}
+.progress{height:14px;background:var(--lw-line);border-radius:99px}
+.progress i{background:var(--lw-ok);border-radius:99px}
+.card{background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:22px;box-shadow:none}
+.card-top{background:none;color:var(--lw-c);padding:16px 18px 0;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase}
+.card-top .tag{font-size:.8rem}
+.card-body{background-image:none}
+.prompt{font-family:var(--lw-f-d);font-weight:700}
+.opts{gap:12px}
+.opt{background:var(--lw-card);color:var(--lw-ink);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:18px;min-height:60px;
+  font-family:var(--lw-f-d);font-weight:600;font-size:1.12rem}
+.opt:not(:disabled):active{transform:translateY(3px);border-bottom-width:2px}
+.opt.ok{border:3px solid var(--lw-ok);border-bottom-width:6px;background:var(--lw-ok-bg);color:var(--lw-ok-ink)}
+.opt.bad{border-color:var(--lw-bad);background:var(--lw-bad-bg);color:var(--lw-bad-ink)}
+.tile{background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:4px;border-radius:12px;font-family:var(--lw-f-d);font-weight:700}
+.slots{border-radius:16px}
+.slots .tile{background:var(--lw-cs);border-color:var(--lw-c)}
+.inp input,.field{border-radius:16px}
+.fb{border-radius:22px;padding:16px 16px 18px;gap:8px}
+.fb.ok{background:var(--lw-ok-bg);border:none;color:var(--lw-ink)}
+.fb.bad{background:var(--lw-bad-bg);border:none;color:var(--lw-ink)}
+.fb strong{font-family:var(--lw-f-d);font-weight:700;font-size:1.3rem;display:flex;align-items:center;gap:10px}
+.fb.ok strong{color:var(--lw-ok-ink)}
+.fb.bad strong{color:var(--lw-bad-ink)}
+.fb.ok strong::before,.fb.bad strong::before{content:"";flex:none;width:36px;height:36px;border-radius:50%;background:var(--lw-ok) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/20px no-repeat}
+.fb.bad strong::before{background:var(--lw-bad) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3.4' stroke-linecap='round'%3E%3Cpath d='M7 7l10 10M17 7L7 17'/%3E%3C/svg%3E") center/18px no-repeat}
+.card-top .tag{color:var(--lw-c);font-family:var(--lw-f-b);font-weight:700;letter-spacing:.12em}
+.card-top .fachtag{background:var(--lw-cs);color:var(--lw-c);font-family:var(--lw-f-b);font-weight:700}
+/* @kit */
+/* Potenz-Quiz ist von Anfang an im Lernwelt-Look gebaut: nur die Fach-Farbe setzen. */
+:root:root:root{--lw-c:var(--lw-ma); --lw-cd:var(--lw-ma-d); --lw-cs:var(--lw-ma-s)}
+.go{width:auto}
+.go:disabled{opacity:.5}
+</style><!--/lw-look--></head><body><nav id="lw-bar" class="lw-bar lw-ma" aria-label="Lernwelt"><a class="lw-back" href="index.html#heft-potenzen" aria-label="Zurück zum Heft"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a><span class="lw-t"><span class="lw-eyebrow">Mathe</span><span class="lw-name">Potenz-Quiz</span></span></nav>
+<main class="wrap" id="app"></main>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+"use strict";
+/* ================= Grundlagen ================= */
+const $=s=>document.querySelector(s);
+const app=$("#app");
+const rand=n=>Math.floor(Math.random()*n);
+const pick=a=>a[rand(a.length)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=rand(i+1);[a[i],a[j]]=[a[j],a[i]]}return a};
+let toastT;function toast(t){const el=$("#toast");el.innerHTML=t;el.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove("show"),2600)}
+
+/* ================= Zahlen ================= */
+const MAXN=20;
+const val=(b,n)=>b===2?String(Math.pow(2,n)):"1"+"0".repeat(n);           // als Text, 10²⁰ ist zu groß für exakte Zahlen
+const fmt=s=>String(s).replace(/\B(?=(\d{3})+(?!\d))/g,"\u00A0");           // 1 048 576 mit festem Leerzeichen: Dreiergruppen gut sichtbar
+const pw=(b,n,cls)=>`<span class="num ${cls||""}">${b}<sup>${n}</sup></span>`;
+/* Namen der 10er-Potenzen (deutsche lange Skala) */
+const NAME=["eins","zehn","hundert","tausend","zehntausend","hunderttausend",
+  "eine Million","zehn Millionen","hundert Millionen","eine Milliarde","zehn Milliarden","hundert Milliarden",
+  "eine Billion","zehn Billionen","hundert Billionen","eine Billiarde","zehn Billiarden","hundert Billiarden",
+  "eine Trillion","zehn Trillionen","hundert Trillionen"];
+const FAM=[[6,"Million"],[9,"Milliarde"],[12,"Billion"],[15,"Billiarde"],[18,"Trillion"]];
+/* Zahlwörter fürs Vorlesen (bis unter eine Milliarde reicht für 2²⁰) */
+const ONES=["null","eins","zwei","drei","vier","fünf","sechs","sieben","acht","neun","zehn","elf","zwölf","dreizehn","vierzehn","fünfzehn","sechzehn","siebzehn","achtzehn","neunzehn"];
+const TENS=["","","zwanzig","dreißig","vierzig","fünfzig","sechzig","siebzig","achtzig","neunzig"];
+function w99(n,end){if(n<20)return n===1?(end?"eins":"ein"):ONES[n];const u=n%10,t=Math.floor(n/10);return u?(u===1?"ein":ONES[u])+"und"+TENS[t]:TENS[t]}
+function w999(n,end,lead){const h=Math.floor(n/100),r=n%100;return (h?(h===1?(lead?"einhundert":"hundert"):ONES[h]+"hundert"):"")+(r?w99(r,end):"")}
+function words(n){n=+n;if(n===0)return "null";const m=Math.floor(n/1e6),th=Math.floor(n/1000)%1000,r=n%1000,out=[];
+  if(m)out.push(m===1?"eine Million":w999(m,false)+" Millionen");
+  let s="";if(th)s+=th===1?"tausend":w999(th,false)+"tausend";if(r)s+=w999(r,true,!!(m||th));if(s)out.push(s);return out.join(" ")}
+const spoken=f=>f.b===10?NAME[f.n]:words(f.v);                 // wie man die Zahl ausspricht
+const sayPow=f=>`${f.b===2?"zwei":"zehn"} hoch ${ONES[f.n]}`;
+const sayFact=f=>`${sayPow(f)} ist ${spoken(f)}`;
+
+/* Alle 42 Potenzen */
+const F=[];[2,10].forEach(b=>{for(let n=0;n<=MAXN;n++)F.push({b,n,id:b+"-"+n,v:val(b,n)})});
+const fact=(b,n)=>F.find(f=>f.b===b&&f.n===n);
+
+/* ================= Zustand ================= */
+const KEY="potenz-quiz-v1";
+const DEF={m:{},best:{},ton:true,rate:.9,taf:2};
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&typeof s==="object")return Object.assign(JSON.parse(JSON.stringify(DEF)),s)}catch(e){}return JSON.parse(JSON.stringify(DEF))}
+let S=load();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+const dots=f=>S.m[f.id]||0;
+const sureCount=()=>F.filter(f=>dots(f)>=3).length;
+
+/* ================= Vorlesen (Sprachausgabe des Geräts) ================= */
+const TTS={ok:"speechSynthesis" in window&&"SpeechSynthesisUtterance" in window,v:null,run:0};
+function pickVoice(){if(!TTS.ok)return;const vs=speechSynthesis.getVoices().filter(v=>/^de/i.test(v.lang));
+  TTS.v=vs.find(v=>/de[-_]DE/i.test(v.lang)&&/anna|petra|helena|katja|google/i.test(v.name))||vs.find(v=>/de[-_]DE/i.test(v.lang))||vs[0]||null}
+if(TTS.ok){pickVoice();speechSynthesis.addEventListener&&speechSynthesis.addEventListener("voiceschanged",pickVoice)}
+function hush(){TTS.run++;if(TTS.ok)speechSynthesis.cancel()}
+/* spricht einen Text; onend kommt auch bei Fehlern, damit Abfolgen weiterlaufen */
+function speak(text,onend){if(!TTS.ok){if(onend)onend();return false}
+  const id=++TTS.run;speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);u.lang="de-DE";if(TTS.v)u.voice=TTS.v;u.rate=S.rate;u.pitch=1.05;
+  let fired=false;const fin=()=>{if(fired)return;fired=true;if(id===TTS.run&&onend)onend()};u.onend=fin;u.onerror=fin;
+  speechSynthesis.speak(u);return true}
+
+/* kurze Töne für richtig/falsch */
+let AC=null;
+function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){AC=null}}if(AC&&AC.state==="suspended")AC.resume();return AC}
+function beep(fs,len,type,vol){const a=ac();if(!a)return;let t=a.currentTime+.02;fs.forEach(f=>{const o=a.createOscillator(),g=a.createGain();o.type=type||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol||.18,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+len);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+len+.02);t+=len*.75})}
+const sfxOk=()=>beep([1046.5,1318.5],.14);
+const sfxBad=()=>beep([233,175],.18,"triangle",.12);
+
+/* ================= Symbole ================= */
+const I={
+  play:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z" fill="currentColor"/></svg>`,
+  stop:`<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/></svg>`,
+  spk:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path d="M15.5 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11"/></svg>`,
+  back:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>`,
+  del:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 5H9l-6 7 6 7h12z"/><path d="M12.5 9.5l5 5M17.5 9.5l-5 5"/></svg>`,
+  ear:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9a6 6 0 1 1 12 0c0 3-2 4.2-3 5.5S13.8 18 12.5 19.5 9 21 8 19"/><path d="M10 9.5a2 2 0 1 1 4 0c0 1.3-1.3 1.7-1.6 2.7"/></svg>`,
+  mix:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h3.5c4 0 6 10 10 10H21M3 17h3.5c1.6 0 2.8-1.6 3.8-3.5M13.7 9.5C14.7 8.2 15.6 7 17 7h4M18.5 4.5L21 7l-2.5 2.5M18.5 14.5L21 17l-2.5 2.5"/></svg>`,
+  star:on=>`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z" fill="${on?"#FFC93C":"var(--lw-line)"}" stroke="${on?"#D99A00":"none"}" stroke-width="1.2" stroke-linejoin="round"/></svg>`
+};
+
+/* ================= Aufgaben ================= */
+/* Nachbarn als falsche Antworten: gleiche Basis, nahe Hochzahl (bei Namen sind ±3 die typische Verwechslung) */
+function near(f,deltas,k,lo){lo=lo==null?0:lo;const out=[];
+  for(const d of deltas){const n=f.n+d;if(n>=lo&&n<=MAXN&&n!==f.n&&!out.includes(n))out.push(n);if(out.length>=k)break}
+  if(out.length<k)for(let n=lo;n<=MAXN&&out.length<k;n++)if(n!==f.n&&!out.includes(n))out.push(n);
+  return out}
+const D1=()=>shuffle([-1,1]).concat(shuffle([-2,2]),shuffle([-3,3]));
+const D3=()=>shuffle([-3,3]).concat(shuffle([-1,1]),shuffle([-2,2,-6,6]));
+const isLong=f=>f.v.length>12;
+
+const T={
+  /* 2ⁿ = ? eintippen */
+  val(f){return {f,kind:"kp",q:"Wie viel ist das?",show:`<div class="eq">${pw(2,f.n)}<span>=</span><span class="slot" id="slot">?</span></div>`,ans:f.v,max:f.v.length+1,group:true}},
+  /* Zahl = bⁿ, Hochzahl eintippen */
+  exp(f){return {f,kind:"kp",q:"Welche Hochzahl fehlt?",show:`<div class="eq ${isLong(f)?"long":""}"><span class="num">${fmt(f.v)}</span><span>=</span><span class="num">${f.b}<sup><span class="slot" id="slot">?</span></sup></span></div>${f.b===10&&f.n>2?`<p class="sub">Tipp: Zähl die Nullen.</p>`:""}`,ans:String(f.n),max:2}},
+  /* bⁿ = ? auswählen */
+  pick(f){const ns=near(f,D1(),3);const o=shuffle([f.n,...ns]).map(n=>({h:fmt(val(f.b,n)),ok:n===f.n}));
+    return {f,kind:"mc",q:f.b===10?"Welche Zahl ist das?":"Welche Zahl ist richtig?",show:`<div class="eq">${pw(f.b,f.n)}</div>`,opts:o,cls:isLong(fact(f.b,Math.max(f.n,...ns)))?"long":""}},
+  /* Verdoppeln: 2ⁿ⁻¹ · 2 */
+  dbl(f){return {f,kind:"kp",q:"Verdopple!",show:`<div class="eq"><span class="num">${fmt(val(2,f.n-1))}</span><span>·</span><span>2</span><span>=</span><span class="slot" id="slot">?</span></div><p class="sub">${pw(2,f.n-1)} · 2 = ${pw(2,f.n)}</p>`,ans:f.v,max:f.v.length+1,group:true}},
+  /* 10ⁿ oder die Zahl → Name auswählen */
+  name(f){const asNum=f.n>=4&&Math.random()<.5;const ns=near(f,D3(),3,3);const o=shuffle([f.n,...ns]).map(n=>({h:NAME[n],ok:n===f.n}));
+    return {f,kind:"mc",q:"Wie heißt diese Zahl?",show:asNum?`<div class="eq ${isLong(f)?"long":""}"><span class="num">${fmt(f.v)}</span></div>`:`<div class="eq">${pw(10,f.n)}</div><p class="sub num">${fmt(f.v)}</p>`,opts:o}},
+  /* Name → Hochzahl eintippen */
+  nameExp(f){return {f,kind:"kp",q:"Schreib als Zehnerpotenz.",show:`<div class="eq"><span class="nm">„${NAME[f.n]}“</span></div><div class="eq"><span>=</span><span class="num">10<sup><span class="slot" id="slot">?</span></sup></span></div>`,ans:String(f.n),max:2}},
+  /* Name → Zahl auswählen */
+  nameNum(f){const ns=near(f,D3(),3,3);const o=shuffle([f.n,...ns]).map(n=>({h:fmt(val(10,n)),ok:n===f.n}));
+    return {f,kind:"mc",q:"Welche Zahl ist das?",show:`<div class="eq"><span class="nm">„${NAME[f.n]}“</span></div>`,opts:o,cls:f.n+3>12||ns.some(n=>n>12)?"long":""}},
+  /* Hören: Zahl hören → Potenz wählen */
+  hearPow(f){const ns=near(f,f.b===10?D3():D1(),3);const o=shuffle([f.n,...ns]).map(n=>({h:pw(f.b,n),ok:n===f.n,cls:"pw"}));
+    return {f,kind:"mc",q:"Welche Potenz hörst du?",audio:spoken(f),show:"",opts:o,g2:true}},
+  /* Hören: „zwei hoch …“ → Zahl wählen */
+  hearVal(f){const ns=near(f,f.b===10?D3():D1(),3);const o=shuffle([f.n,...ns]).map(n=>({h:f.b===10&&n>=3?NAME[n]:fmt(val(f.b,n)),ok:n===f.n}));
+    return {f,kind:"mc",q:"Hör zu: Welche Zahl ist das?",audio:sayPow(f),show:"",opts:o}}
+};
+/* Welche Aufgabenarten zu welcher Potenz passen */
+function typesFor(f,ch){
+  const hear=TTS.ok&&S.ton;
+  if(ch==="zwei1")return f.n>=2?["val","val","exp","pick","dbl"]:["val","exp","pick"];
+  if(ch==="zwei2")return ["val","exp","pick","pick","dbl"];
+  if(ch==="zehn")return ["pick","exp","exp"];
+  if(ch==="namen")return ["name","name","nameExp","nameNum"];
+  if(ch==="hoeren")return hear?["hearPow","hearPow","hearVal"]:(f.b===2?["exp","pick"]:["name","nameNum"]);
+  /* Großer Mix */
+  const t=f.b===2?(f.n>=2?["val","exp","pick","dbl"]:["val","exp","pick"]):(f.n>=3?["pick","exp","name","nameExp","nameNum"]:["pick","exp"]);
+  if(hear)t.push("hearPow","hearVal");return t}
+
+/* ================= Kapitel ================= */
+const CH=[
+  {id:"zwei1",t:"2er-Potenzen bis 2¹⁰",d:"Von 2⁰ = 1 bis 2¹⁰ = 1 024",ico:"2",pool:F.filter(f=>f.b===2&&f.n<=10),n:10},
+  {id:"zwei2",t:"2er-Potenzen bis 2²⁰",d:"Von 2¹¹ = 2 048 bis 2²⁰ = 1 048 576",ico:"2",pool:F.filter(f=>f.b===2&&f.n>10),n:10},
+  {id:"zehn",t:"10er-Potenzen bis 10²⁰",d:"Eine 1 und ganz viele Nullen",ico:"10",pool:F.filter(f=>f.b===10),n:10},
+  {id:"namen",t:"Namen der großen Zahlen",d:"Tausend, Million, Milliarde, Billion, Billiarde, Trillion",ico:"Mio",pool:F.filter(f=>f.b===10&&f.n>=3),n:10},
+  {id:"hoeren",t:"Hör-Quiz",d:"Hör dir die Zahl an und finde die passende Potenz",ico:"ear",pool:F,n:10},
+  {id:"mix",t:"Großer Mix",d:"Alle 42 Potenzen durcheinander",ico:"mix",pool:F,n:15}
+];
+const chOf=id=>CH.find(c=>c.id===id);
+const stars=c=>S.best[c.id]||0;
+
+/* ================= Startseite ================= */
+function cellsHTML(b){return `<div class="grid">${F.filter(f=>f.b===b).map(f=>{const d=dots(f);return `<button class="cell s${d}" data-f="${f.id}" aria-label="${f.b} hoch ${f.n}, ${d} von 3 Punkten"><span>${f.n}</span><span class="d">${[1,2,3].map(i=>`<i class="${d>=i?"on":""}"></i>`).join("")}</span></button>`}).join("")}</div>`}
+function home(){hush();R=null;
+  const s=sureCount();
+  app.innerHTML=`
+  <section class="panel">
+    <div class="sure"><h2 style="font-size:1.35rem">Sitzt schon</h2><span><b>${s}</b> <span class="small">von 42</span></span></div>
+    <div class="bar"><i style="width:${s/42*100}%"></i></div>
+    <p class="small">Jede Potenz braucht 3 grüne Punkte: dreimal hintereinander richtig. Ein Fehler setzt sie auf null. Tipp ein Feld an, um es zu hören.</p>
+    <div class="glbl">2er-Potenzen · Hochzahl 0 bis 20</div>${cellsHTML(2)}
+    <div class="glbl">10er-Potenzen · Hochzahl 0 bis 20</div>${cellsHTML(10)}
+  </section>
+  <div class="stations">${CH.map((c,k)=>{const b=stars(c);const ico=I[c.ico]||`<span>${c.ico}</span>`;
+    return `<button class="st" data-ch="${c.id}"><span class="ico">${ico}</span><span class="grow"><span class="n">Kapitel ${k+1}</span><h3>${c.t}</h3><p>${c.d}</p><span class="stars" aria-label="${b} von 3 Sternen">${[0,1,2].map(i=>I.star(i<b)).join("")}</span></span></button>`}).join("")}
+    <button class="st free" id="taf"><span class="ico">${I.spk}</span><span class="grow"><span class="n">Zum Anhören</span><h3>Hörtafel</h3><p>Alle Potenzen in einer Liste. Antippen oder alle vorlesen lassen.</p></span></button></div>
+  <section class="panel"><h3>Vorlesen</h3>
+    ${TTS.ok?`<p class="small">Nach jeder Antwort liest die Lernwelt die Potenz laut vor. Hören und Sehen zusammen bleibt besser im Kopf.</p>
+    <div class="modes" role="group" aria-label="Vorlesen">${[[true,"An"],[false,"Aus"]].map(([v,t])=>`<button data-ton="${v}" aria-pressed="${S.ton===v}">${t}</button>`).join("")}</div>
+    <div class="modes" role="group" aria-label="Sprechtempo">${[[.75,"Langsam"],[.9,"Normal"],[1.05,"Schnell"]].map(([v,t])=>`<button data-rate="${v}" aria-pressed="${S.rate===v}">${t}</button>`).join("")}</div>
+    <p class="small">Nichts zu hören? Lauter stellen und auf dem iPhone den Stumm-Schalter an der Seite prüfen.</p>`
+    :`<p class="small">Dieser Browser kann leider nicht vorlesen. Das Quiz geht trotzdem, nur ohne Hör-Aufgaben.</p>`}
+  </section>`;
+  app.querySelectorAll(".st[data-ch]").forEach(b=>b.onclick=()=>startRound(b.dataset.ch));
+  $("#taf").onclick=tafel;
+  app.querySelectorAll(".cell").forEach(b=>b.onclick=()=>{const f=F.find(x=>x.id===b.dataset.f);toast(`${f.b}<sup>${f.n}</sup> = ${fmt(f.v)}${f.b===10&&f.n>=3?" · "+NAME[f.n]:""}`);speak(sayFact(f))});
+  app.querySelectorAll("[data-ton]").forEach(b=>b.onclick=()=>{S.ton=b.dataset.ton==="true";save();home();if(S.ton)speak("Vorlesen ist an.")});
+  app.querySelectorAll("[data-rate]").forEach(b=>b.onclick=()=>{S.rate=+b.dataset.rate;save();app.querySelectorAll("[data-rate]").forEach(x=>x.setAttribute("aria-pressed",x===b));speak(sayFact(fact(2,10)))});
+  scrollTo(0,0)}
+
+/* ================= Runde ================= */
+let R=null;
+/* Potenzen mit wenig Punkten kommen öfter dran; ohne Wiederholung, solange der Vorrat reicht */
+function choose(pool,n){const out=[];let rest=pool.slice();
+  while(out.length<n){if(!rest.length)rest=pool.filter(f=>f!==out[out.length-1]);
+    const W=rest.map(f=>Math.pow(4-dots(f),2)+.6);let r=Math.random()*W.reduce((a,b)=>a+b,0),k=0;while(r>W[k]&&k<W.length-1){r-=W[k];k++}
+    out.push(rest[k]);rest.splice(k,1)}
+  return out}
+function startRound(id){hush();const c=chOf(id);
+  const fs=choose(c.pool,c.n);
+  R={id,i:0,ok:0,res:[],miss:[],tasks:fs.map(f=>T[pick(typesFor(f,id))](f))};R.n=R.tasks.length;showTask()}
+function track(){$("#track").innerHTML=Array.from({length:R.n},(_,i)=>`<i class="${i<R.res.length?(R.res[i]?"ok":"no"):(i===R.i?"now":"")}"></i>`).join("")}
+function showTask(){hush();const t=R.tasks[R.i];R.locked=false;R.typed="";const d=dots(t.f);
+  app.innerHTML=`<div class="topbar"><button id="quit" aria-label="Runde beenden"></button><div class="track" id="track"></div></div>
+    <div class="q"><b>${t.q}</b><span class="dots" aria-label="${d} von 3 Punkten">${[1,2,3].map(i=>`<i class="${d>=i?"on":""}"></i>`).join("")}</span></div>
+    <section class="stage" id="cb"></section>`;
+  $("#quit").onclick=home;track();
+  const cb=$("#cb");let h="";
+  if(t.audio)h+=`<div class="show"><button class="go listen" id="lis">${I.spk}<span>Anhören</span></button><p class="sub">So oft du willst.</p></div>`;
+  if(t.show)h+=`<div class="show">${t.show}</div>`;
+  if(t.kind==="mc")h+=`<div class="opts ${t.g2?"g2":""}">${t.opts.map((o,i)=>`<button class="opt ${o.cls||t.cls||""}" data-i="${i}">${o.h}</button>`).join("")}</div>`;
+  else h+=`<div class="kp">${[1,2,3,4,5,6,7,8,9].map(n=>`<button data-k="${n}">${n}</button>`).join("")}<button class="del" data-k="del" aria-label="Löschen">${I.del}</button><button data-k="0">0</button><button class="ok" data-k="ok" disabled>OK</button></div>`;
+  cb.innerHTML=h;
+  if(t.audio){const go=()=>{const b=$("#lis");if(b)b.lastChild.textContent="Hör zu …";speak(t.audio,()=>{const b2=$("#lis");if(b2)b2.lastChild.textContent="Nochmal hören"})};
+    $("#lis").onclick=go;go()}
+  if(t.kind==="mc")cb.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{if(R.locked)return;const o=t.opts[+b.dataset.i];
+    cb.querySelectorAll(".opt").forEach((x,i)=>{x.disabled=true;if(t.opts[i].ok)x.classList.add("ok")});if(!o.ok)b.classList.add("bad");done(o.ok)});
+  else cb.querySelectorAll(".kp button").forEach(b=>b.onclick=()=>key(b.dataset.k));
+  scrollTo(0,0)}
+/* Ziffernblock (eigener, damit keine Handy-Tastatur aufspringt) */
+function key(k){if(!R||R.locked)return;const t=R.tasks[R.i];if(t.kind!=="kp")return;
+  if(k==="ok"){if(R.typed)check();return}
+  if(k==="del")R.typed=R.typed.slice(0,-1);
+  else if(R.typed.length<t.max)R.typed=(R.typed==="0"?"":R.typed)+k;
+  const sl=$("#slot");sl.textContent=R.typed?(t.group?fmt(R.typed):R.typed):"?";sl.classList.toggle("full",!!R.typed);
+  $(".kp .ok").disabled=!R.typed}
+document.addEventListener("keydown",e=>{if(!R||R.locked||e.metaKey||e.ctrlKey||e.altKey)return;
+  if(/^[0-9]$/.test(e.key))key(e.key);else if(e.key==="Backspace")key("del");else if(e.key==="Enter"){e.preventDefault();key("ok")}else return});
+function check(){const t=R.tasks[R.i];const ok=R.typed===t.ans;const sl=$("#slot");sl.classList.add(ok?"ok":"bad");
+  $(".kp").querySelectorAll("button").forEach(b=>b.disabled=true);done(ok,R.typed)}
+/* Merktipp zur Potenz */
+function tip(f){
+  if(f.n===0)return "Hoch 0 ist immer 1.";
+  if(f.b===2){if(f.n===1)return "Hoch 1 ist die Zahl selbst: 2¹ = 2.";
+    let s=`Verdoppeln: ${fmt(val(2,f.n-1))} · 2 = ${fmt(f.v)}.`;
+    if(f.n===10)s+=" Merk dir 2¹⁰ = 1 024: fast genau tausend.";
+    else if(f.n===20)s+=" Und: 2²⁰ = 1 024 · 1 024, gut eine Million.";
+    else if(f.n>10)s+=` Oder: 1 024 · ${fmt(val(2,f.n-10))} = ${fmt(f.v)}.`;
+    return s}
+  if(f.n===1)return "Hoch 1 ist die Zahl selbst: 10¹ = 10.";
+  let s=`Eine 1 mit ${f.n} Nullen.`;
+  const fam=FAM.slice().reverse().find(([e])=>e<=f.n);
+  if(fam&&f.n>fam[0])s+=` ${fam[1]} ist 10<sup>${fam[0]}</sup>, ${f.n-fam[0]===1?"mal zehn":"mal hundert"} gibt 10<sup>${f.n}</sup>.`;
+  else if(fam)s+=" Million, Milliarde, Billion, Billiarde, Trillion: immer drei Nullen mehr.";
+  return s}
+function done(ok,typed){if(R.locked)return;R.locked=true;const t=R.tasks[R.i],f=t.f;
+  S.m[f.id]=ok?Math.min(3,dots(f)+1):0;save();
+  R.res.push(ok);if(ok)R.ok++;else if(!R.miss.includes(f))R.miss.push(f);
+  ok?sfxOk():sfxBad();track();const d=dots(f);
+  const fb=document.createElement("div");fb.className="fb "+(ok?"ok":"bad");fb.setAttribute("role","status");
+  fb.innerHTML=`<strong>${ok?pick(["Richtig!","Super!","Genau!","Klasse!","Stark!"]):"Nicht ganz"}</strong>
+    <div class="big num ${isLong(f)?"long":""}">${f.b}<sup>${f.n}</sup> = ${fmt(f.v)}</div>
+    ${f.b===10&&f.n>=3?`<div class="nm">„${NAME[f.n]}“</div>`:""}
+    ${!ok&&typed?`<p>Du hast ${t.group?fmt(typed):typed} getippt.</p>`:""}
+    <p>${tip(f)}</p>
+    <p class="small">${ok?(d>=3?"Diese Potenz sitzt: 3 grüne Punkte!":`Noch ${3-d}-mal richtig, dann sitzt sie.`):"Die Punkte für diese Potenz starten wieder bei null."}</p>`;
+  const extra=[];
+  if(TTS.ok){const b=document.createElement("button");b.className="ghost";b.type="button";b.innerHTML=I.spk+"<span>Anhören</span>";b.onclick=()=>speak(sayFact(f));extra.push(b)}
+  const nx=document.createElement("button");nx.className="next";nx.type="button";nx.textContent=R.i+1>=R.n?"Ergebnis":"Weiter";
+  nx.onclick=()=>{R.i++;R.i>=R.n?endRound():showTask()};
+  lwSheet($("#cb"),ok,[fb,...extra,nx]);
+  if(S.ton)speak(sayFact(f))}
+function endRound(){hush();const n=R.n,ok=R.ok,q=ok/n;const st=q>=.9?3:q>=.7?2:q>=.5?1:0;
+  S.best[R.id]=Math.max(S.best[R.id]||0,st);save();
+  const k=CH.findIndex(c=>c.id===R.id),nxt=CH[k+1];
+  const cheer=["Dranbleiben, das wird!","Gut gemacht!","Stark!","Super, alles im Kopf!"][st];
+  const miss=R.miss;
+  app.innerHTML=`<section class="result"><h2>${cheer}</h2><div class="bigstars">${[0,1,2].map(i=>I.star(i<st).replace("<svg",`<svg class="s${i+1}"`)).join("")}</div>
+    <p class="lead"><b>${ok} von ${n}</b> richtig · <b>${sureCount()} von 42</b> Potenzen sitzen</p>
+    ${miss.length?`<div class="panel missed"><b>Das übst du noch einmal:</b><ul>${miss.map(f=>`<li><button class="hrow" data-f="${f.id}"><span class="p">${f.b}<sup>${f.n}</sup></span><span class="v">${fmt(f.v)}${f.b===10&&f.n>=3?`<small>${NAME[f.n]}</small>`:""}</span>${TTS.ok?I.spk:"<span></span>"}</button></li>`).join("")}</ul></div>`:""}
+    <button class="go" id="again">Nochmal üben</button>
+    ${nxt&&st>=2?`<button class="ghost" id="nx">Weiter: ${nxt.t}</button>`:""}
+    <button class="ghost" id="hm">Alle Kapitel</button></section>`;
+  if(st>=2)beep([523.25,659.25,783.99,1046.5],.2);
+  const id=R.id;R=null;
+  $("#again").onclick=()=>startRound(id);$("#hm").onclick=home;if($("#nx"))$("#nx").onclick=()=>startRound(nxt.id);
+  app.querySelectorAll(".missed .hrow").forEach(b=>b.onclick=()=>speak(sayFact(F.find(x=>x.id===b.dataset.f))));
+  scrollTo(0,0)}
+
+/* ================= Hörtafel ================= */
+let TAF=false;
+function tafel(){hush();R=null;TAF=false;const b=S.taf===10?10:2;
+  app.innerHTML=`<div class="chead"><button class="backb" id="cbk">${I.back}Alle Kapitel</button></div>
+    <div><span class="eyebrow">Zum Anhören</span><h2>Hörtafel</h2><p class="small" style="margin-top:4px">Tipp eine Zeile an, dann hörst du sie. Oder lass dir alle der Reihe nach vorlesen und sprich leise mit.</p></div>
+    <div class="modes" role="group" aria-label="Potenzen">${[[2,"2er-Potenzen"],[10,"10er-Potenzen"]].map(([v,t])=>`<button data-tb="${v}" aria-pressed="${b===v}">${t}</button>`).join("")}</div>
+    ${TTS.ok?`<button class="go" id="all">${I.play}<span>Alle vorlesen</span></button>`:`<p class="small">Dieser Browser kann leider nicht vorlesen.</p>`}
+    <div class="tafel">${F.filter(f=>f.b===b).map(f=>`<button class="hrow ${b===10&&FAM.some(([e])=>e===f.n)?"fam":""}" data-f="${f.id}"><span class="p">${f.b}<sup>${f.n}</sup></span><span class="v">${fmt(f.v)}<small>${b===10?NAME[f.n]:spoken(f)}</small></span>${TTS.ok?I.spk:"<span></span>"}</button>`).join("")}</div>`;
+  $("#cbk").onclick=home;
+  app.querySelectorAll("[data-tb]").forEach(x=>x.onclick=()=>{S.taf=+x.dataset.tb;save();tafel()});
+  const rows=[...app.querySelectorAll(".tafel .hrow")];
+  const mark=el=>{rows.forEach(r=>r.classList.toggle("on",r===el))};
+  rows.forEach(r=>r.onclick=()=>{TAF=false;setAll(false);mark(r);speak(sayFact(F.find(x=>x.id===r.dataset.f)),()=>mark(null))});
+  const setAll=on=>{const a=$("#all");if(a)a.innerHTML=(on?I.stop:I.play)+`<span>${on?"Stopp":"Alle vorlesen"}</span>`};
+  if($("#all"))$("#all").onclick=()=>{if(TAF){TAF=false;hush();mark(null);setAll(false);return}
+    TAF=true;setAll(true);let i=0;
+    const next=()=>{if(!TAF||!document.body.contains(rows[0]))return;if(i>=rows.length){TAF=false;mark(null);setAll(false);return}
+      const r=rows[i++];mark(r);r.scrollIntoView({block:"nearest",behavior:"smooth"});speak(sayFact(F.find(x=>x.id===r.dataset.f)),()=>setTimeout(next,350))};
+    next()};
+  scrollTo(0,0)}
+
+/* Lernwelt: direkt ins Kapitel (potenzen.html#namen …), Anker stehen in hefte.js */
+function kapitelSprung(){const id=location.hash.slice(1);if(id==="tafel"){tafel();return true}if(!chOf(id))return false;startRound(id);return true}
+kapitelSprung()||home();
+</script>
+<script>/* Lernwelt: Kapitel-Fortschritt für die Startseite (siehe sync.js) */
+if(window.LW&&LW.kapitel){
+LW.kapitel(function(){
+  return CH.map(function(c){return {t:c.t,p:(S.best[c.id]||0)/3}});
+});
+}</script>
+</body></html>

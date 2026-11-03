@@ -1,0 +1,5 @@
+/* @kit */
+/* Potenz-Quiz ist von Anfang an im Lernwelt-Look gebaut: nur die Fach-Farbe setzen. */
+:root:root:root{--lw-c:var(--lw-ma); --lw-cd:var(--lw-ma-d); --lw-cs:var(--lw-ma-s)}
+.go{width:auto}
+.go:disabled{opacity:.5}
