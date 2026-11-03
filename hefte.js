@@ -38,7 +38,7 @@ window.LW_HEFTE = [
     kapitel: ['2er-Potenzen bis 2¹⁰', '2er-Potenzen bis 2²⁰', '10er-Potenzen bis 10²⁰', 'Namen der großen Zahlen', 'Hör-Quiz', 'Großer Mix'],
     anker: ['zwei1', 'zwei2', 'zehn', 'namen', 'hoeren', 'mix'] },
   { id: 'englisch', abzeichen: 'Vokabel-Champion', fach: 'englisch', thema: 'Vokabeln und Grammatik', name: 'English trainer',
-    info: 'Vokabeln S. 170–180 und Grammatik Seite für Seite, oder alles gemischt im Karteikasten', key: 'englisch-kartei-5-v1',
+    info: 'Vokabeln S. 170–180 und Grammatik Seite für Seite, mit Chats zum Mitschreiben, oder alles gemischt im Karteikasten', key: 'englisch-kartei-5-v1',
     // Ein Kapitel pro Buchseite, Grammatik dort eingeordnet, wo sie thematisch passt (muss zu KAPS in englisch.html passen)
     kapitel: ['S. 170 · Hello!', 'G2 · to be', 'S. 171 · Welcome to London!', 'G1 · a/an & Plural', 'S. 172 · In the park', 'G3 · there is/are',
       'S. 173 · Zahlen, Farben, Freunde', 'S. 174 · Freunde & Hobbys', 'G6 · Pronomen & my/your…', 'S. 175 · Bis morgen!', 'S. 176 · Schulsachen',

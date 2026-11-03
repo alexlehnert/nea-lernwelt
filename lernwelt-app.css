@@ -90,3 +90,60 @@ html:has(#quit) body{padding-top:env(safe-area-inset-top,0px)}
 .lbl{font-size:13px}
 .box .t,#front .t{font-size:13px;line-height:1.15}
 html,body{overflow-x:clip}
+
+/* Chat-Aufgabe (lwChat in lernwelt-chat.js), für alle Fächer. Farbe vom Fach über .lw-ma, .lw-en … */
+:where(.lwc){--lw-c:var(--lw-brand);--lw-cd:var(--lw-brand-d);--lw-cs:var(--lw-soft)}
+.lwc{display:flex;flex-direction:column;border-radius:22px;overflow:hidden;background:var(--lw-soft);border:2px solid var(--lw-line);border-bottom-width:5px;
+  font-family:var(--lw-f-b);color:var(--lw-ink);text-align:left}
+.lwc-head{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--lw-c);color:#fff}
+.lwc-ava{width:36px;height:36px;flex:none;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.25);font:700 1rem/1 var(--lw-f-d)}
+.lwc-ht{display:flex;flex-direction:column;min-width:0}
+.lwc-ht b{font-family:var(--lw-f-d);font-size:1.05rem;line-height:1.2}
+.lwc-ht small{opacity:.88;font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lwc-body{display:flex;flex-direction:column;gap:8px;padding:12px 10px;min-height:120px}
+.lwc-ln{display:flex;gap:8px;align-items:flex-end;max-width:90%;animation:lwc-pop .25s ease-out both;text-align:left;border:0;background:none;padding:0;margin:0;color:inherit;font:inherit;cursor:default}
+button.lwc-ln{cursor:pointer}
+.lwc-ln.me{align-self:flex-end;flex-direction:row-reverse}
+.lwc-av{width:32px;height:32px;flex:none;border-radius:50%;display:grid;place-items:center;font:700 .95rem/1 var(--lw-f-d);color:#fff}
+.lwc-bub{position:relative;padding:9px 12px;border-radius:18px 18px 18px 6px;background:var(--lw-card);font-size:1.05rem;line-height:1.38;box-shadow:0 1px 0 var(--lw-line)}
+.lwc-ln.me .lwc-bub{border-radius:18px 18px 6px 18px;background:var(--lw-cs)}
+.lwc-who{display:block;font-size:.78rem;font-weight:700;margin-bottom:1px}
+.lwc-ln.draft .lwc-bub{background:var(--lw-card);border:2px dashed var(--lw-c);padding:7px 10px}
+.lwc-gap{display:inline-block;min-width:2.6em;text-align:center;border-radius:8px;background:var(--lw-cs);color:var(--lw-c);font-weight:700;animation:lwc-blink 1.2s infinite}
+.lwc-in{color:var(--lw-ok-ink)}
+.lwc-ln.bad .lwc-in{color:var(--lw-ok-ink)}
+.lwc-wrong{color:var(--lw-bad-ink);text-decoration-thickness:2px}
+.lwc-mark{position:absolute;left:-10px;bottom:-6px;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:.8rem;font-weight:700;color:#fff;background:var(--lw-ok)}
+.lwc-ln.bad .lwc-mark{background:var(--lw-bad)}
+.lwc-tip{align-self:flex-end;max-width:90%;margin:0;padding:8px 12px;border-radius:14px;background:var(--lw-bad-bg);color:var(--lw-bad-ink);font-size:.95rem;animation:lwc-pop .25s ease-out both}
+.lwc-nar{align-self:center;text-align:center;font-size:.92rem;color:var(--lw-muted);max-width:90%;margin:2px 0;animation:lwc-pop .25s ease-out both}
+.lwc-photo{display:flex;align-items:center;gap:8px;margin-top:6px;padding:10px;border-radius:12px;background:var(--lw-soft);font-size:.9rem;color:var(--lw-muted)}
+.lwc-photo span{font-size:28px}
+.lwc-typing{align-self:flex-start;display:flex;gap:4px;padding:11px 14px;border-radius:18px;background:var(--lw-card);margin-left:40px}
+.lwc-typing i{width:7px;height:7px;border-radius:50%;background:var(--lw-muted);animation:lwc-blink 1s infinite}
+.lwc-typing i:nth-child(2){animation-delay:.15s}.lwc-typing i:nth-child(3){animation-delay:.3s}
+/* Antwortleiste unten im Chat, wie die Wortvorschläge über der Tastatur */
+.lwc-reply{display:flex;flex-direction:column;gap:8px;padding:10px;background:var(--lw-card);border-top:2px solid var(--lw-line)}
+.lwc-reply[hidden]{display:none}
+.lwc-rl{margin:0;font-size:.85rem;font-weight:700;color:var(--lw-muted)}
+.lwc-sug{display:flex;flex-wrap:wrap;gap:8px}
+.lwc-chip{flex:1 1 auto;min-height:48px;padding:8px 14px;border-radius:16px;border:2px solid var(--lw-line);border-bottom-width:4px;background:var(--lw-card);color:var(--lw-ink);
+  font:700 1.05rem/1.2 var(--lw-f-b);cursor:pointer}
+.lwc-chip:active{border-bottom-width:2px;transform:translateY(2px)}
+.lwc-chip:disabled{cursor:default}
+.lwc-chip.ok{border-color:var(--lw-ok);background:var(--lw-ok-bg);color:var(--lw-ok-ink)}
+.lwc-chip.bad{border-color:var(--lw-bad);background:var(--lw-bad-bg);color:var(--lw-bad-ink)}
+.lwc-form{display:flex;gap:8px;margin:0}
+.lwc-form input{flex:1;min-width:0;min-height:48px;box-sizing:border-box;padding:8px 14px;border-radius:24px;border:2px solid var(--lw-line);background:var(--lw-soft);color:var(--lw-ink);font:1.1rem var(--lw-f-b)}
+.lwc-form input:focus{outline:none;border-color:var(--lw-c)}
+.lwc-send{flex:none;width:48px;height:48px;border-radius:50%;border:0;background:var(--lw-c);display:grid;place-items:center;cursor:pointer}
+.lwc-send svg{width:22px;height:22px;fill:#fff}
+.lwc-cont{min-height:48px;border-radius:16px;border:0;background:var(--lw-c);color:#fff;font:700 1.02rem var(--lw-f-d);cursor:pointer;box-shadow:0 4px 0 var(--lw-cd)}
+.lwc-cont:active{transform:translateY(3px);box-shadow:none}
+.lwc-ctl{display:flex;justify-content:center;margin-top:8px}
+.lwc-skip{min-height:44px;padding:6px 14px;border-radius:14px;border:2px solid var(--lw-line);background:var(--lw-card);color:var(--lw-muted);font:700 .95rem var(--lw-f-b);cursor:pointer}
+.lwc-skip:disabled{opacity:.5}
+.lwc button:focus-visible{outline:3px solid var(--lw-brand);outline-offset:2px}
+@keyframes lwc-pop{0%{transform:scale(.85);opacity:0}100%{transform:none;opacity:1}}
+@keyframes lwc-blink{0%,100%{opacity:.35}50%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.lwc-ln,.lwc-nar,.lwc-tip{animation:none}.lwc-gap,.lwc-typing i{animation:none}}
