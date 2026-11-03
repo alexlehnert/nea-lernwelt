@@ -191,6 +191,14 @@ h2.sh{font-size:1.25rem}
 .ref span{font-size:.78rem;color:var(--muted)}
 
 /* Heft: Kapitel-Pfad */
+.frei{display:flex;align-items:center;gap:14px;background:var(--card);border:2px solid var(--line);border-bottom-width:5px;border-radius:20px;padding:14px 16px;text-decoration:none;color:var(--ink);margin-bottom:18px}
+.frei:active{transform:translateY(3px);border-bottom-width:2px}
+.frei .ic{width:48px;height:48px;flex:none;border-radius:14px;display:grid;place-items:center;background:var(--c);color:#fff}
+.frei .ic svg{width:26px;height:26px}
+.frei > span:nth-child(2){flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.frei b{font-family:var(--f-display);font-weight:600;font-size:1.08rem}
+.frei small{font-size:.88rem;color:var(--muted)}
+.frei > svg{width:22px;height:22px;flex:none;color:var(--muted)}
 .path{display:flex;flex-direction:column;gap:18px;padding:6px 4px 0;position:relative}
 .step{display:grid;grid-template-columns:72px minmax(0,1fr);gap:14px;align-items:center;text-decoration:none;color:var(--ink);width:min(100%,360px)}
 .step:nth-child(even){grid-template-columns:minmax(0,1fr) 72px;align-self:flex-end;text-align:right}
@@ -348,7 +356,9 @@ function einst(){let e={};try{e=JSON.parse(get(EINST)||'{}')||{}}catch(x){}retur
 const zielMin=()=>+einst().ziel||15;
 function kapitel(h){
   let r=null;try{r=JSON.parse(get('lernwelt-fortschritt-'+h.id)||'null')}catch(e){}
-  const list=r&&Array.isArray(r.k)&&r.k.length?r.k:(h.kapitel||[]).map(t=>({t,p:0}));
+  let list=r&&Array.isArray(r.k)&&r.k.length?r.k:(h.kapitel||[]).map(t=>({t,p:0}));
+  // Hat sich die Kapitel-Liste eines Hefts geändert, gelten die Titel aus hefte.js (Fortschritt per Titel), bis die App neu meldet
+  if(h.kapitel&&h.kapitel.length&&list.length!==h.kapitel.length)list=h.kapitel.map(t=>({t,p:+((r&&r.k||[]).find(x=>x.t===t)||{}).p||0}));
   return list.map((k,i)=>({t:k.t,p:+k.p||0,a:(h.anker||[])[i]}));
 }
 function stand(h){
@@ -643,6 +653,7 @@ const V={
         <h1 style="margin-top:14px;font-size:1.9rem;line-height:1.05">${esc(h.name)}</h1><p class="sub">${esc(h.info)}</p>
         <div class="hbar"><span class="bar"><i style="width:${Math.round(100*t.done/Math.max(1,t.n))}%"></i></span><span>${t.done} von ${plural(t.n,'Kapitel','Kapiteln')}</span></div></header>
       <div class="pad ${f.cls}">
+        ${h.frei?`<a class="frei" href="${heftLink(h)}" data-heft="${h.id}"><span class="ic">${I.box}</span><span><b>${esc(h.frei.t)}</b><small>${esc(h.frei.s)}</small></span>${I.arrow}</a><h2 class="rule" style="margin:4px 0 0">Kapitel der Reihe nach</h2>`:''}
         <section class="path" aria-label="Kapitel">
         ${k.map((x,i)=>{const st=x.p>=.999?'done':i===t.cur?'now':'open';
           return `<a class="step ${st}" href="${kapLink(h,i)}" data-heft="${h.id}" aria-label="Kapitel ${i+1}: ${esc(x.t)}${st==='done'?', geschafft':st==='now'?', als Nächstes':''}">
