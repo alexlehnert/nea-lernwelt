@@ -255,6 +255,33 @@ a.klink.small{color:var(--lw-en);font-weight:700;padding:6px}
 .kstars i.on svg{fill:#FFB800}
 .kapend{display:flex;flex-direction:column;gap:8px;background:var(--lw-en-s);border-radius:18px;padding:12px 14px}
 </style>
+<style id="sprechen">
+/* Sprech-Übung: großer Mikrofon-Knopf wie bei den Antwortkacheln, pulsiert beim Zuhören */
+.mic-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;padding:6px 0}
+.mic{width:96px;height:96px;border-radius:50%;border:none;background:var(--lw-en);box-shadow:0 6px 0 var(--lw-en-d);display:grid;place-items:center;cursor:pointer;position:relative}
+.mic svg{width:44px;height:44px;fill:#fff}
+.mic:active{transform:translateY(4px);box-shadow:0 2px 0 var(--lw-en-d)}
+.mic.on{background:var(--lw-bad)}
+.mic.on::after{content:"";position:absolute;inset:-8px;border-radius:50%;border:4px solid var(--lw-bad);opacity:.5;animation:mic-p 1.1s ease-out infinite}
+@keyframes mic-p{from{transform:scale(.9);opacity:.6}to{transform:scale(1.25);opacity:0}}
+.mic:disabled{opacity:.5;cursor:default}
+.mic-lbl{font-family:var(--lw-f-d);font-weight:700;font-size:1.05rem;color:var(--lw-ink);text-align:center;min-height:1.4em}
+.heard{font-size:.98rem;color:var(--lw-muted);text-align:center;min-height:1.3em;margin:0}
+.heard b{color:var(--lw-ink)}
+.heard.ok b{color:var(--lw-ok-ink)}
+.mic-tries{display:flex;gap:6px;justify-content:center}
+.mic-tries i{width:10px;height:10px;border-radius:50%;background:var(--lw-line)}
+.mic-tries i.x{background:var(--lw-bad)}
+.spk-alt{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.spk-alt .ghost{padding:8px 14px}
+.linkbtn{background:none;border:none;color:var(--lw-muted);text-decoration:underline;font:inherit;font-size:.92rem;padding:8px;min-height:44px;cursor:pointer}
+.spk-toggle{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.spk-note{font-size:13px;color:var(--lw-muted);margin:0}
+.mic.sm{width:68px;height:68px}.mic.sm svg{width:32px;height:32px}
+.lw-sheet.neutral{background:var(--lw-en-s)}
+.lw-sheet.neutral .next{background:var(--lw-en);box-shadow:0 5px 0 var(--lw-en-d)}
+@media (prefers-reduced-motion:reduce){.mic.on::after{animation:none}}
+</style>
 
 <div class="wrap">
   <header>
@@ -691,6 +718,123 @@ function say(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtteranc
 const SPK='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/></svg>';
 const sayBtn=t=>canSay?`<button class="say" type="button" data-say="${esc(t)}" aria-label="Anhören">${SPK}</button>`:'';
 
+/* ===== Sprechen: Spracherkennung des Browsers (wie die Sprech-Übungen bei Duolingo) =====
+   Chrome (Android) schickt die Aufnahme zur Erkennung an Google, Safari (iPhone) an Apple.
+   Die Lernwelt selbst speichert keine Aufnahmen, nur ob die Karte geklappt hat. */
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+const canHear=!!SR&&window.isSecureContext!==false;
+let micBroken=false,REC=null,recLang='en-GB';
+const speakOn=()=>canHear&&!micBroken&&S.speak!==false&&!(S.noMic&&S.noMic>Date.now());
+const MIC='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg>';
+const NUMW='zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen twenty'.split(' ');
+const CONTR={"i'm":'i am',"you're":'you are',"we're":'we are',"they're":'they are',"he's":'he is',"she's":'she is',"it's":'it is',"that's":'that is',"what's":'what is',"there's":'there is',"let's":'let us',"don't":'do not',"can't":'can not',cannot:'can not',"isn't":'is not',"aren't":'are not'};
+const HOMO={};[['two','to','too'],['four','for'],['eight','ate'],['one','won'],['right','write'],['see','sea'],['hear','here'],['no','know'],['bee','be'],['new','knew'],['flower','flour'],['break','brake'],['mrs','missus','misses'],['mum','mom'],['colour','color'],['favourite','favorite'],['grey','gray'],['centre','center'],['ok','okay'],['hi','hey'],['bye','by','buy']].forEach(g=>g.forEach(w=>HOMO[w]=g[0]));
+function sNorm(t){
+  t=apos(String(t)).toLowerCase().replace(/\([^)]*\)/g,' ').replace(/\d+/g,d=>NUMW[+d]||d).replace(/[-–/]/g,' ').replace(/[^a-z' ]/g,' ');
+  return t.split(/\s+/).filter(Boolean).map(w=>CONTR[w]||w).join(' ').split(' ').map(w=>HOMO[w]||w).join(' ');
+}
+const sCore=t=>t.replace(/^(to|a|an|the) /,'');
+function speakTargets(v){const out=new Set();V.filter(x=>x.de===v.de).forEach(x=>variants(x.en).forEach(a=>{const n=sNorm(a);if(n)out.add(n)}));return [...out]}
+function speakable(v){const c=clean(v.en),core=c.replace(/^to /,'');return c.split(' ').length<=6&&core.replace(/[^a-z]/gi,'').length>=3}
+function heardOK(alts,targets){
+  for(const raw of alts){const a=sNorm(raw);if(!a)continue;
+    for(const t of targets){const ca=sCore(a),ct=sCore(t),pa=ca.replace(/ /g,''),pt=ct.replace(/ /g,'');
+      if(a===t||ca===ct||pa===pt)return raw;
+      if(a.split(' ').length<=t.split(' ').length+3&&(' '+a+' ').includes(' '+ct+' '))return raw;
+      const tol=pt.length>=8?2:pt.length>=5?1:0;if(tol&&lev(pa,pt)<=tol)return raw;
+    }}
+  return null;
+}
+function stopMic(){const r=REC;REC=null;if(r)try{r.abort()}catch(e){}}
+/* Eine Aufnahme: onLive zeigt mit, was gerade verstanden wird; onDone bekommt die Varianten (beste zuerst) oder einen Fehler */
+function listen(onLive,onDone){
+  stopMic();try{speechSynthesis.cancel()}catch(e){}
+  const rec=new SR();REC=rec;
+  rec.lang=recLang;rec.interimResults=true;rec.maxAlternatives=5;rec.continuous=false;
+  let res=null,err=null,done=false,t1,t2;
+  const fin=()=>{if(done)return;done=true;clearTimeout(t1);clearTimeout(t2);const mine=REC===rec;if(mine)REC=null;
+    const alts=[];if(res){if(res.length===1)for(let k=0;k<res[0].length;k++)alts.push(res[0][k].transcript);
+      else alts.push(Array.from({length:res.length},(_,i)=>res[i][0].transcript).join(' '))}
+    if(!mine&&err==null)err='aborted';
+    onDone(alts.filter(a=>a&&a.trim()),err)};
+  rec.onresult=e=>{res=e.results;onLive(Array.from({length:res.length},(_,i)=>res[i][0].transcript).join(' '))};
+  rec.onerror=e=>{err=e.error||'error'};
+  rec.onend=fin;
+  t1=setTimeout(()=>{try{rec.stop()}catch(e){}t2=setTimeout(fin,1500)},8000);
+  try{rec.start()}catch(e){err='start';fin()}
+}
+/* Mikrofon-Knopf in el. check(alts) gibt true (geschafft), false (Versuch zählt) oder null zurück */
+function micWidget(el,o){
+  el.innerHTML=`<div class="mic-wrap"><button class="mic${o.small?' sm':''}" type="button" aria-label="Mikrofon: tippen und sprechen">${MIC}</button>
+    <div class="mic-lbl" aria-live="polite">${o.label||'Tippen und sprechen'}</div><p class="heard"></p>
+    ${o.max?`<div class="mic-tries" aria-hidden="true">${'<i></i>'.repeat(o.max)}</div>`:''}</div>`;
+  const mic=el.querySelector('.mic'),ml=el.querySelector('.mic-lbl'),hd=el.querySelector('.heard');let tries=0;
+  const idle=t=>{mic.classList.remove('on');ml.textContent=t||'Nochmal tippen und sprechen'};
+  mic.onclick=()=>{
+    if(mic.classList.contains('on')){try{REC&&REC.stop()}catch(e){}return}
+    mic.classList.add('on');ml.textContent='Ich höre zu …';hd.className='heard';hd.textContent='';
+    listen(t=>{hd.innerHTML=`<b>${esc(t)}</b>`},(alts,err)=>{
+      if(!mic.isConnected||err==='aborted')return;
+      if(err==='language-not-supported'&&recLang==='en-GB'){recLang='en-US';mic.classList.remove('on');mic.click();return}
+      if(['not-allowed','service-not-allowed','audio-capture','start'].includes(err)||(err==='language-not-supported')){
+        micBroken=true;idle('');mic.disabled=true;
+        const msg=err==='audio-capture'?'Ich finde kein Mikrofon.':'Das Mikrofon ist hier nicht freigegeben.';
+        return o.broken&&o.broken(msg)}
+      if(err==='network'){idle();hd.textContent='Keine Verbindung zur Spracherkennung. Versuch es gleich nochmal.';return}
+      if(!alts.length){idle();hd.textContent='Ich habe nichts gehört. Tipp aufs Mikrofon und sprich laut und deutlich.';return}
+      const hit=heardOK(alts,o.targets);
+      if(hit){mic.classList.remove('on');mic.disabled=true;ml.textContent='';hd.className='heard ok';hd.innerHTML=`<b>„${esc(hit)}“</b>`;return o.hit(hit)}
+      tries++;const dots=el.querySelectorAll('.mic-tries i');if(dots[tries-1])dots[tries-1].classList.add('x');
+      if(o.max&&tries>=o.max){mic.classList.remove('on');mic.disabled=true;ml.textContent='';hd.innerHTML=`Verstanden habe ich: <b>„${esc(alts[0])}“</b>`;return o.miss(alts[0])}
+      idle(o.again);hd.innerHTML=`Ich habe <b>„${esc(alts[0])}“</b> verstanden.`;
+    });
+  };
+  return mic;
+}
+/* Ohne Wertung weiter: die Karte bleibt in ihrem Fach (wenn nur das Mikro nicht mitgespielt hat) */
+function pass(id,html){
+  const fb=document.createElement('div');fb.className='fb';fb.setAttribute('role','status');fb.innerHTML=html;
+  const nx=document.createElement('button');nx.className='next';nx.type='button';nx.textContent=R.i+1>=R.q.length?'Ergebnis':'Weiter';
+  nx.onclick=()=>{R.i++;task()};const cb=$('#cb'),sh=lwSheet(cb,false,[fb,nx]);sh.className='lw-sheet neutral';bindSay(sh);
+}
+/* Andere Aufgabe für dieselbe Karte, wenn gerade nicht gesprochen werden kann */
+function noSpeak(cb,v,note){
+  stopMic();const k=vocabType(v,bx(v.id));VT[k](cb,v);
+  if(note){const p=document.createElement('p');p.className='spk-note';p.textContent=note;cb.prepend(p)}
+}
+function speakTask(cb,v,rep){
+  const MAX=3,ans=clean(v.en);
+  cb.innerHTML=`<p class="instr">${rep?'Hör gut zu und sprich es nach.':'Sag es laut auf Englisch.'}</p>
+  <p class="prompt">${rep?`${esc(v.en)} ${sayBtn(v.en)}`:esc(v.de)}</p>${rep?`<p class="small" style="margin:0">${esc(v.de)}</p>`:''}
+  <div id="mw"></div>
+  <div class="spk-alt">${rep?'':'<button class="ghost" type="button" id="dunno">Weiß ich nicht</button>'}</div>
+  <button class="linkbtn" type="button" id="nomic">Ich kann gerade nicht sprechen</button>`;
+  bindSay(cb);if(rep&&canSay)say(v.en);
+  const hideAlt=()=>{cb.querySelectorAll('#dunno,#nomic').forEach(b=>b.remove())};
+  micWidget($('#mw'),{targets:speakTargets(v),max:MAX,again:rep?'Hör nochmal hin und sprich nach':'Nochmal tippen und sprechen',
+    hit:()=>{hideAlt();if(canSay)setTimeout(()=>say(v.en),300);
+      grade(v.id,true,`<strong>${rep?'Super ausgesprochen!':praise()}</strong><span>${esc(ans)} = ${esc(v.de)}</span>`)},
+    miss:()=>{hideAlt();if(canSay)setTimeout(()=>say(v.en),300);
+      if(rep)return pass(v.id,`<strong>Das war noch nicht ganz deutlich.</strong><span><b>${esc(ans)}</b> ${sayBtn(v.en)}</span><span class="ex">Hör es dir nochmal an. Die Karte bleibt in ihrem Fach.</span>`);
+      const box=cb.querySelector('.spk-alt');
+      box.innerHTML=`<p class="instr" style="width:100%;text-align:center">Richtig wäre <b>${esc(ans)}</b>. Hast du das gesagt?</p>
+        <button class="ghost" type="button" id="said">Ja, das Mikro hat mich nicht verstanden</button><button class="ghost" type="button" id="notsaid">Nein</button>`;
+      $('#said').onclick=()=>{box.innerHTML='';pass(v.id,`<strong>Alles klar.</strong><span>${esc(ans)} = ${esc(v.de)} ${sayBtn(v.en)}</span><span class="ex">Die Karte bleibt in ihrem Fach.</span>`)};
+      $('#notsaid').onclick=()=>{box.innerHTML='';grade(v.id,false,`<strong>Nicht ganz.</strong><span>Merk dir: <b>${esc(ans)}</b> = ${esc(v.de)}</span>`)};
+    },
+    broken:msg=>noSpeak(cb,v,msg+' Du bekommst jetzt eine andere Aufgabe.')});
+  const dn=$('#dunno');if(dn)dn.onclick=()=>{stopMic();hideAlt();cb.querySelector('.mic').disabled=true;if(canSay)say(v.en);
+    grade(v.id,false,`<strong>Kein Problem.</strong><span>Merk dir: <b>${esc(ans)}</b> = ${esc(v.de)}</span>`)};
+  $('#nomic').onclick=()=>{S.noMic=Date.now()+36e5;save();noSpeak(cb,v,'Alles klar: Eine Stunde lang gibt es keine Sprech-Aufgaben.')};
+}
+/* An/Aus für Sprech-Aufgaben (Start und Kapitel-Seite) */
+function spkToggle(){
+  if(!canHear)return '';const on=S.speak!==false;
+  return `<div class="spk-toggle"><span class="lbl">Sprech-Aufgaben</span><div class="chips"><button type="button" class="chip" data-spk="1" aria-pressed="${on}">An</button><button type="button" class="chip" data-spk="0" aria-pressed="${!on}">Aus</button></div></div>
+  ${on?'<p class="spk-note">Du sprichst Wörter ins Mikrofon. Zum Erkennen schickt dein Browser die Aufnahme kurz an Google oder Apple. Die Lernwelt speichert keine Aufnahmen.</p>':''}`;
+}
+function bindSpk(){document.querySelectorAll('[data-spk]').forEach(b=>b.onclick=()=>{S.speak=b.dataset.spk==='1';if(S.speak)S.noMic=0;save();home()})}
+
 /* Rechtschreib-Vergleich: markiert in der richtigen Lösung, welche Buchstaben gefehlt haben oder falsch waren */
 function diffHTML(typed,target){
   const a=apos(typed).toLowerCase(),b=target,bl=b.toLowerCase(),n=a.length,m=b.length;
@@ -858,7 +1002,7 @@ function kapBar(){
   if(KAP==null){e.textContent='Englisch';n.textContent='English trainer'}
   else{e.textContent=`Englisch · Kapitel ${KAP+1} von ${KAPS.length}`;n.textContent=kapTitle(KAPS[KAP])}
 }
-function home(){KAP!=null?kapStart():start()}
+function home(){stopMic();KAP!=null?kapStart():start()}
 function kapStart(){
   R=null;closeDetail();renderBox();kapBar();
   const K=KAPS[KAP],p=kapProg(K),isG=!!K.g,nx=KAPS[KAP+1],seen=kapIds(K).some(id=>bx(id)>0);
@@ -871,10 +1015,12 @@ function kapStart(){
     <button class="go" type="button" id="kgo">${seen?'Weiter üben':"Los geht's"}</button>
     <button class="ghost kbtn" type="button" id="kseek">${isG?'Aufgaben ansehen':'Wörter ansehen'}</button>
     <a class="ghost kbtn klink" href="index.html#heft-englisch">Zurück zum Heft</a>
+    ${isG?'':spkToggle()}
     ${nx&&kapStars(p)>=1?`<a class="klink small" href="#${nx.a}">Nächstes Kapitel: ${esc(kapTitle(nx))} ›</a>`:''}
   </section>`;
   $('#kgo').onclick=kapRound;
   $('#kseek').onclick=()=>openWords('g:'+(K.g||'s'+K.s));
+  bindSpk();
   window.scrollTo(0,0);
 }
 function kapRound(){startRound(kapIds(KAPS[KAP]),{maxNew:5})}
@@ -887,12 +1033,16 @@ function introCard(){
     body=`<p class="instr">Lies dir die Regel durch. Danach übst du sie.</p><p class="prompt" style="font-size:1.35rem">${esc(TOP[g])}</p>
       <p style="margin:0;font-size:1.1rem">${esc(EXD[g])}</p>${ex?`<p class="small" style="margin:0">Beispiel: ${fillQ(ex.q,ex.a[0])}</p>`:''}`}
   else body=`<p class="instr">Hör es dir an und sprich es laut nach.</p><p class="prompt">${esc(x.en)} ${sayBtn(x.en)}</p><div class="flipback">${esc(x.de)}</div>`;
+  const tryIt=!isRule&&speakOn()&&speakable(x);
+  if(tryIt)body+='<div id="mw"></div>';
   $('#screen').innerHTML=`<div class="topbar"><button class="ghost" type="button" id="quit" aria-label="Runde beenden">✕</button><span>Kennenlernen${KAP!=null?' · Kapitel '+(KAP+1):''}</span></div>
   <div class="progress" aria-hidden="true"><i style="width:${Math.round(R.ii/R.intro.length*100)}%"></i></div>
   <article class="card"><div class="card-top"><span class="tag">${head}</span><span class="fachtag">neu</span></div><div class="card-body" id="cb">${body}
   <button class="go" type="button" id="inext">${last?'Jetzt üben':'Weiter'}</button></div></article>`;
   $('#quit').onclick=home;bindSay($('#cb'));
   if(!isRule&&canSay)say(x.en);
+  if(tryIt){const mw=$('#mw');micWidget(mw,{small:true,label:'Probier es: tippen und nachsprechen',again:'Hör nochmal hin und probier es nochmal',targets:speakTargets(x),
+    hit:()=>{mw.querySelector('.mic-lbl').textContent='Super ausgesprochen!'},broken:()=>{mw.remove()}})}
   $('#inext').onclick=()=>{R.ii++;task()};$('#inext').focus({preventScroll:true});
 }
 
@@ -913,6 +1063,7 @@ function start(){
     <div class="chips">${Object.entries(TOP).map(([k,t])=>`<button type="button" class="chip" data-top="${k}" aria-pressed="${S.tops.includes(k)}">${esc(t)}</button>`).join('')}</div>`:''}
     <div class="lbl">Karten pro Runde</div>
     <div class="chips">${[10,15,20].map(n=>`<button type="button" class="chip" data-len="${n}" aria-pressed="${S.len===n}">${n}</button>`).join('')}</div>
+    ${S.mode!=='g'?spkToggle():''}
     <div class="row" style="justify-content:space-between">
       <button class="go" type="button" id="go">Los geht's</button>
       <button class="ghost" type="button" id="reset">Kasten leeren</button>
@@ -927,6 +1078,7 @@ function start(){
   let armed=false;
   $('#reset').onclick=e=>{if(!armed){armed=true;e.target.textContent='Wirklich leeren?';return}S.box={};save();start()};
   $('#kwords').onclick=()=>openWords('p');
+  bindSpk();
   $('#go').onclick=()=>{if(!pool().length){$('#note').textContent='Wähle mindestens eine Seite oder ein Grammatik-Thema aus.';return}startRound()};
 }
 
@@ -952,13 +1104,14 @@ function startRound(only,opt){
 }
 function vocabType(v,b){
   const c=clean(v.en),core=c.startsWith('to ')?c.slice(3):c,words=c.split(' ');
+  const sp=speakOn()&&speakable(v)?1:0;
   const can={flip:1,mcED:1,mcDE:1,type:c.length<=26?1:0,
-    tiles:/^[A-Za-z'-]{3,12}$/.test(core)?1:0, words:words.length>=3&&words.length<=8?1:0};
-  const plan=b<=1?['mcED','mcED','mcDE']:b===2?['mcDE','mcED','tiles','words']:b===3?['type','tiles','words','mcDE']:['type','type','words'];
+    tiles:/^[A-Za-z'-]{3,12}$/.test(core)?1:0, words:words.length>=3&&words.length<=8?1:0, say:sp, speak:sp};
+  const plan=b<=1?['mcED','mcED','mcDE','say']:b===2?['mcDE','mcED','tiles','words','say']:b===3?['type','tiles','words','mcDE','speak']:['type','type','words','speak'];
   const ok=plan.filter(t=>can[t]);return rnd(ok.length?ok:['mcED']);
 }
 function task(){
-  renderBox();
+  stopMic();renderBox();
   if(R.intro&&R.ii<R.intro.length)return introCard();
   if(R.i>=R.q.length)return end();
   const id=R.q[R.i],it=ALL[id],b=bx(id),isV=id[0]==='v';
@@ -1048,7 +1201,9 @@ const VT={
     const c=clean(v.en),pre=c.startsWith('to ')?'to ':'',core=c.slice(pre.length);
     tileGame(cb,v.id,[...core],`Bilde das Wort aus den Buchstaben. Klick sie in der richtigen Reihenfolge an.`,v.de,core,pre,'',true,v.en);
   },
-  words(cb,v){const c=clean(v.en);tileGame(cb,v.id,c.split(' '),'Bring die Wörter in die richtige Reihenfolge.',v.de,c,'',' ',false,v.en)}
+  words(cb,v){const c=clean(v.en);tileGame(cb,v.id,c.split(' '),'Bring die Wörter in die richtige Reihenfolge.',v.de,c,'',' ',false,v.en)},
+  say(cb,v){speakTask(cb,v,true)},
+  speak(cb,v){speakTask(cb,v,false)}
 };
 function tileGame(cb,id,parts,instr,prompt,target,prefix,joiner,letters,speak){
   let order;do{order=shuffle(parts.map((p,i)=>i))}while(parts.length>1&&order.every((x,i)=>parts[x]===parts[i]));
