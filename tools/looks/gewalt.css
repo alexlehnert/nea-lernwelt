@@ -1,0 +1,4 @@
+/* @kit */
+/* Gemeinsam stark ist von Anfang an im Lernwelt-Look gebaut: nur die Fach-Farbe setzen. */
+:root:root:root{--lw-c:var(--lw-eth); --lw-cd:var(--lw-eth-d); --lw-cs:var(--lw-eth-s)}
+.go:disabled{opacity:.45}

@@ -15,6 +15,7 @@ Fächer und Hefte stehen in [`hefte.js`](hefte.js).
 | Erdkunde | Atlas-Detektiv | `atlas.html` |
 | Musik | Notenwerkstatt | `noten.html` |
 | Musik | Rhythmuswerkstatt (Notenlängen) | `rhythmus.html` |
+| Ethik | Gemeinsam stark (Thema Gewalt: erkennen, fair streiten, Hilfe holen) | `gewalt.html` |
 
 ## Einrichten (einmalig, ca. 15 Minuten)
 

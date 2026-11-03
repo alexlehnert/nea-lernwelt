@@ -1,0 +1,946 @@
+<!doctype html><html lang="de"><head><meta charset=utf8><script src="/api/config"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="/sync.js"></script><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"><link rel="manifest" href="/manifest.webmanifest"><meta name="apple-mobile-web-app-title" content="Lernwelt"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="theme-color" content="#5B3FE6"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Gemeinsam stark</title>
+<style>
+/* Ethik · Gemeinsam stark: das Thema Gewalt für Klasse 5.
+   Jedes Kapitel ist ein Pfad aus kurzen Karten: auf eine kurze Info folgt immer gleich eine Aktion
+   (Sortieren, Stimmt/Stimmt nicht, Was tust du?, Klassenchat, Rollenspiel zum Anhören, Ich-Botschaft, Klassenvertrag).
+   Vorlesen mit der Sprachausgabe des Geräts (Web Speech API, de-DE), Figuren mit eigener Stimmlage.
+   Sterne zählen nur Wissensfragen; Gefühle und eigene Sätze haben kein Richtig oder Falsch.
+   Farben und Schriften kommen aus lernwelt-app.css (hell und dunkel). */
+:root{color-scheme:light dark}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{margin:0;background:var(--lw-bg);color:var(--lw-ink);font-family:var(--lw-f-b);font-size:17px;line-height:1.45;-webkit-tap-highlight-color:transparent;padding-top:env(safe-area-inset-top,0px)}
+.wrap{max-width:640px;margin:0 auto;padding:14px max(16px,env(safe-area-inset-right,0px)) 140px max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px}
+h1,h2,h3{font-family:var(--lw-f-d);font-weight:700;margin:0;line-height:1.15;text-wrap:balance}
+h2{font-size:1.55rem}
+h3{font-size:1.15rem}
+p{margin:0}
+b{font-weight:700}
+button{font:inherit;color:inherit;cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--lw-brand);outline-offset:2px}
+svg{display:block}
+.small{font-size:.88rem;color:var(--lw-muted)}
+.panel{background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--lw-eth)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.grow{flex:1;min-width:0}
+.ghost{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:8px 14px}
+.ghost svg,.go svg{width:20px;height:20px;flex:none}
+.go{display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.go:disabled{opacity:.45;cursor:default}
+
+/* Startseite */
+.intro{display:flex;gap:14px;align-items:center}
+.intro .art{width:72px;height:72px;flex:none;border-radius:22px;background:var(--lw-eth-s);display:grid;place-items:center;font-size:42px}
+.helpbtn{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:12px 14px;border-radius:18px;border:2px solid var(--lw-eth);background:var(--lw-eth-s);color:var(--lw-ink)}
+.helpbtn .h{width:40px;height:40px;flex:none;border-radius:12px;background:var(--lw-eth);color:#fff;display:grid;place-items:center}
+.helpbtn .h svg{width:22px;height:22px}
+.helpbtn b{display:block;font-family:var(--lw-f-d);font-size:1.05rem}
+.helpbtn span span{font-size:.88rem;color:var(--lw-muted)}
+.stations{display:flex;flex-direction:column;gap:12px}
+.st{display:flex;align-items:center;gap:14px;text-align:left;width:100%;padding:14px;border-radius:22px;background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:5px}
+.st:active{transform:translateY(3px);border-bottom-width:2px}
+.st .ico{width:56px;height:56px;flex:none;border-radius:16px;background:var(--lw-eth-s);display:grid;place-items:center;font-size:30px;line-height:1}
+.st h3{font-size:1.1rem}
+.st p{font-size:.9rem;color:var(--lw-muted);line-height:1.3;margin-top:2px}
+.st .n{font:700 12px var(--lw-f-b);letter-spacing:.1em;text-transform:uppercase;color:var(--lw-eth)}
+.stars{display:flex;gap:2px;margin-top:6px}
+.stars svg{width:20px;height:20px}
+.modes{display:flex;gap:6px;background:var(--lw-soft);border-radius:16px;padding:4px}
+.modes button{flex:1;min-height:44px;border:0;border-radius:12px;background:none;font-weight:700;color:var(--lw-muted)}
+.modes button[aria-pressed="true"]{background:var(--lw-card);color:var(--lw-ink);box-shadow:0 2px 0 var(--lw-shadow)}
+.mine{display:flex;flex-direction:column;gap:8px}
+.quote{font-family:var(--lw-f-d);font-weight:600;font-size:1.1rem;line-height:1.35;padding:12px 14px;border-radius:16px;background:var(--lw-eth-s)}
+
+/* Runde */
+.topbar{display:flex;align-items:center;gap:10px}
+.track{flex:1;display:flex;gap:3px}
+.track i{flex:1;height:12px;border-radius:99px;background:var(--lw-line)}
+.track i.ok{background:var(--lw-ok)}
+.track i.no{background:var(--lw-bad)}
+.track i.done{background:var(--lw-eth);opacity:.55}
+.track i.now{background:var(--lw-eth)}
+.hbtn{flex:none;width:44px;height:44px;border-radius:14px;border:2px solid var(--lw-line);border-bottom-width:4px;background:var(--lw-card);color:var(--lw-eth);display:grid;place-items:center;padding:0}
+.hbtn svg{width:22px;height:22px}
+.stage{display:flex;flex-direction:column;gap:14px}
+.qh{display:flex;align-items:flex-start;gap:10px}
+.qh b{flex:1;display:block;font:700 1.3rem/1.25 var(--lw-f-d)}
+.spk{flex:none;width:44px;height:44px;border-radius:14px;border:2px solid var(--lw-line);border-bottom-width:4px;background:var(--lw-card);color:var(--lw-eth);display:grid;place-items:center;padding:0}
+.spk svg{width:22px;height:22px}
+.spk.on{background:var(--lw-eth);border-color:var(--lw-eth-d);color:#fff}
+.ey{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--lw-eth)}
+/* Info-Karte */
+.info{background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:22px;padding:18px 16px;display:flex;flex-direction:column;gap:12px}
+.info .art{width:84px;height:84px;border-radius:24px;background:var(--lw-eth-s);display:grid;place-items:center;font-size:48px;line-height:1;align-self:center}
+.info h2{font-size:1.45rem;text-align:center}
+.info p{font-size:1.06rem}
+.info .merk{background:var(--lw-sun);color:#3A2600;border-radius:16px;padding:12px 14px;font-weight:700}
+.tiles{display:grid;grid-template-columns:1fr;gap:8px}
+.tile2{display:flex;gap:12px;align-items:flex-start;padding:10px 12px;border-radius:16px;background:var(--lw-soft)}
+.tile2 .e{font-size:28px;line-height:1;flex:none;width:34px;text-align:center}
+.tile2 b{display:block;font-family:var(--lw-f-d);font-size:1.05rem}
+.tile2 span{font-size:.95rem;color:var(--lw-muted);display:block;line-height:1.35}
+.tile2.g{background:var(--lw-ok-bg)} .tile2.y{background:#FFF3CC} .tile2.r{background:var(--lw-bad-bg)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tile2.y{background:#3D3110}}
+/* Situation */
+.sit{background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:22px;padding:16px;font-size:1.08rem;display:flex;gap:12px;align-items:flex-start}
+.sit .e{font-size:30px;line-height:1;flex:none}
+.cnt{font-size:13px;font-weight:700;color:var(--lw-muted)}
+.opts{display:grid;grid-template-columns:1fr;gap:10px}
+.opts.g2{grid-template-columns:1fr 1fr}
+.opt{width:100%;padding:12px 14px;display:flex;align-items:center;justify-content:flex-start;gap:10px;text-align:left;line-height:1.3}
+.opt .e{font-size:24px;line-height:1;flex:none}
+.opts.g2 .opt{flex-direction:column;justify-content:center;text-align:center;gap:4px;min-height:84px}
+.opt:disabled{cursor:default}
+.opt.miss{border-style:dashed;border-color:var(--lw-ok)}
+.opt.sel{border-color:var(--lw-eth);background:var(--lw-eth-s)}
+.opt .num{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--lw-line);font:700 1rem/1 var(--lw-f-d);color:var(--lw-muted)}
+.opt.sel .num{background:var(--lw-eth);color:#fff}
+.tfrow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tfrow .opt{justify-content:center;text-align:center;flex-direction:column;min-height:90px;gap:4px}
+.tfrow .opt .e{font-size:30px}
+.check{width:100%}
+/* Szene: Gespräch und Klassenchat */
+.scene{display:flex;flex-direction:column;gap:10px;padding:14px 12px;border-radius:22px;background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:5px;min-height:140px}
+.scene.chat{background:var(--lw-soft);padding:0;overflow:hidden;gap:0}
+.chathead{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--lw-eth);color:#fff}
+.chathead .ava{background:rgba(255,255,255,.25);color:#fff}
+.chathead b{font-family:var(--lw-f-d);font-size:1.05rem;display:block}
+.chathead small{opacity:.85;font-size:.8rem}
+.chatbody{display:flex;flex-direction:column;gap:8px;padding:12px}
+.ln{display:flex;gap:8px;align-items:flex-end;max-width:92%;animation:pop .25s ease-out both;text-align:left;border:0;background:none;padding:0;color:inherit}
+.ln.r{align-self:flex-end;flex-direction:row-reverse}
+.ava{width:34px;height:34px;flex:none;border-radius:50%;display:grid;place-items:center;font:700 .95rem/1 var(--lw-f-d);color:#fff}
+.bub{padding:9px 12px;border-radius:18px;background:var(--lw-soft);font-size:1.02rem;line-height:1.35}
+.scene.chat .bub{background:var(--lw-card)}
+.bub .who{display:block;font-size:.78rem;font-weight:700;margin-bottom:1px}
+.ln.r .bub{background:var(--lw-eth-s)}
+.ln.now .bub{box-shadow:0 0 0 3px var(--lw-eth)}
+.ln.think .bub{font-style:italic;border:2px dashed var(--lw-line);background:var(--lw-card)}
+.nar{align-self:center;text-align:center;font-size:.95rem;color:var(--lw-muted);max-width:92%;animation:pop .25s ease-out both;padding:2px 6px}
+.nar.now{color:var(--lw-ink)}
+.photo{display:flex;align-items:center;gap:8px;padding:10px;border-radius:12px;background:var(--lw-soft);font-size:.9rem;color:var(--lw-muted);margin-top:4px}
+.photo .e{font-size:26px}
+.voice{display:flex;align-items:center;gap:8px;margin-top:4px}
+.voice i{display:block;width:3px;border-radius:2px;background:var(--lw-eth)}
+.typing{align-self:flex-start;display:flex;gap:4px;padding:10px 14px;border-radius:18px;background:var(--lw-card);margin-left:42px}
+.typing i{width:7px;height:7px;border-radius:50%;background:var(--lw-muted);animation:blink 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes blink{0%,100%{opacity:.25}50%{opacity:1}}
+@keyframes pop{0%{transform:scale(.85);opacity:0}100%{transform:none;opacity:1}}
+.skip{align-self:center}
+/* Baukasten */
+.part{display:flex;flex-direction:column;gap:8px}
+.part .lab{font-weight:700;font-size:.95rem;color:var(--lw-muted)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips .chip{min-height:44px}
+.preview{font:600 1.2rem/1.4 var(--lw-f-d);padding:14px;border-radius:18px;background:var(--lw-eth-s);border:2px dashed var(--lw-eth)}
+.preview .gap{display:inline-block;min-width:3.2em;border-bottom:3px solid var(--lw-muted);height:1em;vertical-align:-.15em}
+.preview .fill{color:var(--lw-eth-d)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .preview .fill{color:#9ED8FF}}
+.rules{display:flex;flex-direction:column;gap:8px}
+.rule{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:12px 14px;border-radius:16px;border:2px solid var(--lw-line);border-bottom-width:4px;background:var(--lw-card);line-height:1.3}
+.rule .box{flex:none;width:26px;height:26px;border-radius:8px;border:2px solid var(--lw-line);display:grid;place-items:center}
+.rule[aria-pressed="true"]{border-color:var(--lw-eth);background:var(--lw-eth-s)}
+.rule[aria-pressed="true"] .box{background:var(--lw-eth);border-color:var(--lw-eth)}
+.rule .box svg{width:18px;height:18px}
+.field{width:100%;min-height:52px;padding:10px 14px;border:2px solid var(--lw-line);background:var(--lw-card);color:var(--lw-ink);font:600 1.1rem var(--lw-f-d)}
+.kp{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.kp button{min-height:56px;border-radius:16px;border:2px solid var(--lw-line);border-bottom-width:5px;background:var(--lw-card);font:700 1.5rem/1 var(--lw-f-d);color:var(--lw-ink);display:grid;place-items:center}
+.kp button:active{transform:translateY(3px);border-bottom-width:2px}
+.kp .del{color:var(--lw-muted)}
+.kp .del svg{width:26px;height:26px}
+.kp .ok{background:var(--lw-eth);border-color:var(--lw-eth-d);color:#fff;font-size:1.15rem}
+.kp .ok:disabled{opacity:.45}
+.phone{font:700 2.2rem/1 var(--lw-f-d);letter-spacing:.06em;text-align:center;padding:16px;border-radius:18px;border:2px dashed var(--lw-eth);background:var(--lw-eth-s);color:var(--lw-eth);font-variant-numeric:tabular-nums;min-height:72px}
+.phone.ok{border:2px solid var(--lw-ok);background:var(--lw-ok-bg);color:var(--lw-ok-ink)}
+.phone.bad{border:2px solid var(--lw-bad);background:var(--lw-bad-bg);color:var(--lw-bad-ink)}
+/* Weiter-Leiste unter Info-Karten und Szenen */
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:8000;padding:12px max(16px,calc((100vw - 640px) / 2)) calc(14px + env(safe-area-inset-bottom,0px));background:linear-gradient(to top,var(--lw-bg) 70%,transparent)}
+.dock .go{width:100%}
+.lw-sheet .ghost{width:100%;min-height:50px}
+.fb p{margin-top:4px}
+.fb ol{margin:6px 0 0;padding-left:22px}
+/* Ergebnis */
+.result{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;padding-top:20px}
+.bigstars{display:flex;gap:8px}
+.bigstars svg{width:64px;height:64px}
+.bigstars .s1{animation:pop2 .5s .1s both}.bigstars .s2{animation:pop2 .5s .35s both}.bigstars .s3{animation:pop2 .5s .6s both}
+@keyframes pop2{0%{transform:scale(0)}70%{transform:scale(1.2)}100%{transform:scale(1)}}
+.result .go,.result .ghost{width:100%}
+.result .panel{align-self:stretch;text-align:left}
+.result ul{margin:4px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+/* Klassenvertrag */
+.cert{background:var(--lw-card);border:3px solid var(--lw-eth);border-radius:22px;padding:20px 18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 6px 0 var(--lw-eth-d)}
+.cert h2{text-align:center;font-size:1.5rem}
+.cert ol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:6px;font-size:1.05rem}
+.cert .sign{border-top:2px dashed var(--lw-line);padding-top:10px;display:flex;justify-content:space-between;gap:10px;font-family:var(--lw-f-d);font-weight:600}
+.cert .sign span{color:var(--lw-muted);font-family:var(--lw-f-b);font-weight:400;font-size:.88rem}
+/* Hilfe-Karte */
+.modal{position:fixed;inset:0;z-index:10050;background:rgba(20,18,40,.55);display:flex;align-items:flex-end;justify-content:center}
+.modal .card{width:100%;max-width:640px;max-height:92vh;overflow:auto;border-radius:28px 28px 0 0;padding:20px max(18px,env(safe-area-inset-left,0px)) calc(20px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:12px;animation:lw-up .22s ease-out}
+.modal h2{font-size:1.45rem}
+.call{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:60px;border-radius:18px;background:var(--lw-ok);color:#fff;font:700 1.35rem/1 var(--lw-f-d);text-decoration:none;box-shadow:0 5px 0 var(--lw-ok-d);letter-spacing:.03em}
+.call svg{width:24px;height:24px}
+.hl{display:flex;flex-direction:column;gap:8px;margin:0;padding:0;list-style:none}
+.hl li{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:14px;background:var(--lw-soft);line-height:1.35}
+.hl li .e{font-size:22px;line-height:1;flex:none}
+.modal a.lnk{color:var(--lw-eth);font-weight:700}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .modal a.lnk{color:#9ED8FF}}
+#toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,40px);opacity:0;z-index:10100;background:var(--lw-ink);color:var(--lw-bg);padding:10px 18px;border-radius:14px;font-weight:700;max-width:88vw;text-align:center;transition:.25s;pointer-events:none}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style><!--lw-look--><link rel="stylesheet" href="/lernwelt-app.css"><script src="/lernwelt-app.js"></script><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap"><style id="lw-look">
+/* Übungs-Bausteine im Lernwelt-Look (wie im Konzept: Antwortkacheln, grüne Rückmeldung, dicke Knöpfe) */
+.go,.next,.check{background:var(--lw-c);color:#fff;border:none;border-radius:16px;min-height:54px;padding:12px 22px;
+  font-family:var(--lw-f-d);font-weight:700;font-size:1.05rem;letter-spacing:.04em;text-transform:uppercase;box-shadow:0 5px 0 var(--lw-cd)}
+.go:active,.next:active,.check:active{transform:translateY(3px);box-shadow:0 2px 0 var(--lw-cd)}
+.ghost{background:var(--lw-card);color:var(--lw-ink);border:2px solid var(--lw-line);border-bottom-width:4px;border-radius:14px;min-height:44px;font-weight:700}
+.chip{background:var(--lw-card);color:var(--lw-ink);border:2px solid var(--lw-line);border-radius:99px;min-height:40px;padding:6px 14px;font-weight:700}
+.chip[aria-pressed="true"]{background:var(--lw-c);border-color:var(--lw-c);color:#fff}
+.progress{height:14px;background:var(--lw-line);border-radius:99px}
+.progress i{background:var(--lw-ok);border-radius:99px}
+.card{background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:22px;box-shadow:none}
+.card-top{background:none;color:var(--lw-c);padding:16px 18px 0;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase}
+.card-top .tag{font-size:.8rem}
+.card-body{background-image:none}
+.prompt{font-family:var(--lw-f-d);font-weight:700}
+.opts{gap:12px}
+.opt{background:var(--lw-card);color:var(--lw-ink);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:18px;min-height:60px;
+  font-family:var(--lw-f-d);font-weight:600;font-size:1.12rem}
+.opt:not(:disabled):active{transform:translateY(3px);border-bottom-width:2px}
+.opt.ok{border:3px solid var(--lw-ok);border-bottom-width:6px;background:var(--lw-ok-bg);color:var(--lw-ok-ink)}
+.opt.bad{border-color:var(--lw-bad);background:var(--lw-bad-bg);color:var(--lw-bad-ink)}
+.tile{background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:4px;border-radius:12px;font-family:var(--lw-f-d);font-weight:700}
+.slots{border-radius:16px}
+.slots .tile{background:var(--lw-cs);border-color:var(--lw-c)}
+.inp input,.field{border-radius:16px}
+.fb{border-radius:22px;padding:16px 16px 18px;gap:8px}
+.fb.ok{background:var(--lw-ok-bg);border:none;color:var(--lw-ink)}
+.fb.bad{background:var(--lw-bad-bg);border:none;color:var(--lw-ink)}
+.fb strong{font-family:var(--lw-f-d);font-weight:700;font-size:1.3rem;display:flex;align-items:center;gap:10px}
+.fb.ok strong{color:var(--lw-ok-ink)}
+.fb.bad strong{color:var(--lw-bad-ink)}
+.fb.ok strong::before,.fb.bad strong::before{content:"";flex:none;width:36px;height:36px;border-radius:50%;background:var(--lw-ok) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/20px no-repeat}
+.fb.bad strong::before{background:var(--lw-bad) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3.4' stroke-linecap='round'%3E%3Cpath d='M7 7l10 10M17 7L7 17'/%3E%3C/svg%3E") center/18px no-repeat}
+.card-top .tag{color:var(--lw-c);font-family:var(--lw-f-b);font-weight:700;letter-spacing:.12em}
+.card-top .fachtag{background:var(--lw-cs);color:var(--lw-c);font-family:var(--lw-f-b);font-weight:700}
+/* @kit */
+/* Gemeinsam stark ist von Anfang an im Lernwelt-Look gebaut: nur die Fach-Farbe setzen. */
+:root:root:root{--lw-c:var(--lw-eth); --lw-cd:var(--lw-eth-d); --lw-cs:var(--lw-eth-s)}
+.go:disabled{opacity:.45}
+</style><!--/lw-look--></head><body><nav id="lw-bar" class="lw-bar lw-eth" aria-label="Lernwelt"><a class="lw-back" href="index.html#heft-gewalt" aria-label="Zurück zum Heft"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a><span class="lw-t"><span class="lw-eyebrow">Ethik</span><span class="lw-name">Gemeinsam stark</span></span></nav>
+<main class="wrap" id="app"></main>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+"use strict";
+/* ================= Grundlagen ================= */
+const $=s=>document.querySelector(s);
+const app=$("#app");
+const rand=n=>Math.floor(Math.random()*n);
+const pick=a=>a[rand(a.length)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=rand(i+1);[a[i],a[j]]=[a[j],a[i]]}return a};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const plain=h=>String(h).replace(/<br\s*\/?>/g,". ").replace(/<[^>]+>/g," ").replace(/\s+/g," ").trim();
+let toastT;function toast(t){const el=$("#toast");el.innerHTML=t;el.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove("show"),2600)}
+
+/* ================= Zustand ================= */
+const KEY="ethik-gewalt-v1";
+const DEF={best:{},auto:true,rate:.95,ich:"",vertrag:null};
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&typeof s==="object")return Object.assign(JSON.parse(JSON.stringify(DEF)),s)}catch(e){}return JSON.parse(JSON.stringify(DEF))}
+let S=load();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function spitzname(){try{const p=JSON.parse(localStorage.getItem("lernwelt-profil"));if(p&&p.spitz)return p.spitz}catch(e){}return ""}
+
+/* ================= Vorlesen (Sprachausgabe des Geräts) ================= */
+const TTS={ok:"speechSynthesis" in window&&"SpeechSynthesisUtterance" in window,vs:[],v:null,run:0};
+function pickVoices(){if(!TTS.ok)return;const vs=speechSynthesis.getVoices().filter(v=>/^de/i.test(v.lang));
+  const de=vs.filter(v=>/de[-_]DE/i.test(v.lang));TTS.vs=de.length?de:vs;
+  TTS.v=TTS.vs.find(v=>/anna|petra|helena|katja|google/i.test(v.name))||TTS.vs[0]||null}
+if(TTS.ok){pickVoices();speechSynthesis.addEventListener&&speechSynthesis.addEventListener("voiceschanged",pickVoices)}
+function hush(){TTS.run++;if(TTS.ok)speechSynthesis.cancel();document.querySelectorAll(".spk.on").forEach(b=>b.classList.remove("on"))}
+/* spricht einen Text; o = {pitch, rate, voice}; onend kommt auch bei Fehlern, damit Abfolgen weiterlaufen */
+function speak(text,o,onend){if(typeof o==="function"){onend=o;o={}}o=o||{};
+  if(!TTS.ok){if(onend)onend();return false}
+  const id=++TTS.run;speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(plain(text));u.lang="de-DE";
+  const v=o.voice!=null&&TTS.vs.length?TTS.vs[o.voice%TTS.vs.length]:TTS.v;if(v)u.voice=v;
+  u.rate=S.rate*(o.rate||1);u.pitch=o.pitch||1.05;
+  let fired=false;const fin=()=>{if(fired)return;fired=true;if(id===TTS.run&&onend)onend()};u.onend=fin;u.onerror=fin;
+  speechSynthesis.speak(u);return true}
+/* Vorlese-Knopf: spricht, solange er leuchtet; nochmal tippen stoppt */
+function spkBtn(getText){const b=document.createElement("button");b.className="spk";b.type="button";b.setAttribute("aria-label","Vorlesen");b.innerHTML=I.spk;
+  b.onclick=()=>{if(b.classList.contains("on")){hush();return}hush();b.classList.add("on");speak(getText(),()=>b.classList.remove("on"))};return b}
+function autoSay(text,btn){if(!S.auto||!TTS.ok)return;if(btn)btn.classList.add("on");speak(text,()=>{if(btn)btn.classList.remove("on")})}
+
+/* kurze Töne für richtig/falsch */
+let AC=null;
+function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){AC=null}}if(AC&&AC.state==="suspended")AC.resume();return AC}
+function beep(fs,len,type,vol){const a=ac();if(!a)return;let t=a.currentTime+.02;fs.forEach(f=>{const o=a.createOscillator(),g=a.createGain();o.type=type||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol||.16,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+len);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+len+.02);t+=len*.75})}
+const sfxOk=()=>beep([1046.5,1318.5],.14);
+const sfxBad=()=>beep([233,175],.18,"triangle",.1);
+const sfxPling=()=>beep([880],.08,"sine",.06);
+
+/* ================= Symbole ================= */
+const I={
+  spk:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path d="M15.5 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11"/></svg>`,
+  heart:`<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.8 4.5c2.1 0 3.6 1.2 5.2 3 1.6-1.8 3.1-3 5.2-3 3.8 0 5.9 3.9 4.4 7.3C19.5 16.4 12 21 12 21z"/></svg>`,
+  phone:`<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z"/></svg>`,
+  back:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>`,
+  del:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 5H9l-6 7 6 7h12z"/><path d="M12.5 9.5l5 5M17.5 9.5l-5 5"/></svg>`,
+  tick:`<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>`,
+  star:on=>`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z" fill="${on?"#FFC93C":"var(--lw-line)"}" stroke="${on?"#D99A00":"none"}" stroke-width="1.2" stroke-linejoin="round"/></svg>`
+};
+
+/* ================= Figuren (Farbe und Stimmlage) ================= */
+const CAST={
+  Aylin:{c:"#D9467A",p:1.35,v:0},Malik:{c:"#2563EB",p:.95,v:1},Paul:{c:"#C2410C",p:1.1,v:1},Tim:{c:"#15803D",p:1.15,v:1},
+  Jonas:{c:"#7C3AED",p:1.25,v:1},Mia:{c:"#BE185D",p:1.4,v:0},Emil:{c:"#0F766E",p:1.05,v:1},Lea:{c:"#B45309",p:1.3,v:0},
+  Hanna:{c:"#9333EA",p:1.35,v:0},Du:{c:"var(--lw-eth)",p:1.2,v:0}
+};
+const who=n=>CAST[n]||{c:"#5E5A7A",p:1.05,v:0};
+
+/* ================= Inhalte =================
+   Schritt-Arten:
+   read  Info-Karte (art, ey, h, p, merk)           – danach Weiter
+   scene Gespräch oder Klassenchat zum Anhören      – mit ask (Frage dazu) oder ohne
+   mc    eine Antwort wählen (opts: h, ok, fb)       tf  Stimmt / Stimmt nicht
+   sort  Situationen einordnen (wird zu einzelnen cat-Schritten)
+   multi alle richtigen antippen                     order  Reihenfolge antippen
+   pad   Nummer eintippen                            feel / build / vertrag  ohne Richtig oder Falsch */
+const ART={
+  koerper:{e:"✋",h:"Körperlich"},seele:{e:"💬",h:"Seelisch"},aus:{e:"🚪",h:"Ausgrenzend"},sache:{e:"🎒",h:"Gegen Sachen"},
+  necken:{e:"🟢",h:"Necken"},aergern:{e:"🟡",h:"Ärgern"},mobbing:{e:"🔴",h:"Mobbing"},
+  taeter:{e:"😈",h:"Täter/in"},mitl:{e:"🙈",h:"Mitläufer/in"},zusch:{e:"👀",h:"Zuschauer/in"},helfer:{e:"🦸",h:"Helfer/in"},opfer:{e:"😢",h:"Betroffene/r"},
+  wut:{e:"😡",h:"Wut"},angst:{e:"😨",h:"Angst"},druck:{e:"👥",h:"Gruppendruck"},anerk:{e:"🏆",h:"Anerkennung"},
+  ich:{e:"🙋",h:"Ich-Botschaft"},du:{e:"👉",h:"Du-Botschaft"},
+  petzen:{e:"🤫",h:"Petzen"},hilfe:{e:"🆘",h:"Hilfe holen"},
+  gut:{e:"👍",h:"Gute Regel"},schlecht:{e:"👎",h:"Lieber nicht"}
+};
+const FEEL=[["😢","traurig"],["😠","wütend"],["😔","allein"],["😳","beschämt"],["😨","ängstlich"],["😕","verwirrt"],["😞","enttäuscht"],["😶","still"]];
+
+const CH=[
+/* ---------- 1 ---------- */
+{id:"was",t:"Was ist Gewalt?",d:"Gewalt ist mehr als Schlagen: vier Arten erkennen",ico:"🤔",
+ merk:["Gewalt ist, wenn jemand absichtlich verletzt wird: am Körper, an der Seele oder an seinen Sachen.","Es gibt körperliche, seelische und ausgrenzende Gewalt und Gewalt gegen Sachen.","Worte und Ausschließen sieht man nicht – sie tun trotzdem weh."],
+ steps:[
+ {k:"read",art:"🤔",ey:"Los geht's",h:"Gewalt hat viele Gesichter",p:"Bei Gewalt denken viele zuerst an Schlagen. Aber auch Worte, Ausschließen oder kaputte Sachen können sehr wehtun. Hier lernst du vier Arten von Gewalt kennen."},
+ {k:"tf",s:"Gewalt ist nur, wenn jemand geschlagen wird.",ok:false,why:"Gewalt ist viel mehr als Schlagen. Auch Beleidigen, Drohen oder Ausschließen verletzt – nur eben innen drin."},
+ {k:"read",art:"🧩",ey:"Die vier Arten",h:"So kann Gewalt aussehen",tiles:[
+   ["✋","Körperlich","schlagen, treten, schubsen, festhalten"],
+   ["💬","Seelisch","beleidigen, auslachen, bloßstellen, drohen"],
+   ["🚪","Ausgrenzend","„Du spielst nicht mit!“, absichtlich ignorieren"],
+   ["🎒","Gegen Sachen","Sachen kaputt machen, verstecken, bekritzeln"]]},
+ {k:"scene",h:"Große Pause",lines:[
+   {n:"Große Pause auf dem Schulhof. Aylin will beim Fußball mitspielen."},
+   {w:"Aylin",t:"Kann ich mitspielen?"},
+   {w:"Malik",t:"Nee, du nicht. Mädchen können eh nicht kicken."},
+   {w:"Aylin",t:"Das stimmt doch gar nicht!"},
+   {n:"Paul schnappt sich Aylins Trinkflasche und wirft sie in die Büsche."},
+   {w:"Paul",t:"Hol sie dir doch, haha!"}],
+  ask:{q:"Welche Arten von Gewalt kommen in der Geschichte vor?",opts:[
+   {h:"Ausgrenzend, seelisch und gegen Sachen",ok:true},
+   {h:"Nur körperlich"},
+   {h:"Gar keine, das war nur Spaß"},
+   {h:"Nur gegen Sachen"}],
+   why:"Malik schließt Aylin aus (ausgrenzend) und macht sie dabei schlecht (seelisch). Paul wirft ihre Flasche weg: Gewalt gegen Sachen. Spaß ist es nur, wenn alle lachen können."}},
+ {k:"sort",q:"Welche Art von Gewalt ist das?",cats:["koerper","seele","aus","sache"],items:[
+   {h:"Jonas wird in der Schlange vor dem Kiosk geschubst.",c:"koerper",e:"🧍",why:"Schubsen verletzt den Körper."},
+   {h:"Im Klassenchat schreibt jemand: „Lea ist voll peinlich.“",c:"seele",e:"📱",why:"Gemeine Worte über jemanden sind seelische Gewalt – auch im Chat."},
+   {h:"Bei der Gruppenarbeit sagen alle: „Mit Ben wollen wir nicht.“",c:"aus",e:"👥",why:"Ben wird absichtlich ausgeschlossen."},
+   {h:"Jemand kritzelt absichtlich in Sofias neues Heft.",c:"sache",e:"📓",why:"Hier wird etwas beschädigt, das Sofia gehört."},
+   {h:"„Wenn du das der Lehrerin sagst, kriegst du was ab!“",c:"seele",e:"😟",why:"Drohen macht Angst. Das ist seelische Gewalt."},
+   {h:"Noah wird festgehalten, damit er nicht weglaufen kann.",c:"koerper",e:"🧍",why:"Festhalten gegen den eigenen Willen ist körperliche Gewalt."}]},
+ {k:"feel",q:"Wie fühlt sich Aylin wohl, als sie nicht mitspielen darf?",ctx:"Du kannst mehrere Gefühle antippen.",resp:"Gut, dass du dich in Aylin hineinversetzt. Ausgrenzen sieht man nicht – aber viele fühlen sich danach traurig, wütend oder allein. Das tut genauso weh wie ein Schubser."},
+ {k:"read",art:"🔍",ey:"Tipp",h:"Woran erkennst du Gewalt?",p:"Frag dich: Wird jemand verletzt – am Körper, an der Seele oder an seinen Sachen? Und passiert das mit Absicht? Dann ist es Gewalt."},
+ {k:"tf",s:"Wenn jemand absichtlich die Mütze eines anderen in eine Pfütze wirft, ist das Gewalt gegen Sachen.",ok:true,why:"Genau. Die Mütze gehört dem anderen, und sie wird absichtlich schmutzig gemacht."},
+ {k:"mc",q:"Welcher Satz ist eine Drohung?",opts:[
+   {h:"„Gib mir dein Pausenbrot, sonst passiert was!“",ok:true},
+   {h:"„Kannst du mir bitte helfen?“"},
+   {h:"„Ich finde dein Bild nicht so schön.“"},
+   {h:"„Lass uns später weiterreden.“"}],
+  why:"Eine Drohung soll Angst machen: „Wenn du nicht …, dann …“. Drohen ist seelische Gewalt, auch wenn niemand geschlagen wird."},
+ {k:"tf",s:"Jemanden immer wieder absichtlich zu ignorieren, kann auch Gewalt sein.",ok:true,why:"Ja. Wer absichtlich immer wieder ignoriert wird, fühlt sich ausgeschlossen. Das ist ausgrenzende Gewalt."},
+ {k:"read",art:"⭐",ey:"Merk dir",h:"Das Wichtigste",merk:"Gewalt ist, wenn jemand absichtlich verletzt wird. Es gibt körperliche, seelische und ausgrenzende Gewalt und Gewalt gegen Sachen."}
+ ]},
+/* ---------- 2 ---------- */
+{id:"streit",t:"Streit ist nicht gleich Gewalt",d:"Necken, Ärgern oder Mobbing: die Streit-Ampel",ico:"🚦",
+ merk:["Streit ist normal. Wichtig ist, fair zu streiten.","Necken: alle haben Spaß, bei „Stopp“ ist Schluss. Ärgern: einer fühlt sich schlecht. Mobbing: immer wieder, über längere Zeit, mit Absicht, oft viele gegen einen.","Du darfst laut und deutlich „Stopp!“ sagen."],
+ steps:[
+ {k:"read",art:"⛅",ey:"Los geht's",h:"Streit gehört dazu",p:"Wo Menschen zusammen sind, gibt es auch mal Streit. Das ist normal. Wichtig ist, <b>wie</b> man streitet: fair und ohne den anderen zu verletzen."},
+ {k:"tf",s:"Wer sich streitet, ist automatisch gewalttätig.",ok:false,why:"Streiten ist keine Gewalt. Gewalt beginnt erst, wenn jemand absichtlich verletzt wird."},
+ {k:"read",art:"🚦",ey:"Die Streit-Ampel",h:"Wo ist die Grenze?",tiles:[
+   ["🟢","Necken","Alle haben Spaß und lachen zusammen. Sagt einer „Stopp“, hört es auf.","g"],
+   ["🟡","Ärgern","Einer ist gemein, der andere fühlt sich schlecht. Das sollte schnell aufhören.","y"],
+   ["🔴","Mobbing","Eine Person wird immer wieder, über längere Zeit, absichtlich fertiggemacht – oft von mehreren.","r"]]},
+ {k:"sort",q:"Necken, Ärgern oder Mobbing?",cats:["necken","aergern","mobbing"],items:[
+   {h:"Emil und Ben ziehen sich mit ihren Lieblingsvereinen auf und lachen beide.",c:"necken",e:"⚽",why:"Beide haben Spaß, keiner fühlt sich schlecht."},
+   {h:"Seit Wochen machen mehrere Kinder Geräusche, wenn Hanna an die Tafel geht.",c:"mobbing",e:"📅",why:"Immer wieder, seit Wochen und mehrere gegen eine: Das ist Mobbing."},
+   {h:"Sofia sagt einmal genervt zu Noah: „Du bist so langsam!“ Er ist gekränkt.",c:"aergern",e:"😒",why:"Das war gemein, ist aber einmal passiert. Am besten entschuldigt sich Sofia."},
+   {h:"Jonas kitzelt Mia. Sie ruft „Stopp!“, und Jonas hört sofort auf.",c:"necken",e:"🤭",why:"Jonas hält sich an das Stopp. So bleibt es Necken."},
+   {h:"Malik wird jeden Morgen die Mütze weggenommen, und die Gruppe lacht ihn aus.",c:"mobbing",e:"🧢",why:"Jeden Tag, viele gegen einen, mit Absicht: Mobbing."},
+   {h:"Lea versteckt in der Pause einmal Pauls Stift, obwohl er das gar nicht lustig findet.",c:"aergern",e:"✏️",why:"Paul findet es nicht lustig. Also ist es Ärgern, kein Necken."}]},
+ {k:"scene",h:"Der Spitzname",lines:[
+   {n:"In der 5b nennen alle Tim „Professor“, weil er so viel weiß."},
+   {w:"Tim",t:"Professor Tim ist da! Den Namen find ich eigentlich cool."},
+   {n:"Ein paar Wochen später. Jetzt rufen ihn einige „Streber-Professor“ und verdrehen die Augen, wenn er sich meldet."},
+   {w:"Tim",t:"Hört doch mal auf damit. Das nervt echt."},
+   {n:"Aber sie machen weiter, jeden Tag. Tim meldet sich kaum noch."}],
+  ask:{q:"Ab wann ist es kein Necken mehr?",opts:[
+   {h:"Als Tim „Hört auf“ sagt und sie trotzdem jeden Tag weitermachen",ok:true},
+   {h:"Schon beim ersten „Professor“"},
+   {h:"Nie, ist doch nur ein Spitzname"},
+   {h:"Erst wenn jemand Tim schlägt"}],
+   why:"Am Anfang fand Tim den Namen gut – das war Necken. Als er „Stopp“ sagte und die anderen trotzdem jeden Tag weitermachten, war die Grenze überschritten. Jetzt geht es in Richtung Mobbing."}},
+ {k:"feel",q:"Wie geht es Tim, als er sich kaum noch meldet?",resp:"Ja, so kann es Tim gehen. Viele, die gemobbt werden, werden still und ziehen sich zurück. Deshalb ist es so wichtig, dass andere es merken und helfen."},
+ {k:"read",art:"🔎",ey:"Mobbing erkennen",h:"Vier Merkmale",tiles:[
+   ["🔁","Immer wieder","nicht nur einmal"],
+   ["📅","Über längere Zeit","Wochen oder Monate"],
+   ["🎯","Mit Absicht","jemand will verletzen"],
+   ["⚖️","Ungleiche Kräfte","viele gegen einen, Stärkere gegen Schwächere"]]},
+ {k:"multi",q:"Was gehört zu Mobbing? Tipp alle richtigen an.",opts:[
+   {h:"Es passiert immer wieder",ok:true},{h:"Beide lachen zusammen"},{h:"Es geht über längere Zeit",ok:true},
+   {h:"Es geschieht mit Absicht",ok:true},{h:"Es passiert nur ein einziges Mal"},{h:"Oft sind es viele gegen einen",ok:true}],
+  why:"Mobbing: immer wieder, über längere Zeit, mit Absicht und oft viele gegen einen."},
+ {k:"read",art:"✋",ey:"Tipp",h:"Stopp sagen",p:"Wenn dir etwas zu weit geht, darfst du laut und deutlich „Stopp!“ sagen. Schau die Person an, stell dich gerade hin und sprich mit fester Stimme."},
+ {k:"mc",q:"Welches Stopp ist am klarsten?",opts:[
+   {h:"„Stopp! Hör auf damit, das will ich nicht.“",ok:true},
+   {h:"„Ähm … vielleicht … könntest du eventuell …“",fb:"Das ist sehr leise und unsicher. Der andere merkt vielleicht gar nicht, dass du es ernst meinst."},
+   {h:"„Du Idiot, lass mich!“",fb:"Das ist zwar deutlich, aber eine Beleidigung. So wird der Streit eher größer."},
+   {h:"Wegschauen und nichts sagen",fb:"Dann weiß der andere nicht, dass es dir zu weit geht."}],
+  why:"Ein gutes Stopp ist klar und deutlich – ohne den anderen zu beleidigen."},
+ {k:"tf",s:"Wenn jemand „Stopp“ sagt und der andere trotzdem weitermacht, ist die Grenze überschritten.",ok:true,why:"Genau. Wer ein Stopp nicht beachtet, macht aus Necken Ärgern – oder Schlimmeres."},
+ {k:"read",art:"⭐",ey:"Merk dir",h:"Das Wichtigste",merk:"Streit ist normal. Gewalt ist es, wenn jemand verletzt wird. Mobbing passiert immer wieder, über längere Zeit, mit Absicht – und oft viele gegen einen."}
+ ]},
+/* ---------- 3 ---------- */
+{id:"mobbing",t:"Mobbing und Cybermobbing",d:"Die fünf Rollen, der Klassenchat und Regeln fürs Handy",ico:"📱",
+ merk:["Bei Mobbing gibt es fünf Rollen: Täter/in, Mitläufer/in, Zuschauer/in, Helfer/in und Betroffene/r.","Zuschauer können zu Helfern werden.","Fotos von anderen nur mit Erlaubnis teilen. Bei Beleidigungen im Chat: nicht zurückschreiben, Screenshot, blockieren, einem Erwachsenen zeigen."],
+ steps:[
+ {k:"read",art:"🎭",ey:"Los geht's",h:"Mobbing braucht Publikum",p:"Bei Mobbing gibt es nicht nur zwei Personen. Fast immer sind andere dabei – und gerade sie können viel verändern."},
+ {k:"read",art:"👥",ey:"Die fünf Rollen",h:"Wer macht was?",tiles:[
+   ["😈","Täter/in","fängt an und denkt sich Gemeinheiten aus"],
+   ["🙈","Mitläufer/in","macht mit oder lacht mit"],
+   ["👀","Zuschauer/in","sieht zu und tut nichts"],
+   ["🦸","Helfer/in","hält zum Opfer oder holt Hilfe"],
+   ["😢","Betroffene/r","wird gemobbt – und ist nie selbst schuld daran"]]},
+ {k:"sort",q:"Welche Rolle hat das Kind?",cats:["taeter","mitl","zusch","helfer","opfer"],items:[
+   {h:"Malik denkt sich die gemeinen Sprüche über Noah aus.",c:"taeter",e:"💭",why:"Malik fängt an. Er ist der Täter."},
+   {h:"Paul lacht laut über Maliks Sprüche und macht sie nach.",c:"mitl",e:"😆",why:"Paul macht mit. Ohne Mitläufer hätte Malik kein Publikum."},
+   {h:"Hanna sieht alles, schaut aber weg und sagt nichts.",c:"zusch",e:"🫣",why:"Hanna schaut nur zu. Sie könnte aber Helferin werden."},
+   {h:"Sofia setzt sich zu Noah und erzählt der Lehrerin davon.",c:"helfer",e:"🤝",why:"Sofia hält zu Noah und holt Hilfe. Super!"},
+   {h:"Noah wird jeden Tag ausgelacht und will morgens nicht mehr in die Schule.",c:"opfer",e:"🎒",why:"Noah ist betroffen. Er braucht Menschen, die zu ihm halten."}]},
+ {k:"tf",s:"Zuschauer haben mit Mobbing nichts zu tun.",ok:false,why:"Wer nur zuschaut, zeigt dem Täter: Ich unternehme nichts. Das macht Mobbing stärker. Zuschauer können aber zu Helfern werden."},
+ {k:"read",art:"📱",ey:"Cybermobbing",h:"Mobbing mit dem Handy",p:"Cybermobbing ist Mobbing im Internet oder mit dem Handy: gemeine Nachrichten, peinliche Fotos, Sprachnachrichten – oder jemand wird absichtlich aus einer Gruppe geworfen."},
+ {k:"multi",q:"Was macht Cybermobbing besonders schlimm? Tipp alle richtigen an.",opts:[
+   {h:"Es geht rund um die Uhr weiter, auch zu Hause",ok:true},{h:"Sehr viele können es sehen",ok:true},
+   {h:"Man schaltet das Handy aus, und alles ist weg"},{h:"Fotos und Nachrichten lassen sich schwer wieder löschen",ok:true},
+   {h:"Es ist nicht so schlimm, weil es ja „nur online“ ist"}],
+  why:"Online hört es nicht an der Schultür auf, viele sehen es, und was einmal verschickt ist, lässt sich kaum zurückholen. Deshalb ist Cybermobbing genauso schlimm wie Mobbing auf dem Schulhof."},
+ {k:"scene",chat:"Klasse 5b 💬",h:"Im Klassenchat",lines:[
+   {w:"Malik",t:"Leute schaut mal 😂😂"},
+   {w:"Malik",photo:"Foto: Hanna stolpert im Sport über die Matte",t:"Foto"},
+   {w:"Paul",t:"😂😂😂 wie peinlich"},
+   {w:"Lea",t:"lol schick das mal an die 5a"},
+   {w:"Emil",voice:"0:06",t:"Hanna, die Bruchpilotin! Hahaha!"},
+   {n:"Hanna ist auch in der Gruppe. Sie hat alles gelesen."}],
+  ask:{q:"Was tust du?",opts:[
+   {h:"Ich schreibe: „Das ist nicht okay. Löscht das Foto.“ Und ich zeige es einem Erwachsenen.",ok:true,fb:"Stark! Du stellst dich klar auf Hannas Seite und holst Hilfe. Das ist Zivilcourage – und du bringst dich dabei nicht in Gefahr."},
+   {h:"Ich schreibe Hanna privat: „Das war gemein von denen. Soll ich dir helfen?“",ok:true,fb:"Sehr gut! Hanna merkt: Ich bin nicht allein. Noch besser wird es, wenn ihr zusammen einem Erwachsenen Bescheid sagt."},
+   {h:"Ich schicke auch einen Lach-Smiley, damit ich dazugehöre.",fb:"Dann wirst du zum Mitläufer. Jeder Lach-Smiley zeigt Malik: Das kommt gut an. Für Hanna wird es noch schlimmer."},
+   {h:"Ich leite das Foto an meine Freunde weiter.",fb:"Weiterleiten verbreitet das Foto noch mehr. Fotos von anderen ohne Erlaubnis zu teilen ist gemein und sogar verboten."},
+   {h:"Ich sage nichts, das geht mich nichts an.",fb:"Man ist oft unsicher, das ist verständlich. Aber wer schweigt, bleibt Zuschauer. Schon eine Nachricht an Hanna oder ein Erwachsener kann viel helfen."}]}},
+ {k:"read",art:"📸",ey:"Wichtig",h:"Das Recht am eigenen Bild",p:"Jeder Mensch darf selbst bestimmen, ob ein Foto oder Video von ihm verschickt oder gepostet wird. Frag also immer vorher: „Darf ich das Foto teilen?“"},
+ {k:"tf",s:"Ein lustiges Foto von einer Freundin darf ich in den Klassenchat stellen, ohne sie zu fragen.",ok:false,why:"Erst fragen! Was du lustig findest, kann für sie peinlich sein. Und ohne Erlaubnis ist es nicht erlaubt."},
+ {k:"order",q:"Jemand beleidigt dich im Chat. Tipp die Schritte in der richtigen Reihenfolge an.",items:["Nicht zurückschreiben oder zurückbeleidigen","Screenshot machen als Beweis","Die Person blockieren oder melden","Einem Erwachsenen den Screenshot zeigen"],
+  why:"Wichtig ist vor allem: erst den Beweis sichern, dann blockieren. Und du musst das nicht allein lösen – zeig es einem Erwachsenen."},
+ {k:"mc",q:"Lea will Hanna aus der Klassengruppe werfen, „weil sie eh nervt“. Was ist das?",opts:[
+   {h:"Ausgrenzung – eine Form von Cybermobbing",ok:true},{h:"Ganz normal, Gruppen sind halt so"},{h:"Gewalt gegen Sachen"},{h:"Necken"}],
+  why:"Jemanden absichtlich aus der Klassengruppe zu werfen, schließt ihn aus. Das ist ausgrenzende Gewalt im Netz."},
+ {k:"read",art:"💙",ey:"Merk dir",h:"Du bist nicht schuld",p:"Wenn dir so etwas passiert: Es liegt nie an dir. Du darfst dir Hilfe holen – bei deinen Eltern, in der Schule oder bei der Nummer gegen Kummer.",help:true,
+  merk:"Zuschauer können zu Helfern werden. Online gilt: erst fragen, dann teilen – und bei Gemeinheiten Screenshot, blockieren, Erwachsenen zeigen."}
+ ]},
+/* ---------- 4 ---------- */
+{id:"gefuehle",t:"Ursachen und Gefühle",d:"Wut, Angst, Gruppendruck, Anerkennung – und was hilft",ico:"💭",
+ merk:["Hinter Gewalt stecken oft Wut, Angst, Gruppendruck oder der Wunsch nach Anerkennung.","Ein Grund erklärt Gewalt, aber er entschuldigt sie nicht.","Bei Wut helfen: durchatmen, bis zehn zählen, weggehen, darüber reden."],
+ steps:[
+ {k:"read",art:"💭",ey:"Los geht's",h:"Warum wird jemand gewalttätig?",p:"Niemand wird als „Schläger“ geboren. Oft stecken starke Gefühle dahinter. Das <b>erklärt</b> Gewalt – aber es <b>entschuldigt</b> sie nicht."},
+ {k:"tf",s:"Wenn jemand einen Grund hat, ist Gewalt in Ordnung.",ok:false,why:"Ein Grund erklärt, warum jemand so handelt. Aber es gibt immer einen besseren Weg als Gewalt."},
+ {k:"read",art:"🌋",ey:"Vier häufige Ursachen",h:"Was steckt dahinter?",tiles:[
+   ["😡","Wut","Man ist so sauer, dass man nicht mehr nachdenkt."],
+   ["😨","Angst","Man greift an, bevor man selbst angegriffen wird."],
+   ["👥","Gruppendruck","Man macht mit, weil die anderen es auch tun."],
+   ["🏆","Anerkennung","Man will cool wirken und bewundert werden."]]},
+ {k:"scene",h:"Tims Gedanken",lines:[
+   {n:"In der Pause fällt Jonas sein Brot herunter. Tim stößt ihn in die Seite, die Clique lacht. Hör mal, was Tim dabei denkt."},
+   {w:"Tim",think:true,t:"Alle schauen zu. Wenn ich jetzt nichts mache, finden die mich langweilig."},
+   {w:"Tim",think:true,t:"Malik sagt, Jonas ist ein Loser. Wenn ich zu Jonas halte, bin ich vielleicht der Nächste."}],
+  ask:{q:"Was steckt bei Tim vor allem dahinter?",opts:[
+   {h:"Gruppendruck – er will dazugehören",ok:true},{h:"Langeweile"},{h:"Er ist wütend auf Jonas"},{h:"Er wollte Jonas helfen"}],
+   why:"Tim will zur Clique gehören und hat Angst, selbst ausgegrenzt zu werden. Das ist Gruppendruck."}},
+ {k:"feel",q:"Und Jonas? Wie fühlt er sich jetzt?",resp:"Gut, dass du an Jonas denkst. Sich in den anderen hineinzuversetzen, ist einer der stärksten Schutze gegen Gewalt."},
+ {k:"scene",h:"Später am Tag",lines:[
+   {w:"Jonas",think:true,t:"Warum ausgerechnet ich? Ich hab doch gar nichts gemacht."},
+   {w:"Jonas",think:true,t:"Morgen will ich nicht in die Schule. Vielleicht sag ich, ich hab Bauchweh."},
+   {n:"Nach der Schule sieht Tim Jonas allein auf der Bank sitzen."},
+   {w:"Tim",think:true,t:"Irgendwie war das gemein von mir. Ich wollte doch nur dazugehören."},
+   {w:"Tim",t:"Hey Jonas … das vorhin war blöd von mir. Tut mir leid."}]},
+ {k:"sort",q:"Welche Ursache steckt dahinter?",cats:["wut","angst","druck","anerk"],items:[
+   {h:"Paul hat eine Fünf zurückbekommen und tritt gegen Emils Stuhl.",c:"wut",e:"📝",why:"Paul ist wütend über die Note und lässt es an Emil aus."},
+   {h:"Lea lästert mit, weil ihre Freundinnen es auch tun.",c:"druck",e:"👭",why:"Lea macht mit, damit sie dazugehört: Gruppendruck."},
+   {h:"Malik macht freche Sprüche über andere, damit die Großen ihn cool finden.",c:"anerk",e:"😎",why:"Malik will bewundert werden: Anerkennung."},
+   {h:"Noah schubst zuerst, weil er glaubt, der andere greift ihn gleich an.",c:"angst",e:"😰",why:"Noah hat Angst und schlägt aus Angst zuerst zu."}]},
+ {k:"read",art:"🌊",ey:"Tipp",h:"Wenn die Wut kommt",p:"Wut ist ein normales Gefühl. Wichtig ist, was du damit machst. Wut ist wie eine Welle: Sie wird groß – und sie geht auch wieder weg, wenn du ihr Zeit gibst."},
+ {k:"multi",q:"Was hilft gegen Wut, ohne jemandem zu schaden? Tipp alle richtigen an.",opts:[
+   {h:"Tief durchatmen",ok:true,e:"🌬️"},{h:"Zurückschlagen",e:"👊"},{h:"Langsam bis zehn zählen",ok:true,e:"🔟"},
+   {h:"Kurz weggehen",ok:true,e:"🚶"},{h:"Etwas kaputt machen",e:"💥"},{h:"Mit jemandem darüber reden",ok:true,e:"🗣️"}],
+  why:"Atmen, zählen, weggehen und reden lassen die Welle kleiner werden. Zurückschlagen und Kaputtmachen verletzen andere."},
+ {k:"mc",q:"Malik sagt: „Mach mit, sonst bist du raus!“ Was kannst du tun?",opts:[
+   {h:"„Nein, da mach ich nicht mit.“ Und zu Freunden gehen, die fair sind",ok:true},
+   {h:"Mitmachen, damit ich dazugehöre",fb:"Das ist der Gruppendruck. Wer mitmacht, wird zum Mitläufer – und fühlt sich später oft schlecht."},
+   {h:"Lachen und so tun, als ob",fb:"Auch so tust du mit. Für den, der gemobbt wird, macht das keinen Unterschied."},
+   {h:"Malik beschimpfen",fb:"Dann wird der Streit größer. Ein klares Nein ohne Beleidigung ist stärker."}],
+  why:"Nein sagen ist mutig. Echte Freunde verlangen nicht, dass du andere verletzt."},
+ {k:"tf",s:"Sich in andere hineinzuversetzen hilft, Gewalt zu verhindern.",ok:true,why:"Ja! Wer spürt, wie es dem anderen geht, tut ihm viel seltener weh."},
+ {k:"read",art:"⭐",ey:"Merk dir",h:"Das Wichtigste",merk:"Hinter Gewalt stecken oft Wut, Angst, Gruppendruck oder der Wunsch nach Anerkennung. Das erklärt Gewalt, aber es entschuldigt sie nicht."}
+ ]},
+/* ---------- 5 ---------- */
+{id:"loesen",t:"Gewaltfrei Streit lösen",d:"Ich-Botschaften, Streitschlichtung und ein Rollenspiel",ico:"🤝",
+ merk:["Ich-Botschaft: Gefühl + was der andere tut + Wunsch. „Ich bin traurig, wenn du … Ich wünsche mir, dass …“","Streitschlichter halten zu niemandem. Sie helfen beiden, eine Lösung zu finden.","Ausreden lassen und gemeinsam Lösungen suchen."],
+ steps:[
+ {k:"read",art:"🤝",ey:"Los geht's",h:"Streiten – aber fair",p:"Ein Streit kann gut ausgehen, wenn beide sagen, was sie stört, ohne den anderen anzugreifen. Ein wichtiges Werkzeug dafür ist die Ich-Botschaft."},
+ {k:"read",art:"🙋",ey:"Zwei Arten zu sprechen",h:"Du-Botschaft oder Ich-Botschaft?",tiles:[
+   ["👉","Du-Botschaft","„Du bist so gemein! Immer machst du alles kaputt!“ – greift an, der andere wehrt sich.","r"],
+   ["🙋","Ich-Botschaft","„Ich bin traurig, wenn du mein Bild zerknickst. Ich wünsche mir, dass du vorsichtig bist.“ – sagt, wie es mir geht.","g"]]},
+ {k:"sort",q:"Ich-Botschaft oder Du-Botschaft?",cats:["ich","du"],items:[
+   {h:"„Ich ärgere mich, wenn du mich unterbrichst.“",c:"ich",e:"💬",why:"Sie sagt, wie es mir geht und was mich stört."},
+   {h:"„Du nervst total!“",c:"du",e:"💬",why:"Ein Vorwurf an den anderen – eine Du-Botschaft."},
+   {h:"„Ich bin traurig, wenn ich nicht mitspielen darf.“",c:"ich",e:"💬",why:"Gefühl und Grund – eine Ich-Botschaft."},
+   {h:"„Immer musst du alles bestimmen!“",c:"du",e:"💬",why:"„Immer“ und „du musst“ greifen an."},
+   {h:"„Ich bin wütend, weil du meinen Stift genommen hast. Bitte frag mich vorher.“",c:"ich",e:"💬",why:"Gefühl, Grund und Wunsch: eine perfekte Ich-Botschaft."}]},
+ {k:"read",art:"🧱",ey:"Baukasten",h:"So baust du eine Ich-Botschaft",tiles:[
+   ["1️⃣","Gefühl","Ich bin … / Ich fühle mich …"],
+   ["2️⃣","Was passiert ist","… wenn du …"],
+   ["3️⃣","Wunsch","Ich wünsche mir, dass …"]]},
+ {k:"build",ctx:"Ben nimmt dir in der Pause immer wieder den Ball weg.",q:"Bau deine Ich-Botschaft für Ben.",parts:[
+   {lab:"1 · Wie fühlst du dich?",pre:"Ich bin",opts:["wütend","traurig","genervt","enttäuscht"]},
+   {lab:"2 · Was macht Ben?",pre:", wenn du",opts:["mir den Ball wegnimmst","mich nicht fragst","weiterspielst, obwohl ich Stopp sage"]},
+   {lab:"3 · Was wünschst du dir?",pre:". Ich wünsche mir, dass",opts:["du mich vorher fragst","wir uns abwechseln","wir zusammen spielen"]}],
+  resp:"Super, das ist eine echte Ich-Botschaft! Ben erfährt, wie es dir geht, ohne dass du ihn beleidigst. So hört er viel eher zu."},
+ {k:"mc",ctx:"Sofia hat heimlich in Leas Tagebuch gelesen.",q:"Welche Ich-Botschaft passt am besten für Lea?",opts:[
+   {h:"„Ich bin enttäuscht, wenn du mein Tagebuch liest. Ich wünsche mir, dass das privat bleibt.“",ok:true},
+   {h:"„Du bist so eine Spionin!“",fb:"Das ist eine Du-Botschaft. Sie greift an, und Sofia wehrt sich wahrscheinlich."},
+   {h:"„Ich finde, du bist doof.“",fb:"Fängt zwar mit „Ich“ an, ist aber eine Beleidigung. Eine Ich-Botschaft sagt, wie es mir geht."},
+   {h:"„Nie wieder rede ich mit dir!“",fb:"Das beendet das Gespräch, löst den Streit aber nicht."}],
+  why:"Gefühl + was passiert ist + Wunsch: So versteht Sofia, was Lea verletzt hat."},
+ {k:"read",art:"⚖️",ey:"Streitschlichtung",h:"Hilfe von Streitschlichtern",p:"An vielen Schulen gibt es Streitschlichter: ausgebildete Schülerinnen und Schüler, die bei Streit helfen. Sie halten zu niemandem, sie helfen beiden. Und was besprochen wird, bleibt unter euch."},
+ {k:"order",q:"Bring die Schritte der Streitschlichtung in die richtige Reihenfolge.",items:["Regeln klären: ausreden lassen, nicht beleidigen","Beide erzählen nacheinander, was passiert ist","Beide sagen, wie sie sich fühlen","Gemeinsam Lösungen sammeln","Auf eine Lösung einigen und sie abmachen"],
+  why:"Erst die Regeln, dann zuhören, dann Gefühle, dann Lösungen – und am Ende eine Abmachung, mit der beide zufrieden sind."},
+ {k:"tf",s:"Streitschlichter entscheiden, wer schuld ist, und bestrafen ihn.",ok:false,why:"Streitschlichter sind keine Richter. Sie helfen beiden, selbst eine Lösung zu finden."},
+ {k:"scene",h:"Rollenspiel: Der Platz am Fenster",lines:[
+   {n:"Mia und Emil wollen beide am Fenster sitzen. Du spielst Mia."},
+   {w:"Emil",t:"Ey, das ist mein Platz! Ich war zuerst da!"},
+   {w:"Mia",t:"Gar nicht, ich sitz hier schon seit Montag!"},
+   {w:"Emil",t:"Du bist so nervig, Mia!"}],
+  ask:{q:"Du bist Mia. Was sagst du jetzt?",opts:[
+   {h:"„Ich bin sauer, wenn du mich nervig nennst. Wollen wir uns abwechseln? Eine Woche du, eine Woche ich?“",ok:true,fb:"Klasse! Du sagst, was dich stört, und schlägst eine Lösung vor, bei der beide gewinnen."},
+   {h:"„Selber nervig! Hau ab!“",fb:"So beleidigen sich beide gegenseitig, und der Streit wird größer."},
+   {h:"Emil den Stuhl wegziehen",fb:"Das ist körperliche Gewalt – und Emil könnte sich verletzen."},
+   {h:"Wortlos gehen und wochenlang nicht mehr mit Emil reden",fb:"Verständlich, aber so ist der Streit nicht gelöst. Morgen geht er weiter."}]}},
+ {k:"scene",h:"So kann es weitergehen",lines:[
+   {w:"Mia",t:"Ich bin sauer, wenn du mich nervig nennst. Wollen wir uns abwechseln? Eine Woche du, eine Woche ich?"},
+   {w:"Emil",t:"Hm … okay. Aber ich fang an!"},
+   {w:"Mia",t:"Abgemacht. Nächste Woche bin ich dran."},
+   {n:"Streit gelöst – ohne Verlierer."}]},
+ {k:"tf",s:"Bei einem Streit sollte man den anderen ausreden lassen.",ok:true,why:"Ja. Wer ausreden darf, fühlt sich ernst genommen – dann hört er auch eher zu."},
+ {k:"read",art:"⭐",ey:"Merk dir",h:"Das Wichtigste",merk:"Ich-Botschaft statt Du-Botschaft: „Ich bin …, wenn du … Ich wünsche mir, dass …“ Streitschlichter helfen beiden, eine Lösung zu finden."}
+ ]},
+/* ---------- 6 ---------- */
+{id:"hilfe",t:"Zivilcourage und Hilfe holen",d:"Sicher helfen und wissen, wer dir hilft",ico:"🦸",
+ merk:["Hilf, ohne dich selbst in Gefahr zu bringen: Hilfe holen, andere ansprechen, zum Opfer gehen.","Hilfe holen ist kein Petzen.","Nummer gegen Kummer: 116 111, kostenlos und anonym."],
+ steps:[
+ {k:"read",art:"🦸",ey:"Los geht's",h:"Was ist Zivilcourage?",p:"Zivilcourage heißt: mutig sein und anderen helfen, wenn ihnen Unrecht geschieht. Dafür brauchst du keine Superkräfte. Die wichtigste Regel: <b>Hilf, ohne dich selbst in Gefahr zu bringen.</b>"},
+ {k:"read",art:"🛟",ey:"Sicher helfen",h:"So geht's",tiles:[
+   ["🆘","Hilfe holen","Lehrkraft, Pausenaufsicht, Busfahrer oder andere Erwachsene"],
+   ["📣","Andere direkt ansprechen","„Du mit der grünen Jacke, hol bitte die Aufsicht!“"],
+   ["🤝","Zum Opfer gehen","nicht zum Täter: „Komm mit, wir gehen.“"],
+   ["📝","Merken, was passiert ist","Wer? Wann? Wo?"]]},
+ {k:"mc",ctx:"Auf dem Weg zum Bus siehst du mit einer Freundin, wie drei ältere Jungs einen Fünftklässler herumschubsen.",q:"Was ist am besten?",opts:[
+   {h:"Sofort den Busfahrer oder eine Lehrkraft holen und andere bitten mitzukommen",ok:true},
+   {h:"Allein dazwischengehen und die Großen wegschubsen",fb:"Sehr mutig, aber gefährlich. Gegen drei Ältere kannst du dich verletzen. Hol lieber Erwachsene."},
+   {h:"Mit dem Handy filmen und ins Internet stellen",fb:"Das hilft dem Jungen nicht – im Gegenteil, es macht alles noch schlimmer."},
+   {h:"Schnell weitergehen, es sind ja Große",fb:"Man hat in so einer Lage oft Angst, das ist normal. Aber Hilfe holen kannst du auch, ohne dich in Gefahr zu bringen."}],
+  why:"Hilfe holen und andere mitnehmen ist sicher und wirkt."},
+ {k:"tf",s:"Hilfe holen ist Petzen.",ok:false,why:"Petzen will jemanden in Schwierigkeiten bringen. Hilfe holen will jemanden aus Schwierigkeiten herausholen. Das ist ein großer Unterschied!"},
+ {k:"sort",q:"Petzen oder Hilfe holen?",cats:["petzen","hilfe"],items:[
+   {h:"Du erzählst der Lehrerin, dass Noah seit Tagen im Chat beleidigt wird.",c:"hilfe",e:"📱",why:"Noah wird verletzt. Du holst Hilfe für ihn."},
+   {h:"Du verrätst, dass Paul sein Pausenbrot nicht gegessen hat, damit er Ärger bekommt.",c:"petzen",e:"🥪",why:"Niemand ist in Gefahr. Du willst nur, dass Paul Ärger bekommt."},
+   {h:"Du sagst der Aufsicht, dass sich zwei Kinder auf dem Schulhof prügeln.",c:"hilfe",e:"🚸",why:"Jemand kann verletzt werden. Hilfe holen ist genau richtig."},
+   {h:"Du meldest sofort, dass Lea beim Malen über den Rand gemalt hat.",c:"petzen",e:"🖍️",why:"Das schadet niemandem. Das wäre Petzen."}]},
+ {k:"read",art:"👪",ey:"Ansprechpartner",h:"Wer kann dir helfen?",tiles:[
+   ["👪","Eltern","oder andere Erwachsene, denen du vertraust"],
+   ["👩‍🏫","Klassenlehrkraft","kennt deine Klasse am besten"],
+   ["🤫","Vertrauenslehrkraft","ist extra dafür da und behandelt alles vertraulich"],
+   ["🧑‍💼","Schulsozialarbeit","hilft bei Streit, Mobbing und Sorgen"],
+   ["☎️","Nummer gegen Kummer","116 111"]]},
+ {k:"read",art:"☎️",ey:"Wichtige Nummer",h:"Die Nummer gegen Kummer",p:"Unter <b>116 111</b> kannst du anrufen, wenn dich etwas bedrückt – egal ob groß oder klein. Der Anruf ist kostenlos, und du musst deinen Namen nicht sagen. Montags bis samstags von 14 bis 20 Uhr hören dir dort Menschen zu.",help:true},
+ {k:"pad",q:"Tipp die Nummer gegen Kummer ein.",ans:"116111",why:"Merk dir: 116 111. Eins, eins, sechs – und dann dreimal die Eins."},
+ {k:"mc",q:"Was stimmt über die Nummer gegen Kummer?",opts:[
+   {h:"Der Anruf ist kostenlos, und man muss seinen Namen nicht sagen",ok:true},
+   {h:"Der Anruf kostet viel Geld"},{h:"Man muss zuerst seine Eltern fragen"},{h:"Man darf nur bei sehr großen Problemen anrufen"}],
+  why:"Die Nummer gegen Kummer ist kostenlos und anonym. Du darfst mit jeder Sorge anrufen."},
+ {k:"multi",q:"Wer kann dir an der Schule bei Mobbing helfen? Tipp alle richtigen an.",opts:[
+   {h:"Klassenlehrkraft",ok:true},{h:"Vertrauenslehrkraft",ok:true},{h:"Die Kinder, die mobben"},{h:"Schulsozialarbeit",ok:true},{h:"Pausenaufsicht",ok:true}],
+  why:"Lehrkräfte, Vertrauenslehrkraft, Schulsozialarbeit und Aufsicht sind für dich da."},
+ {k:"mc",ctx:"Jemand schreibt dir: „Wenn du das erzählst, kriegst du Ärger!“",q:"Was tust du?",opts:[
+   {h:"Es trotzdem einem Erwachsenen erzählen – gerade dann",ok:true},
+   {h:"Lieber schweigen",fb:"Genau das will die Person. Eine Drohung soll verhindern, dass du Hilfe holst."},
+   {h:"Zurückdrohen",fb:"Dann wird es noch schlimmer. Hol dir lieber Hilfe von Erwachsenen."},
+   {h:"Das Handy für immer verstecken",fb:"Das Problem bleibt. Zeig die Nachricht lieber einem Erwachsenen."}],
+  why:"Drohungen sollen Angst machen, damit niemand Hilfe holt. Gerade dann ist es wichtig, es zu erzählen."},
+ {k:"read",art:"⭐",ey:"Merk dir",h:"Das Wichtigste",merk:"Hilf, ohne dich in Gefahr zu bringen. Hilfe holen ist kein Petzen. Nummer gegen Kummer: 116 111 – kostenlos und anonym.",help:true}
+ ]},
+/* ---------- 7 ---------- */
+{id:"regeln",t:"Regeln für das Miteinander",d:"Gute Regeln erkennen und deinen Klassenvertrag schreiben",ico:"📜",
+ merk:["Gute Regeln sind kurz, positiv formuliert und gelten für alle.","„Wir lassen andere ausreden“ statt „Nicht unterbrechen“.","Wer eine Regel bricht, kann sich entschuldigen und etwas wiedergutmachen."],
+ steps:[
+ {k:"read",art:"📜",ey:"Los geht's",h:"Warum Regeln?",p:"Regeln sind wie ein Geländer: Sie geben allen Halt. Viele Klassen schreiben gemeinsam einen <b>Klassenvertrag</b>. Alle unterschreiben und versprechen, sich daran zu halten."},
+ {k:"read",art:"✅",ey:"Gute Regeln",h:"Gute Regeln sind …",tiles:[
+   ["✂️","kurz und klar","jeder versteht sie sofort"],
+   ["😊","positiv","sagen, was man tun soll: „Wir lassen andere ausreden“ statt „Nicht unterbrechen!“"],
+   ["⚖️","für alle gleich","auch für Klassensprecher und Lieblinge"],
+   ["💪","machbar","man kann sie wirklich einhalten"]]},
+ {k:"mc",q:"Welche Regel ist positiv formuliert?",opts:[
+   {h:"„Wir lassen andere ausreden.“",ok:true},{h:"„Nicht dazwischenreden!“"},{h:"„Wer stört, fliegt raus!“"},{h:"„Kein Gemecker.“"}],
+  why:"Eine positive Regel sagt, was wir tun wollen – nicht nur, was verboten ist."},
+ {k:"sort",q:"Gute Regel oder lieber nicht?",cats:["gut","schlecht"],items:[
+   {h:"Wir helfen uns gegenseitig.",c:"gut",e:"📜",why:"Kurz, positiv und für alle."},
+   {h:"Wer petzt, ist raus.",c:"schlecht",e:"📜",why:"Diese Regel sorgt dafür, dass sich niemand mehr Hilfe holt. Das schützt Täter."},
+   {h:"Wir fragen, bevor wir etwas ausleihen.",c:"gut",e:"📜",why:"Klar, machbar und fair."},
+   {h:"Die Coolen bestimmen, wer mitspielt.",c:"schlecht",e:"📜",why:"Die Regel gilt nicht für alle gleich und grenzt aus."},
+   {h:"Wir teilen Fotos nur, wenn alle darauf einverstanden sind.",c:"gut",e:"📜",why:"Schützt alle – passt gut zum Recht am eigenen Bild."},
+   {h:"Alle sind den ganzen Tag komplett still.",c:"schlecht",e:"📜",why:"Das kann niemand einhalten."}]},
+ {k:"mc",q:"Mach daraus eine positive Regel: „Nicht auslachen!“",opts:[
+   {h:"„Wir sind freundlich zueinander, auch wenn jemand einen Fehler macht.“",ok:true},
+   {h:"„Auslachen verboten!!!“"},{h:"„Wer lacht, muss nachsitzen.“"},{h:"„Lachen ist doof.“"}],
+  why:"Die positive Regel sagt, wie wir miteinander umgehen wollen. Lachen an sich ist ja schön – nur nicht über andere."},
+ {k:"tf",s:"Die Regeln im Klassenvertrag gelten für alle – auch für die Klassensprecher.",ok:true,why:"Genau. Regeln sind nur fair, wenn sie für alle gleich gelten."},
+ {k:"vertrag",q:"Dein Klassenvertrag",p:"Wähl mindestens 4 Regeln aus, die dir für deine Klasse wichtig sind."},
+ {k:"read",art:"🩹",ey:"Und dann?",h:"Wenn jemand eine Regel bricht",p:"Dann redet man darüber – fair und mit Ich-Botschaften. Wer etwas falsch gemacht hat, kann sich entschuldigen und etwas wiedergutmachen."},
+ {k:"mc",q:"Ben hat Lea ausgelacht. Was ist eine faire Wiedergutmachung?",opts:[
+   {h:"Ben entschuldigt sich ehrlich und hilft Lea bei etwas",ok:true},
+   {h:"Lea lacht Ben auch aus",fb:"Dann geht es einfach andersherum weiter. Das macht nichts wieder gut."},
+   {h:"Alle ignorieren Ben eine Woche lang",fb:"Das wäre Ausgrenzung – also auch Gewalt."},
+   {h:"Nichts, ist ja vorbei",fb:"Lea ist aber vielleicht noch verletzt. Eine Entschuldigung hilft."}],
+  why:"Eine ehrliche Entschuldigung und eine nette Tat machen viel wieder gut."},
+ {k:"read",art:"🎉",ey:"Geschafft",h:"Gemeinsam stark",p:"Du weißt jetzt, was Gewalt ist, wie man fair streitet und wo es Hilfe gibt. Das macht dich stark – und deine Klasse auch.",merk:"Gute Regeln sind kurz, positiv und gelten für alle. Wer eine Regel bricht, kann sich entschuldigen und etwas wiedergutmachen."}
+ ]},
+/* ---------- 8 ---------- */
+{id:"mix",t:"Großer Mix",d:"12 gemischte Fragen aus allen Kapiteln",ico:"🎲",mix:true,
+ merk:["Gewalt hat viele Formen.","Fair streiten mit Ich-Botschaften.","Hilfe holen ist kein Petzen – Nummer gegen Kummer 116 111."],steps:[]}
+];
+const chOf=id=>CH.find(c=>c.id===id);
+const stars=c=>S.best[c.id]||0;
+
+/* Regeln für den Klassenvertrag */
+const RULES=["Wir lassen andere ausreden.","Wir sind freundlich zueinander, auch wenn jemand einen Fehler macht.","Bei uns darf jeder mitspielen.",
+  "Wir sagen „Stopp“, wenn uns etwas zu weit geht – und hören auf, wenn jemand „Stopp“ sagt.","Wir lösen Streit mit Worten, nicht mit Fäusten.",
+  "Wir benutzen Ich-Botschaften.","Wir fragen, bevor wir Fotos von anderen teilen.","Im Klassenchat schreiben wir nur, was wir auch ins Gesicht sagen würden.",
+  "Wir gehen mit den Sachen anderer vorsichtig um.","Wir holen Hilfe, wenn jemand geärgert oder gemobbt wird.","Wir helfen uns gegenseitig.","Wir entschuldigen uns, wenn wir jemanden verletzt haben."];
+
+/* ================= Hilfe-Karte (immer erreichbar) ================= */
+const HELPTXT="Du bist nicht allein. Wenn dir jemand wehtut, dich ausgrenzt oder dir droht, bist du nicht schuld. Erzähl es einem Erwachsenen, dem du vertraust. Oder ruf die Nummer gegen Kummer an: eins eins sechs, eins eins eins. Der Anruf ist kostenlos, und du musst deinen Namen nicht sagen.";
+function helpCard(){hush();const m=document.createElement("div");m.className="modal";m.setAttribute("role","dialog");m.setAttribute("aria-modal","true");m.setAttribute("aria-label","Hilfe-Karte");
+  m.innerHTML=`<div class="card panel"><div class="row"><span class="ey grow">Hilfe-Karte</span></div>
+    <h2>Du bist nicht allein 💙</h2>
+    <p>Wenn dir jemand wehtut, dich ausgrenzt oder dir droht: <b>Du bist nicht schuld.</b> Erzähl es einem Erwachsenen, dem du vertraust.</p>
+    <a class="call" href="tel:116111">${I.phone}<span>116 111 anrufen</span></a>
+    <p class="small"><b>Nummer gegen Kummer</b> · montags bis samstags 14 bis 20 Uhr · kostenlos · du musst deinen Namen nicht sagen. Schreiben geht auch: <a class="lnk" href="https://www.nummergegenkummer.de" target="_blank" rel="noopener">nummergegenkummer.de</a></p>
+    <ul class="hl"><li><span class="e">👪</span><span>Eltern oder andere Erwachsene, denen du vertraust</span></li>
+      <li><span class="e">👩‍🏫</span><span>Klassenlehrkraft oder Vertrauenslehrkraft</span></li>
+      <li><span class="e">🧑‍💼</span><span>Schulsozialarbeit</span></li>
+      <li><span class="e">🚨</span><span>Wenn jemand in Gefahr ist: Polizei <b>110</b></span></li></ul>
+    <div class="row"></div>
+    <button class="go" type="button" id="hclose">Schließen</button></div>`;
+  document.body.appendChild(m);
+  const r=m.querySelector(".row");const sb=spkBtn(()=>HELPTXT);r.appendChild(sb);
+  const close=()=>{hush();m.remove()};
+  m.querySelector("#hclose").onclick=close;m.onclick=e=>{if(e.target===m)close()};
+  m.querySelector("#hclose").focus({preventScroll:true})}
+
+/* ================= Startseite ================= */
+function home(){hush();R=null;
+  app.innerHTML=`
+  <section class="panel">
+    <div class="intro"><div class="art" aria-hidden="true">🤝</div><div><span class="eyebrow">Thema Gewalt</span><h2>Gemeinsam stark</h2><p class="small" style="margin-top:4px">Gewalt erkennen, fair streiten, Hilfe holen. Mit Geschichten zum Anhören.</p></div></div>
+    <button class="helpbtn" id="help"><span class="h">${I.heart}</span><span><b>Hilfe-Karte</b><span>Wer hilft dir? Nummer gegen Kummer 116 111</span></span></button>
+  </section>
+  <div class="stations">${CH.map((c,k)=>{const b=stars(c);
+    return `<button class="st" data-ch="${c.id}"><span class="ico" aria-hidden="true">${c.ico}</span><span class="grow"><span class="n">Kapitel ${k+1}</span><h3>${c.t}</h3><p>${c.d}</p><span class="stars" aria-label="${b} von 3 Sternen">${[0,1,2].map(i=>I.star(i<b)).join("")}</span></span></button>`}).join("")}</div>
+  ${S.ich||S.vertrag?`<section class="panel mine"><h3>Meine Sachen</h3>
+    ${S.ich?`<span class="small">Meine Ich-Botschaft</span><div class="row"><div class="quote grow">„${esc(S.ich)}“</div></div>`:""}
+    ${S.vertrag?`<button class="ghost" id="cert">📜 Mein Klassenvertrag ansehen</button>`:""}</section>`:""}
+  <section class="panel"><h3>Vorlesen</h3>
+    ${TTS.ok?`<p class="small">Die Lernwelt liest Karten, Geschichten und Rückmeldungen vor. In Gesprächen spricht jede Figur mit eigener Stimme.</p>
+    <div class="modes" role="group" aria-label="Automatisch vorlesen">${[[true,"Automatisch"],[false,"Nur auf Knopfdruck"]].map(([v,t])=>`<button data-auto="${v}" aria-pressed="${S.auto===v}">${t}</button>`).join("")}</div>
+    <div class="modes" role="group" aria-label="Sprechtempo">${[[.8,"Langsam"],[.95,"Normal"],[1.1,"Schnell"]].map(([v,t])=>`<button data-rate="${v}" aria-pressed="${S.rate===v}">${t}</button>`).join("")}</div>
+    <p class="small">Nichts zu hören? Lauter stellen und auf dem iPhone den Stumm-Schalter an der Seite prüfen.</p>`
+    :`<p class="small">Dieser Browser kann leider nicht vorlesen. Alles geht trotzdem, nur zum Lesen.</p>`}
+  </section>`;
+  app.querySelectorAll(".st[data-ch]").forEach(b=>b.onclick=()=>startRound(b.dataset.ch));
+  $("#help").onclick=helpCard;
+  if(S.ich){const r=app.querySelector(".mine .row");r.appendChild(spkBtn(()=>S.ich))}
+  if($("#cert"))$("#cert").onclick=()=>certView(home);
+  app.querySelectorAll("[data-auto]").forEach(b=>b.onclick=()=>{S.auto=b.dataset.auto==="true";save();home();if(S.auto)speak("Ich lese ab jetzt automatisch vor.")});
+  app.querySelectorAll("[data-rate]").forEach(b=>b.onclick=()=>{S.rate=+b.dataset.rate;save();app.querySelectorAll("[data-rate]").forEach(x=>x.setAttribute("aria-pressed",x===b));speak("So schnell lese ich vor.")});
+  scrollTo(0,0)}
+
+/* ================= Runde ================= */
+let R=null;
+/* Sortier-Aufgaben werden zu einzelnen Schritten, damit nach jeder Situation eine Rückmeldung kommt */
+function expand(steps){const out=[];steps.forEach(s=>{
+  if(s.k==="sort"){const its=shuffle(s.items);its.forEach((it,i)=>out.push({k:"cat",q:s.q,cats:s.cats,it,i,n:its.length}))}
+  else out.push(s)});return out}
+const GRADED=s=>["mc","tf","cat","multi","order","pad"].includes(s.k)||(s.k==="scene"&&s.ask);
+function mixSteps(){const pool=[];CH.forEach(c=>{if(!c.mix)expand(c.steps).forEach(s=>{if(["mc","tf","cat","multi"].includes(s.k))pool.push(s)})});
+  /* höchstens 2 Situationen aus derselben Sortier-Aufgabe */
+  const per={},out=[];for(const s of shuffle(pool)){const key=s.k==="cat"?s.cats.join():null;if(key){per[key]=(per[key]||0)+1;if(per[key]>2)continue}out.push(s.k==="cat"?Object.assign({},s,{i:null}):s);if(out.length>=12)break}
+  return out}
+function startRound(id){hush();const c=chOf(id);
+  R={id,i:0,res:[],steps:c.mix?mixSteps():expand(c.steps)};
+  R.graded=R.steps.filter(GRADED).length;R.ok=0;R.miss=0;showStep()}
+function track(){$("#track").innerHTML=R.steps.map((s,i)=>{const r=R.res[i];return `<i class="${r===true?"ok":r===false?"no":r==="done"?"done":i===R.i?"now":""}"></i>`}).join("")}
+function frame(){app.innerHTML=`<div class="topbar"><button id="quit" aria-label="Kapitel beenden"></button><div class="track" id="track"></div><button class="hbtn" id="hb" aria-label="Hilfe-Karte">${I.heart}</button></div>
+    <section class="stage" id="cb"></section>`;
+  $("#quit").onclick=home;$("#hb").onclick=helpCard;track();return $("#cb")}
+function showStep(){hush();const t=R.steps[R.i];R.locked=false;const cb=frame();
+  (RENDER[t.k]||RENDER.read)(t,cb);scrollTo(0,0)}
+function next(){R.i++;R.i>=R.steps.length?endRound():showStep()}
+/* Weiter-Knopf unten für Karten ohne Antwort */
+function dock(cb,label,fn){const d=document.createElement("div");d.className="dock";const b=document.createElement("button");b.className="go";b.type="button";b.textContent=label||"Weiter";
+  b.onclick=()=>{d.remove();fn?fn():(R.res[R.i]="done",next())};d.appendChild(b);cb.appendChild(d);return b}
+/* Überschrift mit Vorlese-Knopf */
+function qhead(cb,q,sayText){const h=document.createElement("div");h.className="qh";h.innerHTML=`<b>${q}</b>`;const sb=spkBtn(()=>sayText||q);h.appendChild(sb);cb.appendChild(h);return sb}
+/* Rückmeldung in der Leiste unten (graded: zählt für die Sterne) */
+function feedback(ok,html,sayText,graded){if(R.locked)return;R.locked=true;
+  if(graded!==false){R.res[R.i]=ok;if(ok)R.ok++;else R.miss++;ok?sfxOk():sfxBad()}else{R.res[R.i]="done";sfxOk()}
+  track();
+  const fb=document.createElement("div");fb.className="fb "+(ok?"ok":"bad");fb.setAttribute("role","status");fb.innerHTML=html;
+  const extra=[];
+  if(TTS.ok){const b=document.createElement("button");b.className="ghost";b.type="button";b.innerHTML=I.spk+"<span>Anhören</span>";b.onclick=()=>speak(sayText||plain(html));extra.push(b)}
+  const nx=document.createElement("button");nx.className="next";nx.type="button";nx.textContent=R.i+1>=R.steps.length?"Ergebnis":"Weiter";nx.onclick=next;
+  lwSheet($("#cb"),ok,[fb,...extra,nx]);
+  if(S.auto)speak(sayText||plain(html))}
+const PRAISE=()=>pick(["Richtig!","Genau!","Super!","Stark!","Klasse!"]);
+
+const RENDER={
+  /* Info-Karte */
+  read(t,cb){const c=document.createElement("div");c.className="info";
+    c.innerHTML=`${t.art?`<div class="art" aria-hidden="true">${t.art}</div>`:""}${t.ey?`<span class="ey" style="text-align:center">${t.ey}</span>`:""}<h2>${t.h}</h2>
+      ${t.p?`<p>${t.p}</p>`:""}
+      ${t.tiles?`<div class="tiles">${t.tiles.map(x=>`<div class="tile2 ${x[3]||""}"><span class="e" aria-hidden="true">${x[0]}</span><span><b>${x[1]}</b><span>${x[2]}</span></span></div>`).join("")}</div>`:""}
+      ${t.merk?`<p class="merk">⭐ ${t.merk}</p>`:""}
+      ${t.help?`<button class="helpbtn" type="button" data-help><span class="h">${I.heart}</span><span><b>Hilfe-Karte öffnen</b><span>Nummer gegen Kummer 116 111</span></span></button>`:""}`;
+    const say=[t.h,t.p||"",(t.tiles||[]).map(x=>x[1]+": "+x[2]).join(". "),t.merk||""].map(plain).filter(Boolean).join(". ");
+    const sb=spkBtn(()=>say);sb.style.alignSelf="center";c.appendChild(sb);
+    cb.appendChild(c);if(c.querySelector("[data-help]"))c.querySelector("[data-help]").onclick=helpCard;
+    dock(cb);autoSay(say,sb)},
+
+  /* eine Antwort wählen */
+  mc(t,cb){if(t.ctx)cb.insertAdjacentHTML("beforeend",`<div class="sit"><span class="e" aria-hidden="true">💬</span><span>${t.ctx}</span></div>`);
+    const order=shuffle(t.opts.map((o,i)=>i));
+    const sb=qhead(cb,t.q,(t.ctx?t.ctx+" ":"")+t.q);
+    const box=document.createElement("div");box.className="opts";
+    box.innerHTML=order.map(i=>`<button class="opt" data-i="${i}">${t.opts[i].e?`<span class="e">${t.opts[i].e}</span>`:""}<span>${t.opts[i].h}</span></button>`).join("");cb.appendChild(box);
+    box.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{if(R.locked)return;const o=t.opts[+b.dataset.i];
+      box.querySelectorAll(".opt").forEach(x=>{x.disabled=true;if(t.opts[+x.dataset.i].ok&&(o.ok?x===b:true))x.classList.add("ok")});if(!o.ok)b.classList.add("bad");
+      const good=t.opts.find(x=>x.ok);
+      const body=o.fb||t.why||"";
+      feedback(!!o.ok,`<strong>${o.ok?PRAISE():"Nicht ganz"}</strong>${!o.ok?`<p>Besser: ${good.h}</p>`:""}<p>${body}</p>${o.ok&&o.fb&&t.why?`<p>${t.why}</p>`:""}`)});
+    autoSay((t.ctx?t.ctx+" ":"")+t.q,sb)},
+
+  /* Stimmt / Stimmt nicht */
+  tf(t,cb){const sb=qhead(cb,"Stimmt das?","Stimmt das? "+t.s);
+    cb.insertAdjacentHTML("beforeend",`<div class="sit"><span class="e" aria-hidden="true">🤔</span><span>${t.s}</span></div><div class="tfrow"><button class="opt" data-v="1"><span class="e">👍</span><span>Stimmt</span></button><button class="opt" data-v="0"><span class="e">👎</span><span>Stimmt nicht</span></button></div>`);
+    cb.querySelectorAll(".tfrow .opt").forEach(b=>b.onclick=()=>{if(R.locked)return;const v=b.dataset.v==="1",ok=v===t.ok;
+      cb.querySelectorAll(".tfrow .opt").forEach(x=>{x.disabled=true;if((x.dataset.v==="1")===t.ok)x.classList.add("ok")});if(!ok)b.classList.add("bad");
+      feedback(ok,`<strong>${ok?PRAISE():"Nicht ganz"}</strong><p>Die Aussage ${t.ok?"stimmt":"stimmt nicht"}. ${t.why}</p>`)});
+    autoSay("Stimmt das? "+t.s,sb)},
+
+  /* eine Situation einordnen */
+  cat(t,cb){const it=t.it;
+    const sb=qhead(cb,t.q,t.q+" "+it.h);
+    cb.insertAdjacentHTML("beforeend",`${t.i!=null?`<span class="cnt">Situation ${t.i+1} von ${t.n}</span>`:""}<div class="sit"><span class="e" aria-hidden="true">${it.e||"💬"}</span><span>${it.h}</span></div>`);
+    const box=document.createElement("div");box.className="opts"+(t.cats.length!==3&&t.cats.length!==5?" g2":"");
+    box.innerHTML=t.cats.map(c=>`<button class="opt" data-c="${c}"><span class="e">${ART[c].e}</span><span>${ART[c].h}</span></button>`).join("");cb.appendChild(box);
+    box.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{if(R.locked)return;const ok=b.dataset.c===it.c;
+      box.querySelectorAll(".opt").forEach(x=>{x.disabled=true;if(x.dataset.c===it.c)x.classList.add("ok")});if(!ok)b.classList.add("bad");
+      feedback(ok,`<strong>${ok?PRAISE():"Nicht ganz"}</strong><p>Das ist <b>${ART[it.c].h}</b>. ${it.why||""}</p>`)});
+    autoSay(it.h,sb)},
+
+  /* alle richtigen antippen */
+  multi(t,cb){const sb=qhead(cb,t.q);const order=shuffle(t.opts.map((o,i)=>i));const sel=new Set();
+    const box=document.createElement("div");box.className="opts";
+    box.innerHTML=order.map(i=>`<button class="opt" data-i="${i}" aria-pressed="false">${t.opts[i].e?`<span class="e">${t.opts[i].e}</span>`:""}<span>${t.opts[i].h}</span></button>`).join("");cb.appendChild(box);
+    const chk=document.createElement("button");chk.className="go check";chk.type="button";chk.textContent="Prüfen";chk.disabled=true;cb.appendChild(chk);
+    box.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{if(R.locked)return;const i=+b.dataset.i;sel.has(i)?sel.delete(i):sel.add(i);b.classList.toggle("sel",sel.has(i));b.setAttribute("aria-pressed",sel.has(i));chk.disabled=!sel.size;sfxPling()});
+    chk.onclick=()=>{if(R.locked)return;let err=0;
+      box.querySelectorAll(".opt").forEach(b=>{const i=+b.dataset.i,o=t.opts[i],s=sel.has(i);b.disabled=true;b.classList.remove("sel");
+        if(o.ok&&s)b.classList.add("ok");else if(!o.ok&&s){b.classList.add("bad");err++}else if(o.ok&&!s){b.classList.add("miss");err++}});
+      chk.remove();const ok=!err;
+      feedback(ok,`<strong>${ok?PRAISE():"Fast"}</strong>${!ok?`<p>Richtig sind: ${t.opts.filter(o=>o.ok).map(o=>o.h).join(" · ")}</p>`:""}<p>${t.why}</p>`)};
+    autoSay(t.q,sb)},
+
+  /* Reihenfolge antippen */
+  order(t,cb){const sb=qhead(cb,t.q);const mix=(()=>{let m;do{m=shuffle(t.items.map((x,i)=>i))}while(m.every((v,i)=>v===i));return m})();const seq=[];
+    const box=document.createElement("div");box.className="opts";cb.appendChild(box);
+    const chk=document.createElement("button");chk.className="go check";chk.type="button";chk.textContent="Prüfen";chk.disabled=true;cb.appendChild(chk);
+    const draw=()=>{box.innerHTML=mix.map(i=>{const p=seq.indexOf(i);return `<button class="opt ${p>=0?"sel":""}" data-i="${i}"><span class="num">${p>=0?p+1:""}</span><span>${t.items[i]}</span></button>`}).join("");
+      box.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{if(R.locked)return;const i=+b.dataset.i,p=seq.indexOf(i);if(p>=0)seq.splice(p);else seq.push(i);sfxPling();draw()});
+      chk.disabled=seq.length<t.items.length};
+    draw();cb.insertAdjacentHTML("beforeend",`<p class="small">Tippst du eine Nummer nochmal an, wird sie wieder frei.</p>`);
+    chk.onclick=()=>{if(R.locked)return;const ok=seq.every((v,i)=>v===i);
+      box.querySelectorAll(".opt").forEach(b=>{b.disabled=true;const i=+b.dataset.i;b.classList.remove("sel");b.classList.add(seq.indexOf(i)===i?"ok":"bad")});chk.remove();
+      feedback(ok,`<strong>${ok?PRAISE():"Nicht ganz"}</strong>${!ok?`<p>So ist die Reihenfolge:</p><ol>${t.items.map(x=>`<li>${x}</li>`).join("")}</ol>`:""}<p>${t.why}</p>`)};
+    autoSay(t.q,sb)},
+
+  /* Nummer eintippen */
+  pad(t,cb){const sb=qhead(cb,t.q);let typed="";
+    cb.insertAdjacentHTML("beforeend",`<div class="phone" id="ph" aria-live="polite">☎️</div><div class="kp">${[1,2,3,4,5,6,7,8,9].map(n=>`<button data-k="${n}">${n}</button>`).join("")}<button class="del" data-k="del" aria-label="Löschen">${I.del}</button><button data-k="0">0</button><button class="ok" data-k="ok" disabled>OK</button></div>`);
+    const show=()=>{$("#ph").textContent=typed?typed.replace(/^(\d{3})(\d)/,"$1 $2"):"☎️";cb.querySelector(".kp .ok").disabled=!typed};
+    cb.querySelectorAll(".kp button").forEach(b=>b.onclick=()=>{if(R.locked)return;const k=b.dataset.k;
+      if(k==="ok"){const ok=typed===t.ans;$("#ph").classList.add(ok?"ok":"bad");cb.querySelectorAll(".kp button").forEach(x=>x.disabled=true);
+        feedback(ok,`<strong>${ok?PRAISE():"Nicht ganz"}</strong><p>Die Nummer gegen Kummer ist <b>116 111</b>. ${t.why}</p>`,"Die Nummer gegen Kummer ist eins eins sechs, eins eins eins. "+t.why);return}
+      if(k==="del")typed=typed.slice(0,-1);else if(typed.length<8)typed+=k;
+      beep([440+(+k||0)*40],.06,"sine",.05);show()});
+    autoSay(t.q,sb)},
+
+  /* Gefühle – ohne Richtig oder Falsch */
+  feel(t,cb){const sb=qhead(cb,t.q);if(t.ctx)cb.insertAdjacentHTML("beforeend",`<p class="small">${t.ctx}</p>`);else cb.insertAdjacentHTML("beforeend",`<p class="small">Tipp an, was passt. Hier gibt es kein Richtig oder Falsch.</p>`);
+    const sel=new Set();const box=document.createElement("div");box.className="opts g2";
+    box.innerHTML=FEEL.map((f,i)=>`<button class="opt" data-i="${i}" aria-pressed="false"><span class="e">${f[0]}</span><span>${f[1]}</span></button>`).join("");cb.appendChild(box);
+    const chk=document.createElement("button");chk.className="go check";chk.type="button";chk.textContent="Fertig";chk.disabled=true;cb.appendChild(chk);
+    box.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{if(R.locked)return;const i=+b.dataset.i;sel.has(i)?sel.delete(i):sel.add(i);b.classList.toggle("sel",sel.has(i));b.setAttribute("aria-pressed",sel.has(i));chk.disabled=!sel.size;sfxPling()});
+    chk.onclick=()=>{box.querySelectorAll(".opt").forEach(b=>b.disabled=true);chk.remove();
+      const names=[...sel].map(i=>FEEL[i][1]);
+      feedback(true,`<strong>Danke!</strong><p>Du hast gewählt: ${names.join(", ")}.</p><p>${t.resp}</p>`,null,false)};
+    autoSay(t.q,sb)},
+
+  /* Ich-Botschaft bauen */
+  build(t,cb){cb.insertAdjacentHTML("beforeend",`<div class="sit"><span class="e" aria-hidden="true">⚽</span><span>${t.ctx}</span></div>`);
+    const sb=qhead(cb,t.q,t.ctx+" "+t.q);const ch=t.parts.map(()=>null);
+    const pv=document.createElement("div");pv.className="preview";cb.appendChild(pv);
+    const sentence=()=>t.parts.map((p,i)=>p.pre+" "+(ch[i]!=null?p.opts[ch[i]]:"…")).join(" ").replace(/ ,/g,",").replace(/ \./g,".")+".";
+    const drawPv=()=>{pv.innerHTML=t.parts.map((p,i)=>`${p.pre} <span class="${ch[i]!=null?"fill":"gap"}">${ch[i]!=null?esc(p.opts[ch[i]]):""}</span>`).join(" ").replace(/ ,/g,",").replace(/ \. /g,". ")+"."};
+    t.parts.forEach((p,i)=>{const d=document.createElement("div");d.className="part";d.innerHTML=`<span class="lab">${p.lab}</span><div class="chips">${p.opts.map((o,j)=>`<button class="chip" data-j="${j}" aria-pressed="false">${o}</button>`).join("")}</div>`;cb.appendChild(d);
+      d.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{if(R.locked)return;ch[i]=+b.dataset.j;d.querySelectorAll(".chip").forEach(x=>x.setAttribute("aria-pressed",x===b));drawPv();sfxPling();chk.disabled=ch.some(x=>x==null)})});
+    const chk=document.createElement("button");chk.className="go check";chk.type="button";chk.textContent="Fertig";chk.disabled=true;cb.appendChild(chk);
+    drawPv();
+    chk.onclick=()=>{const s=sentence();S.ich=s;save();chk.remove();cb.querySelectorAll(".chip").forEach(b=>b.disabled=true);
+      feedback(true,`<strong>Deine Ich-Botschaft</strong><p class="quote">„${esc(s)}“</p><p>${t.resp}</p><p class="small">Gespeichert unter „Meine Sachen“.</p>`,s+" "+t.resp,false)};
+    autoSay(t.ctx+" "+t.q,sb)},
+
+  /* Klassenvertrag */
+  vertrag(t,cb){const sb=qhead(cb,t.q,t.q+". "+t.p);const sel=new Set(S.vertrag?S.vertrag.r.map(r=>RULES.indexOf(r)).filter(i=>i>=0):[]);
+    cb.insertAdjacentHTML("beforeend",`<p>${t.p}</p>`);
+    const box=document.createElement("div");box.className="rules";
+    box.innerHTML=RULES.map((r,i)=>`<button class="rule" data-i="${i}" aria-pressed="${sel.has(i)}"><span class="box">${I.tick}</span><span>${r}</span></button>`).join("");cb.appendChild(box);
+    cb.insertAdjacentHTML("beforeend",`<label class="part"><span class="lab">Unterschrift (dein Name)</span><input class="field" id="sig" maxlength="24" autocomplete="off" value="${esc(S.vertrag?S.vertrag.n:spitzname())}"></label><p class="small" id="vcount"></p>`);
+    const chk=document.createElement("button");chk.className="go check";chk.type="button";chk.textContent="Unterschreiben";cb.appendChild(chk);
+    const upd=()=>{const n=sel.size;$("#vcount").textContent=n<4?`Noch ${4-n} ${4-n===1?"Regel":"Regeln"} auswählen.`:`${n} Regeln ausgewählt.`;chk.disabled=n<4||!$("#sig").value.trim()};
+    box.querySelectorAll(".rule").forEach(b=>b.onclick=()=>{if(R.locked)return;const i=+b.dataset.i;sel.has(i)?sel.delete(i):sel.add(i);b.setAttribute("aria-pressed",sel.has(i));sfxPling();upd()});
+    $("#sig").oninput=upd;upd();
+    chk.onclick=()=>{const d=new Date();S.vertrag={r:[...sel].sort((a,b)=>a-b).map(i=>RULES[i]),n:$("#sig").value.trim(),d:d.toLocaleDateString("de-DE")};save();
+      R.res[R.i]="done";track();sfxOk();certView(next)};
+    autoSay(t.q+". "+t.p,sb)},
+
+  /* Gespräch oder Klassenchat */
+  scene(t,cb){
+    const sc=document.createElement("div");sc.className="scene"+(t.chat?" chat":"");
+    let body=sc;
+    if(t.chat){sc.innerHTML=`<div class="chathead"><span class="ava">5b</span><span><b>${t.chat}</b><small>Malik, Paul, Lea, Emil, Hanna, du</small></span></div><div class="chatbody"></div>`;body=sc.querySelector(".chatbody")}
+    else cb.insertAdjacentHTML("beforeend",`<span class="ey">${t.ask?"Hör zu":"Geschichte"}</span>`);
+    cb.insertAdjacentHTML("beforeend",`<div class="qh"><b>${t.h}</b></div>`);
+    cb.appendChild(sc);
+    const ctl=document.createElement("div");ctl.className="row";cb.appendChild(ctl);
+    const skip=document.createElement("button");skip.className="ghost skip";skip.type="button";skip.textContent="Alles zeigen";ctl.appendChild(skip);
+    const run=++SCN;let i=0,finished=false;
+    const lineEl=l=>{if(l.n){const p=document.createElement("p");p.className="nar";p.textContent=l.n;return p}
+      const c=who(l.w);
+      const b=document.createElement("button");b.type="button";b.className="ln"+(l.think?" think":"");
+      b.innerHTML=`<span class="ava" style="background:${c.c}">${l.w[0]}</span><span class="bub"><span class="who" style="color:${c.c}">${l.w}${l.think?" denkt":""}</span>${l.photo?`<span class="photo"><span class="e">📷</span>${l.photo}</span>`:l.voice?`<span class="voice">${I.spk.replace('<svg','<svg width="18" height="18"')}<span>Sprachnachricht ${l.voice}</span></span><span class="small">„${esc(l.t)}“</span>`:esc(l.t)}</span>`;
+      b.setAttribute("aria-label",l.w+": "+(l.photo||l.t));
+      b.onclick=()=>{hush();sayLine(l)};return b};
+    const sayLine=(l,cb2)=>{if(l.n)return speak(l.n,{pitch:1},cb2);if(l.photo)return speak(l.w+" schickt ein Foto. "+l.photo,{pitch:1},cb2);const c=who(l.w);return speak(l.t,{pitch:c.p,voice:c.v,rate:l.think?.95:1},cb2)};
+    const els=[];
+    const finish=()=>{if(finished)return;finished=true;skip.remove();
+      while(i<t.lines.length){const e=lineEl(t.lines[i++]);body.appendChild(e);els.push(e)}
+      els.forEach(e=>e.classList.remove("now"));
+      const again=document.createElement("button");again.className="ghost";again.type="button";again.innerHTML=I.spk+"<span>Nochmal hören</span>";ctl.appendChild(again);
+      again.onclick=()=>{hush();let j=0;const go=()=>{if(j>=t.lines.length){els.forEach(e=>e.classList.remove("now"));return}els.forEach(e=>e.classList.remove("now"));els[j].classList.add("now");sayLine(t.lines[j++],()=>setTimeout(go,250))};go()};
+      if(t.ask)askAfter(t,cb);else dock(cb)};
+    const step=()=>{if(run!==SCN||finished)return;if(i>=t.lines.length){finish();return}
+      const l=t.lines[i++];
+      const show=()=>{if(run!==SCN||finished)return;const e=lineEl(l);body.appendChild(e);els.push(e);els.forEach(x=>x.classList.remove("now"));e.classList.add("now");
+        if(t.chat&&!l.n)sfxPling();e.scrollIntoView({block:"nearest",behavior:"smooth"});
+        const len=plain(l.n||l.photo||l.t).length;
+        if(S.auto&&TTS.ok)sayLine(l,()=>setTimeout(step,300));else setTimeout(step,900+len*35)};
+      if(t.chat&&!l.n){const ty=document.createElement("div");ty.className="typing";ty.innerHTML="<i></i><i></i><i></i>";body.appendChild(ty);setTimeout(()=>{ty.remove();show()},650)}else show()};
+    skip.onclick=()=>{hush();finish()};
+    step()},
+};
+let SCN=0;
+/* Frage nach einer Szene */
+function askAfter(t,cb){const a=t.ask;const sb=qhead(cb,a.q);const order=shuffle(a.opts.map((o,i)=>i));
+  const box=document.createElement("div");box.className="opts";
+  box.innerHTML=order.map(i=>`<button class="opt" data-i="${i}">${a.opts[i].h}</button>`).join("");cb.appendChild(box);
+  box.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{if(R.locked)return;const o=a.opts[+b.dataset.i];
+    box.querySelectorAll(".opt").forEach(x=>{x.disabled=true;if(a.opts[+x.dataset.i].ok&&(o.ok?x===b:true))x.classList.add("ok")});if(!o.ok)b.classList.add("bad");
+    const good=a.opts.find(x=>x.ok);
+    feedback(!!o.ok,`<strong>${o.ok?PRAISE():"Nicht ganz"}</strong>${!o.ok&&!o.fb?`<p>Besser: ${good.h}</p>`:""}<p>${o.fb||a.why}</p>${!o.ok&&o.fb?`<p>Besser: ${good.h}</p>`:""}${o.ok&&o.fb&&a.why?`<p>${a.why}</p>`:""}`)});
+  sb.scrollIntoView({block:"start",behavior:"smooth"});
+  autoSay(a.q,sb)}
+
+/* Klassenvertrag als Urkunde */
+function certView(after){hush();const v=S.vertrag;if(!v){after();return}const inRound=!!R&&after!==home;
+  app.innerHTML=`${inRound?"":`<div class="row"><button class="ghost" id="cbk">${I.back}<span>Alle Kapitel</span></button></div>`}
+    <div class="cert"><span class="ey" style="text-align:center">Gemeinsam stark</span><h2>📜 Unser Klassenvertrag</h2>
+      <ol>${v.r.map(r=>`<li>${esc(r)}</li>`).join("")}</ol>
+      <div class="sign"><div>${esc(v.n)}<br><span>Unterschrift</span></div><div style="text-align:right">${esc(v.d)}<br><span>Datum</span></div></div></div>
+    <div class="row" id="crow"></div>
+    ${inRound?`<p class="small">Gespeichert! Du findest ihn jederzeit unter „Meine Sachen“. Vielleicht wollt ihr so einen Vertrag ja auch in deiner Klasse machen?</p>`:""}`;
+  const say="Unser Klassenvertrag. "+v.r.join(" ")+" Unterschrieben von "+v.n+".";
+  const b=document.createElement("button");b.className="ghost";b.type="button";b.innerHTML=I.spk+"<span>Vorlesen</span>";b.onclick=()=>speak(say);$("#crow").appendChild(b);
+  if(inRound){beep([523.25,659.25,783.99],.16);dock(app,"Weiter",after);if(S.auto)speak(say)}
+  else $("#cbk").onclick=after;
+  scrollTo(0,0)}
+
+function endRound(){hush();const n=R.graded,ok=R.ok,q=n?ok/n:1;const st=q>=.9?3:q>=.7?2:q>=.5?1:0;
+  S.best[R.id]=Math.max(S.best[R.id]||0,st);save();
+  const c=chOf(R.id),k=CH.indexOf(c),nxt=CH[k+1];
+  const cheer=["Dranbleiben, das wird!","Gut gemacht!","Stark!","Super, du kennst dich aus!"][st];
+  app.innerHTML=`<section class="result"><h2>${cheer}</h2><div class="bigstars">${[0,1,2].map(i=>I.star(i<st).replace("<svg",`<svg class="s${i+1}"`)).join("")}</div>
+    <p class="lead"><b>${ok} von ${n}</b> Fragen richtig</p>
+    <div class="panel"><b>Das nimmst du mit:</b><ul>${c.merk.map(m=>`<li>${m}</li>`).join("")}</ul><div class="row" id="mrow"></div></div>
+    <button class="helpbtn" id="help"><span class="h">${I.heart}</span><span><b>Brauchst du Hilfe?</b><span>Nummer gegen Kummer 116 111 · kostenlos</span></span></button>
+    ${nxt&&st>=2?`<button class="go" id="nx">Weiter: ${nxt.t}</button>`:""}
+    <button class="${nxt&&st>=2?"ghost":"go"}" id="again">Nochmal machen</button>
+    <button class="ghost" id="hm">Alle Kapitel</button></section>`;
+  if(st>=2)beep([523.25,659.25,783.99,1046.5],.2);
+  const id=R.id;R=null;
+  $("#mrow").appendChild(spkBtn(()=>c.merk.join(" ")));
+  $("#again").onclick=()=>startRound(id);$("#hm").onclick=home;$("#help").onclick=helpCard;if($("#nx"))$("#nx").onclick=()=>startRound(nxt.id);
+  scrollTo(0,0)}
+
+/* Lernwelt: direkt ins Kapitel (gewalt.html#mobbing …), Anker stehen in hefte.js */
+function kapitelSprung(){const id=location.hash.slice(1);if(!chOf(id))return false;startRound(id);return true}
+kapitelSprung()||home();
+</script>
+<script>/* Lernwelt: Kapitel-Fortschritt für die Startseite (siehe sync.js) */
+if(window.LW&&LW.kapitel){
+LW.kapitel(function(){
+  return CH.map(function(c){return {t:c.t,p:(S.best[c.id]||0)/3}});
+});
+}</script>
+</body></html>

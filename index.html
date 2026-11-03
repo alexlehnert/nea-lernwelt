@@ -20,7 +20,7 @@
   --brand:#5B3FE6; --brand-d:#4227B8; --sun:#FFC93C; --ok:#22A35A; --err:#C2410C;
   --new-bg:#FFF3CC; --new-fg:#8A5A00;
   --ma:#2563EB; --ma-d:#1E40AF; --en:#15803D; --en-d:#166534; --bio:#C2410C; --bio-d:#9A3412;
-  --geo:#BE185D; --geo-d:#9D174D; --mu:#7C3AED; --mu-d:#5B21B6; --de:#0F766E; --de-d:#115E59;
+  --geo:#BE185D; --geo-d:#9D174D; --mu:#7C3AED; --mu-d:#5B21B6; --de:#0F766E; --de-d:#115E59; --eth:#0369A1; --eth-d:#075985;
   --f-display:"Fredoka","Trebuchet MS",system-ui,sans-serif;
   --f-body:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
 }
@@ -28,12 +28,12 @@
   --bg:#15132A; --card:#1F1C3A; --ink:#F1EFFF; --muted:#B4AFD3; --line:#332E5A; --soft:#2A2650; --shadow:#0D0B1F;
   --brand:#6E55F0; --brand-d:#4A31C4; --ok:#3DBA70; --err:#F07A4A; --new-bg:#4A3B0E; --new-fg:#FFD970;
   --ma:#3B76F0; --ma-d:#2349B8; --en:#22994C; --en-d:#166534; --bio:#D9541A; --bio-d:#9A3412;
-  --geo:#D42C72; --geo-d:#9D174D; --mu:#8B55F0; --mu-d:#5B21B6; --de:#169489; --de-d:#115E59; color-scheme:dark}}
+  --geo:#D42C72; --geo-d:#9D174D; --mu:#8B55F0; --mu-d:#5B21B6; --de:#169489; --de-d:#115E59; --eth:#1C8FCF; --eth-d:#0C5A86; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#15132A; --card:#1F1C3A; --ink:#F1EFFF; --muted:#B4AFD3; --line:#332E5A; --soft:#2A2650; --shadow:#0D0B1F;
   --brand:#6E55F0; --brand-d:#4A31C4; --ok:#3DBA70; --err:#F07A4A; --new-bg:#4A3B0E; --new-fg:#FFD970;
   --ma:#3B76F0; --ma-d:#2349B8; --en:#22994C; --en-d:#166534; --bio:#D9541A; --bio-d:#9A3412;
-  --geo:#D42C72; --geo-d:#9D174D; --mu:#8B55F0; --mu-d:#5B21B6; --de:#169489; --de-d:#115E59; color-scheme:dark}
+  --geo:#D42C72; --geo-d:#9D174D; --mu:#8B55F0; --mu-d:#5B21B6; --de:#169489; --de-d:#115E59; --eth:#1C8FCF; --eth-d:#0C5A86; color-scheme:dark}
 *{box-sizing:border-box}
 html{padding-bottom:env(safe-area-inset-bottom,0px)}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5}
@@ -44,7 +44,7 @@ a{color:inherit}
 :focus-visible{outline:3px solid var(--brand);outline-offset:3px;border-radius:8px}
 h1,h2,h3{font-family:var(--f-display);font-weight:700;margin:0;text-wrap:balance;letter-spacing:-.01em}
 .ma{--c:var(--ma);--cd:var(--ma-d)} .en{--c:var(--en);--cd:var(--en-d)} .bio{--c:var(--bio);--cd:var(--bio-d)}
-.geo{--c:var(--geo);--cd:var(--geo-d)} .mu{--c:var(--mu);--cd:var(--mu-d)} .de{--c:var(--de);--cd:var(--de-d)}
+.geo{--c:var(--geo);--cd:var(--geo-d)} .mu{--c:var(--mu);--cd:var(--mu-d)} .de{--c:var(--de);--cd:var(--de-d)} .eth{--c:var(--eth);--cd:var(--eth-d)}
 .br{--c:var(--brand);--cd:var(--brand-d)}
 .muted{color:var(--muted)}
 .small{font-size:.88rem}
@@ -478,6 +478,7 @@ const I={
   geo:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg>',
   mu:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="18" r="3"/><path d="M10 18V5l10-2v12"/><circle cx="17" cy="15" r="3"/></svg>',
   de:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 7l3 3"/></svg>',
+  eth:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.3-8.8-8.5C2 8.4 4 5 7.3 5c1.9 0 3.3 1.1 4.7 2.8C13.4 6.1 14.8 5 16.7 5 20 5 22 8.4 20.8 11.5 19 15.7 12 20 12 20z"/></svg>',
   wstar:'<svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7L12 17.3 5.8 21l1.6-7L2 9.2l7.1-.6z" fill="#fff"/></svg>',
   wflame:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c4 0 7-2.7 7-7 0-4-3-6-4-10-2 2-3 4-3 6-1-1-2-2-2-4-3 2-5 5-5 8 0 4.3 3 7 7 7z"/></svg>',
   clock:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',

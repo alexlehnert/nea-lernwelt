@@ -13,6 +13,7 @@
   --lw-bio:#C2410C; --lw-bio-d:#9A3412; --lw-bio-s:#FBE4D6;
   --lw-geo:#BE185D; --lw-geo-d:#9D174D; --lw-geo-s:#FCE4EF;
   --lw-mu:#7C3AED; --lw-mu-d:#5B21B6; --lw-mu-s:#EDE4FD;
+  --lw-eth:#0369A1; --lw-eth-d:#075985; --lw-eth-s:#DCEFFB;
   --lw-f-d:"Fredoka","Trebuchet MS",system-ui,sans-serif;
   --lw-f-b:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
 }
@@ -26,6 +27,7 @@
   --lw-bio:#D9541A; --lw-bio-d:#9A3412; --lw-bio-s:#3A2216;
   --lw-geo:#D42C72; --lw-geo-d:#9D174D; --lw-geo-s:#3A1828;
   --lw-mu:#8B55F0; --lw-mu-d:#5B21B6; --lw-mu-s:#2A1F4D;
+  --lw-eth:#1C8FCF; --lw-eth-d:#0C5A86; --lw-eth-s:#13304A;
 }}
 
 /* Leiste oben: Zurück zur Lernwelt, Fach und Heft */
@@ -46,6 +48,7 @@
 .lw-bio{--lw-c:var(--lw-bio);--lw-cd:var(--lw-bio-d);--lw-cs:var(--lw-bio-s)}
 .lw-geo{--lw-c:var(--lw-geo);--lw-cd:var(--lw-geo-d);--lw-cs:var(--lw-geo-s)}
 .lw-mu{--lw-c:var(--lw-mu);--lw-cd:var(--lw-mu-d);--lw-cs:var(--lw-mu-s)}
+.lw-eth{--lw-c:var(--lw-eth);--lw-cd:var(--lw-eth-d);--lw-cs:var(--lw-eth-s)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .lw-bar .lw-eyebrow{color:var(--lw-muted)}}
 /* Leiste immer über die volle Breite, auch wenn die App einen Seitenrand hat */
 .lw-bar{width:100vw;max-width:none;margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw)}
