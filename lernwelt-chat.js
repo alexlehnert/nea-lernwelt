@@ -135,4 +135,49 @@
     next();
     return root;
   };
+
+  /*
+   * Mehrere Chats in einer Kachel, für Seiten ohne Runden (z. B. Terme, Pflanzenzelle):
+   *   lwChatPanel(container, { fach, people, say, chats: [{ title, sub, ava, name, lines }], onEnd: (index, results) => … })
+   * name = kurzer Name für die Auswahl. Ein Chat startet erst, wenn Nea „Chat starten“ antippt.
+   */
+  window.lwChatPanel = function (host, o) {
+    var chats = o.chats || [], cur = 0, done = {};
+    var box = document.createElement('div'); box.className = 'lwc-panel'; host.appendChild(box);
+    function pick() {
+      return '<div class="lwc-pick" role="group" aria-label="Chat auswählen">' + chats.map(function (c, k) {
+        return '<button type="button" class="lwc-chip" data-c="' + k + '" aria-pressed="' + (k === cur) + '">' + (done[k] ? '✓ ' : '💬 ') + esc(c.name || c.title) + '</button>';
+      }).join('') + '</div>';
+    }
+    function bindPick() { box.querySelectorAll('[data-c]').forEach(function (b) { b.onclick = function () { cur = +b.dataset.c; menu(); }; }); }
+    function menu() {
+      var c = chats[cur];
+      box.innerHTML = pick() + '<div class="lwc-start"><div class="lwc-head"><span class="lwc-ava">' + esc(c.ava || '💬') + '</span><span class="lwc-ht"><b>' + esc(c.title) + '</b>' +
+        (c.sub ? '<small>' + esc(c.sub) + '</small>' : '') + '</span></div><button type="button" class="lwc-cont">' + (done[cur] ? 'Nochmal chatten' : 'Chat starten') + '</button></div>';
+      bindPick();
+      box.querySelector('.lwc-start').className = 'lwc-start lwc' + (o.fach ? ' lw-' + o.fach : '');
+      box.querySelector('.lwc-cont').onclick = run;
+    }
+    function run() {
+      var c = chats[cur];
+      box.innerHTML = '';
+      window.lwChat(box, { title: c.title, sub: c.sub, ava: c.ava, fach: o.fach, people: o.people, say: o.say, lines: c.lines,
+        onEnd: function (res) {
+          var k = res.filter(function (r) { return r.ok; }).length, all = k === res.length;
+          done[cur] = done[cur] || all;
+          if (o.onEnd) o.onEnd(cur, res);
+          var end = document.createElement('div'); end.className = 'lwc-end ' + (all ? 'ok' : 'bad');
+          end.innerHTML = '<b>' + (all ? 'Super, alles richtig! 🎉' : (k ? 'Fast! ' : '') + k + ' von ' + res.length + ' richtig.') + '</b>' +
+            (all ? '' : '<span>Probier den Chat nochmal, dann sitzt es.</span>');
+          var row = document.createElement('div'); row.className = 'lwc-endrow';
+          var nx = (cur + 1) % chats.length;
+          if (chats.length > 1) { var b1 = document.createElement('button'); b1.type = 'button'; b1.className = 'lwc-cont'; b1.textContent = 'Nächster Chat ›'; b1.onclick = function () { cur = nx; menu(); into(box); }; row.appendChild(b1); }
+          var b2 = document.createElement('button'); b2.type = 'button'; b2.className = 'lwc-skip'; b2.textContent = 'Nochmal'; b2.onclick = run; row.appendChild(b2);
+          end.appendChild(row); box.appendChild(end); into(end);
+        } });
+    }
+    var into = function (e) { try { e.scrollIntoView({ block: 'nearest', behavior: calm ? 'auto' : 'smooth' }); } catch (x) { } };
+    menu();
+    return box;
+  };
 })();

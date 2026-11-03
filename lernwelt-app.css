@@ -97,7 +97,8 @@ html,body{overflow-x:clip}
   font-family:var(--lw-f-b);color:var(--lw-ink);text-align:left}
 .lwc-head{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--lw-c);color:#fff}
 .lwc-ava{width:36px;height:36px;flex:none;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.25);font:700 1rem/1 var(--lw-f-d)}
-.lwc-ht{display:flex;flex-direction:column;min-width:0}
+.lwc-ht{display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.lwc{min-width:0;max-width:100%;box-sizing:border-box}
 .lwc-ht b{font-family:var(--lw-f-d);font-size:1.05rem;line-height:1.2}
 .lwc-ht small{opacity:.88;font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .lwc-body{display:flex;flex-direction:column;gap:8px;padding:12px 10px;min-height:120px}
@@ -147,3 +148,15 @@ button.lwc-ln{cursor:pointer}
 @keyframes lwc-pop{0%{transform:scale(.85);opacity:0}100%{transform:none;opacity:1}}
 @keyframes lwc-blink{0%,100%{opacity:.35}50%{opacity:1}}
 @media (prefers-reduced-motion:reduce){.lwc-ln,.lwc-nar,.lwc-tip{animation:none}.lwc-gap,.lwc-typing i{animation:none}}
+/* Mehrere Chats in einer Kachel (lwChatPanel) */
+.lwc-panel{display:flex;flex-direction:column;gap:12px;font-family:var(--lw-f-b);min-width:0;max-width:100%}
+.lwc-pick{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.lwc-pick .lwc-chip{flex:none;font-size:.95rem;min-height:44px}
+.lwc-pick .lwc-chip[aria-pressed="true"]{border-color:var(--lw-ink);background:var(--lw-soft)}
+.lwc-start{display:flex;flex-direction:column}
+.lwc-start .lwc-cont{margin:14px}
+.lwc-end{display:flex;flex-direction:column;gap:6px;padding:14px;border-radius:18px;background:var(--lw-ok-bg);color:var(--lw-ok-ink)}
+.lwc-end.bad{background:var(--lw-bad-bg);color:var(--lw-bad-ink)}
+.lwc-end b{font-family:var(--lw-f-d);font-size:1.15rem}
+.lwc-endrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
+.lwc-endrow .lwc-cont{flex:1 1 180px;padding:0 16px}

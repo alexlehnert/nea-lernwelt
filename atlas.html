@@ -165,7 +165,7 @@ body{background-image:none}
 #app > header.top{display:none}
 .cover .eyebrow,.cover .band span{font-size:13px}
 .lw-bar{margin-top:-14px}
-</style><!--/lw-look-->
+</style><!--/lw-look--><script src="/lernwelt-chat.js"></script>
 
 <div class="wrap" id="app" lang="de">
   <header class="top">
@@ -1096,7 +1096,60 @@ function gview(t) { return t.hard ? { tilt: rnd([-23, 23, -30, 30]), lon: rnd([-
 const rotHint = 'Achtung, der Kompass ist gedreht! Die rote Spitze zeigt nach Norden.';
 
 /* ---------- Aufgaben: Himmelsrichtungen ---------- */
+/* Chat-Aufgabe (lernwelt-chat.js): Freunde unterwegs, Nea schreibt die Himmelsrichtung. Lücke: d = Richtung */
+const DCHATS = [
+  { title: 'Mila', sub: 'auf Klassenfahrt 🚌', ava: 'M', lines: [
+    { w: 'Mila', t: 'Hi! Wir fahren mit der Klasse von Leipzig erst nach Berlin und dann nach Hamburg! 🚌' },
+    { t: 'Berlin liegt von Leipzig aus im ___.', d: 'NO', ex: 'Berlin liegt nördlich und ein Stück östlich von Leipzig, also im Nordosten.' },
+    { w: 'Mila', t: 'Und Hamburg?' },
+    { t: 'Hamburg liegt von Leipzig aus im ___.', d: 'NW', ex: 'Hamburg liegt nördlich und westlich von Leipzig, also im Nordwesten.' },
+    { w: 'Mila', t: 'Morgen früh will ich den Sonnenaufgang sehen! 🌅 Wohin muss ich schauen?' },
+    { t: 'Schau nach ___!', d: 'O', ex: 'Im Osten geht die Sonne auf.' },
+    { w: 'Mila', t: 'Wow, so schön! 😍' }] },
+  { title: 'Opa Jo', sub: 'in München 🥨', ava: 'J', lines: [
+    { w: 'Opa Jo', t: 'Grüße aus München! Ich sehe von hier die Alpen. ⛰️' },
+    { t: 'München liegt im ___ von Deutschland.', d: 'S', ex: 'München liegt ganz unten auf der Deutschlandkarte, im Süden.' },
+    { w: 'Opa Jo', t: 'Und in welcher Richtung von hier wohnst du in Leipzig?' },
+    { t: 'Leipzig liegt von München aus im ___.', d: 'N', ex: 'Leipzig liegt fast genau nördlich von München.' },
+    { w: 'Opa Jo', t: 'Morgen fahre ich nach Salzburg. Das liegt östlich von München.' },
+    { t: 'Dann fährst du nach ___. Gute Fahrt! 🚗', d: 'O', ex: 'östlich = nach Osten.' }] },
+  { title: 'Ben', sub: 'Schatzsuche auf dem Schulhof 🗺️', ava: 'B', lines: [
+    { w: 'Ben', t: 'Ich stehe am Tor und schaue nach Norden. Die Schatzkarte sagt: „Dreh dich nach rechts.“' },
+    { t: 'Rechts von Norden ist ___!', d: 'O', ex: 'Schaust du nach Norden, ist rechts Osten. Merksatz im Uhrzeigersinn: Nie Ohne Seife Waschen.' },
+    { w: 'Ben', t: 'Jetzt bin ich am Baum. Der Schatz liegt genau zwischen Süden und Osten.' },
+    { t: 'Dann geh nach ___!', d: 'SO', ex: 'Zwischen Süden und Osten liegt Südosten. Norden oder Süden steht immer vorne.' },
+    { w: 'Ben', t: 'Gefunden! 🎉 Jetzt laufe ich genau in die Gegenrichtung zurück.' },
+    { t: 'Das Gegenteil von Südosten ist ___.', d: 'NW', ex: 'Gegenüber von Südosten liegt Nordwesten.' }] },
+  { title: 'Lea', sub: 'beim Wandern 🥾', ava: 'L', lines: [
+    { w: 'Lea', t: 'Mein Handy-Akku ist leer, und ich habe keinen Kompass dabei! 😬 Es ist 12 Uhr mittags.' },
+    { t: 'Mittags steht die Sonne bei uns im ___.', d: 'S', ex: 'Bei uns steht die Sonne mittags im Süden.' },
+    { w: 'Lea', t: 'Okay, und mein Schatten zeigt genau von der Sonne weg …' },
+    { t: 'Dann zeigt dein Schatten nach ___.', d: 'N', ex: 'Der Schatten zeigt von der Sonne weg. Steht die Sonne im Süden, zeigt er nach Norden.' },
+    { w: 'Lea', t: 'Das Schild sagt: Hütte zwischen Norden und Westen.' },
+    { t: 'Das ist ___. Viel Spaß! 🏔️', d: 'NW', ex: 'Zwischen Norden und Westen liegt Nordwesten.' }] },
+  { title: 'Mila', sub: 'in den Ferien ✈️', ava: 'M', lines: [
+    { w: 'Mila', t: 'Wir fliegen in den Ferien von Deutschland nach Spanien! ✈️' },
+    { t: 'Spanien liegt von Deutschland aus im ___.', d: 'SW', ex: 'Spanien liegt südlich und westlich von Deutschland, also im Südwesten.' },
+    { w: 'Mila', t: 'Und nächstes Jahr wollen wir nach Dänemark.' },
+    { t: 'Dänemark liegt im ___ von Deutschland.', d: 'N', ex: 'Dänemark grenzt im Norden an Deutschland.' },
+    { w: 'Mila', t: 'Und Polen, wo wohnt meine Oma?' },
+    { t: 'Polen liegt im ___ von Deutschland.', d: 'O', ex: 'Polen grenzt im Osten an Deutschland.' }] }
+];
 const KMODES = {
+  chat: { label: 'Chat', ok: k => !!window.lwChat && DCHATS.some(c => c.lines.some(l => l.d === dk(k))),
+    prep(t) { const ok = DCHATS.map((c, i) => i).filter(i => DCHATS[i].lines.some(l => l.d === dk(t.target))); t.chat = rnd(ok); t.variant = t.chat; },
+    render(t, c) {
+      const ch = DCHATS[t.chat];
+      c.q.textContent = 'Lies den Chat und schreib die richtige Himmelsrichtung.';
+      const host = h('div');
+      c.card.append(host, c.fb, c.nav);
+      lwChat(host, { title: ch.title, sub: ch.sub, ava: ch.ava, fach: 'geo', people: { Mila: '#E0567A', 'Opa Jo': '#2F80ED', Ben: '#E07B12', Lea: '#8B4FE0' },
+        lines: ch.lines.map(l => l.d ? Object.assign({}, l, { a: [DIRN[l.d]], o: dirOpts(l.d).map(x => DIRN[x]) }) : l),
+        onEnd(res) {
+          const all = c.recordMany(res.map(r => [rk(r.line.d), r.ok])), k = res.filter(r => r.ok).length;
+          c.finish(all, all ? 'Alles richtig gechattet!' : `${k} von ${res.length} Richtungen waren richtig.`, MERK + ' ' + ZWTIP);
+        } });
+    } },
   beschrifte: { label: 'Kompass beschriften', ok: () => true,
     prep(t) {
       t.kind = rnd(t.hard ? ['alle', 'alle', 'woerter', 'zwischen'] : ['haupt', 'zwischen', 'alle', 'woerter']);
