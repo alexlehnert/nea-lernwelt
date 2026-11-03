@@ -249,7 +249,7 @@ header.top .kicker,header.top h1{display:none}
   h4,.bracket,h1 .sm,.range-row output,.eq .f,.lname small{color:var(--lw-bio)}
   h1 .c,.game-task,.q h3{color:var(--lw-ink)}
 }
-</style><!--/lw-look-->
+</style><!--/lw-look--><script src="/lernwelt-chat.js"></script>
 
 <div class="wrap">
 <header class="top">
@@ -403,6 +403,11 @@ header.top .kicker,header.top h1{display:none}
   <div class="eq">
     <div id="eq-p"><b>Fotosynthese</b> (im Chloroplasten): Kohlenstoffdioxid + Wasser → Traubenzucker + Sauerstoff <span class="f">braucht Licht und Chlorophyll · 6 CO₂ + 6 H₂O → C₆H₁₂O₆ + 6 O₂</span></div>
     <div id="eq-r"><b>Zellatmung</b> (im Mitochondrium): Traubenzucker + Sauerstoff → Kohlenstoffdioxid + Wasser + Energie <span class="f">läuft Tag und Nacht · C₆H₁₂O₆ + 6 O₂ → 6 CO₂ + 6 H₂O + Energie</span></div>
+  </div>
+  <div class="card" style="margin-top:16px;min-width:0;max-width:100%;box-sizing:border-box">
+    <h3 style="margin:0 0 4px">Der Zell-Chat 💬</h3>
+    <p style="margin:0 0 12px;color:var(--muted)">Du bist der Zellkern, die Chefin der Zelle. Deine Zellorganellen schreiben dir. Antworte richtig!</p>
+    <div id="zellChat" style="min-width:0"></div>
   </div>
 </section>
 
@@ -910,6 +915,43 @@ function buildQuiz(){
 function updScore(){$('q-score').textContent=`${qRight} von ${QZ.length} richtig`+(qDone===QZ.length?(qRight===QZ.length?' · Perfekt!':' · Schau dir die Erklärungen an.'):'');}
 $('q-reset').addEventListener('click',buildQuiz);
 buildQuiz();
+})();
+</script>
+
+<script>/* Chat-Aufgabe in „Ein Tag in der Blattzelle“ (lernwelt-chat.js) */
+(function(){
+if(!window.lwChatPanel)return;
+var host=document.getElementById('zellChat');if(!host)return;
+lwChatPanel(host,{fach:'bio',people:{Chloroplast:'#16A05A',Mitochondrium:'#E07B12',Vakuole:'#2F80ED'},chats:[
+ {name:'Morgens um 7',title:'Blattzelle 🌿',sub:'Chloroplast, Mitochondrium, Vakuole, du (Zellkern)',ava:'🌿',lines:[
+  {n:'7 Uhr morgens. Die Sonne geht auf. ☀️'},
+  {w:'Chloroplast',t:'Guten Morgen, Chefin! Licht ist da, ich fange mit der Fotosynthese an!'},
+  {t:'Super! Du brauchst Licht, Wasser und ___.',a:['Kohlenstoffdioxid'],o:['Kohlenstoffdioxid','Sauerstoff','Traubenzucker'],ex:'Für die Fotosynthese braucht der Chloroplast Licht, Wasser und Kohlenstoffdioxid (CO₂) aus der Luft.'},
+  {w:'Chloroplast',t:'Das CO₂ kommt durch winzige Öffnungen im Blatt aus der Luft. 🍃'},
+  {w:'Mitochondrium',t:'Und ich? Ich hab Hunger! 😩'},
+  {t:'Keine Sorge, der Chloroplast macht ___ für dich.',a:['Traubenzucker'],o:['Traubenzucker','Sauerstoff','Wasser'],ex:'Bei der Fotosynthese entsteht Traubenzucker. Daraus gewinnt das Mitochondrium Energie.'},
+  {w:'Mitochondrium',t:'Lecker! Daraus mache ich Energie für die ganze Zelle. 💪'},
+  {w:'Chloroplast',t:'Hier bleibt noch Sauerstoff übrig. Wohin damit?'},
+  {t:'Den Sauerstoff gibt das Blatt an die ___ ab.',a:['Luft'],o:['Luft','Wurzeln','Vakuole'],ex:'Tagsüber gibt das Blatt Sauerstoff an die Luft ab. Den atmen Menschen und Tiere.'}]},
+ {name:'Nachts um 23 Uhr',title:'Blattzelle 🌿',sub:'Chloroplast, Mitochondrium, Vakuole, du (Zellkern)',ava:'🌙',lines:[
+  {n:'23 Uhr. Es ist dunkel. 🌙'},
+  {w:'Chloroplast',t:'Gähn … kein Licht mehr. Ich mache Pause. 😴'},
+  {t:'Klar, ohne Licht gibt es keine ___.',a:['Fotosynthese'],o:['Fotosynthese','Zellatmung','Energie'],ex:'Fotosynthese braucht Licht. Nachts macht der Chloroplast Pause.'},
+  {w:'Mitochondrium',t:'Ich arbeite weiter! Zellatmung läuft Tag und Nacht. 🔥'},
+  {t:'Dann nimmt das Blatt jetzt Sauerstoff auf und gibt ___ ab.',a:['Kohlenstoffdioxid'],o:['Kohlenstoffdioxid','Traubenzucker','Licht'],ex:'Bei der Zellatmung wird Sauerstoff verbraucht. Es entstehen Kohlenstoffdioxid, Wasser und Energie.'},
+  {w:'Mitochondrium',t:'Aber woher bekomme ich nachts Zucker?'},
+  {t:'Nimm ihn aus dem ___!',a:['Stärke-Vorrat'],o:['Stärke-Vorrat','Zellkern','Chloroplasten'],ex:'Tagsüber legt die Zelle aus übrigem Zucker einen Stärke-Vorrat an. Davon lebt sie nachts.'},
+  {w:'Mitochondrium',t:'Puh, gut, dass wir vorgesorgt haben! 😅'}]},
+ {name:'Hitzetag',title:'Blattzelle 🌿',sub:'Chloroplast, Mitochondrium, Vakuole, du (Zellkern)',ava:'🥵',lines:[
+  {n:'Ein heißer Sommertag. Niemand hat die Pflanze gegossen. 🥵'},
+  {w:'Vakuole',t:'Hilfe, Chefin! Ich verliere Wasser und werde immer kleiner! 💧'},
+  {t:'Oh nein, dann sinkt der Druck auf die Zellwand und das Blatt wird ___.',a:['schlaff'],o:['schlaff','hart','blau'],ex:'Ohne Wasser fehlt der Innendruck (Turgor). Die Zellen werden weich, die Pflanze lässt die Blätter hängen.'},
+  {n:'Endlich! Jemand gießt die Pflanze. 🚿'},
+  {w:'Vakuole',t:'Ich spüre Wasser! Woher kommt das?'},
+  {t:'Das Wasser kommt über die ___ nach oben.',a:['Wurzeln'],o:['Wurzeln','Blüten','Chloroplasten'],ex:'Die Wurzeln nehmen Wasser aus der Erde auf. Es steigt bis in die Blätter.'},
+  {w:'Vakuole',t:'Jetzt bin ich wieder prall gefüllt! 💪'},
+  {t:'Super! Du drückst gegen die ___, und die Pflanze steht wieder.',a:['Zellwand'],o:['Zellwand','Mitochondrien','Zellkerne'],ex:'Die volle Vakuole drückt das Zellplasma gegen die feste Zellwand, wie Luft in einem Fahrradreifen.'}]}
+]});
 })();
 </script>
 

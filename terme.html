@@ -239,7 +239,7 @@ nav.jump{position:sticky;top:0;z-index:20;display:flex;flex-wrap:nowrap;justify-
 nav.jump::-webkit-scrollbar{display:none}
 nav.jump a{flex:none;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
 [id]{scroll-margin-top:76px}
-</style><!--/lw-look-->
+</style><!--/lw-look--><script src="/lernwelt-chat.js"></script>
 
 <div class="wrap">
 
@@ -429,6 +429,12 @@ nav.jump a{flex:none;display:inline-flex;align-items:center;gap:6px;white-space:
     <div class="fb" id="sFb" aria-live="polite"></div>
     <div class="row"><button class="btn" type="button" id="sNext" hidden>Nächste Geschichte →</button></div>
   </div>
+
+  <div class="panel" style="margin-top:18px">
+    <h3>Im Klassenchat 💬</h3>
+    <p class="small">Deine Freunde planen etwas und brauchen einen Term. Schreib mit!</p>
+    <div id="termChat"></div>
+  </div>
 </section>
 
 <!-- 4 -->
@@ -510,6 +516,7 @@ function award(id){
   const s=$('#stars'); s.classList.remove('bump'); void s.offsetWidth; s.classList.add('bump');
   $('#finalStars').textContent = 'Du hast schon ' + earned.size + (earned.size===1?' Stern':' Sterne') + ' gesammelt. Super!';
 }
+window.termeAward = award;
 $('#finalStars').textContent = 'Sammle Sterne, indem du die Aufgaben oben löst.';
 
 /* Terme anzeigen */
@@ -932,6 +939,40 @@ $('#dBtns').addEventListener('click',e=>{
 });
 $('#dNext').onclick=()=>{ if(di>=dTerms.length){di=0;dRes=[];} else di++; drawDet(); };
 drawDet();
+})();
+</script>
+
+<script>/* Chat-Aufgabe in „Terme im Alltag“ (lernwelt-chat.js) */
+(function(){
+if(!window.lwChatPanel)return;
+var host=document.getElementById('termChat');if(!host)return;
+lwChatPanel(host,{fach:'ma',people:{Lena:'#E0567A',Tom:'#2F80ED',Mia:'#8B4FE0'},chats:[
+ {name:'Kino am Samstag',title:'Klasse 5b 💬',sub:'Lena, Tom, Mia, du',ava:'5b',lines:[
+  {w:'Lena',t:'Wer kommt Samstag mit ins Kino? Ein Ticket kostet 7 € 🎬'},
+  {w:'Tom',t:'Keine Ahnung, wie viele wir am Ende sind 🤷'},
+  {t:'Dann nennen wir die Anzahl x. Zusammen kostet es ___ Euro.',a:['7 · x'],o:['7 · x','7 + x','x : 7'],ex:'Jeder zahlt 7 €. Bei x Kindern: 7 · x.'},
+  {w:'Mia',t:'Und jeder will noch Popcorn für 3 €! 🍿'},
+  {t:'Jeder zahlt also 7 + 3. Für alle zusammen: ___',a:['(7 + 3) · x'],o:['(7 + 3) · x','7 + 3 · x','7 · x + 3'],ex:'Erst zusammenzählen, was einer zahlt, dann mal x. Die Klammer sorgt dafür, dass zuerst addiert wird.'},
+  {w:'Tom',t:'Wir sind 4! 🙋'},
+  {t:'(7 + 3) · 4 = ___ €',a:['40'],o:['40','19','31'],ex:'Klammer zuerst: 7 + 3 = 10, dann 10 · 4 = 40.'},
+  {w:'Lena',t:'Perfekt, ich sammle das Geld ein 💰'}]},
+ {name:'Pizza-Party',title:'Mia',sub:'online',ava:'M',lines:[
+  {w:'Mia',t:'Für meine Party gibt es 24 Pizzastücke 🍕'},
+  {t:'Wenn x Kinder kommen, bekommt jedes ___ Stücke.',a:['24 : x'],o:['24 : x','x : 24','24 − x'],ex:'Gerecht verteilen heißt teilen: 24 : x.'},
+  {w:'Mia',t:'Es kommen 6 Kinder.'},
+  {t:'Dann ist 24 : 6 = ___',a:['4'],o:['4','18','30']},
+  {w:'Tom',t:'Ich will aber 2 Stücke mehr als die anderen 😋'},
+  {t:'Wenn jedes Kind x Stücke bekommt, bekommt Tom ___.',a:['x + 2'],o:['x + 2','2 · x','x − 2'],ex:'„2 mehr als“ heißt: 2 dazuzählen, also x + 2.'},
+  {w:'Mia',t:'Haha, dann bestellen wir lieber noch eine Pizza 😂'}]},
+ {name:'Skateboard sparen',title:'Tom',sub:'online',ava:'T',lines:[
+  {w:'Tom',t:'Ich spare jede Woche 5 € für ein Skateboard 🛹'},
+  {t:'Nach x Wochen hast du ___ €.',a:['5 · x'],o:['5 · x','5 + x','x − 5'],ex:'Jede Woche kommen 5 € dazu: nach x Wochen 5 · x.'},
+  {w:'Tom',t:'Oma hat mir schon 12 € geschenkt 🥰'},
+  {t:'Dann ist dein Term ___.',a:['5 · x + 12'],o:['5 · x + 12','(5 + 12) · x','5 + x + 12'],ex:'Die 12 € kommen nur einmal dazu, nicht jede Woche: 5 · x + 12.'},
+  {w:'Tom',t:'Und wie viel habe ich nach 4 Wochen?'},
+  {t:'5 · 4 + 12 = ___ €. Punkt vor Strich!',a:['32'],o:['32','68','21'],ex:'Punkt vor Strich: 5 · 4 = 20, dann 20 + 12 = 32.'},
+  {w:'Tom',t:'Noch ein bisschen, dann reicht es! 🙌'}]}
+],onEnd:function(i,res){if(window.termeAward&&res.every(function(r){return r.ok}))termeAward('chat'+i)}});
 })();
 </script>
 
