@@ -164,7 +164,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--navy);outline-o
 .box{border-radius:22px}
 /* Name steht schon in der Leiste oben */
 .wrap > header{display:none}
-</style><!--/lw-look-->
+</style><!--/lw-look--><script src="/lernwelt-chat.js"></script>
 <style id="kasten-ansicht">
 /* Karteikasten durchschauen: Fächer antippen, Meine Wörter, Nach Seiten, Karten-Detail, Rundenende */
 :root{--k0:#B9B3D6;--k0s:#EFEDF8;--k1:#E2583E;--k1s:#FCE4DE;--k2:#F29A2E;--k2s:#FDEBD3;--k3:#8CC63F;--k3s:#E9F5D6;--k4:#3FA45B;--k4s:#DDF1E3;--k5:#E8B10E;--k5s:#FFF4CC;--k5i:#5a4300}
@@ -686,6 +686,117 @@ const G=GRAW.map(([g,t,q,a,o,ex],i)=>{
   if(t==='c'&&!opts){opts=DEF[g].slice();const cap=a[0]===a[0].toUpperCase()&&/[a-z]/i.test(a[0]);opts=opts.map(x=>cap?x[0].toUpperCase()+x.slice(1):x.toLowerCase());}
   return {id:'g'+i,g,t,q,a:Array.isArray(a)?a:[a],opts,ex:ex||EXD[g]};
 });
+/* ===== Chat-Aufgaben: Neas Nachrichten haben Lücken (lwChat aus lernwelt-chat.js) ===== */
+const PEOPLE={Ruby:'#E0567A',Ryan:'#2F80ED',Karam:'#E07B12',Lily:'#8B4FE0',Sophie:'#0E9AA7'};
+const BE=['am','is','are'],BE_C=['Am','Is','Are'];
+const CHATS=[
+ {g:'G2',title:'Ruby',sub:'online',ava:'R',lines:[
+  {w:'Ruby',t:'Hi! Where are you? 👀'},
+  {t:'I ___ in the park with Sherlock. 🐶',a:['am'],o:BE,ex:'Bei I steht immer am.'},
+  {w:'Ruby',t:'Cool! Is Ryan with you?'},
+  {t:"No, he ___. He's at home.",a:["isn't"],o:["isn't","aren't","am not"],ex:"he → is, verneint isn't."},
+  {w:'Ruby',t:'Hurry up! The film starts at 4. 🍿'},
+  {t:'OK! ___ Karam at the cinema too?',a:['Is'],o:BE_C,ex:'Karam = he → Is Karam …?'},
+  {w:'Ruby',t:'Yes, he is. See you! 👋'}]},
+ {g:'G2',title:'Class 5b 💬',sub:'Karam, Lily, Ruby, Ryan, du',ava:'5b',lines:[
+  {w:'Karam',t:"Hi everyone! This is Lily. She's new in our class. 👋"},
+  {w:'Lily',t:"Hi! I'm from Leipzig."},
+  {t:'Hi Lily, welcome! How old ___ you?',a:['are'],o:BE,ex:'Bei you steht immer are.'},
+  {w:'Lily',t:"I'm eleven. And you?"},
+  {t:'I ___ eleven too! 🎉',a:['am'],o:BE},
+  {w:'Ryan',t:'Ruby and I are eleven too 😄'},
+  {t:'Cool, we ___ all eleven!',a:['are'],o:BE,ex:'Bei we steht are.'}]},
+ {g:'G2',title:'Ryan',sub:'online',ava:'R',lines:[
+  {w:'Ryan',t:'Is Sherlock with you? 🐶'},
+  {t:'Yes, ___.',a:['he is'],o:['he is',"he's",'he are'],ex:'Bei Yes keine Kurzform: Yes, he is.'},
+  {w:'Ryan',t:'Phew! Is he hungry?'},
+  {t:'No, ___. He has got a sandwich. 😂',a:["he isn't"],o:["he isn't","he not","he aren't"],ex:"Verneinte Kurzantwort: No, he isn't."},
+  {w:'Ryan',t:'Oh no! 🙈 Are you at the park?'},
+  {t:'___',a:['Yes, I am.'],o:['Yes, I am.',"Yes, I'm.",'Yes, I is.'],ex:"Bei Yes keine Kurzform: Yes, I am."},
+  {w:'Ryan',t:"OK, I'm on my way! 🏃"}]},
+ {g:'G2',title:'Lily',sub:'neu in der 5b',ava:'L',lines:[
+  {w:'Lily',t:"Hi! It's Lily from your class. 😊"},
+  {t:'Hi Lily! ___ are you from?',a:['Where'],o:['Where','What','Who','How'],ex:'Where = wo / woher'},
+  {w:'Lily',t:"I'm from Leipzig in Germany."},
+  {t:'Cool! ___ is your favourite subject?',a:['What'],o:['What','Who','Where','Why'],ex:'What = was'},
+  {w:'Lily',t:"Art! 🎨 And who is our tutor?"},
+  {t:"Mrs Wilson. She ___ really nice.",a:['is'],o:BE,ex:'she → is'},
+  {w:'Lily',t:"Great. See you tomorrow!"}]},
+ {g:'G6',title:'Karam',sub:'online',ava:'K',lines:[
+  {w:'Karam',t:'Look at my new cat! 😻',photo:'Eine kleine graue Katze auf dem Sofa',pic:'🐱'},
+  {t:"Wow! What's ___ name?",a:['its','her'],o:['its',"it's",'their'],ex:"its = sein/ihr (von einem Tier). it's = it is."},
+  {w:'Karam',t:'Her name is Mimi.'},
+  {t:'Mimi is so cute! Is ___ friendly?',a:['she'],o:['she','her','its'],ex:'Mimi = she. her braucht ein Ding dahinter: her name.'},
+  {w:'Karam',t:'Yes, she is. My sister Noor loves her. 💜'},
+  {t:"Is Mimi ___ cat or Noor's cat?",a:['your'],o:['your',"you're",'yours'],ex:"your = dein. you're = you are."},
+  {w:'Karam',t:"She's our cat! 😊"}]},
+ {g:'G6',title:'Ruby',sub:'online',ava:'R',lines:[
+  {w:'Ruby',t:'Ryan and I have a party on Saturday! 🎂'},
+  {t:'Cool! Where is ___ party?',a:['your'],o:['your',"you're",'their'],ex:'Du schreibst Ruby: euer Fest → your party.'},
+  {w:'Ruby',t:'At our house in Greenwich. 🏠'},
+  {t:'Can I bring ___ little brother?',a:['my'],o:['my','me','I'],ex:'mein Bruder → my brother.'},
+  {w:'Ryan',t:"Sure! What's his name?"},
+  {t:'___ name is Ben. He is eight.',a:['His'],o:['His','He','Her'],ex:'Ben ist ein Junge → his name.'},
+  {w:'Ruby',t:'Yay! See you on Saturday! 🎉'}]},
+ {g:'G6',title:'Lily',sub:'online',ava:'L',lines:[
+  {w:'Lily',t:'Help! Where are my pens? 😟'},
+  {t:'___ on your desk!',a:["They're"],o:["They're",'Their','There'],ex:"They're = they are: Sie sind …"},
+  {w:'Lily',t:'Oh, thanks! And where is my maths book?'},
+  {t:'Karam has ___. 📘',a:['it'],o:['it','its','he'],ex:'das Buch = it.'},
+  {w:'Lily',t:"And where are Ruby and Ryan's bags?"},
+  {t:'___ bags are in the classroom.',a:['Their'],o:['Their','There',"They're"],ex:'their = ihr (von mehreren).'}]},
+ {g:'G6',title:'Ryan',sub:'online',ava:'R',lines:[
+  {w:'Ryan',t:'Who is the girl in your photo?',photo:'Ein Foto von dir mit einem Mädchen und einem Hund',pic:'🖼️'},
+  {t:"That's ___ sister.",a:['my'],o:['my','me','I'],ex:'meine Schwester → my sister.'},
+  {w:'Ryan',t:"What's her name?"},
+  {t:'___ name is Emma.',a:['Her'],o:['Her','His','She'],ex:'Emma ist ein Mädchen → her name.'},
+  {w:'Ryan',t:'And the dog? 🐕'},
+  {t:"That's ___ dog Rocky. We all love him!",a:['our'],o:['our','we','us'],ex:'unser Hund → our dog.'}]},
+ {g:'G3',title:'Ruby',sub:'online',ava:'R',lines:[
+  {w:'Ruby',t:"What's your new room like? 🏠"},
+  {t:"It's great! There ___ a big bed.",a:['is'],o:['is','are'],ex:'Ein Ding → There is …'},
+  {w:'Ruby',t:'Is there a desk?'},
+  {t:'Yes, ___.',a:['there is'],o:['there is',"there's",'it is'],ex:'Bei Yes keine Kurzform: Yes, there is.'},
+  {w:'Ruby',t:'Are there posters on the walls?'},
+  {t:'No, ___. 😕',a:["there aren't"],o:["there aren't","there isn't","they aren't"],ex:"Mehrere Poster → No, there aren't."},
+  {t:'But there ___ two big windows!',a:['are'],o:['is','are'],ex:'Zwei Fenster → There are …'}]},
+ {g:'G3',title:'Karam',sub:'online',ava:'K',lines:[
+  {w:'Karam',t:"I'm at the media centre. Where are you?"},
+  {t:'In the library. There ___ a reading corner here. 📚',a:['is'],o:['is','are']},
+  {w:'Karam',t:'Are there power sockets?'},
+  {t:'Yes, there ___ three next to the door.',a:['are'],o:['is','are'],ex:'Drei Steckdosen → there are.'},
+  {w:'Karam',t:'Is there a free table for us?'},
+  {t:'No, there ___ free table. 😕',a:['is no'],o:['is no','are no',"isn't no"],ex:'Kein Tisch → There is no …'},
+  {w:'Karam',t:"OK, I'll come to you then! 🏃"}]},
+ {g:'G3',title:'Ryan',sub:'online',ava:'R',lines:[
+  {w:'Ryan',t:'Where is Sherlock?! 😱'},
+  {t:'Wait! There ___ a dog under the bench. Is it Sherlock?',a:['is'],o:['is','are']},
+  {w:'Ryan',t:"Yes, that's him! 😅 Are there children with him?"},
+  {t:'Yes, there ___ two girls. They give him a sandwich.',a:['are'],o:['is','are'],ex:'Zwei Mädchen → there are.'},
+  {w:'Ryan',t:'Typical Sherlock! 🥪🐶'}]},
+ {g:'G1',title:'Ruby',sub:'online',ava:'R',lines:[
+  {w:'Ruby',t:'Picnic tomorrow! 🧺 What can you bring?'},
+  {t:'I can bring ___ apple pie. 🥧',a:['an'],o:['a','an'],ex:'apple beginnt mit Vokal-Laut → an.'},
+  {w:'Ruby',t:"Yum! I'll make sandwiches. How many?"},
+  {t:'Three ___, please! 🥪',a:['sandwiches'],o:['sandwiches','sandwichs','sandwich'],ex:'Nach ch hängst du -es an.'},
+  {w:'Ruby',t:'OK! And drinks?'},
+  {t:"I've got ___ big bottle of water.",a:['a'],o:['a','an'],ex:'big beginnt mit Konsonant-Laut → a.'}]},
+ {g:'G1',title:'Lily',sub:'online',ava:'L',lines:[
+  {w:'Lily',t:'What do I need for school tomorrow? 📝'},
+  {t:'You need ___ exercise book.',a:['an'],o:['a','an'],ex:'exercise beginnt mit Vokal-Laut → an.'},
+  {w:'Lily',t:'OK! And?'},
+  {t:'And two ___ for art. ✏️',a:['pencils'],o:['pencils','pencil','pencilles'],ex:'Meistens einfach +s.'},
+  {w:'Lily',t:'Do I need a uniform?'},
+  {t:'Yes, ___ uniform is important at our school!',a:['a'],o:['a','an'],ex:'uniform spricht man „ju…“ – ein Konsonant-Laut → a.'}]},
+ {g:'G1',title:'Karam',sub:'im Zoo',ava:'K',lines:[
+  {w:'Karam',t:"I'm at the zoo! 🦁"},
+  {t:'Cool! Is there ___ elephant?',a:['an'],o:['a','an'],ex:'elephant beginnt mit Vokal-Laut → an.'},
+  {w:'Karam',t:'Yes! And look, three baby monkeys! 🐒',photo:'Drei kleine Affen auf einem Ast',pic:'🐒'},
+  {t:'Three ___? So cute!',a:['babies'],o:['babies','babys','baby'],ex:'Konsonant + y wird zu -ies.'},
+  {w:'Karam',t:'And there are two men with a big camera. 📷'},
+  {t:'Two ___? Maybe they are from TV!',a:['men'],o:['men','mans','mens'],ex:'man → men: unregelmäßig, auswendig lernen!'}]}
+];
+CHATS.forEach((c,i)=>{const k=c.lines.find(l=>l.a);G.push({id:'gc'+i,g:c.g,t:'chat',q:k.t,a:k.a,opts:k.o||k.a,ex:EXD[c.g],chat:c})});
 const ALL={};V.forEach(v=>ALL[v.id]=v);G.forEach(x=>ALL[x.id]=x);
 
 /* ===== Speicher ===== */
@@ -884,7 +995,7 @@ const kGroup=id=>id[0]==='v'?'s'+ALL[id].s:ALL[id].g;
 const kSort=(a,b)=>{const va=a[0]==='s',vb=b[0]==='s';return va&&vb?+a.slice(1)-+b.slice(1):va?-1:vb?1:a.localeCompare(b)};
 const kGroupName=g=>g[0]==='s'?`${SECS[+g.slice(1)].p} · ${SECS[+g.slice(1)].n}`:TOP[g];
 const kMain=id=>{const x=ALL[id];return id[0]==='v'?esc(x.en):(x.q.includes('___')?fillQ(x.q,x.a[0]):`${esc(x.q)} → <b>${esc(x.a[0])}</b>`)};
-const kSub=id=>{const x=ALL[id];return id[0]==='v'?esc(x.de):'Grammatik-Karte'};
+const kSub=id=>{const x=ALL[id];return id[0]==='v'?esc(x.de):x.t==='chat'?`Chat mit ${esc(x.chat.title)} 💬`:'Grammatik-Karte'};
 const kSayTxt=id=>{const x=ALL[id];return id[0]==='v'?x.en:(x.q.includes('___')?x.q.replace('___',x.a[0]):'')};
 const kSpk=id=>{const t=kSayTxt(id);return canSay&&t?`<button class="kspk" type="button" data-say="${esc(t)}" aria-label="Anhören">${SPK}</button>`:''};
 const kRow=id=>`<div class="kw"><button class="kw-open" type="button" data-kcard="${id}"><span class="kdot" style="background:var(--k${bx(id)})" aria-hidden="true"></span><span class="kw-t"><b>${kMain(id)}</b><span class="${id[0]==='v'?'de':''}">${kSub(id)}</span></span></button>${kSpk(id)}</div>`;
@@ -1095,6 +1206,12 @@ function startRound(only,opt){
     if(bx(c.id)===0){if(nNew>=maxNew)continue;nNew++}
     out.push(c.id);
   }
+  /* Mindestens ein Chat pro Runde, wenn die Auswahl einen hat (Nea mag die Chats) */
+  const chats=ids.filter(id=>ALL[id].t==='chat');
+  if(chats.length&&out.length>=4&&!out.some(id=>ALL[id].t==='chat')){
+    const c=shuffle(chats).sort((a,b)=>bx(a)-bx(b))[0];
+    out.splice(1+Math.random()*(out.length-1)|0,1,c);
+  }
   const was={};out.forEach(id=>was[id]=bx(id));
   let intro=[];
   if(KAP!=null){const nw=out.filter(id=>bx(id)===0);intro=nw.filter(id=>id[0]==='v');const gs=[...new Set(nw.filter(id=>id[0]==='g').map(id=>ALL[id].g))];intro=gs.map(g=>'rule:'+g).concat(intro)}
@@ -1238,6 +1355,16 @@ const GT={
       const full=it.q.includes('___')?`<span>${fillQ(it.q,it.a[0])}</span>`:`<span><b>${esc(it.a[0])}</b></span>`;
       grade(it.id,ok,`<strong>${ok?praise():'Nicht ganz.'}</strong>${full}<span class="ex">${esc(it.ex)}</span>`);
     });
+  },
+  /* Chat: Nea schreibt mit. Ab Fach 3 schreibt sie einzelne Wörter selbst, sonst tippt sie Vorschläge an. */
+  chat(cb,it){
+    const c=it.chat,typed=bx(it.id)>=3;
+    cb.innerHTML=`<p class="instr">Chatte mit! Füll die Lücken in deinen Nachrichten.${canSay?' Tipp auf eine Nachricht, dann hörst du sie.':''}</p>`;
+    lwChat(cb,{title:c.title,sub:c.sub,ava:c.ava,fach:'en',people:PEOPLE,say:canSay?say:null,
+      lines:c.lines.map(l=>l.a&&typed&&/^[A-Za-z']+$/.test(l.a[0])?Object.assign({},l,{type:true}):l),
+      onEnd(res){const n=res.length,k=res.filter(r=>r.ok).length,ok=k===n;
+        const wrong=res.filter(r=>!r.ok).map(r=>`<span>${fillQ(r.line.t,r.line.a[0])}</span>`).join('');
+        grade(it.id,ok,`<strong>${ok?praise()+' Alles richtig geschrieben.':`${k?"Fast! ":""}${k} von ${n} richtig.`}</strong>${ok?'':`<span class="ex">So wäre es richtig:</span>${wrong}`}<span class="ex">${esc(EXD[it.g])}</span>`)}});
   },
   t(cb,it){
     cb.innerHTML=`<p class="instr">${it.q.includes('___')?'Schreibe das fehlende Wort.':'Schreibe die Lösung.'}</p><p class="prompt">${showQ(it.q)}</p>
