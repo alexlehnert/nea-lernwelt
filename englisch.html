@@ -245,6 +245,15 @@ button.fach:not(:disabled):active .stack{background:rgba(0,0,0,.3)}
 .kpill em{font-style:normal;color:var(--lw-muted);font-size:.75rem}
 .kbtn{width:100%}
 @media (prefers-reduced-motion:reduce){.ksw::after{transition:none}}
+.kap{display:flex;flex-direction:column;gap:12px}
+.kap .go,.kap .kbtn{width:100%}
+.klink{display:flex;align-items:center;justify-content:center;text-decoration:none;color:var(--lw-ink)}
+a.klink.small{color:var(--lw-en);font-weight:700;padding:6px}
+.kstars{display:flex;gap:4px}
+.kstars i{width:30px;height:30px;display:block}
+.kstars svg{width:100%;height:100%;fill:var(--lw-line)}
+.kstars i.on svg{fill:#FFB800}
+.kapend{display:flex;flex-direction:column;gap:8px;background:var(--lw-en-s);border-radius:18px;padding:12px 14px}
 </style>
 
 <div class="wrap">
@@ -676,7 +685,7 @@ function variants(en){
   [...out].forEach(v=>{if(v.startsWith('to '))out.add(v.slice(3));else if(/^[a-z]/.test(v)&&!v.includes(' ')&&en.startsWith('to '))out.add('to '+v)});
   return [...out];
 }
-const pool=()=>{const ids=[];if(S.mode!=='g')V.forEach(v=>{if(S.secs.includes(v.s))ids.push(v.id)});if(S.mode!=='v')G.forEach(x=>{if(S.tops.includes(x.g))ids.push(x.id)});return ids};
+const pool=()=>{if(KAP!=null)return kapIds(KAPS[KAP]);const ids=[];if(S.mode!=='g')V.forEach(v=>{if(S.secs.includes(v.s))ids.push(v.id)});if(S.mode!=='v')G.forEach(x=>{if(S.tops.includes(x.g))ids.push(x.id)});return ids};
 const canSay='speechSynthesis' in window;
 function say(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t.replace(/…/g,'').replace(/\(pl\)/g,''));u.lang='en-GB';u.rate=.9;speechSynthesis.speak(u)}catch(e){}}
 const SPK='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/></svg>';
@@ -699,6 +708,7 @@ const lev=(a,b)=>{const d=Array.from({length:a.length+1},(_,i)=>[i]);for(let j=1
 
 /* ===== Karteikasten-Anzeige ===== */
 function renderBox(){
+  const bxs=document.querySelector('section.box');if(bxs)bxs.hidden=KAP!=null;
   const ids=pool(),c=[0,0,0,0,0,0];ids.forEach(id=>c[bx(id)]++);
   const max=Math.max(1,...c),names=['neu','Fach 1','Fach 2','Fach 3','Fach 4','Fach 5'],hint=['noch nie geübt','oft üben','üben','wird besser','fast sicher','sicher'];
   const busy=!!(R&&R.i<R.q.length);
@@ -771,7 +781,7 @@ function renderWords(){
     <div class="kv-top"><button class="ghost" type="button" id="kback" aria-label="Zurück zur Auswahl">‹ Zurück</button><h2>Meine Wörter</h2></div>
     ${tabs}${scope}${body}</section>`;
   const sel=document.querySelector('.ktab[aria-pressed="true"]');if(sel)sel.scrollIntoView({block:'nearest',inline:'nearest'});
-  $('#kback').onclick=start;
+  $('#kback').onclick=home;
   $('#kall').onclick=()=>{KW.all=!KW.all;renderWords()};
   document.querySelectorAll('[data-ktab]').forEach(b=>b.onclick=()=>{const v=b.dataset.ktab;KW.tab=v==='p'?'p':+v;KW.more=false;renderWords()});
   document.querySelectorAll('[data-kpage]').forEach(b=>b.onclick=()=>{KW.tab='g:'+b.dataset.kpage;renderWords();kTop()});
@@ -815,9 +825,80 @@ function movesHTML(){
   </div>`;
 }
 
+/* ===== Kapitel-Modus: ein Kapitel pro Buchseite, Grammatik eingeordnet (Reihenfolge wie hefte.js) ===== */
+const KAPS=[{a:'s0',s:0},{a:'g2',g:'G2'},{a:'s1',s:1},{a:'g1',g:'G1'},{a:'s2',s:2},{a:'g3',g:'G3'},{a:'s3',s:3},{a:'s4',s:4},{a:'g6',g:'G6'},{a:'s5',s:5},{a:'s6',s:6},{a:'s7',s:7},{a:'s8',s:8},{a:'s9',s:9}];
+const OLD_ANKER={v1:'s0',v2:'s4',v3:'s7'};
+let KAP=null;
+const kapTitle=K=>K.g?TOP[K.g]:`${SECS[K.s].p} · ${SECS[K.s].n}`;
+const kapIds=K=>K.g?G.filter(x=>x.g===K.g).map(x=>x.id):V.filter(v=>v.s===K.s).map(v=>v.id);
+/* Sterne: ⭐ alle einmal gesehen · ⭐⭐ alle mindestens Fach 2 · ⭐⭐⭐ alle mindestens Fach 4 */
+function kapProg(K){
+  const ids=kapIds(K),n=ids.length||1,sh=k=>ids.filter(id=>bx(id)>=k).length/n;
+  const a=sh(1),b=sh(2),c=sh(4);
+  return a<1?a/3:b<1?1/3+b/3:2/3+c/3;
+}
+const kapStars=p=>p>=.999?3:p>=2/3-1e-9?2:p>=1/3-1e-9?1:0;
+const STAR='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7L12 17.3 5.8 21l1.6-7L2 9.2l7.1-.6z"/></svg>';
+const starsHTML=n=>`<span class="kstars" aria-label="${n} von 3 Sternen">${[1,2,3].map(i=>`<i class="${i<=n?'on':''}">${STAR}</i>`).join('')}</span>`;
+function kapNext(K){
+  const ids=kapIds(K),isG=!!K.g,w=isG?'Aufgaben':'Wörter',st=kapStars(kapProg(K));
+  const left=k=>ids.filter(id=>bx(id)<k).length;
+  return st===0?`Nächster Stern: alle ${w} einmal kennenlernen (noch ${left(1)}).`:
+    st===1?`Nächster Stern: alle ${w} mindestens in Fach 2 bringen (noch ${left(2)}).`:
+    st===2?`Letzter Stern: alle ${w} mindestens in Fach 4 bringen (noch ${left(4)}).`:
+    `Kapitel geschafft! Üben hält die ${w} trotzdem frisch.`;
+}
+function kapMeter(K){
+  const ids=kapIds(K),c=[0,0,0,0,0,0];ids.forEach(id=>c[bx(id)]++);
+  return `<span class="kmeter">${[5,4,3,2,1,0].map(i=>c[i]?`<i style="width:${c[i]/ids.length*100}%;background:var(--k${i})"></i>`:'').join('')}</span>
+  <p class="small" style="margin:0">${c[5]} von ${ids.length} sicher · ${c[0]} neu</p>`;
+}
+function kapBar(){
+  const e=document.querySelector('#lw-bar .lw-eyebrow'),n=document.querySelector('#lw-bar .lw-name');if(!e||!n)return;
+  if(KAP==null){e.textContent='Englisch';n.textContent='English trainer'}
+  else{e.textContent=`Englisch · Kapitel ${KAP+1} von ${KAPS.length}`;n.textContent=kapTitle(KAPS[KAP])}
+}
+function home(){KAP!=null?kapStart():start()}
+function kapStart(){
+  R=null;closeDetail();renderBox();kapBar();
+  const K=KAPS[KAP],p=kapProg(K),isG=!!K.g,nx=KAPS[KAP+1],seen=kapIds(K).some(id=>bx(id)>0);
+  $('#screen').innerHTML=`<section class="panel kap">
+    <div class="lbl">Kapitel ${KAP+1} von ${KAPS.length}${isG?' · Grammatik':' · Vokabeln'}</div>
+    <h2 style="font-size:1.5rem">${esc(kapTitle(K))}</h2>
+    ${starsHTML(kapStars(p))}
+    ${kapMeter(K)}
+    <p style="margin:0">${kapNext(K)}</p>
+    <button class="go" type="button" id="kgo">${seen?'Weiter üben':"Los geht's"}</button>
+    <button class="ghost kbtn" type="button" id="kseek">${isG?'Aufgaben ansehen':'Wörter ansehen'}</button>
+    <a class="ghost kbtn klink" href="index.html#heft-englisch">Zurück zum Heft</a>
+    ${nx&&kapStars(p)>=1?`<a class="klink small" href="#${nx.a}">Nächstes Kapitel: ${esc(kapTitle(nx))} ›</a>`:''}
+  </section>`;
+  $('#kgo').onclick=kapRound;
+  $('#kseek').onclick=()=>openWords('g:'+(K.g||'s'+K.s));
+  window.scrollTo(0,0);
+}
+function kapRound(){startRound(kapIds(KAPS[KAP]),{maxNew:5})}
+/* Kennenlernen: neue Wörter zuerst ansehen und anhören, neue Grammatik zuerst als Regel-Karte */
+function introCard(){
+  const id=R.intro[R.ii],last=R.ii+1>=R.intro.length,x=ALL[id],isRule=id.startsWith('rule:');
+  const head=isRule?'Die Regel':`Neues Wort ${R.ii+1} von ${R.intro.length}`;
+  let body;
+  if(isRule){const g=id.slice(5),ex=G.find(y=>y.g===g&&y.q.includes('___'));
+    body=`<p class="instr">Lies dir die Regel durch. Danach übst du sie.</p><p class="prompt" style="font-size:1.35rem">${esc(TOP[g])}</p>
+      <p style="margin:0;font-size:1.1rem">${esc(EXD[g])}</p>${ex?`<p class="small" style="margin:0">Beispiel: ${fillQ(ex.q,ex.a[0])}</p>`:''}`}
+  else body=`<p class="instr">Hör es dir an und sprich es laut nach.</p><p class="prompt">${esc(x.en)} ${sayBtn(x.en)}</p><div class="flipback">${esc(x.de)}</div>`;
+  $('#screen').innerHTML=`<div class="topbar"><button class="ghost" type="button" id="quit" aria-label="Runde beenden">✕</button><span>Kennenlernen${KAP!=null?' · Kapitel '+(KAP+1):''}</span></div>
+  <div class="progress" aria-hidden="true"><i style="width:${Math.round(R.ii/R.intro.length*100)}%"></i></div>
+  <article class="card"><div class="card-top"><span class="tag">${head}</span><span class="fachtag">neu</span></div><div class="card-body" id="cb">${body}
+  <button class="go" type="button" id="inext">${last?'Jetzt üben':'Weiter'}</button></div></article>`;
+  $('#quit').onclick=home;bindSay($('#cb'));
+  if(!isRule&&canSay)say(x.en);
+  $('#inext').onclick=()=>{R.ii++;task()};$('#inext').focus({preventScroll:true});
+}
+
 /* ===== Startbildschirm ===== */
 function start(){
-  R=null;closeDetail();renderBox();
+  KAP=null;R=null;closeDetail();renderBox();kapBar();
   const m=S.mode;
   $('#screen').innerHTML=`<button class="ghost kbtn" type="button" id="kwords">Meine Wörter ansehen ›</button><section class="panel">
     <div><div class="lbl">Was möchtest du üben?</div></div>
@@ -851,10 +932,10 @@ function start(){
 
 /* ===== Runde ===== */
 let R=null;
-function startRound(only){
-  closeDetail();
-  const ids=only&&only.length?only:pool(),Wt=[6,16,8,4,2,1];let cand=ids.map(id=>({id,w:Wt[bx(id)]}));
-  const out=[],maxNew=Math.ceil(S.len*.6);let nNew=0;
+function startRound(only,opt){
+  closeDetail();opt=opt||{};
+  const ids=only&&only.length?only:pool(),Wt=[opt.maxNew?12:6,16,8,4,2,1];let cand=ids.map(id=>({id,w:Wt[bx(id)]}));
+  const out=[],maxNew=opt.maxNew||Math.ceil(S.len*.6);let nNew=0;
   while(out.length<S.len&&cand.length){
     const tot=cand.reduce((s,c)=>s+c.w,0);let r=Math.random()*tot,k=0;
     while(r>cand[k].w){r-=cand[k].w;k++}
@@ -863,7 +944,9 @@ function startRound(only){
     out.push(c.id);
   }
   const was={};out.forEach(id=>was[id]=bx(id));
-  R={q:out,i:0,right:0,first:out.length,missed:[],retried:new Set(),was};
+  let intro=[];
+  if(KAP!=null){const nw=out.filter(id=>bx(id)===0);intro=nw.filter(id=>id[0]==='v');const gs=[...new Set(nw.filter(id=>id[0]==='g').map(id=>ALL[id].g))];intro=gs.map(g=>'rule:'+g).concat(intro)}
+  R={q:out,i:0,right:0,first:out.length,missed:[],retried:new Set(),was,intro,ii:0};
   window.scrollTo(0,0);
   task();
 }
@@ -876,6 +959,7 @@ function vocabType(v,b){
 }
 function task(){
   renderBox();
+  if(R.intro&&R.ii<R.intro.length)return introCard();
   if(R.i>=R.q.length)return end();
   const id=R.q[R.i],it=ALL[id],b=bx(id),isV=id[0]==='v';
   let kind=isV?vocabType(it,b):it.t;
@@ -883,11 +967,11 @@ function task(){
   const tag=isV?`Vokabel · ${SECS[it.s].p}`:TOP[it.g];
   const fach=b?`Fach ${b}`:'neu';
   const pct=Math.round(R.i/R.q.length*100);
-  $('#screen').innerHTML=`<div class="topbar"><span>Karte ${R.i+1} von ${R.q.length}${R.i>=R.first?' · Wiederholung':''}</span><button class="ghost" type="button" id="quit" aria-label="Runde beenden">Beenden</button></div>
+  $('#screen').innerHTML=`<div class="topbar"><span>${KAP!=null?`Kapitel ${KAP+1} · `:''}Karte ${R.i+1} von ${R.q.length}${R.i>=R.first?' · Wiederholung':''}</span><button class="ghost" type="button" id="quit" aria-label="Runde beenden">Beenden</button></div>
   <div class="progress" aria-hidden="true"><i style="width:${pct}%"></i></div>
   <article class="card"><div class="card-top"><span class="tag">${esc(tag)}</span><span class="fachtag">${fach}</span></div>
   <div class="card-body" id="cb"></div></article>`;
-  $('#quit').onclick=start;
+  $('#quit').onclick=home;
   const cb=$('#cb');
   if(isV)VT[kind](cb,it);else GT[kind](cb,it);
 }
@@ -1027,22 +1111,23 @@ function end(){
     <div class="lbl">Runde geschafft</div>
     <div class="score">${r}<span style="font-size:1.4rem;color:var(--muted)"> / ${n}</span></div>
     <h2>${msg}</h2>
-    <p class="small" style="margin:0">${sure} von ${ids.length} Karten sind schon in Fach 5.</p>
+    ${KAP!=null?`<div class="kapend"><div class="lbl">Kapitel ${KAP+1} · ${esc(kapTitle(KAPS[KAP]))}</div>${starsHTML(kapStars(kapProg(KAPS[KAP])))}${kapMeter(KAPS[KAP])}<p style="margin:0">${kapNext(KAPS[KAP])}</p></div>`
+      :`<p class="small" style="margin:0">${sure} von ${ids.length} Karten sind schon in Fach 5.</p>`}
     ${movesHTML()}
     ${R.missed.length?`<div><div class="lbl" style="margin-bottom:6px">Diese Karten übst du am besten noch einmal</div><ul class="list">${R.missed.map(id=>{const x=ALL[id];return `<li>${id[0]==='v'?`<b>${esc(x.en)}</b> – ${esc(x.de)}`:(x.q.includes('___')?fillQ(x.q,x.a[0]):`${esc(x.q)} → <b>${esc(x.a[0])}</b>`)}</li>`}).join('')}</ul></div>`:''}
-    <div class="row"><button class="go" type="button" id="again">Neue Runde</button><button class="ghost" type="button" id="menu">Auswahl ändern</button>${R.moves&&R.moves.down.length?'<button class="ghost" type="button" id="seef1">Fach 1 ansehen</button>':''}</div>
+    ${KAP!=null?`<div class="row"><button class="go" type="button" id="again">Weiter üben</button><a class="ghost klink" href="index.html#heft-englisch">Zurück zum Heft</a><button class="ghost" type="button" id="menu">Zum Kapitel</button></div>`
+      :`<div class="row"><button class="go" type="button" id="again">Neue Runde</button><button class="ghost" type="button" id="menu">Auswahl ändern</button>${R.moves&&R.moves.down.length?'<button class="ghost" type="button" id="seef1">Fach 1 ansehen</button>':''}</div>`}
   </section>`;
-  $('#again').onclick=()=>startRound();$('#menu').onclick=start;
+  $('#again').onclick=()=>KAP!=null?kapRound():startRound();$('#menu').onclick=home;
   if($('#seef1'))$('#seef1').onclick=()=>openWords(1);$('#again').focus({preventScroll:true});
 }
 /* Lernwelt: direkt ins Kapitel (englisch.html#v1 … #v3, #g1 …), Anker stehen in hefte.js */
 function kapitelSprung(){
-  const h=location.hash.slice(1).toUpperCase(),V3={V1:[0,3],V2:[4,6],V3:[7,9]};
-  if(V3[h]){const [a,b]=V3[h];S.mode='v';S.secs=SECS.map((_,i)=>i).filter(i=>i>=a&&i<=b)}
-  else if(TOP[h]){S.mode='g';S.tops=[h]}
-  else return false;
-  save();start();if(pool().length)startRound();return true;
+  let h=location.hash.slice(1).toLowerCase();h=OLD_ANKER[h]||h;
+  const i=KAPS.findIndex(K=>K.a===h);if(i<0)return false;
+  KAP=i;kapStart();return true;
 }
+window.addEventListener('hashchange',()=>{kapitelSprung()||start()});
 document.addEventListener('keydown',e=>{if(e.key==='Enter'){const nx=document.querySelector('.next');if(nx&&document.activeElement!==nx&&!(document.activeElement&&document.activeElement.tagName==='INPUT'&&!document.activeElement.disabled)){e.preventDefault();nx.click()}}});
 kapitelSprung()||start();
 </script>
@@ -1050,10 +1135,7 @@ kapitelSprung()||start();
 <script>/* Lernwelt: Kapitel-Fortschritt für die Startseite (siehe sync.js) */
 if(window.LW&&LW.kapitel){
 LW.kapitel(function(){
-  var avg=function(a){return a.length?a.reduce(function(s,x){return s+Math.min(1,bx(x.id)/4)},0)/a.length:0};
-  var voc=function(a,b){return avg(V.filter(function(v){return v.s>=a&&v.s<=b}))};
-  return [{t:'Vokabeln S. 170–173',p:voc(0,3)},{t:'Vokabeln S. 174–176',p:voc(4,6)},{t:'Vokabeln S. 176–180',p:voc(7,9)}]
-    .concat(Object.keys(TOP).map(function(g){return {t:TOP[g],p:avg(G.filter(function(x){return x.g===g}))}}));
+  return KAPS.map(function(K){return {t:kapTitle(K),p:kapProg(K)}});
 });
 }</script>
 </body></html>
