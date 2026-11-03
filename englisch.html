@@ -165,6 +165,87 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--navy);outline-o
 /* Name steht schon in der Leiste oben */
 .wrap > header{display:none}
 </style><!--/lw-look-->
+<style id="kasten-ansicht">
+/* Karteikasten durchschauen: Fächer antippen, Meine Wörter, Nach Seiten, Karten-Detail, Rundenende */
+:root{--k0:#B9B3D6;--k0s:#EFEDF8;--k1:#E2583E;--k1s:#FCE4DE;--k2:#F29A2E;--k2s:#FDEBD3;--k3:#8CC63F;--k3s:#E9F5D6;--k4:#3FA45B;--k4s:#DDF1E3;--k5:#E8B10E;--k5s:#FFF4CC;--k5i:#5a4300}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--k0s:#2A2650;--k1s:#3A1D1A;--k2s:#3a2a14;--k3s:#26331a;--k4s:#16301F;--k5s:#3a3010;--k5i:#FFE08A}}
+:root[data-theme="dark"]{--k0s:#2A2650;--k1s:#3A1D1A;--k2s:#3a2a14;--k3s:#26331a;--k4s:#16301F;--k5s:#3a3010;--k5i:#FFE08A}
+button.fach{border:none;background:none;padding:0;font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+button.fach:disabled{cursor:default}
+button.fach:not(:disabled):active .stack{background:rgba(0,0,0,.3)}
+.boxtip{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.16);border-radius:12px;padding:7px 10px;margin:0 4px 10px;font-size:.85rem;color:#fff}
+.kv{display:flex;flex-direction:column;gap:12px}
+.kv-top{display:flex;align-items:center;gap:10px}
+.kv-top h2{flex:1;min-width:0}
+.ktabs{display:flex;gap:6px;overflow-x:auto;margin:0 -16px;padding:2px 16px 6px;scrollbar-width:none}
+.ktabs::-webkit-scrollbar{display:none}
+.ktab{flex:none;display:flex;align-items:center;gap:6px;border:2px solid var(--lw-line);border-bottom-width:4px;background:var(--lw-card);color:var(--lw-ink);border-radius:14px;min-height:44px;padding:6px 12px;font-family:var(--lw-f-d);font-weight:600;font-size:.95rem;cursor:pointer}
+.ktab i{width:10px;height:10px;border-radius:50%;flex:none}
+.ktab em{font-style:normal;color:var(--lw-muted);font-weight:500;font-variant-numeric:tabular-nums}
+.ktab[aria-pressed="true"]{border-color:var(--lw-en);background:var(--lw-en-s)}
+.khead{border-radius:20px;padding:14px 16px;display:flex;flex-direction:column;gap:4px}
+.khead h2{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.khead p{margin:0;font-size:.95rem;color:var(--lw-muted)}
+.kchip{display:inline-flex;align-items:center;font-family:var(--lw-f-b);font-weight:700;font-size:.75rem;border-radius:99px;padding:2px 10px;background:var(--lw-card);color:var(--lw-muted)}
+.ktog{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:.95rem;color:var(--lw-muted)}
+.ksw{width:52px;height:30px;border-radius:99px;background:var(--lw-line);position:relative;border:none;cursor:pointer;flex:none;padding:0}
+.ksw::after{content:"";position:absolute;left:4px;top:4px;width:22px;height:22px;border-radius:50%;background:#fff;transition:left .2s}
+.ksw[aria-checked="true"]{background:var(--lw-en)}
+.ksw[aria-checked="true"]::after{left:26px}
+.kgrp{display:flex;flex-direction:column;gap:8px}
+.kgt{display:flex;justify-content:space-between;gap:8px;font-family:var(--lw-f-d);font-weight:600;font-size:.88rem;color:var(--lw-muted);padding:4px 2px 0}
+.kw{display:flex;align-items:center;gap:8px;background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:4px;border-radius:16px;padding:4px 6px 4px 4px}
+.kw-open{flex:1;min-width:0;display:flex;align-items:center;gap:10px;background:none;border:none;text-align:left;padding:8px 6px 8px 10px;color:var(--lw-ink);cursor:pointer;border-radius:12px}
+.kw-t{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.3}
+.kw-t b{font-family:var(--lw-f-d);font-weight:600;font-size:1.05rem;overflow-wrap:anywhere}
+.kw-t span{font-size:.9rem;color:var(--lw-muted);overflow-wrap:anywhere}
+.kv.hide .kw-t span.de{color:transparent;background:var(--lw-soft);border-radius:6px;width:fit-content;min-width:90px;user-select:none}
+.kdot{width:10px;height:10px;border-radius:50%;flex:none}
+.kspk{width:44px;height:44px;border-radius:14px;background:var(--lw-en-s);color:var(--lw-en);display:grid;place-items:center;flex:none;border:none;cursor:pointer;padding:0}
+.kspk svg{width:20px;height:20px;fill:currentColor}
+.kempty{background:var(--lw-card);border:2px dashed var(--lw-line);border-radius:18px;padding:18px;text-align:center;color:var(--lw-muted)}
+.kmore{align-self:center}
+.kzones{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;text-align:center}
+.kzone{border-radius:14px;padding:8px 2px;border:none;font:inherit;color:var(--lw-ink);cursor:pointer}
+.kzone b{font-family:var(--lw-f-d);font-size:1.35rem;display:block;line-height:1.1;font-variant-numeric:tabular-nums}
+.kzone span{font-size:.72rem;color:var(--lw-muted);line-height:1.15;display:block}
+.kmeter{display:flex;height:14px;border-radius:99px;overflow:hidden;background:var(--lw-soft)}
+.kmeter i{display:block;height:100%}
+.kpage{display:flex;flex-direction:column;gap:7px;padding:12px 14px;background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:4px;border-radius:16px;text-align:left;color:var(--lw-ink);font:inherit;cursor:pointer;width:100%}
+.kpage .top{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:.92rem}
+.kpage .top b{font-family:var(--lw-f-d);font-weight:600;min-width:0}
+.kpage .top span{color:var(--lw-muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+.klegend{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:.78rem;color:var(--lw-muted)}
+.klegend span{display:flex;align-items:center;gap:5px}
+.klegend i{width:9px;height:9px;border-radius:50%}
+.kdim{position:fixed;inset:0;background:rgba(20,15,50,.5);z-index:9500}
+.kdetail{position:fixed;left:0;right:0;bottom:0;z-index:9501;background:var(--lw-card);color:var(--lw-ink);border-radius:26px 26px 0 0;max-height:88vh;overflow-y:auto;
+  padding:10px max(20px,env(safe-area-inset-right,0px)) calc(22px + env(safe-area-inset-bottom,0px)) max(20px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px;max-width:680px;margin:0 auto;font-family:var(--lw-f-b)}
+.kgrab{width:44px;height:5px;border-radius:3px;background:var(--lw-line);margin:0 auto}
+.kbig{display:flex;align-items:center;gap:12px}
+.kbig .t{flex:1;min-width:0}
+.kbig b{font-family:var(--lw-f-d);font-size:1.7rem;display:block;line-height:1.15;overflow-wrap:anywhere}
+.kbig span{color:var(--lw-muted);font-size:1.05rem}
+.kpath{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;align-items:end}
+.kpath div{display:flex;flex-direction:column;align-items:center;gap:4px}
+.kpath .st{width:100%;height:34px;border-radius:10px;background:var(--lw-soft);display:grid;place-items:center;font-family:var(--lw-f-d);font-weight:700;color:var(--lw-muted)}
+.kpath .st.done{background:var(--lw-en-s);color:var(--lw-en)}
+.kpath .st.here{background:var(--lw-en);color:#fff;height:44px;box-shadow:0 4px 0 var(--lw-en-d)}
+.kpath .st.goal{border:2px dashed var(--k5);background:var(--k5s);color:var(--k5i)}
+.kpath .st.goal.here{border:none;background:var(--k5);color:#fff;box-shadow:0 4px 0 #a37a00}
+.kpath small{font-size:.72rem;color:var(--lw-muted);min-height:1em}
+.khist{display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:.9rem;color:var(--lw-muted)}
+.kres{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-size:.85rem}
+.kres.ok{background:var(--lw-ok)}.kres.no{background:var(--lw-bad)}
+.kmoves{display:flex;flex-direction:column;gap:10px}
+.kmv{border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.kmv h3{margin:0;font-family:var(--lw-f-d);font-size:1rem}
+.kpills{display:flex;flex-wrap:wrap;gap:6px}
+.kpill{background:var(--lw-card);border-radius:99px;padding:3px 11px;font-size:.88rem;display:flex;gap:5px;align-items:baseline}
+.kpill em{font-style:normal;color:var(--lw-muted);font-size:.75rem}
+.kbtn{width:100%}
+@media (prefers-reduced-motion:reduce){.ksw::after{transition:none}}
+</style>
 
 <div class="wrap">
   <header>
@@ -575,6 +656,8 @@ const ALL={};V.forEach(v=>ALL[v.id]=v);G.forEach(x=>ALL[x.id]=x);
 const KEY='englisch-kartei-5-v1';
 let S={box:{},mode:'v',secs:SECS.map((_,i)=>i),tops:['G1','G2','G3','G6'],len:10};
 try{const s=JSON.parse(localStorage.getItem(KEY)||'null');if(s&&s.box)S=Object.assign(S,s)}catch(e){}
+/* Verlauf pro Karte: d = Tag der letzten Antwort, r = letzte 4 Ergebnisse (1 richtig, 0 falsch), neueste hinten */
+if(!S.hist||typeof S.hist!=='object')S.hist={};
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 const bx=id=>S.box[id]||0;
 
@@ -618,16 +701,125 @@ const lev=(a,b)=>{const d=Array.from({length:a.length+1},(_,i)=>[i]);for(let j=1
 function renderBox(){
   const ids=pool(),c=[0,0,0,0,0,0];ids.forEach(id=>c[bx(id)]++);
   const max=Math.max(1,...c),names=['neu','Fach 1','Fach 2','Fach 3','Fach 4','Fach 5'],hint=['noch nie geübt','oft üben','üben','wird besser','fast sicher','sicher'];
-  $('#faecher').innerHTML=c.map((n,i)=>`<div class="fach f${i}"><span class="tab">${i?i:'neu'}</span><div class="stack"><div class="cards" style="height:${n?Math.max(4,Math.round(n/max*70)):0}px"></div></div></div>`).join('');
+  const busy=!!(R&&R.i<R.q.length);
+  $('#faecher').innerHTML=c.map((n,i)=>`<button type="button" class="fach f${i}" data-kfach="${i}"${busy?' disabled':''} aria-label="${names[i]}: ${n} Karten${busy?'':' ansehen'}"><span class="tab">${i?i:'neu'}</span><span class="stack"><span class="cards" style="display:block;height:${n?Math.max(4,Math.round(n/max*70)):0}px"></span></span></button>`).join('');
+  document.querySelectorAll('[data-kfach]').forEach(b=>b.onclick=()=>openWords(+b.dataset.kfach));
   $('#front').innerHTML=c.map((n,i)=>`<div><span class="n">${n}</span><span class="t">${hint[i]}</span></div>`).join('');
   $('#boxinfo').textContent=`${ids.length} Karten in deiner Auswahl · richtig → ein Fach weiter, falsch → zurück in Fach 1`;
+  let tip=$('#boxtip');
+  if(!busy&&!tip){tip=document.createElement('div');tip.id='boxtip';tip.className='boxtip';tip.innerHTML='<span aria-hidden="true">👆</span><span>Tipp auf ein Fach, dann siehst du die Wörter darin.</span>';$('#faecher').before(tip)}
+  if(tip)tip.hidden=busy;
+}
+
+/* ===== Meine Wörter: was liegt in welchem Fach? ===== */
+const KF=[
+  {n:'neu',h:'noch nie geübt',t:'Diese Karten hast du noch nie geübt. Sie kommen nach und nach in deine Runden.'},
+  {n:'Fach 1',h:'oft üben',t:'Hier landet jede Karte, die du falsch hattest. Die kommen am häufigsten dran.'},
+  {n:'Fach 2',h:'üben',t:'Einmal richtig gewusst. Noch ein paar Mal, dann wandern sie weiter.'},
+  {n:'Fach 3',h:'wird besser',t:'Die sitzen schon ganz gut. Jetzt schreibst du sie meistens selbst.'},
+  {n:'Fach 4',h:'fast sicher',t:'Nur noch einmal richtig, dann sind sie sicher.'},
+  {n:'Fach 5',h:'sicher ⭐',t:'Diese Karten kannst du sicher. Sie kommen nur noch selten zur Kontrolle.'}];
+const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+function whenTxt(d){
+  if(!d)return '';const [y,m,t]=d.split('-').map(Number),a=new Date(y,m-1,t),n=new Date();n.setHours(0,0,0,0);
+  const k=Math.round((n-a)/864e5);return k<=0?'heute':k===1?'gestern':k<7?`vor ${k} Tagen`:`am ${t}.${m}.`;
+}
+const KW={tab:'p',hide:false,all:false,more:false};
+const kIds=()=>KW.all?Object.keys(ALL):pool();
+const kGroup=id=>id[0]==='v'?'s'+ALL[id].s:ALL[id].g;
+const kSort=(a,b)=>{const va=a[0]==='s',vb=b[0]==='s';return va&&vb?+a.slice(1)-+b.slice(1):va?-1:vb?1:a.localeCompare(b)};
+const kGroupName=g=>g[0]==='s'?`${SECS[+g.slice(1)].p} · ${SECS[+g.slice(1)].n}`:TOP[g];
+const kMain=id=>{const x=ALL[id];return id[0]==='v'?esc(x.en):(x.q.includes('___')?fillQ(x.q,x.a[0]):`${esc(x.q)} → <b>${esc(x.a[0])}</b>`)};
+const kSub=id=>{const x=ALL[id];return id[0]==='v'?esc(x.de):'Grammatik-Karte'};
+const kSayTxt=id=>{const x=ALL[id];return id[0]==='v'?x.en:(x.q.includes('___')?x.q.replace('___',x.a[0]):'')};
+const kSpk=id=>{const t=kSayTxt(id);return canSay&&t?`<button class="kspk" type="button" data-say="${esc(t)}" aria-label="Anhören">${SPK}</button>`:''};
+const kRow=id=>`<div class="kw"><button class="kw-open" type="button" data-kcard="${id}"><span class="kdot" style="background:var(--k${bx(id)})" aria-hidden="true"></span><span class="kw-t"><b>${kMain(id)}</b><span class="${id[0]==='v'?'de':''}">${kSub(id)}</span></span></button>${kSpk(id)}</div>`;
+const kTop=()=>{const e=$('#screen');if(e)window.scrollTo(0,Math.max(0,e.getBoundingClientRect().top+window.scrollY-12))};
+function openWords(tab){KW.tab=tab;KW.more=false;if(R)R=null;renderBox();renderWords();kTop()}
+function renderWords(){
+  const ids=kIds(),c=[0,0,0,0,0,0];ids.forEach(id=>c[bx(id)]++);
+  const tab=KW.tab;
+  const tabs=`<div class="ktabs" role="group" aria-label="Ansicht wählen"><button class="ktab" type="button" data-ktab="p" aria-pressed="${tab==='p'||String(tab).startsWith('g:')}">Nach Seiten</button>${c.map((n,i)=>`<button class="ktab" type="button" data-ktab="${i}" aria-pressed="${tab===i}"><i style="background:var(--k${i})"></i>${i?'Fach '+i:'neu'} <em>${n}</em></button>`).join('')}</div>`;
+  const scope=`<div class="ktog"><span>${KW.all?`Alle ${ids.length} Karten im Kasten`:`Deine Auswahl: ${ids.length} Karten`}</span><button class="ghost" type="button" id="kall">${KW.all?'Nur meine Auswahl':'Alle zeigen'}</button></div>`;
+  let body='';
+  if(tab==='p'){
+    const groups={};ids.forEach(id=>{const g=kGroup(id);(groups[g]=groups[g]||[0,0,0,0,0,0])[bx(id)]++});
+    const keys=Object.keys(groups).sort(kSort);
+    const z=[[5,c[5],'sicher ⭐','Fach 5'],[4,c[3]+c[4],'wird besser','Fach 3–4'],[1,c[1]+c[2],'noch üben','Fach 1–2'],[0,c[0],'neu','']];
+    body=`<section class="panel" style="gap:10px"><div class="lbl">So sicher bist du schon</div>
+      <div class="kzones">${z.map(([k,n,a,b])=>`<button class="kzone" type="button" data-ktab="${k===4?3:k}" style="background:var(--k${k}s)"><b>${n}</b><span>${a}${b?'<br>'+b:'<br>&nbsp;'}</span></button>`).join('')}</div></section>
+      <div class="klegend">${[5,4,3,2,1,0].map(i=>`<span><i style="background:var(--k${i})"></i>${i===5?'sicher':i?'Fach '+i:'neu'}</span>`).join('')}</div>
+      <div class="kgrp">${keys.map(g=>{const cc=groups[g],t=cc.reduce((a,b)=>a+b,0);return `<button class="kpage" type="button" data-kpage="${g}"><span class="top"><b>${esc(kGroupName(g))}</b><span>${cc[5]} / ${t} sicher</span></span><span class="kmeter">${[5,4,3,2,1,0].map(i=>cc[i]?`<i style="width:${cc[i]/t*100}%;background:var(--k${i})"></i>`:'').join('')}</span></button>`}).join('')}</div>`;
+  }else if(String(tab).startsWith('g:')){
+    const g=tab.slice(2),list=ids.filter(id=>kGroup(id)===g);
+    body=`<div class="khead" style="background:var(--lw-en-s)"><h2>${esc(kGroupName(g))}</h2><p>${list.length} Karten, ${list.filter(id=>bx(id)===5).length} davon sicher.</p></div>
+      <div class="ktog"><span>Deutsch abdecken</span><button class="ksw" type="button" role="switch" id="khide" aria-checked="${KW.hide}" aria-label="Deutsch abdecken"></button></div>
+      ${[1,2,3,4,5,0].map(f=>{const l=list.filter(id=>bx(id)===f);return l.length?`<div class="kgrp"><div class="kgt"><span>${KF[f].n} · ${KF[f].h}</span><span>${l.length}</span></div>${l.map(kRow).join('')}</div>`:''}).join('')}`;
+  }else{
+    const f=tab,list=ids.filter(id=>bx(id)===f),LIM=40,show=KW.more?list:list.slice(0,LIM);
+    const groups=[];show.forEach(id=>{const g=kGroup(id);let e=groups.find(x=>x[0]===g);if(!e)groups.push(e=[g,[]]);e[1].push(id)});
+    groups.sort((a,b)=>kSort(a[0],b[0]));
+    const btn=f>=1&&f<=4&&list.length?`<button class="go kbtn" type="button" id="kpractice">${list.length===1?'Diese Karte üben':`Diese ${list.length} Karten üben`}</button>`:'';
+    body=`<div class="khead" style="background:var(--k${f}s)"><h2>${KF[f].n}<span class="kchip">${KF[f].h}</span></h2><p>${list.length} ${list.length===1?'Karte':'Karten'}. ${KF[f].t}</p></div>
+      ${btn}
+      ${list.length?`<div class="ktog"><span>Deutsch abdecken</span><button class="ksw" type="button" role="switch" id="khide" aria-checked="${KW.hide}" aria-label="Deutsch abdecken"></button></div>
+      ${groups.map(([g,l])=>`<div class="kgrp"><div class="kgt"><span>${esc(kGroupName(g))}</span><span>${l.length}</span></div>${l.map(kRow).join('')}</div>`).join('')}
+      ${list.length>show.length?`<button class="ghost kmore" type="button" id="kmore">Alle ${list.length} zeigen</button>`:''}`
+      :`<div class="kempty">${f===5?'Noch keine Karte ist sicher. Jede Karte, die du oft genug richtig hast, landet hier.':f===0?'Du hast schon alle Karten deiner Auswahl geübt.':'Dieses Fach ist gerade leer.'}</div>`}`;
+  }
+  $('#screen').innerHTML=`<section class="kv${KW.hide?' hide':''}">
+    <div class="kv-top"><button class="ghost" type="button" id="kback" aria-label="Zurück zur Auswahl">‹ Zurück</button><h2>Meine Wörter</h2></div>
+    ${tabs}${scope}${body}</section>`;
+  const sel=document.querySelector('.ktab[aria-pressed="true"]');if(sel)sel.scrollIntoView({block:'nearest',inline:'nearest'});
+  $('#kback').onclick=start;
+  $('#kall').onclick=()=>{KW.all=!KW.all;renderWords()};
+  document.querySelectorAll('[data-ktab]').forEach(b=>b.onclick=()=>{const v=b.dataset.ktab;KW.tab=v==='p'?'p':+v;KW.more=false;renderWords()});
+  document.querySelectorAll('[data-kpage]').forEach(b=>b.onclick=()=>{KW.tab='g:'+b.dataset.kpage;renderWords();kTop()});
+  document.querySelectorAll('[data-kcard]').forEach(b=>b.onclick=()=>openDetail(b.dataset.kcard));
+  bindSay($('#screen'));
+  const h=$('#khide');if(h)h.onclick=()=>{KW.hide=!KW.hide;renderWords()};
+  const m=$('#kmore');if(m)m.onclick=()=>{KW.more=true;renderWords()};
+  const pr=$('#kpractice');if(pr)pr.onclick=()=>startRound(ids.filter(id=>bx(id)===KW.tab));
+}
+function closeDetail(){document.querySelectorAll('.kdim,.kdetail').forEach(e=>e.remove());document.removeEventListener('keydown',detailKey)}
+function detailKey(e){if(e.key==='Escape')closeDetail()}
+function openDetail(id){
+  closeDetail();
+  const x=ALL[id],b=bx(id),h=S.hist[id],isV=id[0]==='v';
+  const left=5-b,msg=b===5?'<strong>Diese Karte kannst du sicher.</strong> Sie kommt nur noch selten zur Kontrolle.':b===0?'<strong>Noch nie geübt.</strong> 5× richtig, dann ist sie sicher.':`<strong>Noch ${left}× richtig</strong>, dann ist die Karte sicher.`;
+  const path=[1,2,3,4,5].map(i=>`<div><span class="st${i<b?' done':''}${i===b?' here':''}${i===5?' goal':''}">${i===5?'⭐':i}</span><small>${i===b?'hier':i===5?'sicher':''}</small></div>`).join('');
+  const hist=h&&h.r?`<div class="khist">${[...h.r].map(r=>r==='1'?'<span class="kres ok" aria-label="richtig">✓</span>':'<span class="kres no" aria-label="falsch">✗</span>').join('')}<span style="margin-left:4px">zuletzt geübt: ${whenTxt(h.d)}</span></div>`:'<p class="small" style="margin:0">Ab jetzt merkt sich die App hier, wie es bei dieser Karte lief.</p>';
+  const big=isV?`<b>${esc(x.en)}</b><span>${esc(x.de)}</span>`:`<b style="font-size:1.3rem">${kMain(id)}</b><span>${x.q.includes('___')?'':esc(x.q)}</span>`;
+  const dim=document.createElement('div');dim.className='kdim';dim.onclick=closeDetail;
+  const sh=document.createElement('div');sh.className='kdetail';sh.setAttribute('role','dialog');sh.setAttribute('aria-modal','true');sh.setAttribute('aria-label','Karte');
+  sh.innerHTML=`<div class="kgrab"></div>
+    <div class="kbig"><div class="t">${big}</div>${kSpk(id)}</div>
+    <span class="kchip" style="background:var(--lw-soft);width:fit-content">${esc(kGroupName(kGroup(id)))}</span>
+    <div style="display:flex;flex-direction:column;gap:8px"><div class="lbl">Weg durch den Kasten</div><div class="kpath">${path}</div><p style="margin:0">${msg}</p></div>
+    <div style="display:flex;flex-direction:column;gap:8px"><div class="lbl">Die letzten Male</div>${hist}</div>
+    <button class="ghost kbtn" type="button" id="kclose">Schließen</button>`;
+  document.body.append(dim,sh);
+  bindSay(sh);
+  $('#kclose').onclick=closeDetail;$('#kclose').focus({preventScroll:true});
+  document.addEventListener('keydown',detailKey);
+}
+function movesHTML(){
+  const m=R.moves;if(!m||!(m.sure.length+m.up.length+m.down.length))return '';
+  const name=id=>{const x=ALL[id];return id[0]==='v'?esc(x.en):esc(x.a[0])};
+  const pills=(l,arrow)=>{const s=l.slice(0,6).map(([id,a,b])=>`<span class="kpill">${name(id)}${arrow?` <em>${a||'neu'}→${b}</em>`:''}</span>`).join('');return s+(l.length>6?`<span class="kpill">+${l.length-6}</span>`:'')};
+  const n=(k,one,many)=>k===1?one:`${k} ${many}`;
+  return `<div class="lbl">So sind deine Karten gewandert</div><div class="kmoves">
+    ${m.sure.length?`<div class="kmv" style="background:var(--k5s)"><h3>⭐ ${n(m.sure.length,'1 Karte ist jetzt sicher','Karten sind jetzt sicher')}</h3><div class="kpills">${pills(m.sure,false)}</div></div>`:''}
+    ${m.up.length?`<div class="kmv" style="background:var(--k4s)"><h3>↑ ${n(m.up.length,'1 Karte ein Fach weiter','Karten ein Fach weiter')}</h3><div class="kpills">${pills(m.up,true)}</div></div>`:''}
+    ${m.down.length?`<div class="kmv" style="background:var(--k1s)"><h3>↓ ${n(m.down.length,'1 Karte zurück in Fach 1','Karten zurück in Fach 1')}</h3><div class="kpills">${pills(m.down,false)}</div></div>`:''}
+  </div>`;
 }
 
 /* ===== Startbildschirm ===== */
 function start(){
-  R=null;renderBox();
+  R=null;closeDetail();renderBox();
   const m=S.mode;
-  $('#screen').innerHTML=`<section class="panel">
+  $('#screen').innerHTML=`<button class="ghost kbtn" type="button" id="kwords">Meine Wörter ansehen ›</button><section class="panel">
     <div><div class="lbl">Was möchtest du üben?</div></div>
     <div class="seg" role="group" aria-label="Schwerpunkt">
       <button type="button" id="m-v" data-mode="v" aria-pressed="${m==='v'}"><b>Vokabeln</b><span>S. 170–180</span></button>
@@ -653,13 +845,15 @@ function start(){
   const all=$('#allsec');if(all)all.onclick=()=>{S.secs=S.secs.length===SECS.length?[]:SECS.map((_,i)=>i);save();start()};
   let armed=false;
   $('#reset').onclick=e=>{if(!armed){armed=true;e.target.textContent='Wirklich leeren?';return}S.box={};save();start()};
+  $('#kwords').onclick=()=>openWords('p');
   $('#go').onclick=()=>{if(!pool().length){$('#note').textContent='Wähle mindestens eine Seite oder ein Grammatik-Thema aus.';return}startRound()};
 }
 
 /* ===== Runde ===== */
 let R=null;
-function startRound(){
-  const ids=pool(),Wt=[6,16,8,4,2,1];let cand=ids.map(id=>({id,w:Wt[bx(id)]}));
+function startRound(only){
+  closeDetail();
+  const ids=only&&only.length?only:pool(),Wt=[6,16,8,4,2,1];let cand=ids.map(id=>({id,w:Wt[bx(id)]}));
   const out=[],maxNew=Math.ceil(S.len*.6);let nNew=0;
   while(out.length<S.len&&cand.length){
     const tot=cand.reduce((s,c)=>s+c.w,0);let r=Math.random()*tot,k=0;
@@ -668,7 +862,9 @@ function startRound(){
     if(bx(c.id)===0){if(nNew>=maxNew)continue;nNew++}
     out.push(c.id);
   }
-  R={q:out,i:0,right:0,first:out.length,missed:[],retried:new Set()};
+  const was={};out.forEach(id=>was[id]=bx(id));
+  R={q:out,i:0,right:0,first:out.length,missed:[],retried:new Set(),was};
+  window.scrollTo(0,0);
   task();
 }
 function vocabType(v,b){
@@ -702,6 +898,7 @@ function grade(id,ok,html){
   const b=bx(id);
   if(R.i<R.first||!R.retried.has(id)){S.box[id]=ok?Math.min(5,Math.max(1,b)+1):1}
   else if(ok&&b<1)S.box[id]=1;
+  const h=S.hist[id]||{r:''};S.hist[id]={d:today(),r:(h.r+(ok?'1':'0')).slice(-4)};
   save();
   if(ok)R.right+=R.i<R.first?1:0;
   else{if(!R.missed.includes(id))R.missed.push(id);if(!R.retried.has(id)){R.retried.add(id);R.q.push(id)}}
@@ -820,6 +1017,9 @@ const GT={
 
 /* ===== Ende ===== */
 function end(){
+  const uniq=[...new Set(R.q)],mv={sure:[],up:[],down:[]};
+  uniq.forEach(id=>{const a=R.was[id]??0,b=bx(id);if(b===5&&a<5)mv.sure.push([id,a,b]);else if(a===0&&b===1)return;else if(b>a)mv.up.push([id,a,b]);else if(b<a)mv.down.push([id,a,b])});
+  R.moves=mv;
   renderBox();
   const n=R.first,r=R.right,ids=pool(),sure=ids.filter(id=>bx(id)===5).length;
   const msg=r===n?'Alles richtig – stark!':r>=n*.8?'Sehr gut gemacht!':r>=n*.5?'Gut! Die falschen Karten stehen jetzt in Fach 1.':'Dranbleiben – morgen sitzt es schon besser.';
@@ -828,10 +1028,12 @@ function end(){
     <div class="score">${r}<span style="font-size:1.4rem;color:var(--muted)"> / ${n}</span></div>
     <h2>${msg}</h2>
     <p class="small" style="margin:0">${sure} von ${ids.length} Karten sind schon in Fach 5.</p>
+    ${movesHTML()}
     ${R.missed.length?`<div><div class="lbl" style="margin-bottom:6px">Diese Karten übst du am besten noch einmal</div><ul class="list">${R.missed.map(id=>{const x=ALL[id];return `<li>${id[0]==='v'?`<b>${esc(x.en)}</b> – ${esc(x.de)}`:(x.q.includes('___')?fillQ(x.q,x.a[0]):`${esc(x.q)} → <b>${esc(x.a[0])}</b>`)}</li>`}).join('')}</ul></div>`:''}
-    <div class="row"><button class="go" type="button" id="again">Neue Runde</button><button class="ghost" type="button" id="menu">Auswahl ändern</button></div>
+    <div class="row"><button class="go" type="button" id="again">Neue Runde</button><button class="ghost" type="button" id="menu">Auswahl ändern</button>${R.moves&&R.moves.down.length?'<button class="ghost" type="button" id="seef1">Fach 1 ansehen</button>':''}</div>
   </section>`;
-  $('#again').onclick=startRound;$('#menu').onclick=start;$('#again').focus({preventScroll:true});
+  $('#again').onclick=()=>startRound();$('#menu').onclick=start;
+  if($('#seef1'))$('#seef1').onclick=()=>openWords(1);$('#again').focus({preventScroll:true});
 }
 /* Lernwelt: direkt ins Kapitel (englisch.html#v1 … #v3, #g1 …), Anker stehen in hefte.js */
 function kapitelSprung(){
