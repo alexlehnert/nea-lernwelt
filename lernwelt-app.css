@@ -14,6 +14,8 @@
   --lw-geo:#BE185D; --lw-geo-d:#9D174D; --lw-geo-s:#FCE4EF;
   --lw-mu:#7C3AED; --lw-mu-d:#5B21B6; --lw-mu-s:#EDE4FD;
   --lw-eth:#0369A1; --lw-eth-d:#075985; --lw-eth-s:#DCEFFB;
+  --lw-de:#0F766E; --lw-de-d:#115E59; --lw-de-s:#D5F2EE;
+  --lw-su:#A15C07; --lw-su-d:#7C4505; --lw-su-s:#FCEBCF;
   --lw-f-d:"Fredoka","Trebuchet MS",system-ui,sans-serif;
   --lw-f-b:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
 }
@@ -28,6 +30,8 @@
   --lw-geo:#D42C72; --lw-geo-d:#9D174D; --lw-geo-s:#3A1828;
   --lw-mu:#8B55F0; --lw-mu-d:#5B21B6; --lw-mu-s:#2A1F4D;
   --lw-eth:#1C8FCF; --lw-eth-d:#0C5A86; --lw-eth-s:#13304A;
+  --lw-de:#169489; --lw-de-d:#115E59; --lw-de-s:#12302D;
+  --lw-su:#D08A1C; --lw-su-d:#8A5508; --lw-su-s:#3A2A12;
 }}
 
 /* Leiste oben: Zurück zur Lernwelt, Fach und Heft */
@@ -49,6 +53,8 @@
 .lw-geo{--lw-c:var(--lw-geo);--lw-cd:var(--lw-geo-d);--lw-cs:var(--lw-geo-s)}
 .lw-mu{--lw-c:var(--lw-mu);--lw-cd:var(--lw-mu-d);--lw-cs:var(--lw-mu-s)}
 .lw-eth{--lw-c:var(--lw-eth);--lw-cd:var(--lw-eth-d);--lw-cs:var(--lw-eth-s)}
+.lw-de{--lw-c:var(--lw-de);--lw-cd:var(--lw-de-d);--lw-cs:var(--lw-de-s)}
+.lw-su{--lw-c:var(--lw-su);--lw-cd:var(--lw-su-d);--lw-cs:var(--lw-su-s)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .lw-bar .lw-eyebrow{color:var(--lw-muted)}}
 /* Leiste immer über die volle Breite, auch wenn die App einen Seitenrand hat */
 .lw-bar{width:100vw;max-width:none;margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw)}

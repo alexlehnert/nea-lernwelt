@@ -1,0 +1,5 @@
+/* @kit */
+/* Länder-Reise ist von Anfang an im Lernwelt-Look gebaut: nur die Fach-Farbe setzen. */
+:root:root:root{--lw-c:var(--lw-su); --lw-cd:var(--lw-su-d); --lw-cs:var(--lw-su-s)}
+.go{width:auto}
+.go:disabled{opacity:.5}

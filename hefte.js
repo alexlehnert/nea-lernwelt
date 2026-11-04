@@ -13,7 +13,17 @@
  *            über LW.kapitel meldet (Skript am Ende der App-Datei).
  *   anker    optional: Abschnitts-ids der App, damit die Lernwelt direkt ins Kapitel springt
  *   abzeichen  Name des Abzeichens, das es gibt, wenn alle Kapitel 3 Sterne haben
+ *   stufe  für welche Klassenstufe das Heft ist (id aus LW_STUFEN, ohne Angabe 'gym5')
+ *   bald   optional: Heft ist angekündigt, aber noch nicht fertig (dann ohne App-Datei)
  */
+// Klassenstufen. Jedes Kind sieht nur die Hefte seiner Stufe (einstellbar im Eltern-Bereich).
+window.LW_STUFEN = [
+  { id: 'gym5', name: 'Klasse 5', lang: 'Gymnasium, Klasse 5' },
+  { id: 'gs3',  name: 'Klasse 3', lang: 'Grundschule, Klasse 3', gross: true }
+];
+// Welche Stufe ein Kind hat, solange im Eltern-Bereich nichts anderes eingestellt ist (Anmeldename → Stufe)
+window.LW_KINDER = { nea: 'gym5', rubie: 'gs3' };
+
 window.LW_FAECHER = [
   { id: 'mathe',    cls: 'ma',  name: 'Mathe' },
   { id: 'englisch', cls: 'en',  name: 'Englisch' },
@@ -21,7 +31,8 @@ window.LW_FAECHER = [
   { id: 'erdkunde', cls: 'geo', name: 'Erdkunde' },
   { id: 'musik',    cls: 'mu',  name: 'Musik' },
   { id: 'deutsch',  cls: 'de',  name: 'Deutsch' },
-  { id: 'ethik',    cls: 'eth', name: 'Ethik' }
+  { id: 'ethik',    cls: 'eth', name: 'Ethik' },
+  { id: 'sachunterricht', cls: 'su', name: 'Sach\u00ADunterricht' }
 ];
 
 window.LW_HEFTE = [
@@ -69,7 +80,20 @@ window.LW_HEFTE = [
   { id: 'gewalt', abzeichen: 'Streitschlichterin', fach: 'ethik', thema: 'Gewalt', name: 'Gemeinsam stark',
     info: 'Gewalt erkennen, fair streiten, Hilfe holen: mit Geschichten und Rollenspielen zum Anhören', key: 'ethik-gewalt-v1',
     kapitel: ['Was ist Gewalt?', 'Streit ist nicht gleich Gewalt', 'Mobbing und Cybermobbing', 'Ursachen und Gefühle', 'Gewaltfrei Streit lösen', 'Zivilcourage und Hilfe holen', 'Regeln für das Miteinander', 'Großer Mix'],
-    anker: ['was', 'streit', 'mobbing', 'gefuehle', 'loesen', 'hilfe', 'regeln', 'mix'] }
+    anker: ['was', 'streit', 'mobbing', 'gefuehle', 'loesen', 'hilfe', 'regeln', 'mix'] },
+
+  // ---------- Grundschule, Klasse 3 (Rubie) ----------
+  { id: 'schatzsuche', stufe: 'gs3', abzeichen: 'Rubin-Königin', fach: 'deutsch', thema: 'Rechtschreibung und Wortarten', name: 'Rubies Schatzsuche',
+    info: 'Wortarten, groß und klein, doppelte Mitlaute und ie: Rubine sammeln und die Krone schmücken', key: 'rubie-schatzsuche-v1',
+    // Stationen der App (ST in schatzsuche.html)
+    kapitel: ['Wortarten-Wald', 'Groß-klein-Burg', 'Doppel-Höhle', 'ie-Insel', 'Große Schatzsuche', 'Blitzrunde'],
+    anker: ['wa', 'gk', 'dk', 'ie', 'mix', 'blitz'] },
+  { id: 'bundeslaender', stufe: 'gs3', abzeichen: 'Deutschland-Kennerin', fach: 'sachunterricht', thema: 'Deutschland', name: 'Länder-Reise',
+    info: 'Die 16 Bundesländer und ihre Hauptstädte, mit Karte zum Antippen und Vorlesen', key: 'bundeslaender-v1',
+    kapitel: ['Deutschland entdecken', 'Wo liegt das Land?', 'Wie heißt das Land?', 'Hauptstädte', 'Zu welchem Land gehört die Stadt?', 'Große Deutschland-Reise'],
+    anker: ['entdecken', 'lage', 'name', 'stadt', 'land', 'mix'] },
+  { id: 'musik-gs3', stufe: 'gs3', bald: true, fach: 'musik', thema: 'Musik', name: 'Musik-Heft',
+    info: 'Die Aufgaben werden gerade vorbereitet.', kapitel: [] }
 ];
 
 // Merkzettel zum Nachschlagen: öffnen sich in einem neuen Tab. Mit fachId erscheinen sie auch auf der Fach-Seite.

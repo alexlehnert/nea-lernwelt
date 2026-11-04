@@ -1,8 +1,17 @@
-# Neas Lernwelt
+# Lernwelt
 
-Alle Lern-Apps für Klasse 5 an einem Ort, mit Anmeldung. Der Fortschritt wird pro Kind in Supabase gespeichert und ist so auf jedem Gerät da.
+Alle Lern-Apps der Kinder an einem Ort, mit Anmeldung. Jedes Kind hat ein eigenes Konto: Fortschritt, Sterne, Edelsteine, Abzeichen, Serie und Tagesziel werden pro Kind in Supabase gespeichert und sind so auf jedem Gerät da.
+
+## Mehrere Kinder
+
+- Jedes Kind meldet sich mit seinem eigenen Namen an (Supabase-Konto `<name>@lernwelt.local`, siehe unten).
+- Jedes Heft in [`hefte.js`](hefte.js) gehört zu einer Klassenstufe (`stufe`, ohne Angabe `gym5`). Ein Kind sieht nur die Hefte seiner Stufe.
+- Welche Stufe ein Kind hat, steht in `LW_KINDER` in `hefte.js` (Nea: Gymnasium Klasse 5, Rubie: Grundschule Klasse 3) und lässt sich im Eltern-Bereich ändern. Für Stufen mit `gross: true` ist die Lernwelt größer und hat Vorlese-Knöpfe.
+- Der Eltern-Bereich (Profil → Für Eltern) zeigt immer das angemeldete Kind: Lernzeit, Hefte, Tagesziel und Klassenstufe.
 
 Fächer und Hefte stehen in [`hefte.js`](hefte.js).
+
+**Gymnasium, Klasse 5 (Nea)**
 
 | Fach | App | Datei |
 |---|---|---|
@@ -16,6 +25,16 @@ Fächer und Hefte stehen in [`hefte.js`](hefte.js).
 | Musik | Notenwerkstatt | `noten.html` |
 | Musik | Rhythmuswerkstatt (Notenlängen) | `rhythmus.html` |
 | Ethik | Gemeinsam stark (Thema Gewalt: erkennen, fair streiten, Hilfe holen) | `gewalt.html` |
+
+**Grundschule, Klasse 3 (Rubie)**
+
+| Fach | App | Datei |
+|---|---|---|
+| Deutsch | Rubies Schatzsuche (Wortarten, groß/klein, doppelte Mitlaute, ie) | `schatzsuche.html` |
+| Sachunterricht | Länder-Reise (16 Bundesländer und Hauptstädte, Karte) | `bundeslaender.html` |
+| Musik | Musik-Heft (angekündigt, `bald: true`) | – |
+
+Die Karte der Länder-Reise ist aus [deutschlandGeoJSON](https://github.com/isellsoap/deutschlandGeoJSON) (Daten: DIVA-GIS) vereinfacht.
 
 ## Einrichten (einmalig, ca. 15 Minuten)
 
