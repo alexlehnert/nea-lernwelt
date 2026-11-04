@@ -79,6 +79,8 @@ svg{display:block}
 .lchip.seen i::after{content:"";width:9px;height:5px;border:solid #fff;border-width:0 0 3px 3px;transform:translateY(-1px) rotate(-45deg)}
 .lchip[aria-pressed="true"]{border-color:var(--lw-c);background:var(--lw-cs)}
 
+.text{gap:12px;font-size:1.08rem;line-height:1.55}
+.text mark{background:#FFE58A;color:#2A2100;border-radius:4px;padding:0 2px}
 /* Runde */
 .topbar{display:flex;align-items:center;gap:12px}
 .track{flex:1;display:flex;gap:4px}
@@ -182,6 +184,37 @@ const L=[
  {id:"BY",n:"Bayern",s:"München",f:"Bayern ist das größte Bundesland. Hier steht die Zugspitze, der höchste Berg Deutschlands."}
 ];
 const LAND=id=>L.find(x=>x.id===id);
+/* Grundwissen vom Arbeitsblatt „Die 16 Bundesländer“ (Klasse 3): Bundesrepublik, Bundesstaat, Republik, Flächen- und Stadtstaaten */
+const TEXT=[
+  "Bundesrepublik Deutschland, kurz BRD, ist der offizielle und amtliche Name unseres Staates.",
+  "Deutschland ist nämlich ein Bundesstaat. Er besteht aus 16 Bundesländern. Die Bundesländer sind gleichberechtigt und dürfen vieles selbst regeln.",
+  "Der Name Bundesrepublik sagt auch: Deutschland ist eine Republik. Das Volk wählt seine Regierung selbst. Es gibt keinen König und keinen Kaiser.",
+  "Die Bundesländer sind unterschiedlich groß. Es gibt Flächenstaaten und Stadtstaaten. Die drei Stadtstaaten sind Berlin, Hamburg und Bremen. Sie sind Stadt und Bundesland zugleich.",
+  "Das größte Bundesland ist Bayern. Die meisten Menschen wohnen in Nordrhein-Westfalen."
+];
+/* Wissensfragen: a = richtig, w = zwei falsche Antworten, n/s = Zeile für „Das übst du noch einmal“ */
+const FAKT=[
+  {id:"name",q:"Wie heißt Deutschland mit seinem amtlichen Namen?",a:"Bundesrepublik Deutschland",w:["Königreich Deutschland","Kaiserreich Deutschland"],
+    big:"Der amtliche Name ist Bundesrepublik Deutschland.",txt:"Das ist der offizielle Name unseres Staates.",n:"Amtlicher Name",s:"Bundesrepublik Deutschland"},
+  {id:"brd",q:"Wofür steht die Abkürzung BRD?",a:"Bundesrepublik Deutschland",w:["Bunte Republik Deutschland","Bürger-Reich Deutschland"],
+    big:"BRD heißt Bundesrepublik Deutschland.",txt:"B für Bundes, R für Republik, D für Deutschland.",n:"BRD",s:"Bundesrepublik Deutschland"},
+  {id:"bund",q:"Deutschland ist ein Bundesstaat. Woraus besteht er?",a:"Aus 16 Bundesländern",w:["Aus 10 Bundesländern","Aus 20 Bundesländern"],
+    big:"Deutschland besteht aus 16 Bundesländern.",txt:"Darum heißt Deutschland Bundesstaat: viele Länder bilden zusammen einen Bund.",n:"Bundesstaat",s:"16 Bundesländer"},
+  {id:"gleich",q:"Wie ist das mit den 16 Bundesländern?",a:"Sie sind gleichberechtigt und regeln vieles selbst",w:["Bayern bestimmt über alle anderen","Berlin bestimmt über alle anderen"],
+    big:"Die Bundesländer sind gleichberechtigt.",txt:"Kein Land bestimmt über die anderen. Jedes Land darf viele Dinge selbst regeln.",n:"Bundesländer",s:"gleichberechtigt"},
+  {id:"republik",q:"Deutschland ist eine Republik. Was bedeutet das?",a:"Das Volk wählt seine Regierung selbst",w:["Ein König bestimmt alles","Der Kaiser sucht die Regierung aus"],
+    big:"In einer Republik wählt das Volk seine Regierung selbst.",txt:"Es gibt keinen König und keinen Kaiser, der über allen steht.",n:"Republik",s:"das Volk wählt die Regierung"},
+  {id:"koenig",q:"Hat Deutschland einen König oder einen Kaiser?",a:"Nein, keinen von beiden",w:["Ja, einen König","Ja, einen Kaiser"],
+    big:"Deutschland hat keinen König und keinen Kaiser.",txt:"Deutschland ist eine Republik: Das Volk wählt seine Regierung selbst.",n:"König oder Kaiser?",s:"keinen von beiden"},
+  {id:"drei",q:"Welche drei Bundesländer sind Stadtstaaten?",a:"Berlin, Hamburg und Bremen",w:["München, Köln und Berlin","Hamburg, Kiel und Bremen"],
+    big:"Die drei Stadtstaaten sind Berlin, Hamburg und Bremen.",txt:"Alle anderen 13 Bundesländer sind Flächenstaaten.",n:"Stadtstaaten",s:"Berlin, Hamburg, Bremen"},
+  {id:"stadtstaat",q:"Was ist ein Stadtstaat?",a:"Eine Stadt, die zugleich ein Bundesland ist",w:["Ein Land mit ganz vielen Städten","Die Hauptstadt eines Bundeslandes"],
+    big:"Ein Stadtstaat ist Stadt und Bundesland zugleich.",txt:"Zum Beispiel Hamburg: Hamburg ist eine Stadt und auch ein Bundesland.",n:"Stadtstaat",s:"Stadt und Bundesland zugleich"},
+  {id:"gross",q:"Welches Bundesland ist das größte?",a:"Bayern",w:["Nordrhein-Westfalen","Niedersachsen"],
+    big:"Bayern ist das flächenmäßig größte Bundesland.",txt:"Bayern hat die meiste Fläche. Die meisten Menschen wohnen aber in Nordrhein-Westfalen.",n:"Größtes Land",s:"Bayern"},
+  {id:"menschen",q:"In welchem Bundesland wohnen die meisten Menschen?",a:"Nordrhein-Westfalen",w:["Bayern","Berlin"],
+    big:"Die meisten Menschen wohnen in Nordrhein-Westfalen.",txt:"Bayern ist größer, aber in Nordrhein-Westfalen wohnen mehr Menschen.",n:"Meiste Menschen",s:"Nordrhein-Westfalen"}
+];
 const nm=l=>(l.das?"das ":"")+l.n;            // „das Saarland“
 const Nm=l=>(l.das?"Das ":"")+l.n;
 /* Beschriftungs-Punkte, wo der Schwerpunkt ungünstig liegt */
@@ -241,11 +274,12 @@ function mapSVG(o){o=o||{};const c=o.cls||{};
 
 /* ================= Kapitel ================= */
 const CH=[
+  {id:"staat",t:"Deutschland ist ein Bundesstaat",d:"Bundesrepublik, Republik, Flächen- und Stadtstaaten",ico:"flag",n:10},
   {id:"entdecken",t:"Deutschland entdecken",d:"Tippe die Länder auf der Karte an und hör zu",ico:"map"},
   {id:"lage",t:"Wo liegt das Land?",d:"Du hörst einen Namen und tippst das Land auf der Karte an",ico:"pin",n:8},
   {id:"name",t:"Wie heißt das Land?",d:"Ein Land leuchtet. Welches ist es?",ico:"look",n:8},
   {id:"stadt",t:"Hauptstädte",d:"Wie heißt die Hauptstadt von diesem Land?",ico:"city",n:8},
-  {id:"land",t:"Zu welchem Land gehört die Stadt?",d:"Von der Hauptstadt zum Bundesland",ico:"flag",n:8},
+  {id:"land",t:"Zu welchem Land gehört die Stadt?",d:"Von der Hauptstadt zum Bundesland",ico:"city",n:8},
   {id:"mix",t:"Große Deutschland-Reise",d:"Alles gemischt",ico:"mix",n:10}
 ];
 const chOf=id=>CH.find(c=>c.id===id);
@@ -253,6 +287,7 @@ const chOf=id=>CH.find(c=>c.id===id);
 function anteil(c){
   if(c.id==="entdecken")return S.seen.length/16;
   if(c.id==="mix")return (S.best.mix||0)/3;
+  if(c.id==="staat")return .7*FAKT.reduce((a,f)=>a+dots("staat",f.id),0)/(FAKT.length*3)+.3*Math.min(1,L.reduce((a,l)=>a+dots("art",l.id),0)/(16*2));
   return L.reduce((a,l)=>a+dots(c.id,l.id),0)/(16*3)}
 const sterne=p=>p>=.999?3:p>=2/3?2:p>=1/3?1:0;
 
@@ -260,7 +295,7 @@ const sterne=p=>p>=.999?3:p>=2/3?2:p>=1/3?1:0;
 function home(){hush();R=null;
   const sicher=L.filter(l=>["lage","name","stadt","land"].every(c=>dots(c,l.id)>=3)).length;
   app.innerHTML=`
-  <section class="panel"><div class="hero"><span class="badge">${I.map}</span><div class="grow"><h2 style="font-size:1.35rem">Deutschland hat 16 Bundesländer</h2>
+  <section class="panel"><div class="hero"><span class="badge">${I.map}</span><div class="grow"><h2 style="font-size:1.35rem">Die Bundesrepublik Deutschland hat 16 Bundesländer</h2>
     <p class="small">Jedes Land hat eine Hauptstadt. Wie viele kennst du schon?</p></div></div>
     <div class="row" style="justify-content:space-between"><span class="small"><b style="color:var(--lw-ink)">${S.seen.length} von 16</b> entdeckt</span><span class="small"><b style="color:var(--lw-ink)">${sicher} von 16</b> sitzen ganz sicher</span></div>
     <div class="bar"><i style="width:${(S.seen.length/16*50+sicher/16*50)}%"></i></div></section>
@@ -277,17 +312,30 @@ function home(){hush();R=null;
   app.querySelectorAll("[data-ton]").forEach(b=>b.onclick=()=>{S.ton=b.dataset.ton==="true";save();home();if(S.ton)speak("Vorlesen ist an.")});
   app.querySelectorAll("[data-rate]").forEach(b=>b.onclick=()=>{S.rate=+b.dataset.rate;save();app.querySelectorAll("[data-rate]").forEach(x=>x.setAttribute("aria-pressed",x===b));speak("Die Hauptstadt vom Saarland ist Saarbrücken.")});
   scrollTo(0,0)}
-function openCh(id){id==="entdecken"?entdecken():startRound(id)}
+function openCh(id){id==="entdecken"?entdecken():id==="staat"?lesen():startRound(id)}
+
+/* ================= Grundwissen: erst lesen oder anhören, dann Quiz ================= */
+function lesen(){hush();R=null;
+  app.innerHTML=`<div class="chead"><button class="backb" id="cbk">${I.back}Alle Kapitel</button></div>
+    <div><h2>Deutschland ist ein Bundesstaat</h2><p class="small" style="margin-top:4px">Lies dir den Text genau durch oder hör ihn dir an. Danach kommen Fragen dazu.</p></div>
+    <section class="panel text">${TEXT.map(t=>`<p>${esc(t).replace(/(Bundesrepublik Deutschland|BRD|16 Bundesländern|gleichberechtigt|Republik|keinen König und keinen Kaiser|Flächenstaaten und Stadtstaaten|Berlin, Hamburg und Bremen|Stadt und Bundesland zugleich|Bayern|Nordrhein-Westfalen)/g,"<mark>$1</mark>")}</p>`).join("")}</section>
+    ${mapSVG({mh:"40vh",cls:{BE:"on",HH:"on",HB:"on"},ring:["BE","HH","HB"],label:["BE","HH","HB"]})}
+    <p class="small" style="text-align:center">Die drei Stadtstaaten leuchten. Alle anderen sind Flächenstaaten.</p>
+    ${TTS.ok?`<button class="ghost" id="hoer">${I.spk}<span>Text anhören</span></button>`:""}
+    <button class="go" id="los">Fragen starten</button>`;
+  $("#cbk").onclick=home;$("#los").onclick=()=>startRound("staat");
+  if($("#hoer"))$("#hoer").onclick=()=>speak(TEXT.join(" "));
+  scrollTo(0,0)}
 
 /* ================= Entdecken ================= */
 let SEL=null;
-function satz(l){return `${Nm(l)}. Die Hauptstadt ist ${l.s}. ${l.f}`}
+function satz(l){return `${Nm(l)}. Die Hauptstadt ist ${l.s}. ${l.staat?"":Nm(l)+" ist ein Flächenstaat. "}${l.f}`}
 function entdecken(sel){hush();R=null;SEL=sel||null;const l=SEL&&LAND(SEL);
   app.innerHTML=`<div class="chead"><button class="backb" id="cbk">${I.back}Alle Kapitel</button></div>
     <div><h2>Deutschland entdecken</h2><p class="small" style="margin-top:4px">Tippe ein Land auf der Karte an. Du hörst, wie es heißt und wie seine Hauptstadt heißt.</p></div>
     ${mapSVG({tap:true,mh:"56vh",cls:SEL?{[SEL]:"on"}:{},base:x=>S.seen.includes(x.id)?"seen":"",cities:l?[l.s]:[],ring:l&&l.staat?[l.id]:[],label:l?[l.id]:[]})}
     ${l?`<section class="panel info" aria-live="polite"><span class="kick">Bundesland ${S.seen.length} von 16 entdeckt</span><h3>${esc(l.n)}</h3>
-      <p class="cap">Hauptstadt: <b>${esc(l.s)}</b></p><p>${esc(l.f)}</p>
+      <p class="cap">Hauptstadt: <b>${esc(l.s)}</b></p><p class="small"><b style="color:var(--lw-ink)">${l.staat?"Stadtstaat":"Flächenstaat"}</b>${l.staat?": Stadt und Bundesland zugleich":""}</p><p>${esc(l.f)}</p>
       ${TTS.ok?`<button class="ghost" id="again">${I.spk}<span>Nochmal hören</span></button>`:""}</section>`
       :`<section class="panel"><p>${S.seen.length?`Du hast schon <b>${S.seen.length} von 16</b> Ländern entdeckt. Die grünen kennst du schon.`:"Los geht's! Welches Land tippst du zuerst an?"}</p></section>`}
     <div class="chips">${L.map(x=>`<button class="lchip ${S.seen.includes(x.id)?"seen":""}" data-l="${x.id}" aria-pressed="${x.id===SEL}"><i></i>${esc(x.n)}</button>`).join("")}</div>
@@ -303,6 +351,14 @@ function entdecken(sel){hush();R=null;SEL=sel||null;const l=SEL&&LAND(SEL);
 
 /* ================= Aufgaben ================= */
 const others=(l,k)=>shuffle(L.filter(x=>x!==l)).slice(0,k);
+const faktTask=f=>{const o=shuffle([f.a,...f.w]);return {l:f,ch:"staat",fakt:true,kind:"mc",q:esc(f.q),say:f.q,map:f.map,opts:o.map(x=>({h:x,ok:x===f.a}))}};
+const artTask=l=>({l,ch:"art",kind:"mc",q:`Ist <em>${esc(nm(l))}</em> ein Flächenstaat oder ein Stadtstaat?`,say:`Ist ${nm(l)} ein Flächenstaat oder ein Stadtstaat?`,
+  map:{cls:{[l.id]:"on"},ring:l.staat?[l.id]:[],mh:"34vh"},opts:[{h:"Flächenstaat",ok:!l.staat},{h:"Stadtstaat",ok:!!l.staat}]});
+/* Fakten mit wenig Punkten kommen öfter dran */
+function chooseFakt(n){const out=[];let rest=FAKT.slice();while(out.length<n&&rest.length){const W=rest.map(f=>Math.pow(4-dots("staat",f.id),2)+.6);
+  let r=Math.random()*W.reduce((a,b)=>a+b,0),k=0;while(r>W[k]&&k<W.length-1){r-=W[k];k++}out.push(rest[k]);rest.splice(k,1)}return out}
+/* Für Flächen- oder Stadtstaat: immer mindestens ein Stadtstaat dabei */
+function chooseArt(n){const st=shuffle(L.filter(l=>l.staat)),fl=shuffle(L.filter(l=>!l.staat));return shuffle([st[0],...shuffle(st.slice(1).concat(fl)).slice(0,n-1)])}
 const T={
   lage(l){return {l,ch:"lage",kind:"map",q:`Wo liegt <em>${esc(nm(l))}</em>?`,say:`Wo liegt ${nm(l)}? Tippe es auf der Karte an.`}},
   name(l){const o=shuffle([l,...others(l,2)]);return {l,ch:"name",kind:"mc",q:"Wie heißt das Land, das leuchtet?",say:"Wie heißt das Land, das leuchtet?",
@@ -323,7 +379,11 @@ function choose(ch,n){const out=[];let rest=L.slice();
 let R=null;
 function startRound(id){hush();const c=chOf(id);
   const ls=choose(id,c.n);
-  R={id,i:0,ok:0,res:[],miss:[],tasks:ls.map(l=>T[id==="mix"?pick(["lage","name","stadt","land"]):id](l))};R.n=R.tasks.length;showTask()}
+  let tasks;
+  if(id==="staat")tasks=shuffle(chooseFakt(7).map(faktTask).concat(chooseArt(3).map(artTask)));
+  else{tasks=ls.map(l=>T[id==="mix"?pick(["lage","name","stadt","land"]):id](l));
+    if(id==="mix"){tasks.splice(rand(tasks.length),1,faktTask(pick(FAKT)));tasks.splice(rand(tasks.length),1,artTask(pick(L)))}}
+  R={id,i:0,ok:0,res:[],miss:[],tasks};R.n=R.tasks.length;showTask()}
 function track(){$("#track").innerHTML=Array.from({length:R.n},(_,i)=>`<i class="${i<R.res.length?(R.res[i]?"ok":"no"):(i===R.i?"now":"")}"></i>`).join("")}
 function showTask(){hush();const t=R.tasks[R.i];R.locked=false;
   app.innerHTML=`<div class="topbar"><button id="quit" aria-label="Runde beenden"></button><div class="track" id="track"></div></div>
@@ -335,7 +395,7 @@ function showTask(){hush();const t=R.tasks[R.i];R.locked=false;
     cb.querySelectorAll("[data-l]").forEach(el=>el.addEventListener("click",()=>{if(R.locked)return;const ok=el.dataset.l===t.l.id;
       cb.innerHTML=mapSVG({mh:"60vh",cls:ok?{[t.l.id]:"ok"}:{[t.l.id]:"ok",[el.dataset.l]:"bad"},label:ok?[t.l.id]:[t.l.id,el.dataset.l],ring:t.l.staat?[t.l.id]:[]});
       done(ok,ok?null:LAND(el.dataset.l))}))}
-  else{cb.innerHTML=mapSVG(t.map)+`<div class="opts">${t.opts.map((o,i)=>`<button class="opt" data-i="${i}">${esc(o.h)}</button>`).join("")}</div>`;
+  else{cb.innerHTML=(t.map?mapSVG(t.map):"")+`<div class="opts">${t.opts.map((o,i)=>`<button class="opt" data-i="${i}">${esc(o.h)}</button>`).join("")}</div>`;
     cb.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{if(R.locked)return;const o=t.opts[+b.dataset.i];
       cb.querySelectorAll(".opt").forEach((x,i)=>{x.disabled=true;if(t.opts[i].ok)x.classList.add("ok")});if(!o.ok)b.classList.add("bad");
       if(t.ch==="land"){const m=cb.querySelector(".map");m.outerHTML=mapSVG(Object.assign({},t.map,{base:null,cls:{[t.l.id]:"ok"},label:[t.l.id]}))}
@@ -345,11 +405,13 @@ function showTask(){hush();const t=R.tasks[R.i];R.locked=false;
   scrollTo(0,0)}
 function done(ok,wrong){if(R.locked)return;R.locked=true;const t=R.tasks[R.i],l=t.l;
   const m=S.m[t.ch]=S.m[t.ch]||{};m[l.id]=ok?Math.min(3,(m[l.id]||0)+1):0;
-  if(!S.seen.includes(l.id))S.seen.push(l.id);save();
+  if(!t.fakt&&!S.seen.includes(l.id))S.seen.push(l.id);save();
   R.res.push(ok);if(ok)R.ok++;else if(!R.miss.includes(l))R.miss.push(l);
   ok?sfxOk():sfxBad();track();
   let big,txt;
-  if(t.ch==="lage"){big=ok?`Das ist ${nm(l)}!`:`Das war ${nm(wrong)}.`;txt=ok?l.f:`${Nm(l)} ist grün markiert. ${l.f}`}
+  if(t.fakt){big=l.big;txt=l.txt}
+  else if(t.ch==="art"){big=`${Nm(l)} ist ein ${l.staat?"Stadtstaat":"Flächenstaat"}.`;txt=l.staat?`${l.n} ist Stadt und Bundesland zugleich. Die drei Stadtstaaten sind Berlin, Hamburg und Bremen.`:`${Nm(l)} ist ein großes Land mit vielen Städten und Dörfern. Die Hauptstadt ist ${l.s}.`}
+  else if(t.ch==="lage"){big=ok?`Das ist ${nm(l)}!`:`Das war ${nm(wrong)}.`;txt=ok?l.f:`${Nm(l)} ist grün markiert. ${l.f}`}
   else if(t.ch==="name"){big=`Das ist ${nm(l)}.`;txt=l.f}
   else if(t.ch==="stadt"){big=`Die Hauptstadt von ${nm(l)} ist ${l.s}.`;txt=l.staat?`${l.n} ist eine Stadt und ein Bundesland zugleich. Darum heißt die Hauptstadt genauso.`:l.f}
   else{big=`${l.s} liegt in ${l.das?"im Saarland":l.n}.`.replace("in im","im");txt=`${l.s} ist die Hauptstadt von ${nm(l)}.`}
