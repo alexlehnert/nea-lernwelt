@@ -92,8 +92,10 @@ window.LW_HEFTE = [
     info: 'Die Bundesrepublik, ihre 16 Bundesländer und Hauptstädte, mit Karte zum Antippen und Vorlesen', key: 'bundeslaender-v1',
     kapitel: ['Deutschland ist ein Bundesstaat', 'Deutschland entdecken', 'Wo liegt das Land?', 'Wie heißt das Land?', 'Hauptstädte', 'Zu welchem Land gehört die Stadt?', 'Große Deutschland-Reise'],
     anker: ['staat', 'entdecken', 'lage', 'name', 'stadt', 'land', 'mix'] },
-  { id: 'musik-gs3', stufe: 'gs3', bald: true, fach: 'musik', thema: 'Musik', name: 'Musik-Heft',
-    info: 'Die Aufgaben werden gerade vorbereitet.', kapitel: [] }
+  { id: 'planeten', stufe: 'gs3', abzeichen: 'Planeten-Lauscherin', fach: 'musik', thema: 'Komponisten', name: 'Holsts Planeten',
+    info: 'Gustav Holst und „Die Planeten“: sein Leben, Holsts Namen für die Planeten und ein Hör-Quiz mit echter Musik', key: 'holst-planeten-v1',
+    kapitel: ['Wer war Gustav Holst?', 'Die sieben Planeten', 'Holsts Namen für die Planeten', 'Wie klingt der Planet?', 'Lückentext: Holsts Leben', 'Hör-Quiz', 'Großer Mix'],
+    anker: ['leben', 'planeten', 'namen', 'klang', 'luecke', 'hoeren', 'mix'] }
 ];
 
 // Merkzettel zum Nachschlagen: öffnen sich in einem neuen Tab. Mit fachId erscheinen sie auch auf der Fach-Seite.

@@ -1,0 +1,665 @@
+<!doctype html><html lang="de"><head><meta charset=utf8><script src="/api/config"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="/sync.js"></script><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"><link rel="manifest" href="/manifest.webmanifest"><meta name="apple-mobile-web-app-title" content="Lernwelt"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="theme-color" content="#5B3FE6"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Holsts Planeten</title>
+<style>
+/* Holsts Planeten (Musik, Klasse 3): Gustav Holst und sein Orchesterwerk „Die Planeten“.
+   Nach Rubies Arbeitsblättern: Lebenslauf (gelb markiert = besonders wichtig), die sieben Sätze mit Holsts Namen,
+   Charakterwörter, Lückentext zur Biografie und ein Hör-Quiz mit echten Aufnahmen.
+   Aufnahmen: frei verwendbar von Wikimedia Commons (US Air Force Band = Werk der US-Regierung; Holst selbst dirigiert 1923),
+   direkt von upload.wikimedia.org geladen. Vorlesen mit Web Speech (de-DE). */
+:root{color-scheme:light dark}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{margin:0;background:var(--lw-bg);color:var(--lw-ink);font-family:var(--lw-f-b);font-size:18px;line-height:1.45;-webkit-tap-highlight-color:transparent;padding-top:env(safe-area-inset-top,0px)}
+.wrap{max-width:640px;margin:0 auto;padding:14px max(16px,env(safe-area-inset-right,0px)) 130px max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px}
+h1,h2,h3{font-family:var(--lw-f-d);font-weight:700;margin:0;line-height:1.15;text-wrap:balance}
+h2{font-size:1.6rem}
+h3{font-size:1.2rem}
+p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+button:focus-visible{outline:3px solid var(--lw-brand);outline-offset:2px}
+svg{display:block}
+.small{font-size:.92rem;color:var(--lw-muted)}
+.panel{background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.grow{flex:1;min-width:0}
+.ghost{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:8px 14px}
+.ghost svg,.go svg{width:20px;height:20px;flex:none}
+.go{display:inline-flex;align-items:center;justify-content:center;gap:8px}
+mark{background:#FFF27A;color:#1E1B3A;border-radius:4px;padding:0 3px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+
+/* Startseite */
+.hero{display:flex;gap:14px;align-items:center}
+.hero .sky{width:76px;height:76px;flex:none;border-radius:22px;background:#1B1745;display:grid;place-items:center}
+.bar{height:12px;border-radius:99px;background:var(--lw-line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--lw-ok);border-radius:99px}
+.stations{display:flex;flex-direction:column;gap:12px}
+.st{display:flex;align-items:center;gap:14px;text-align:left;width:100%;padding:14px;border-radius:22px;background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:5px;min-height:92px}
+.st:active{transform:translateY(3px);border-bottom-width:2px}
+.st .ico{width:60px;height:60px;flex:none;border-radius:18px;background:var(--lw-cs);color:var(--lw-c);display:grid;place-items:center}
+.st .ico svg{width:34px;height:34px}
+.st .ico .pl{width:46px;height:46px}
+.st h3{font-size:1.18rem}
+.st p{font-size:.95rem;color:var(--lw-muted);line-height:1.3;margin-top:2px}
+.st .n{font:700 12px var(--lw-f-b);letter-spacing:.1em;text-transform:uppercase;color:var(--lw-c)}
+.st.star{border-color:var(--lw-c)}
+.stars{display:flex;gap:2px;margin-top:6px}
+.stars svg{width:22px;height:22px}
+.modes{display:flex;gap:6px;background:var(--lw-soft);border-radius:16px;padding:4px}
+.modes button{flex:1;min-height:48px;border:0;border-radius:12px;background:none;font-weight:700;color:var(--lw-muted)}
+.modes button[aria-pressed="true"]{background:var(--lw-card);color:var(--lw-ink);box-shadow:0 2px 0 var(--lw-shadow)}
+
+/* Kopf eines Kapitels */
+.chead{display:flex;align-items:center;gap:12px}
+.backb{display:inline-flex;align-items:center;gap:6px;min-height:48px;padding:6px 16px 6px 12px;border-radius:14px;border:2px solid var(--lw-line);border-bottom-width:4px;background:var(--lw-card);font-weight:700;color:var(--lw-muted)}
+.backb svg{width:18px;height:18px}
+.kick{font:700 12px var(--lw-f-b);letter-spacing:.12em;text-transform:uppercase;color:var(--lw-c)}
+.say{flex:none;width:52px;height:52px;border-radius:16px;border:2px solid var(--lw-line);border-bottom-width:4px;background:var(--lw-card);color:var(--lw-c);display:grid;place-items:center}
+.say svg{width:26px;height:26px}
+.say.on{background:var(--lw-c);color:#fff;border-color:var(--lw-cd)}
+
+/* Planeten */
+.pl{display:block;flex:none}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px}
+.pbtn{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 6px 10px;border-radius:20px;border:2px solid var(--lw-line);border-bottom-width:5px;background:var(--lw-card);font:700 1rem/1.1 var(--lw-f-d);position:relative}
+.pbtn:active{transform:translateY(3px);border-bottom-width:2px}
+.pbtn .pl{width:58px;height:58px}
+.pbtn[aria-pressed="true"]{border-color:var(--lw-c);background:var(--lw-cs)}
+.pbtn .nr{position:absolute;top:6px;left:8px;font:700 11px var(--lw-f-b);color:var(--lw-muted)}
+.pbtn.seen::after{content:"";position:absolute;top:7px;right:7px;width:18px;height:18px;border-radius:50%;background:var(--lw-ok) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/12px no-repeat}
+.pcard{border-color:var(--lw-c)}
+.pcard .top{display:flex;gap:14px;align-items:center}
+.pcard .top .pl{width:84px;height:84px}
+.pcard h3{font-size:1.6rem}
+.pcard .holst{font:700 1.2rem/1.25 var(--lw-f-d);color:var(--lw-c)}
+.words{display:flex;flex-wrap:wrap;gap:8px}
+.word{padding:6px 14px;border-radius:99px;background:var(--lw-cs);color:var(--lw-ink);font-weight:700;border:2px solid transparent}
+.tip{background:var(--lw-soft);border-radius:16px;padding:10px 12px;display:flex;gap:10px;align-items:flex-start}
+.tip .ear{flex:none;width:30px;height:30px;color:var(--lw-c)}
+.fact{font-size:.95rem;color:var(--lw-muted)}
+
+/* Musik-Spieler */
+.player{display:flex;align-items:center;gap:12px;padding:10px;border-radius:20px;background:#1B1745;color:#fff}
+.player .pp{flex:none;width:64px;height:64px;border-radius:50%;border:0;background:var(--lw-sun);color:#1B1745;display:grid;place-items:center;box-shadow:0 4px 0 #C99400}
+.player .pp:active{transform:translateY(3px);box-shadow:0 1px 0 #C99400}
+.player .pp svg{width:30px;height:30px}
+.player .pt{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.player .pt b{font:700 1.05rem/1.2 var(--lw-f-d)}
+.player .pt small{opacity:.8;font-size:.85rem;line-height:1.25}
+.player .pbar{height:8px;border-radius:99px;background:rgba(255,255,255,.2);overflow:hidden}
+.player .pbar i{display:block;height:100%;width:0;background:var(--lw-sun);border-radius:99px;transition:width .25s linear}
+.player.wait .pp svg{animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.player.big{flex-direction:column;padding:22px 16px;text-align:center}
+.player.big .pp{width:96px;height:96px}
+.player.big .pp svg{width:44px;height:44px}
+.player.big .pt{width:100%}
+.eq{display:flex;gap:4px;justify-content:center;height:28px;align-items:flex-end}
+.eq i{width:6px;border-radius:3px;background:var(--lw-sun);height:6px}
+.player.play .eq i{animation:eq .9s ease-in-out infinite}
+.eq i:nth-child(2){animation-delay:.15s!important}.eq i:nth-child(3){animation-delay:.3s!important}.eq i:nth-child(4){animation-delay:.45s!important}.eq i:nth-child(5){animation-delay:.6s!important}
+@keyframes eq{0%,100%{height:6px}50%{height:28px}}
+
+/* Lesen */
+.read{font-size:1.15rem;line-height:1.55}
+.read b{color:var(--lw-c)}
+.lifebar{display:flex;gap:4px}
+.lifebar i{flex:1;height:10px;border-radius:99px;background:var(--lw-line)}
+.lifebar i.on{background:var(--lw-c)}
+.timeline{display:flex;flex-direction:column;gap:8px;margin:0;padding:0;list-style:none}
+.timeline li{display:flex;gap:12px;align-items:baseline}
+.timeline b{flex:none;min-width:5.6em;font-family:var(--lw-f-d);color:var(--lw-c)}
+
+/* Runde */
+.topbar{display:flex;align-items:center;gap:12px}
+.track{flex:1;display:flex;gap:4px}
+.track i{flex:1;height:14px;border-radius:99px;background:var(--lw-line)}
+.track i.ok{background:var(--lw-ok)}
+.track i.no{background:var(--lw-bad)}
+.track i.now{background:var(--lw-c)}
+.q{display:flex;align-items:center;gap:10px}
+.q b{flex:1;display:block;font:700 1.4rem/1.2 var(--lw-f-d)}
+.q b em{font-style:normal;color:var(--lw-c)}
+.stage{display:flex;flex-direction:column;gap:14px}
+.showp{display:flex;justify-content:center;padding:6px 0}
+.showp .pl{width:120px;height:120px}
+.opts{display:grid;grid-template-columns:1fr;gap:10px}
+.opts.pl3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.opts.pl4{grid-template-columns:repeat(2,minmax(0,1fr))}
+.opt{width:100%;padding:10px 12px;display:flex;align-items:center;justify-content:center;text-align:center;min-height:64px!important;font-size:1.2rem!important;gap:10px}
+.opt.withp{flex-direction:column;gap:6px;padding:12px 6px}
+.opt .pl{width:54px;height:54px}
+.opt.withp span{hyphens:auto;-webkit-hyphens:auto;overflow-wrap:anywhere;max-width:100%}
+.opt:disabled{cursor:default}
+.opt.sel{border-color:var(--lw-c);background:var(--lw-cs)}
+.lw-sheet .ghost{width:100%;min-height:52px}
+.fb .big{font:700 1.35rem/1.2 var(--lw-f-d);color:var(--lw-ink)}
+.fb p{margin-top:4px}
+.levels{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.levels button{display:flex;flex-direction:column;gap:2px;text-align:left;padding:12px 14px;border-radius:18px;border:2px solid var(--lw-line);border-bottom-width:5px;background:var(--lw-card);min-height:84px}
+.levels button b{font:700 1.1rem/1.15 var(--lw-f-d)}
+.levels button span{font-size:.88rem;color:var(--lw-muted);line-height:1.25}
+.levels button .stars{margin-top:4px}
+
+/* Ergebnis */
+.result{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;padding-top:20px}
+.bigstars{display:flex;gap:8px}
+.bigstars svg{width:68px;height:68px}
+.bigstars .s1{animation:pop .5s .1s both}.bigstars .s2{animation:pop .5s .35s both}.bigstars .s3{animation:pop .5s .6s both}
+@keyframes pop{0%{transform:scale(0)}70%{transform:scale(1.2)}100%{transform:scale(1)}}
+.result .go,.result .ghost{width:100%}
+.missed{align-self:stretch;text-align:left}
+.missed ul{margin:6px 0 0;padding-left:20px}
+#toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,40px);opacity:0;z-index:10100;background:var(--lw-ink);color:var(--lw-bg);padding:10px 18px;border-radius:14px;font-weight:700;max-width:88vw;text-align:center;transition:.25s;pointer-events:none}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+.credits{font-size:.85rem;color:var(--lw-muted);line-height:1.4}
+.credits a{color:inherit}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style><!--lw-look--><link rel="stylesheet" href="/lernwelt-app.css"><script src="/lernwelt-app.js"></script><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap"><style id="lw-look">
+/* Übungs-Bausteine im Lernwelt-Look (wie im Konzept: Antwortkacheln, grüne Rückmeldung, dicke Knöpfe) */
+.go,.next,.check{background:var(--lw-c);color:#fff;border:none;border-radius:16px;min-height:54px;padding:12px 22px;
+  font-family:var(--lw-f-d);font-weight:700;font-size:1.05rem;letter-spacing:.04em;text-transform:uppercase;box-shadow:0 5px 0 var(--lw-cd)}
+.go:active,.next:active,.check:active{transform:translateY(3px);box-shadow:0 2px 0 var(--lw-cd)}
+.ghost{background:var(--lw-card);color:var(--lw-ink);border:2px solid var(--lw-line);border-bottom-width:4px;border-radius:14px;min-height:44px;font-weight:700}
+.chip{background:var(--lw-card);color:var(--lw-ink);border:2px solid var(--lw-line);border-radius:99px;min-height:40px;padding:6px 14px;font-weight:700}
+.chip[aria-pressed="true"]{background:var(--lw-c);border-color:var(--lw-c);color:#fff}
+.progress{height:14px;background:var(--lw-line);border-radius:99px}
+.progress i{background:var(--lw-ok);border-radius:99px}
+.card{background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:22px;box-shadow:none}
+.card-top{background:none;color:var(--lw-c);padding:16px 18px 0;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase}
+.card-top .tag{font-size:.8rem}
+.card-body{background-image:none}
+.prompt{font-family:var(--lw-f-d);font-weight:700}
+.opts{gap:12px}
+.opt{background:var(--lw-card);color:var(--lw-ink);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:18px;min-height:60px;
+  font-family:var(--lw-f-d);font-weight:600;font-size:1.12rem}
+.opt:not(:disabled):active{transform:translateY(3px);border-bottom-width:2px}
+.opt.ok{border:3px solid var(--lw-ok);border-bottom-width:6px;background:var(--lw-ok-bg);color:var(--lw-ok-ink)}
+.opt.bad{border-color:var(--lw-bad);background:var(--lw-bad-bg);color:var(--lw-bad-ink)}
+.tile{background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:4px;border-radius:12px;font-family:var(--lw-f-d);font-weight:700}
+.slots{border-radius:16px}
+.slots .tile{background:var(--lw-cs);border-color:var(--lw-c)}
+.inp input,.field{border-radius:16px}
+.fb{border-radius:22px;padding:16px 16px 18px;gap:8px}
+.fb.ok{background:var(--lw-ok-bg);border:none;color:var(--lw-ink)}
+.fb.bad{background:var(--lw-bad-bg);border:none;color:var(--lw-ink)}
+.fb strong{font-family:var(--lw-f-d);font-weight:700;font-size:1.3rem;display:flex;align-items:center;gap:10px}
+.fb.ok strong{color:var(--lw-ok-ink)}
+.fb.bad strong{color:var(--lw-bad-ink)}
+.fb.ok strong::before,.fb.bad strong::before{content:"";flex:none;width:36px;height:36px;border-radius:50%;background:var(--lw-ok) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/20px no-repeat}
+.fb.bad strong::before{background:var(--lw-bad) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3.4' stroke-linecap='round'%3E%3Cpath d='M7 7l10 10M17 7L7 17'/%3E%3C/svg%3E") center/18px no-repeat}
+.card-top .tag{color:var(--lw-c);font-family:var(--lw-f-b);font-weight:700;letter-spacing:.12em}
+.card-top .fachtag{background:var(--lw-cs);color:var(--lw-c);font-family:var(--lw-f-b);font-weight:700}
+/* @kit */
+/* Holsts Planeten ist von Anfang an im Lernwelt-Look gebaut: nur die Fach-Farbe setzen. */
+:root:root:root{--lw-c:var(--lw-mu); --lw-cd:var(--lw-mu-d); --lw-cs:var(--lw-mu-s)}
+.go{width:auto}
+.go:disabled{opacity:.5}
+</style><!--/lw-look--><script src="/lernwelt-chat.js"></script></head><body><nav id="lw-bar" class="lw-bar lw-mu" aria-label="Lernwelt"><a class="lw-back" href="index.html#heft-planeten" aria-label="Zurück zum Heft"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a><span class="lw-t"><span class="lw-eyebrow">Musik</span><span class="lw-name">Holsts Planeten</span></span></nav>
+<main class="wrap" id="app"></main>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+"use strict";
+const $=s=>document.querySelector(s);
+const app=$("#app");
+const rand=n=>Math.floor(Math.random()*n);
+const pick=a=>a[rand(a.length)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=rand(i+1);[a[i],a[j]]=[a[j],a[i]]}return a};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const plain=s=>String(s).replace(/<[^>]+>/g,"").replace(/&nbsp;/g," ");
+function toast(t){const e=$("#toast");e.textContent=t;e.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove("show"),3200)}
+
+/* ================= Die sieben Planeten ================= */
+/* h = Holsts Bezeichnung (wie auf dem Arbeitsblatt), w = Charakterwörter, klang = wie die Musik klingt (Hör-Tipp) */
+const P=[
+ {id:"mars",n:"Mars",h:"der Kriegsbringer",art:"der",w:["böse","laut","bedrohlich"],
+  klang:"Laut und bedrohlich. Immer wieder derselbe stampfende Rhythmus, wie Soldaten, die marschieren. Dazu dröhnen Trompeten und Pauken.",
+  merk:"Bumm-bumm-bumm-ba-bumm: der stampfende Rhythmus hört nicht auf."},
+ {id:"venus",n:"Venus",h:"die Friedensbringerin",art:"die",w:["ruhig","friedlich","liebevoll"],
+  klang:"Ganz ruhig und sanft. Ein Horn spielt leise am Anfang, dann antworten Flöten und Geigen. Es klingt friedlich und liebevoll.",
+  merk:"Leise, langsam und sanft, ganz ohne Trommeln."},
+ {id:"merkur",n:"Merkur",h:"der geflügelte Bote",art:"der",w:["schnell","wild","flink"],
+  klang:"Sehr schnell und flink. Die Töne huschen hin und her, als würde ein Bote mit Flügeln an den Schuhen durch den Himmel flitzen.",
+  merk:"Schnelle, leichte Töne, die hin und her huschen."},
+ {id:"jupiter",n:"Jupiter",h:"der Bringer der Fröhlichkeit",art:"der",w:["fröhlich","festlich","schwungvoll"],
+  klang:"Fröhlich und schwungvoll, wie bei einem großen Fest. In der Mitte kommt eine berühmte, feierliche Melodie, die viele Menschen kennen.",
+  merk:"Es klingt nach Fest und guter Laune."},
+ {id:"saturn",n:"Saturn",h:"der Bringer des Alters",art:"der",w:["traurig","ruhig","langsam"],
+  klang:"Langsam und ein bisschen traurig. Am Anfang tickt es wie eine alte Uhr, dann kommen schwere, müde Schritte. So langsam wie ein alter Mensch.",
+  merk:"Tick-tack, wie eine alte Uhr: langsam und schwer."},
+ {id:"uranus",n:"Uranus",h:"der Magier",art:"der",w:["aufregend","wild","zauberhaft"],
+  klang:"Am Anfang rufen die Blechbläser vier laute Zauber-Töne. Dann tanzt ein lustiger, hüpfender Zaubertanz los. Ein Magier ist ein Zauberer.",
+  merk:"Vier laute Zauber-Töne, dann ein hüpfender Tanz."},
+ {id:"neptun",n:"Neptun",h:"der Mystiker",art:"der",w:["geheimnisvoll","zauberhaft","magisch"],
+  klang:"Ganz leise und schwebend, sehr geheimnisvoll. Am Ende singt ein Chor ohne Worte, und die Musik verklingt ganz langsam im Weltall.",
+  merk:"Leise und schwebend, wie Nebel im Weltall."}
+];
+const PL=id=>P.find(x=>x.id===id);
+const voll=p=>`${p.n}, ${p.h}`;
+
+/* ================= Aufnahmen ================= */
+/* Wikimedia Commons, frei verwendbar. f = Hash-Ordner/Dateiname, so wie Commons die Datei speichert.
+   by = wer spielt. Hörstellen: 0 = Anfang, Zahlen < 1 = Anteil der Länge (0.4 = nach 40 %). */
+const REC={
+ mars:{f:["85/Holst-_mars.ogg"],by:"Blasorchester der US Air Force (Heritage of America Band)",spots:[0,.62]},
+ venus:{f:["4c/Holst-_venus.ogg"],by:"Blasorchester der US Air Force (Heritage of America Band)",spots:[0,.45]},
+ merkur:{f:["89/Holst_The_Planets_Mercury.ogg"],by:"Blasorchester der US Air Force (Heritage of America Band)",spots:[0,.5]},
+ jupiter:{f:["e2/Holst_The_Planets_Jupiter.ogg","3f/Gustav_Holst_-_the_planets,_op._32_-_iv._jupiter,_the_bringer_of_jollity.ogg"],by:"Blasorchester der US Air Force (Heritage of America Band)",spots:[0,.4]},
+ saturn:{f:["e5/Holst_-_Saturn.ogg"],by:"London Symphony Orchestra, Gustav Holst dirigiert selbst (1923)",spots:[0,.55],alt:1},
+ uranus:{f:["97/Holst-_uranus.ogg"],by:"Blasorchester der US Air Force (Heritage of America Band)",spots:[0,.3]},
+ neptun:{f:["96/Holst_-_Neptune.ogg"],by:"London Symphony Orchestra, Gustav Holst dirigiert selbst (1923)",spots:[0,.75],alt:1}
+};
+const CAN_OGG=(()=>{try{return !!document.createElement("audio").canPlayType('audio/ogg; codecs="vorbis"')}catch(e){return false}})();
+function srcs(id){const out=[];REC[id].f.forEach(f=>{const [h,n]=f.split("/"),e=encodeURIComponent(n),base=`https://upload.wikimedia.org/wikipedia/commons/`;
+    out.push(`${base}transcoded/${h[0]}/${h}/${e}/${e}.mp3`);
+    if(CAN_OGG)out.push(`${base}${h[0]}/${h}/${e}`);
+    out.push(`https://commons.wikimedia.org/wiki/Special:FilePath/${e}`)});
+  return out}
+const commonsLink=id=>`https://commons.wikimedia.org/wiki/File:${encodeURIComponent(REC[id].f[0].split("/")[1])}`;
+
+/* Ein Spieler für alles. play(id,{at,len,el}) spielt ab Stelle at (Sekunden oder Anteil) len Sekunden lang (0 = bis zum Ende). */
+const AU={a:null,id:null,stopAt:0,el:null,tok:0,dur:{}};
+function audioEl(){if(!AU.a){AU.a=new Audio();AU.a.preload="none";AU.a.playsInline=true;
+    AU.a.addEventListener("timeupdate",tick);AU.a.addEventListener("ended",()=>stopMusic(true))}
+  return AU.a}
+function tick(){const a=AU.a;if(!a||!AU.el)return;
+  const st=AU.start||0,end=AU.stopAt||a.duration||0;
+  if(AU.stopAt&&a.currentTime>=AU.stopAt){stopMusic(true);return}
+  const f=end>st?(a.currentTime-st)/(end-st):0;const b=AU.el.querySelector(".pbar i");if(b)b.style.width=Math.max(0,Math.min(100,f*100))+"%"}
+function ui(el,state){if(!el)return;el.classList.toggle("play",state==="play");el.classList.toggle("wait",state==="wait");
+  const b=el.querySelector(".pp");if(b){b.innerHTML=state==="play"?I.pause:state==="wait"?I.load:I.play;b.setAttribute("aria-label",state==="play"?"Musik anhalten":"Musik abspielen")}
+  if(state==="stop"){const i=el.querySelector(".pbar i");if(i)i.style.width="0"}}
+function stopMusic(natural){const a=AU.a;AU.tok++;if(a){try{a.pause()}catch(e){}}
+  const el=AU.el;AU.el=null;ui(el,"stop");if(el&&el._onstop)el._onstop(!!natural)}
+function playMusic(id,o){o=o||{};hush();stopMusic();const a=audioEl(),tok=++AU.tok,list=srcs(id);let k=0;
+  AU.id=id;AU.el=o.el||null;ui(AU.el,"wait");
+  const go=()=>{if(tok!==AU.tok)return;
+    const d=a.duration&&isFinite(a.duration)?a.duration:0;if(d)AU.dur[id]=d;
+    let at=o.at||0;if(at>0&&at<1)at=d?d*at:0;
+    AU.start=at;AU.stopAt=o.len?at+o.len:0;
+    try{if(at)a.currentTime=at}catch(e){}
+    const pr=a.play();if(pr&&pr.catch)pr.catch(err=>{if(tok!==AU.tok)return;ui(AU.el,"stop");if(err&&err.name==="NotAllowedError")toast("Tippe noch einmal auf Abspielen.");});
+    ui(AU.el,"play")};
+  const tryNext=()=>{if(tok!==AU.tok)return;
+    if(k>=list.length){ui(AU.el,"stop");AU.el=null;toast("Die Musik lädt gerade nicht. Bist du mit dem Internet verbunden?");return}
+    a.onloadedmetadata=go;a.onerror=()=>{k++;tryNext()};a.src=list[k];a.load()};
+  if(AU.loaded===id&&a.readyState>=1&&!a.error){go();return}
+  AU.loaded=id;tryNext()}
+document.addEventListener("visibilitychange",()=>{if(document.hidden)stopMusic()});
+/* Spieler-Kachel. o.big = großer runder Knopf (Hör-Quiz), o.title/o.sub */
+function playerHTML(o){return `<div class="player ${o.big?"big":""}" id="${o.pid||"pl"}"><button class="pp" type="button" aria-label="Musik abspielen">${I.play}</button>
+  <div class="pt">${o.big?`<div class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>`:""}<b>${o.title}</b>${o.sub?`<small>${o.sub}</small>`:""}<div class="pbar"><i></i></div></div></div>`}
+function bindPlayer(el,id,o){if(!el)return;el.querySelector(".pp").onclick=()=>{if(AU.el===el){stopMusic();return}playMusic(id,Object.assign({el},o))};return el}
+
+/* ================= Zustand ================= */
+const KEY="holst-planeten-v1";
+const DEF={seen:[],leben:0,m:{},best:{},ton:true,rate:.85};
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&typeof s==="object")return Object.assign(JSON.parse(JSON.stringify(DEF)),s)}catch(e){}return JSON.parse(JSON.stringify(DEF))}
+let S=load();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+const dots=(ch,id)=>(S.m[ch]||{})[id]||0;
+
+/* ================= Vorlesen (wie in Ethik: erst nach dem ersten Antippen, lokale deutsche Stimme) ================= */
+const TTS={ok:"speechSynthesis" in window&&"SpeechSynthesisUtterance" in window,v:null,run:0,keep:null,awake:false,err:0,warned:false};
+function pickVoices(){if(!TTS.ok)return;const all=speechSynthesis.getVoices()||[];
+  let vs=all.filter(v=>/^de([-_]|$)/i.test(v.lang));const dd=vs.filter(v=>/de[-_]DE/i.test(v.lang));if(dd.length)vs=dd;
+  const loc=vs.filter(v=>v.localService);if(loc.length)vs=loc;
+  TTS.v=vs.find(v=>/anna|petra|helena|katja|marlene|vicki/i.test(v.name))||vs.find(v=>v.default)||vs[0]||null}
+if(TTS.ok){pickVoices();if(speechSynthesis.addEventListener)speechSynthesis.addEventListener("voiceschanged",pickVoices);else speechSynthesis.onvoiceschanged=pickVoices}
+function wake(){if(!TTS.ok||TTS.awake)return;TTS.awake=true;
+  try{const u=new SpeechSynthesisUtterance(" ");u.volume=0;u.lang="de-DE";TTS.keep=u;speechSynthesis.speak(u)}catch(e){}
+  pickVoices()}
+["touchend","click","keydown"].forEach(ev=>document.addEventListener(ev,wake,{capture:true,passive:true}));
+document.addEventListener("visibilitychange",()=>{if(document.hidden)hush()});
+const talking=()=>TTS.ok&&(speechSynthesis.speaking||speechSynthesis.pending);
+function stopNow(){if(talking()){speechSynthesis.cancel();TTS.cut=Date.now()}}
+function hush(){TTS.run++;stopNow();document.querySelectorAll(".say.on").forEach(b=>b.classList.remove("on"))}
+function chunks(t){const out=[];(t.match(/[^.!?…]+[.!?…]*["“”»«„]?\s*/g)||[t]).forEach(s=>{s=s.trim();if(!s)return;
+  while(s.length>180){let k=s.lastIndexOf(", ",180);if(k<60)k=s.lastIndexOf(" ",180);if(k<1)k=180;out.push(s.slice(0,k+1));s=s.slice(k+1).trim()}
+  if(s)out.push(s)});
+  return out.reduce((a,s)=>{if(a.length&&(a[a.length-1].length+s.length<120))a[a.length-1]+=" "+s;else a.push(s);return a},[])}
+function speak(text,onend){if(!TTS.ok){if(onend)setTimeout(onend,0);return false}
+  if(AU.el)stopMusic();
+  const id=++TTS.run,parts=chunks(plain(text));let k=0;
+  const done=()=>{if(id===TTS.run&&onend)onend()};
+  const one=()=>{if(id!==TTS.run)return;if(k>=parts.length){done();return}
+    const u=new SpeechSynthesisUtterance(parts[k++]);u.lang="de-DE";if(TTS.v)u.voice=TTS.v;u.rate=S.rate;u.pitch=1.05;TTS.keep=u;
+    let fired=false,started=false;
+    const fin=e=>{if(fired)return;fired=true;clearTimeout(wd);
+      if(e&&e.type==="error"&&!/interrupted|canceled/.test(e.error||"")){TTS.err++;if(!started&&TTS.err>=2&&!TTS.warned){TTS.warned=true;toast("Vorlesen klappt gerade nicht. Ist der Ton an?")}}
+      else if(started)TTS.err=0;
+      one()};
+    u.onstart=()=>{started=true};u.onend=fin;u.onerror=fin;
+    const wd=setTimeout(fin,2500+u.text.length*110/u.rate);
+    if(speechSynthesis.paused)speechSynthesis.resume();
+    speechSynthesis.speak(u)};
+  stopNow();const wait=90-(Date.now()-(TTS.cut||0));wait>0?setTimeout(one,wait):one();
+  return true}
+/* Vorlese-Knopf: leuchtet beim Sprechen, nochmal tippen stoppt */
+const sayBtn=(id,label)=>TTS.ok?`<button class="say" type="button" id="${id}" aria-label="${label||"Vorlesen"}">${I.spk}</button>`:"";
+function bindSay(id,getText){const b=document.getElementById(id);if(!b)return;
+  b.onclick=()=>{if(b.classList.contains("on")){hush();return}hush();wake();b.classList.add("on");speak(getText(),()=>b.classList.remove("on"))}}
+const canAuto=()=>S.ton&&TTS.ok&&TTS.awake;
+function autoSay(t){if(canAuto())speak(t)}
+
+let AC=null;
+function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){AC=null}}if(AC&&AC.state==="suspended")AC.resume();return AC}
+function beep(fs,len,type,vol){const a=ac();if(!a)return;let t=a.currentTime+.02;fs.forEach(f=>{const o=a.createOscillator(),g=a.createGain();o.type=type||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol||.18,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+len);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+len+.02);t+=len*.75})}
+const sfxOk=()=>beep([1046.5,1318.5],.14);
+const sfxBad=()=>beep([233,175],.18,"triangle",.12);
+
+/* ================= Symbole ================= */
+const I={
+  spk:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path d="M15.5 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11"/></svg>`,
+  back:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>`,
+  play:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z" fill="currentColor"/></svg>`,
+  pause:`<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4.2" height="14" rx="1.2" fill="currentColor"/><rect x="13.8" y="5" width="4.2" height="14" rx="1.2" fill="currentColor"/></svg>`,
+  load:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M12 3a9 9 0 1 1-9 9"/></svg>`,
+  person:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4.2-7 8-7s7 2.5 8 7"/><circle cx="10.4" cy="8" r=".6" fill="currentColor"/><circle cx="13.6" cy="8" r=".6" fill="currentColor"/></svg>`,
+  name:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7l9-4 9 4-9 4z"/><path d="M7 9v5c0 1.7 2.2 3 5 3s5-1.3 5-3V9"/></svg>`,
+  words:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v10H9l-5 4z"/><path d="M8 9h8M8 12h5"/></svg>`,
+  chat:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h11v8H8l-4 3z"/><path d="M15 9h5v8l-3-2h-6v-1"/></svg>`,
+  ear:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 9a5 5 0 0 1 10 0c0 3-3 4-3 7a3 3 0 0 1-5.5 1.6"/><path d="M10 9.5a2 2 0 0 1 4 0c0 1.3-1.4 1.7-1.4 3"/></svg>`,
+  mix:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h3.5c4 0 6 10 10 10H21M3 17h3.5c1.6 0 2.8-1.6 3.8-3.5M13.7 9.5C14.7 8.2 15.6 7 17 7h4M18.5 4.5L21 7l-2.5 2.5M18.5 14.5L21 17l-2.5 2.5"/></svg>`,
+  star:on=>`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z" fill="${on?"#FFC93C":"var(--lw-line)"}" stroke="${on?"#D99A00":"none"}" stroke-width="1.2" stroke-linejoin="round"/></svg>`
+};
+/* Planeten als SVG: Farbverlauf, Streifen bei Jupiter, Ring bei Saturn */
+const PCOL={mars:["#F08A5D","#B8401F"],venus:["#FBE7B5","#D6A55E"],merkur:["#D3CEC8","#7D7873"],jupiter:["#F4D3A8","#C27A44"],saturn:["#F6DFA4","#C99A4E"],uranus:["#BDF0F2","#4BAFC0"],neptun:["#7EA4F5","#2245B3"]};
+let GID=0;
+function planet(id,cls){const [a,b]=PCOL[id],g="pg"+(++GID);
+  const stripes=id==="jupiter"?`<path d="M12 40h76M10 52h80M14 63h72" stroke="#A65F2E" stroke-width="5" stroke-linecap="round" opacity=".55"/><ellipse cx="62" cy="62" rx="8" ry="4.5" fill="#B84A2A" opacity=".8"/>`
+    :id==="mars"?`<circle cx="38" cy="40" r="5" fill="#9B3218" opacity=".45"/><circle cx="60" cy="62" r="7" fill="#9B3218" opacity=".35"/>`
+    :id==="merkur"?`<circle cx="40" cy="38" r="6" fill="#6A6560" opacity=".4"/><circle cx="62" cy="58" r="4" fill="#6A6560" opacity=".4"/><circle cx="44" cy="66" r="3" fill="#6A6560" opacity=".4"/>`
+    :id==="neptun"?`<path d="M18 46h64" stroke="#1A3390" stroke-width="4" stroke-linecap="round" opacity=".4"/>`
+    :id==="saturn"?`<path d="M20 44h60M18 56h64" stroke="#B08440" stroke-width="3.5" stroke-linecap="round" opacity=".45"/>`:"";
+  const ring=id==="saturn";
+  return `<svg class="pl ${cls||""}" viewBox="0 0 100 100" aria-hidden="true"><defs><radialGradient id="${g}" cx="35%" cy="32%" r="75%"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></radialGradient><clipPath id="${g}c"><circle cx="50" cy="50" r="${ring?30:38}"/></clipPath></defs>
+    ${ring?`<ellipse cx="50" cy="50" rx="47" ry="13" fill="none" stroke="#D9B97A" stroke-width="5" transform="rotate(-18 50 50)" opacity=".9"/>`:""}
+    <circle cx="50" cy="50" r="${ring?30:38}" fill="url(#${g})"/><g clip-path="url(#${g}c)" ${ring?'transform="translate(50 50) scale(.79) translate(-50 -50)"':""}>${stripes}</g>
+    ${ring?`<path d="M3 50A47 13 0 0 0 97 50" fill="none" stroke="#E7CB8E" stroke-width="5" transform="rotate(-18 50 50)"/>`:""}</svg>`}
+const sky=()=>`<svg viewBox="0 0 76 76" width="76" height="76" aria-hidden="true"><circle cx="14" cy="16" r="1.5" fill="#fff"/><circle cx="60" cy="12" r="1.2" fill="#fff"/><circle cx="66" cy="58" r="1.4" fill="#fff"/><circle cx="10" cy="60" r="1" fill="#fff"/>
+  <path d="M28 52V24l22-5v27" fill="none" stroke="#FFC93C" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="23" cy="52" rx="6" ry="4.5" fill="#FFC93C"/><ellipse cx="45" cy="47" rx="6" ry="4.5" fill="#FFC93C"/></svg>`;
+
+/* ================= Holsts Leben (Kapitel 1) ================= */
+/* Lesen und Fragen wechseln sich ab. mark = gelb markiert wie auf dem Arbeitsblatt. */
+const LEBEN=[
+ {r:`Das ist <b>Gustav Holst</b>. Er war ein Komponist. Ein Komponist erfindet Musik und schreibt sie auf.`},
+ {r:`Gustav Holst wurde am <mark>21. September 1874</mark> in <mark>Cheltenham</mark> geboren. Cheltenham ist eine Stadt im Südwesten von <mark>England</mark>.`},
+ {q:"In welchem Land wurde Gustav Holst geboren?",o:["England","Deutschland","Frankreich"]},
+ {q:"In welchem Jahr wurde er geboren?",o:["1874","1934","1916"]},
+ {r:`Schon als Kind mochte er Musik sehr. <mark>Er lernte Klavier, Geige und später auch Komposition.</mark> Komposition heißt: selbst Musik erfinden.`},
+ {q:"Welche Instrumente lernte Holst als Kind?",o:["Klavier und Geige","Trommel und Flöte","Gitarre und Trompete"]},
+ {r:`<mark>Als Erwachsener arbeitete er als Lehrer, Dirigent und Komponist.</mark> Ein Dirigent steht vor dem Orchester und zeigt allen, wie sie spielen sollen.`},
+ {q:"Was war Holst von Beruf? Tippe alle drei an!",multi:true,o:["Lehrer","Dirigent","Komponist","Bäcker","Pilot"],a:["Lehrer","Dirigent","Komponist"]},
+ {r:`Er war ein ruhiger, freundlicher und sehr fleißiger Mensch. Er liebte die Natur, die Sterne und das Weltall.`},
+ {r:`Zwischen <b>1914 und 1916</b> schrieb er sein bekanntestes Werk: <b>„Die Planeten“</b>. Das ist Musik für ein großes Orchester. Sie hat <b>sieben Teile</b>, man sagt auch Sätze. Jeder Satz gehört zu einem Planeten.`},
+ {q:"Wie heißt das bekannteste Werk von Holst?",o:["Die Planeten","Die Sterne","Der Mond"]},
+ {q:"Wie viele Sätze hat „Die Planeten“?",o:["7","5","9"]},
+ {r:`Mit seiner Musik wollte Holst die Stimmung und den Charakter jedes Planeten zeigen. Manche Planeten klingen kraftvoll, andere ruhig, fröhlich oder geheimnisvoll.`},
+ {r:`Und warum fehlt die Erde? Holst hat nur die Planeten vertont, die man vom Himmel aus sieht. Auf der Erde wohnen wir ja selbst.`,fact:1},
+ {r:`Gustav Holst starb <mark>1934 in London</mark>.`},
+ {q:"Wo ist Holst gestorben?",o:["London","Cheltenham","Berlin"]},
+ {q:"Wann ist Holst gestorben?",o:["1934","1874","1914"]},
+ {end:1}
+];
+const LEBEN_N=LEBEN.length-1;
+const STATIONEN=[["1874","Geburt in Cheltenham, England",1],["ab 1893","Studium am Royal College of Music in London"],["1914–1916","Er komponiert „Die Planeten“"],["1934","Tod in London",1]];
+
+/* ================= Kapitel ================= */
+const CH=[
+  {id:"leben",t:"Wer war Gustav Holst?",d:"Lies und hör, wie Holst gelebt hat",ico:"person"},
+  {id:"planeten",t:"Die sieben Planeten",d:"Tippe die Planeten an und hör ihre Musik",ico:"pl"},
+  {id:"namen",t:"Holsts Namen für die Planeten",d:"Der Kriegsbringer, die Friedensbringerin …",ico:"name",n:7},
+  {id:"klang",t:"Wie klingt der Planet?",d:"Laut, ruhig, fröhlich oder geheimnisvoll?",ico:"words",n:7},
+  {id:"luecke",t:"Lückentext: Holsts Leben",d:"Erzähl Mia im Chat, wer Holst war",ico:"chat"},
+  {id:"hoeren",t:"Hör-Quiz",d:"Du hörst Musik. Welcher Planet ist das?",ico:"ear",n:7},
+  {id:"mix",t:"Großer Mix",d:"Alles gemischt, auch mit Musik",ico:"mix",n:10}
+];
+const chOf=id=>CH.find(c=>c.id===id);
+function anteil(c){
+  if(c.id==="leben")return S.leben/LEBEN_N;
+  if(c.id==="planeten")return S.seen.length/7;
+  if(c.id==="luecke")return (S.best.luecke||0)/3;
+  if(c.id==="hoeren")return Math.max(P.reduce((a,p)=>a+dots("hoeren",p.id),0)/21,(S.best.hoeren2||0)/3);
+  if(c.id==="mix")return (S.best.mix||0)/3;
+  return P.reduce((a,p)=>a+dots(c.id,p.id),0)/(7*3)}
+const sterne=p=>p>=.999?3:p>=2/3?2:p>=1/3?1:0;
+const icoOf=c=>c.ico==="pl"?planet("saturn"):I[c.ico];
+const chead=t=>`<div class="chead"><button class="backb" id="cbk">${I.back}Alle Kapitel</button></div>${t?`<h2>${t}</h2>`:""}`;
+
+/* ================= Startseite ================= */
+function home(){hush();stopMusic();R=null;
+  app.innerHTML=`
+  <section class="panel"><div class="hero"><span class="sky">${sky()}</span><div class="grow"><h2 style="font-size:1.35rem">Gustav Holst und „Die Planeten“</h2>
+    <p class="small">Ein Komponist hat Musik über sieben Planeten geschrieben. Erkennst du sie am Klang?</p></div></div>
+    <div class="bar"><i style="width:${Math.round(CH.reduce((a,c)=>a+Math.min(1,anteil(c)),0)/CH.length*100)}%"></i></div></section>
+  <div class="stations">${CH.map((c,k)=>{const b=sterne(anteil(c));
+    return `<button class="st ${c.id==="hoeren"?"star":""}" data-ch="${c.id}"><span class="ico">${icoOf(c)}</span><span class="grow"><span class="n">Kapitel ${k+1}${c.id==="hoeren"?" · für die Arbeit":""}</span><h3>${c.t}</h3><p>${c.d}</p><span class="stars" aria-label="${b} von 3 Sternen">${[0,1,2].map(i=>I.star(i<b)).join("")}</span></span></button>`}).join("")}</div>
+  <section class="panel"><h3>Vorlesen</h3>
+    ${TTS.ok?`<p class="small">Fragen und Texte werden laut vorgelesen. Mit dem Lautsprecher-Knopf hörst du sie noch einmal.</p>
+    <div class="modes" role="group" aria-label="Vorlesen">${[[true,"An"],[false,"Aus"]].map(([v,t])=>`<button data-ton="${v}" aria-pressed="${S.ton===v}">${t}</button>`).join("")}</div>
+    <div class="modes" role="group" aria-label="Sprechtempo">${[[.7,"Langsam"],[.85,"Normal"],[1,"Schnell"]].map(([v,t])=>`<button data-rate="${v}" aria-pressed="${S.rate===v}">${t}</button>`).join("")}</div>`
+    :`<p class="small">Dieser Browser kann leider nicht vorlesen. Alles andere geht trotzdem.</p>`}
+    <p class="small">Nichts zu hören? Lauter stellen und am iPhone den Stumm-Schalter prüfen.</p>
+  </section>
+  <details class="panel credits"><summary><b>Woher kommt die Musik?</b></summary>
+    <p style="margin-top:8px">Alle Aufnahmen sind frei verwendbar und kommen von Wikimedia Commons. Die Musik ist über 100 Jahre alt und gehört allen.</p>
+    <ul style="margin:6px 0 0;padding-left:18px">${P.map(p=>`<li><a href="${commonsLink(p.id)}" target="_blank" rel="noopener">${esc(p.n)}</a>: ${esc(REC[p.id].by)}</li>`).join("")}</ul>
+    <p style="margin-top:6px">Saturn und Neptun hat Holst 1923 selbst dirigiert. Darum rauschen sie ein bisschen, so klangen Aufnahmen damals.</p></details>`;
+  app.querySelectorAll(".st[data-ch]").forEach(b=>b.onclick=()=>openCh(b.dataset.ch));
+  app.querySelectorAll("[data-ton]").forEach(b=>b.onclick=()=>{S.ton=b.dataset.ton==="true";save();home();if(S.ton)speak("Vorlesen ist an.")});
+  app.querySelectorAll("[data-rate]").forEach(b=>b.onclick=()=>{S.rate=+b.dataset.rate;save();app.querySelectorAll("[data-rate]").forEach(x=>x.setAttribute("aria-pressed",x===b));speak("Mars, der Kriegsbringer.")});
+  scrollTo(0,0)}
+function openCh(id){({leben:()=>leben(0),planeten:()=>entdecken(),luecke:luecke,hoeren:hoerStart}[id]||(()=>startRound(id)))()}
+
+/* ================= Kapitel 1: Leben ================= */
+function leben(i){hush();stopMusic();R=null;
+  if(i>=LEBEN_N)return lebenEnde();
+  const s=LEBEN[i];
+  const bar=`<div class="lifebar" aria-hidden="true">${Array.from({length:LEBEN_N},(_,k)=>`<i class="${k<=i?"on":""}"></i>`).join("")}</div>`;
+  if(s.r){
+    app.innerHTML=`${chead()}${bar}<section class="panel"><div class="row" style="align-items:flex-start;flex-wrap:nowrap"><span class="kick grow">${s.fact?"Wusstest du schon?":"Gustav Holst"}</span>${sayBtn("sy")}</div>
+      ${i===0?`<div style="display:flex;justify-content:center">${portrait()}</div>`:""}
+      <p class="read">${s.r}</p>${i===1?`<p class="small">Gelb markiert = besonders wichtig.</p>`:""}</section>
+      <button class="go" id="nx">Weiter</button>
+      ${i>0?`<button class="ghost" id="pv">Zurück</button>`:""}`;
+    bindSay("sy",()=>s.r);$("#cbk").onclick=home;
+    $("#nx").onclick=()=>{S.leben=Math.max(S.leben,i+1);save();leben(i+1)};
+    if($("#pv"))$("#pv").onclick=()=>leben(i-1);
+    autoSay(s.r);scrollTo(0,0);return}
+  /* Frage */
+  const opts=shuffle(s.o);const right=s.a||[s.o[0]];const sel=new Set();
+  app.innerHTML=`${chead()}${bar}<div class="q"><b>${esc(s.q)}</b>${sayBtn("sy","Frage vorlesen")}</div>
+    <section class="stage" id="cb"><div class="opts">${opts.map((o,k)=>`<button class="opt" data-k="${k}">${esc(o)}</button>`).join("")}</div>
+    ${s.multi?`<button class="go" id="chk" disabled>Prüfen</button>`:""}</section>`;
+  $("#cbk").onclick=home;bindSay("sy",()=>s.q);
+  const fin=ok=>{app.querySelectorAll(".opt").forEach(b=>{b.disabled=true;const v=opts[+b.dataset.k];if(right.includes(v))b.classList.add("ok");else if(sel.has(v))b.classList.add("bad")});
+    if($("#chk"))$("#chk").remove();
+    ok?sfxOk():sfxBad();
+    const fb=document.createElement("div");fb.className="fb "+(ok?"ok":"bad");fb.setAttribute("role","status");
+    const big=right.length>1?`Holst war ${right.join(", ").replace(/, ([^,]*)$/," und $1")}.`:`Richtig ist: ${right[0]}.`;
+    fb.innerHTML=`<strong>${ok?pick(["Richtig!","Super!","Genau!","Toll!"]):"Nicht ganz"}</strong><div class="big">${esc(big)}</div>`;
+    const nx=document.createElement("button");nx.className="next";nx.type="button";nx.textContent="Weiter";
+    nx.onclick=()=>{if(ok){S.leben=Math.max(S.leben,i+1);save();leben(i+1)}else leben(i)};
+    if(!ok)nx.textContent="Nochmal versuchen";
+    const els=[fb];if(!ok){const g=document.createElement("button");g.className="ghost";g.type="button";g.textContent="Weiter";g.onclick=()=>{S.leben=Math.max(S.leben,i+1);save();leben(i+1)};els.push(nx,g)}else els.push(nx);
+    lwSheet($("#cb"),ok,els);if(canAuto())speak((ok?"Richtig! ":"")+big)};
+  app.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{const v=opts[+b.dataset.k];
+    if(s.multi){sel.has(v)?sel.delete(v):sel.add(v);b.classList.toggle("sel");$("#chk").disabled=!sel.size;return}
+    sel.add(v);fin(right.includes(v))});
+  if($("#chk"))$("#chk").onclick=()=>fin(sel.size===right.length&&right.every(x=>sel.has(x)));
+  autoSay(s.q);scrollTo(0,0)}
+function lebenEnde(){S.leben=LEBEN_N;save();
+  app.innerHTML=`${chead("Holsts Leben auf einen Blick")}
+    <section class="panel"><span class="kick">Wichtige Stationen</span><ul class="timeline">${STATIONEN.map(([j,t,m])=>`<li><b>${j}</b><span>${m?`<mark>${esc(t)}</mark>`:esc(t)}</span></li>`).join("")}</ul></section>
+    <section class="panel"><span class="kick">Das merkst du dir</span><p class="read">Geboren <mark>1874 in Cheltenham, England</mark>. Er lernte <mark>Klavier, Geige und Komposition</mark>. Er war <mark>Lehrer, Dirigent und Komponist</mark>. Sein bekanntestes Werk: <b>„Die Planeten“</b> mit sieben Sätzen. Gestorben <mark>1934 in London</mark>.</p>${sayBtn("sy")}</section>
+    <button class="go" id="nx">Weiter: Die sieben Planeten</button><button class="ghost" id="again">Nochmal von vorn</button>`;
+  $("#cbk").onclick=home;bindSay("sy",()=>"Gustav Holst wurde 1874 in Cheltenham in England geboren. Er lernte Klavier, Geige und Komposition. Er war Lehrer, Dirigent und Komponist. Sein bekanntestes Werk heißt Die Planeten und hat sieben Sätze. Er starb 1934 in London.");
+  $("#nx").onclick=()=>entdecken();$("#again").onclick=()=>leben(0);
+  beep([523.25,659.25,783.99,1046.5],.2);scrollTo(0,0)}
+/* Holst als kleine Zeichnung (Brille, Schnurrbart nein: so wie auf dem Arbeitsblatt, freundlich) */
+function portrait(){return `<svg viewBox="0 0 120 120" width="120" height="120" aria-hidden="true"><circle cx="60" cy="60" r="58" fill="var(--lw-cs)"/>
+  <path d="M22 118c4-24 18-34 38-34s34 10 38 34z" fill="#7A4A2A"/><path d="M50 86l10 16 10-16z" fill="#fff"/><path d="M57 92h6l-1 18h-4z" fill="#2B2B40"/>
+  <ellipse cx="60" cy="56" rx="22" ry="26" fill="#F2C9A6"/><path d="M37 50c0-18 10-26 23-26s24 8 24 24c-4-8-10-12-20-12-9 0-17 4-27 14z" fill="#8B5A33"/>
+  <circle cx="51" cy="58" r="7" fill="none" stroke="#2B2B40" stroke-width="2.2"/><circle cx="69" cy="58" r="7" fill="none" stroke="#2B2B40" stroke-width="2.2"/><path d="M58 58h4" stroke="#2B2B40" stroke-width="2"/>
+  <circle cx="51" cy="58" r="1.8" fill="#2B2B40"/><circle cx="69" cy="58" r="1.8" fill="#2B2B40"/><path d="M52 71c5 4 11 4 16 0" fill="none" stroke="#B5674A" stroke-width="2.4" stroke-linecap="round"/></svg>`}
+
+/* ================= Kapitel 2: Entdecken ================= */
+let SEL=null;
+const satz=p=>`${p.n}, ${p.h}. So klingt die Musik: ${p.klang}`;
+function entdecken(sel){hush();stopMusic();R=null;SEL=sel||null;const p=SEL&&PL(SEL);
+  app.innerHTML=`${chead("Die sieben Planeten")}
+    <p class="small" style="margin-top:-6px">Holst hat jedem Planeten einen Namen gegeben, der seinen Charakter zeigt. Tippe einen Planeten an!</p>
+    <div class="pgrid">${P.map((x,k)=>`<button class="pbtn ${S.seen.includes(x.id)?"seen":""}" data-p="${x.id}" aria-pressed="${x.id===SEL}"><span class="nr">${k+1}</span>${planet(x.id)}<span>${esc(x.n)}</span></button>`).join("")}</div>
+    ${p?`<section class="panel pcard" id="pc" aria-live="polite"><div class="top">${planet(p.id)}<div class="grow"><span class="kick">Satz ${P.indexOf(p)+1} von 7</span><h3>${esc(p.n)}</h3><div class="holst">${esc(p.h)}</div></div>${sayBtn("sy")}</div>
+        <div class="words">${p.w.map(w=>`<span class="word">${esc(w)}</span>`).join("")}</div>
+        <div class="tip"><span class="ear">${I.ear}</span><p><b>So klingt es:</b> ${esc(p.klang)}</p></div>
+        ${playerHTML({pid:"pl",title:`Hör mal: ${p.n}`,sub:"Die ersten 30 Sekunden"})}
+        ${playerHTML({pid:"pl2",title:"Das ganze Stück",sub:esc(REC[p.id].by)})}
+        ${REC[p.id].alt?`<p class="fact">Diese Aufnahme ist von 1923. Holst dirigiert hier selbst! Darum rauscht sie ein bisschen.</p>`:""}</section>`
+      :`<section class="panel"><p>${S.seen.length?`Du hast schon <b>${S.seen.length} von 7</b> Planeten angehört.`:"Welchen Planeten hörst du zuerst?"}</p></section>`}
+    ${S.seen.length===7?`<section class="panel"><b>Alle 7 entdeckt!</b><p class="small">Weißt du noch, wie Holst die Planeten genannt hat?</p><button class="go" id="nx">Weiter: Holsts Namen</button></section>`:""}`;
+  $("#cbk").onclick=home;
+  app.querySelectorAll("[data-p]").forEach(el=>el.onclick=()=>{const id=el.dataset.p;if(!S.seen.includes(id)){S.seen.push(id);save()}
+    entdecken(id);const c=$("#pc");if(c)c.scrollIntoView({block:"start",behavior:"smooth"});autoSay(satz(PL(id)))});
+  if(p){bindSay("sy",()=>satz(p));bindPlayer($("#pl"),p.id,{at:0,len:30});bindPlayer($("#pl2"),p.id,{at:0})}
+  if($("#nx"))$("#nx").onclick=()=>startRound("namen");
+  if(!sel)scrollTo(0,0)}
+
+/* ================= Aufgaben ================= */
+const others=(p,k)=>shuffle(P.filter(x=>x!==p)).slice(0,k);
+/* Charakterwort, das nur zu diesem Planeten passt (wild steht bei Merkur und Uranus) */
+const eigenWort=p=>shuffle(p.w.filter(w=>P.every(x=>x===p||!x.w.includes(w))))[0]||p.w[0];
+const T={
+  namen(p){if(Math.random()<.5){const o=shuffle([p,...others(p,2)]);
+      return {p,ch:"namen",q:`Wie hat Holst <em>${esc(p.n)}</em> genannt?`,say:`Wie hat Holst ${p.n} genannt?`,show:p.id,opts:o.map(x=>({h:x.h,ok:x===p}))}}
+    const o=shuffle([p,...others(p,2)]);
+    return {p,ch:"namen",q:`Welcher Planet ist <em>${esc(p.h)}</em>?`,say:`Welcher Planet ist ${p.h}?`,popts:true,opts:o.map(x=>({h:x.n,id:x.id,ok:x===p}))}},
+  klang(p){const r=Math.random();
+    if(r<.5){const w=eigenWort(p),o=shuffle([p,...others(p,2).filter(x=>!x.w.includes(w))].slice(0,3));
+      return {p,ch:"klang",q:`Welcher Planet klingt <em>${esc(w)}</em>?`,say:`Welcher Planet klingt ${w}?`,popts:true,opts:o.map(x=>({h:x.n,id:x.id,ok:x===p}))}}
+    const w=eigenWort(p),wrong=shuffle(others(p,6)).map(x=>eigenWort(x)).filter(x=>!p.w.includes(x)).slice(0,2);
+    return {p,ch:"klang",q:`Wie klingt <em>${esc(p.n)}</em>?`,say:`Wie klingt ${p.n}, ${p.h}?`,show:p.id,opts:shuffle([w,...wrong]).map(x=>({h:x,ok:x===w}))}},
+  hoeren(p,lvl){const n=lvl===2?4:3,o=shuffle([p,...others(p,n-1)]);
+    return {p,ch:"hoeren",lvl,listen:true,q:"Welcher Planet ist das?",say:"Hör gut zu. Welcher Planet ist das?",popts:true,
+      at:lvl===2?pick(REC[p.id].spots.slice(1).concat([0])):0,opts:o.map(x=>({h:x.n,id:x.id,ok:x===p,sub:lvl===2?"":x.h}))}},
+  leben(){const s=pick(LEBEN.filter(x=>x.q&&!x.multi));const o=shuffle(s.o);
+    return {p:null,ch:"leben",q:esc(s.q),say:s.q,opts:o.map(x=>({h:x,ok:x===s.o[0]}))}}
+};
+function choose(ch,n){const out=[];let rest=P.slice();
+  while(out.length<n){if(!rest.length)rest=P.filter(p=>p!==out[out.length-1]);
+    const W=rest.map(p=>Math.pow(4-dots(ch==="mix"?"hoeren":ch,p.id),2)+.6);let r=Math.random()*W.reduce((a,b)=>a+b,0),k=0;while(r>W[k]&&k<W.length-1){r-=W[k];k++}
+    out.push(rest[k]);rest.splice(k,1)}
+  return out}
+
+/* ================= Hör-Quiz: Start ================= */
+function hoerStart(){hush();stopMusic();R=null;
+  const s1=sterne(P.reduce((a,p)=>a+dots("hoeren",p.id),0)/21),s2=S.best.hoeren2||0;
+  app.innerHTML=`${chead("Hör-Quiz")}
+    <section class="panel"><p>In der Klassenarbeit hörst du vielleicht ein Stück Musik und sollst sagen, welcher Planet das ist. Hier kannst du das üben!</p>
+      <p class="small">Tipp: Hör auf die Stimmung. Ist es laut und bedrohlich? Ruhig? Schnell? Fröhlich? Geheimnisvoll?</p></section>
+    <div class="levels"><button id="l1"><b>Anfänge</b><span>Der Anfang jedes Stücks, 3 Planeten zur Wahl</span><span class="stars">${[0,1,2].map(i=>I.star(i<s1)).join("")}</span></button>
+      <button id="l2"><b>Profi</b><span>Auch Stellen aus der Mitte, 4 zur Wahl, ohne Namen</span><span class="stars">${[0,1,2].map(i=>I.star(i<s2)).join("")}</span></button></div>
+    <section class="panel"><h3>Hör-Spickzettel</h3>${P.map(p=>`<div class="row" style="flex-wrap:nowrap;align-items:flex-start">${planet(p.id).replace('class="pl ','class="pl " style="width:40px;height:40px" ')}<p class="grow"><b>${esc(p.n)}</b>: ${esc(p.merk)}</p></div>`).join("")}</section>`;
+  $("#cbk").onclick=home;$("#l1").onclick=()=>startRound("hoeren",1);$("#l2").onclick=()=>startRound("hoeren",2);
+  scrollTo(0,0)}
+
+/* ================= Runde ================= */
+let R=null;
+function startRound(id,lvl){hush();stopMusic();const c=chOf(id);
+  const ps=choose(id,c.n);
+  const tasks=ps.map((p,k)=>{if(id!=="mix")return T[id](p,lvl||1);
+    const kind=["hoeren","namen","klang","hoeren","leben"][k%5];return T[kind](p,kind==="hoeren"&&k>4?2:1)});
+  R={id,lvl:lvl||1,i:0,ok:0,res:[],miss:[],tasks:id==="mix"?shuffle(tasks):tasks};R.n=R.tasks.length;showTask()}
+function track(){$("#track").innerHTML=Array.from({length:R.n},(_,i)=>`<i class="${i<R.res.length?(R.res[i]?"ok":"no"):(i===R.i?"now":"")}"></i>`).join("")}
+function showTask(){hush();stopMusic();const t=R.tasks[R.i];R.locked=false;
+  app.innerHTML=`<div class="topbar"><button id="quit" aria-label="Runde beenden"></button><div class="track" id="track"></div></div>
+    <div class="q"><b>${t.q}</b>${t.listen?"":sayBtn("say","Frage vorlesen")}</div>
+    <section class="stage" id="cb">
+      ${t.listen?playerHTML({pid:"hp",big:true,title:"Musik abspielen",sub:"Tippe auf den gelben Knopf. Du kannst so oft hören, wie du willst."}):""}
+      ${t.show?`<div class="showp">${planet(t.show)}</div>`:""}
+      <div class="opts ${t.popts?(t.opts.length===4?"pl4":"pl3"):""}">${t.opts.map((o,i)=>`<button class="opt ${o.id?"withp":""}" data-i="${i}">${o.id?planet(o.id):""}<span>${esc(o.h)}</span>${o.sub?`<span class="small" style="font-size:.78rem;line-height:1.15">${esc(o.sub)}</span>`:""}</button>`).join("")}</div></section>`;
+  $("#quit").onclick=()=>R.id==="hoeren"?hoerStart():home();track();
+  if(t.listen){bindPlayer($("#hp"),t.p.id,{at:t.at,len:20})}
+  app.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{if(R.locked)return;const o=t.opts[+b.dataset.i];
+    app.querySelectorAll(".opt").forEach((x,i)=>{x.disabled=true;if(t.opts[i].ok)x.classList.add("ok")});if(!o.ok)b.classList.add("bad");
+    done(o.ok,o)});
+  if($("#say"))bindSay("say",()=>t.say);
+  if(!t.listen)autoSay(t.say);
+  scrollTo(0,0)}
+function done(ok,o){if(R.locked)return;R.locked=true;const t=R.tasks[R.i],p=t.p;
+  if(p&&t.ch!=="leben"){const m=S.m[t.ch]=S.m[t.ch]||{};m[p.id]=ok?Math.min(3,(m[p.id]||0)+1):0;save()}
+  R.res.push(ok);if(ok)R.ok++;else if(p&&!R.miss.includes(p))R.miss.push(p);
+  ok?sfxOk():sfxBad();track();
+  let big,txt="";
+  if(!p){big=ok?"Das stimmt!":`Richtig ist: ${t.opts.find(x=>x.ok).h}.`}
+  else if(t.ch==="hoeren"){big=`Das war ${voll(p)}.`;txt=p.merk;if(AU.el)stopMusic()}
+  else if(t.ch==="namen"){big=`${voll(p)}.`;txt=`So klingt ${p.n}: ${p.w.join(", ")}.`}
+  else{big=`${p.n} klingt ${p.w.join(", ").replace(/, ([^,]*)$/," und $1")}.`;txt=p.klang}
+  const fb=document.createElement("div");fb.className="fb "+(ok?"ok":"bad");fb.setAttribute("role","status");
+  fb.innerHTML=`<strong>${ok?pick(["Richtig!","Super!","Genau!","Klasse!","Toll!"]):"Nicht ganz"}</strong><div class="big">${esc(big)}</div>${txt?`<p>${esc(txt)}</p>`:""}`;
+  const extra=[];
+  if(t.ch==="hoeren"){const b=document.createElement("button");b.className="ghost";b.type="button";b.innerHTML=I.play+"<span>Nochmal hören</span>";
+    b.onclick=()=>{const el=$("#hp");if(el)playMusic(p.id,{el,at:t.at,len:20})};extra.push(b)}
+  else if(TTS.ok){const b=document.createElement("button");b.className="ghost";b.type="button";b.innerHTML=I.spk+"<span>Anhören</span>";b.onclick=()=>speak(big+" "+txt);extra.push(b)}
+  const nx=document.createElement("button");nx.className="next";nx.type="button";nx.textContent=R.i+1>=R.n?"Ergebnis":"Weiter";
+  nx.onclick=()=>{R.i++;R.i>=R.n?endRound():showTask()};
+  lwSheet($("#cb"),ok,[fb,...extra,nx]);
+  if(canAuto())speak(big)}
+function endRound(){hush();stopMusic();const n=R.n,ok=R.ok,q=ok/n;const st=q>=.9?3:q>=.7?2:q>=.5?1:0;
+  const bk=R.id==="hoeren"&&R.lvl===2?"hoeren2":R.id;S.best[bk]=Math.max(S.best[bk]||0,st);save();
+  const k=CH.findIndex(c=>c.id===R.id),nxt=CH[k+1];
+  const cheer=["Weiter üben, du schaffst das!","Gut gemacht!","Stark!","Super, du kennst dich aus!"][st];
+  const miss=R.miss,id=R.id,lvl=R.lvl;R=null;
+  app.innerHTML=`<section class="result"><h2>${cheer}</h2><div class="bigstars">${[0,1,2].map(i=>I.star(i<st).replace("<svg",`<svg class="s${i+1}"`)).join("")}</div>
+    <p style="font-size:1.15rem"><b>${ok} von ${n}</b> richtig</p>
+    ${miss.length?`<div class="panel missed"><b>Diese übst du noch einmal:</b><ul>${miss.map(p=>`<li>${esc(voll(p))}: ${esc(p.w.join(", "))}</li>`).join("")}</ul></div>`:""}
+    <button class="go" id="again">Nochmal üben</button>
+    ${nxt&&st>=2?`<button class="ghost" id="nx">Weiter: ${esc(nxt.t)}</button>`:""}
+    <button class="ghost" id="hm">Alle Kapitel</button></section>`;
+  if(st>=2)beep([523.25,659.25,783.99,1046.5],.2);
+  if(canAuto())speak(cheer+` Du hast ${ok} von ${n} richtig.`);
+  $("#again").onclick=()=>startRound(id,lvl);$("#hm").onclick=home;if($("#nx"))$("#nx").onclick=()=>openCh(nxt.id);
+  scrollTo(0,0)}
+
+/* ================= Kapitel 5: Lückentext als Chat ================= */
+/* Die Sätze sind die vom Arbeitsblatt („Ergänze den Lückentext zur Biographie“). */
+const CHAT=[
+  {w:"Mia",t:"Hey Rubie! Wir haben in Musik über einen Komponisten gesprochen. Ich hab aber nicht aufgepasst 🙈"},
+  {w:"Mia",t:"Wie hieß der nochmal?"},
+  {t:"Er hieß ___.",a:["Gustav Holst"],o:["Gustav Holst","Mozart","Beethoven"],ex:"Der Komponist der Planeten ist Gustav Holst."},
+  {w:"Mia",t:"Ach ja! Und wann wurde er geboren?"},
+  {t:"Gustav Holst wurde am ___ geboren.",a:["21.9.1874"],o:["21.9.1874","21.9.1934","1.1.1916"],ex:"Geboren am 21. September 1874."},
+  {w:"Mia",t:"Und wo?"},
+  {t:"In ___. Diese Stadt liegt im Südwesten Englands.",a:["Cheltenham"],o:["Cheltenham","London","Berlin"],ex:"Geboren in Cheltenham, gestorben in London."},
+  {w:"Mia",t:"Was hat er denn gearbeitet?"},
+  {t:"Er war von Beruf ___ und Dirigent und Lehrer.",a:["Komponist"],o:["Komponist","Bäcker","Pilot"],ex:"Holst war Komponist, Dirigent und Lehrer."},
+  {w:"Mia",t:"Ein Dirigent ist doch der, der vorne vor dem Orchester steht, oder?"},
+  {t:"Genau! Sein berühmtestes Werk heißt ___.",a:["Die Planeten"],o:["Die Planeten","Die Sterne","Der Mond"],ex:"Sein berühmtestes Werk heißt „Die Planeten“."},
+  {w:"Mia",t:"Cool 🪐 Und lebt er noch?"},
+  {t:"Nein. Er starb ___ in London.",a:["1934"],o:["1934","1874","1916"],ex:"Holst starb 1934 in London."},
+  {w:"Mia",t:"Danke, Rubie! Jetzt weiß ich alles für die Arbeit 😊"}
+];
+function luecke(){hush();stopMusic();R=null;
+  app.innerHTML=`${chead("Lückentext: Holsts Leben")}<p class="small" style="margin-top:-6px">Deine Freundin Mia schreibt dir. Tippe das richtige Wort an, damit deine Nachricht stimmt.</p><div id="chat" style="display:flex;flex-direction:column;gap:10px;min-width:0"></div><div id="after"></div>`;
+  $("#cbk").onclick=home;scrollTo(0,0);
+  if(!window.lwChat){$("#chat").innerHTML=`<section class="panel">Der Chat lädt gerade nicht.</section>`;return}
+  lwChat($("#chat"),{title:"Mia",sub:"online",ava:"M",fach:"mu",people:{Mia:"#E0567A"},say:TTS.ok?(t=>{wake();speak(t)}):null,lines:CHAT,
+    onEnd:res=>{const n=res.length,ok=res.filter(r=>r.ok).length,st=ok===n?3:ok>=n-1?2:ok>=n/2?1:0;
+      S.best.luecke=Math.max(S.best.luecke||0,st);save();if(st>=2)beep([523.25,659.25,783.99,1046.5],.2);
+      $("#after").innerHTML=`<section class="panel" style="margin-top:4px"><b>${ok} von ${n} Lücken richtig!</b>
+        <p class="read" style="font-size:1rem"><mark>Gustav Holst</mark> wurde am <mark>21.9.1874</mark> in <mark>Cheltenham</mark> geboren. Diese Stadt liegt im Südwesten <mark>Englands</mark>. Er war von Beruf <mark>Komponist</mark> und <mark>Dirigent</mark> und <mark>Lehrer</mark>. Sein berühmtestes Werk heißt <mark>„Die Planeten“</mark>. Er starb <mark>1934</mark> in <mark>London</mark>.</p>
+        <button class="go" id="again">Nochmal chatten</button><button class="ghost" id="nx">Weiter: Hör-Quiz</button></section>`;
+      $("#again").onclick=luecke;$("#nx").onclick=hoerStart;$("#after").scrollIntoView({block:"start",behavior:"smooth"})}})}
+
+/* Lernwelt: direkt ins Kapitel (planeten.html#hoeren …), Anker stehen in hefte.js */
+function kapitelSprung(){const id=location.hash.slice(1);if(!chOf(id))return false;openCh(id);return true}
+kapitelSprung()||home();
+</script>
+<script>/* Lernwelt: Kapitel-Fortschritt für die Startseite (siehe sync.js) */
+if(window.LW&&LW.kapitel){
+LW.kapitel(function(){
+  return CH.map(function(c){return {t:c.t,p:Math.min(1,anteil(c))}});
+});
+}</script>
+</body></html>
