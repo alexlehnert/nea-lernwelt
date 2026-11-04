@@ -1,0 +1,5 @@
+/* @kit */
+/* Holsts Planeten ist von Anfang an im Lernwelt-Look gebaut: nur die Fach-Farbe setzen. */
+:root:root:root{--lw-c:var(--lw-mu); --lw-cd:var(--lw-mu-d); --lw-cs:var(--lw-mu-s)}
+.go{width:auto}
+.go:disabled{opacity:.5}

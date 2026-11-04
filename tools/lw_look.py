@@ -7,7 +7,7 @@ Die Regeln für jede App stehen in tools/looks/<app>.css.
 import re, pathlib
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 APPS = {'rechenheft': 'ma', 'terme': 'ma', 'englisch': 'en', 'bio-expedition': 'bio',
-        'pflanzenzelle': 'bio', 'atlas': 'geo', 'noten': 'mu', 'rhythmus': 'mu', 'potenzen': 'ma', 'gewalt': 'eth', 'bundeslaender': 'su'}
+        'pflanzenzelle': 'bio', 'atlas': 'geo', 'noten': 'mu', 'rhythmus': 'mu', 'potenzen': 'ma', 'gewalt': 'eth', 'bundeslaender': 'su', 'planeten': 'mu'}
 FONTS = ('<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
          '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap">')
 BACK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>'

@@ -32,7 +32,9 @@ Fächer und Hefte stehen in [`hefte.js`](hefte.js).
 |---|---|---|
 | Deutsch | Rubies Schatzsuche (Wortarten, groß/klein, doppelte Mitlaute, ie) | `schatzsuche.html` |
 | Sachunterricht | Länder-Reise (16 Bundesländer und Hauptstädte, Karte) | `bundeslaender.html` |
-| Musik | Musik-Heft (angekündigt, `bald: true`) | – |
+| Musik | Holsts Planeten (Gustav Holst, „Die Planeten“, Hör-Quiz mit freien Aufnahmen von Wikimedia Commons) | `planeten.html` |
+
+Die Aufnahmen in „Holsts Planeten“ sind frei verwendbar (Wikimedia Commons: Blasorchester der US Air Force als Werk der US-Regierung, Saturn und Neptun von 1923 mit Holst als Dirigent) und werden direkt von upload.wikimedia.org geladen.
 
 Die Karte der Länder-Reise ist aus [deutschlandGeoJSON](https://github.com/isellsoap/deutschlandGeoJSON) (Daten: DIVA-GIS) vereinfacht.
 
