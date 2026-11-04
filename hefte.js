@@ -89,9 +89,9 @@ window.LW_HEFTE = [
     kapitel: ['Wortarten-Wald', 'Groß-klein-Burg', 'Doppel-Höhle', 'ie-Insel', 'Große Schatzsuche', 'Blitzrunde'],
     anker: ['wa', 'gk', 'dk', 'ie', 'mix', 'blitz'] },
   { id: 'bundeslaender', stufe: 'gs3', abzeichen: 'Deutschland-Kennerin', fach: 'sachunterricht', thema: 'Deutschland', name: 'Länder-Reise',
-    info: 'Die 16 Bundesländer und ihre Hauptstädte, mit Karte zum Antippen und Vorlesen', key: 'bundeslaender-v1',
-    kapitel: ['Deutschland entdecken', 'Wo liegt das Land?', 'Wie heißt das Land?', 'Hauptstädte', 'Zu welchem Land gehört die Stadt?', 'Große Deutschland-Reise'],
-    anker: ['entdecken', 'lage', 'name', 'stadt', 'land', 'mix'] },
+    info: 'Die Bundesrepublik, ihre 16 Bundesländer und Hauptstädte, mit Karte zum Antippen und Vorlesen', key: 'bundeslaender-v1',
+    kapitel: ['Deutschland ist ein Bundesstaat', 'Deutschland entdecken', 'Wo liegt das Land?', 'Wie heißt das Land?', 'Hauptstädte', 'Zu welchem Land gehört die Stadt?', 'Große Deutschland-Reise'],
+    anker: ['staat', 'entdecken', 'lage', 'name', 'stadt', 'land', 'mix'] },
   { id: 'musik-gs3', stufe: 'gs3', bald: true, fach: 'musik', thema: 'Musik', name: 'Musik-Heft',
     info: 'Die Aufgaben werden gerade vorbereitet.', kapitel: [] }
 ];
