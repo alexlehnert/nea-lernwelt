@@ -66,7 +66,16 @@ mark{background:#FFF27A;color:#1E1B3A;border-radius:4px;padding:0 3px;box-decora
 .pbtn[aria-pressed="true"]{border-color:var(--lw-c);background:var(--lw-cs)}
 .pbtn .nr{position:absolute;top:6px;left:8px;font:700 11px var(--lw-f-b);color:var(--lw-muted)}
 .pbtn.seen::after{content:"";position:absolute;top:7px;right:7px;width:18px;height:18px;border-radius:50%;background:var(--lw-ok) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/12px no-repeat}
-.pcard{border-color:var(--lw-c)}
+.pcard{border-color:var(--lw-c);scroll-margin-top:84px;position:relative}
+.pcard.seen::after{content:"";position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:var(--lw-ok) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/14px no-repeat}
+.pcard .top .say{margin-top:18px}
+.jump{position:sticky;top:0;z-index:5;display:flex;gap:4px;overflow-x:auto;padding:8px 2px;margin:0 -2px;background:var(--lw-bg);scrollbar-width:none}
+.jump::-webkit-scrollbar{display:none}
+.jump button{flex:1 1 0;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:0;padding:6px 1px;border-radius:16px;border:2px solid var(--lw-line);border-bottom-width:4px;background:var(--lw-card);font:700 .66rem/1.1 var(--lw-f-d)}
+.jump .pl{width:32px;height:32px}
+.jump button.seen{border-color:var(--lw-ok)}
+.more summary{cursor:pointer;font-weight:700;color:var(--lw-c);min-height:44px;display:flex;align-items:center}
+.more .player{margin-top:6px}
 .pcard .top{display:flex;gap:14px;align-items:center}
 .pcard .top .pl{width:84px;height:84px}
 .pcard h3{font-size:1.6rem}
@@ -408,7 +417,7 @@ const STATIONEN=[["1874","Geburt in Cheltenham, England",1],["ab 1893","Studium 
 /* ================= Kapitel ================= */
 const CH=[
   {id:"leben",t:"Wer war Gustav Holst?",d:"Lies und hör, wie Holst gelebt hat",ico:"person"},
-  {id:"planeten",t:"Die sieben Planeten",d:"Tippe die Planeten an und hör ihre Musik",ico:"pl"},
+  {id:"planeten",t:"Planeten-Übersicht",d:"Erst lernen: alle Planeten mit Name, Beschreibung und Musik",ico:"pl"},
   {id:"namen",t:"Holsts Namen für die Planeten",d:"Der Kriegsbringer, die Friedensbringerin …",ico:"name",n:7},
   {id:"klang",t:"Wie klingt der Planet?",d:"Laut, ruhig, fröhlich oder geheimnisvoll?",ico:"words",n:7},
   {id:"luecke",t:"Lückentext: Holsts Leben",d:"Erzähl Mia im Chat, wer Holst war",ico:"chat"},
@@ -493,7 +502,7 @@ function lebenEnde(){S.leben=LEBEN_N;save();
   app.innerHTML=`${chead("Holsts Leben auf einen Blick")}
     <section class="panel"><span class="kick">Wichtige Stationen</span><ul class="timeline">${STATIONEN.map(([j,t,m])=>`<li><b>${j}</b><span>${m?`<mark>${esc(t)}</mark>`:esc(t)}</span></li>`).join("")}</ul></section>
     <section class="panel"><span class="kick">Das merkst du dir</span><p class="read">Geboren <mark>1874 in Cheltenham, England</mark>. Er lernte <mark>Klavier, Geige und Komposition</mark>. Er war <mark>Lehrer, Dirigent und Komponist</mark>. Sein bekanntestes Werk: <b>„Die Planeten“</b> mit sieben Sätzen. Gestorben <mark>1934 in London</mark>.</p>${sayBtn("sy")}</section>
-    <button class="go" id="nx">Weiter: Die sieben Planeten</button><button class="ghost" id="again">Nochmal von vorn</button>`;
+    <button class="go" id="nx">Weiter: Planeten-Übersicht</button><button class="ghost" id="again">Nochmal von vorn</button>`;
   $("#cbk").onclick=home;bindSay("sy",()=>"Gustav Holst wurde 1874 in Cheltenham in England geboren. Er lernte Klavier, Geige und Komposition. Er war Lehrer, Dirigent und Komponist. Sein bekanntestes Werk heißt Die Planeten und hat sieben Sätze. Er starb 1934 in London.");
   $("#nx").onclick=()=>entdecken();$("#again").onclick=()=>leben(0);
   beep([523.25,659.25,783.99,1046.5],.2);scrollTo(0,0)}
@@ -504,27 +513,40 @@ function portrait(){return `<svg viewBox="0 0 120 120" width="120" height="120" 
   <circle cx="51" cy="58" r="7" fill="none" stroke="#2B2B40" stroke-width="2.2"/><circle cx="69" cy="58" r="7" fill="none" stroke="#2B2B40" stroke-width="2.2"/><path d="M58 58h4" stroke="#2B2B40" stroke-width="2"/>
   <circle cx="51" cy="58" r="1.8" fill="#2B2B40"/><circle cx="69" cy="58" r="1.8" fill="#2B2B40"/><path d="M52 71c5 4 11 4 16 0" fill="none" stroke="#B5674A" stroke-width="2.4" stroke-linecap="round"/></svg>`}
 
-/* ================= Kapitel 2: Entdecken ================= */
-let SEL=null;
-const satz=p=>`${p.n}, ${p.h}. So klingt die Musik: ${p.klang}`;
-function entdecken(sel){hush();stopMusic();R=null;SEL=sel||null;const p=SEL&&PL(SEL);
-  app.innerHTML=`${chead("Die sieben Planeten")}
-    <p class="small" style="margin-top:-6px">Holst hat jedem Planeten einen Namen gegeben, der seinen Charakter zeigt. Tippe einen Planeten an!</p>
-    <div class="pgrid">${P.map((x,k)=>`<button class="pbtn ${S.seen.includes(x.id)?"seen":""}" data-p="${x.id}" aria-pressed="${x.id===SEL}"><span class="nr">${k+1}</span>${planet(x.id)}<span>${esc(x.n)}</span></button>`).join("")}</div>
-    ${p?`<section class="panel pcard" id="pc" aria-live="polite"><div class="top">${planet(p.id)}<div class="grow"><span class="kick">Satz ${P.indexOf(p)+1} von 7</span><h3>${esc(p.n)}</h3><div class="holst">${esc(p.h)}</div></div>${sayBtn("sy")}</div>
-        <div class="words">${p.w.map(w=>`<span class="word">${esc(w)}</span>`).join("")}</div>
-        <div class="tip"><span class="ear">${I.ear}</span><p><b>So klingt es:</b> ${esc(p.klang)}</p></div>
-        ${playerHTML({pid:"pl",title:`Hör mal: ${p.n}`,sub:"Die ersten 30 Sekunden"})}
-        ${playerHTML({pid:"pl2",title:"Das ganze Stück",sub:esc(REC[p.id].by)})}
-        ${REC[p.id].alt?`<p class="fact">Diese Aufnahme ist von 1923. Holst dirigiert hier selbst! Darum rauscht sie ein bisschen.</p>`:""}</section>`
-      :`<section class="panel"><p>${S.seen.length?`Du hast schon <b>${S.seen.length} von 7</b> Planeten angehört.`:"Welchen Planeten hörst du zuerst?"}</p></section>`}
-    ${S.seen.length===7?`<section class="panel"><b>Alle 7 entdeckt!</b><p class="small">Weißt du noch, wie Holst die Planeten genannt hat?</p><button class="go" id="nx">Weiter: Holsts Namen</button></section>`:""}`;
-  $("#cbk").onclick=home;
-  app.querySelectorAll("[data-p]").forEach(el=>el.onclick=()=>{const id=el.dataset.p;if(!S.seen.includes(id)){S.seen.push(id);save()}
-    entdecken(id);const c=$("#pc");if(c)c.scrollIntoView({block:"start",behavior:"smooth"});autoSay(satz(PL(id)))});
-  if(p){bindSay("sy",()=>satz(p));bindPlayer($("#pl"),p.id,{at:0,len:30});bindPlayer($("#pl2"),p.id,{at:0})}
-  if($("#nx"))$("#nx").onclick=()=>startRound("namen");
-  if(!sel)scrollTo(0,0)}
+/* ================= Kapitel 2: Planeten-Übersicht zum Lernen ================= */
+/* Alle sieben Planeten untereinander: Name, Holsts Bezeichnung, Charakterwörter, wie es klingt und die Musik.
+   Ein Planet gilt als gelernt, sobald Rubie seine Musik abspielt oder ihn vorlesen lässt. */
+const satz=p=>`${p.n}, ${p.h}. Die Musik klingt ${p.w.join(", ").replace(/, ([^,]*)$/," und $1")}. ${p.klang}`;
+function lernt(id){if(!S.seen.includes(id)){S.seen.push(id);save()}
+  const c=document.getElementById("pc-"+id);if(c)c.classList.add("seen");
+  const j=app.querySelector(`.jump [data-p="${id}"]`);if(j)j.classList.add("seen");
+  const n=$("#seenN");if(n)n.textContent=S.seen.length;
+  const f=$("#fertig");if(f&&S.seen.length===7)f.hidden=false}
+function entdecken(sel){hush();stopMusic();R=null;
+  app.innerHTML=`${chead("Planeten-Übersicht")}
+    <section class="panel"><p>Hier lernst du alle sieben Planeten kennen. Hör dir zu jedem Planeten die Musik an und lies, wie sie klingt. Danach bist du bereit fürs Quiz!</p>
+      <p class="small"><b id="seenN" style="color:var(--lw-ink)">${S.seen.length}</b> von 7 Planeten angehört</p></section>
+    <nav class="jump" aria-label="Zu einem Planeten springen">${P.map(x=>`<button class="${S.seen.includes(x.id)?"seen":""}" data-p="${x.id}">${planet(x.id)}<span>${esc(x.n)}</span></button>`).join("")}</nav>
+    ${P.map((p,k)=>`<section class="panel pcard ${S.seen.includes(p.id)?"seen":""}" id="pc-${p.id}">
+      <div class="top">${planet(p.id)}<div class="grow"><span class="kick">Satz ${k+1} von 7</span><h3>${esc(p.n)}</h3><div class="holst">${esc(p.h)}</div></div>${sayBtn("sy-"+p.id,"Vorlesen: "+p.n)}</div>
+      <div class="words">${p.w.map(w=>`<span class="word">${esc(w)}</span>`).join("")}</div>
+      <div class="tip"><span class="ear">${I.ear}</span><p><b>So klingt es:</b> ${esc(p.klang)}</p></div>
+      ${playerHTML({pid:"pl-"+p.id,title:`Hör mal: ${p.n}`,sub:"Die ersten 30 Sekunden"})}
+      <p class="fact"><b>Merk-Tipp:</b> ${esc(p.merk)}</p>
+      <details class="more"><summary>Das ganze Stück anhören</summary>${playerHTML({pid:"pf-"+p.id,title:`${p.n}, ganz`,sub:esc(REC[p.id].by)})}
+        ${REC[p.id].alt?`<p class="fact">Diese Aufnahme ist von 1923. Holst dirigiert hier selbst! Darum rauscht sie ein bisschen.</p>`:""}</details>
+    </section>`).join("")}
+    <section class="panel" id="fertig" ${S.seen.length===7?"":"hidden"}><b>Alle 7 Planeten angehört!</b><p class="small">Jetzt kannst du üben. Weißt du noch, wie Holst die Planeten genannt hat?</p>
+      <button class="go" id="nx">Weiter: Holsts Namen</button><button class="ghost" id="hq">Zum Hör-Quiz</button></section>
+    <button class="ghost" id="top">Nach oben</button>`;
+  $("#cbk").onclick=home;$("#top").onclick=()=>scrollTo({top:0,behavior:"smooth"});
+  P.forEach(p=>{bindSay("sy-"+p.id,()=>satz(p));
+    [["pl-",{at:0,len:30}],["pf-",{at:0}]].forEach(([k,o])=>{const el=bindPlayer(document.getElementById(k+p.id),p.id,o);
+      el.querySelector(".pp").addEventListener("click",()=>lernt(p.id))});
+    const sb=document.getElementById("sy-"+p.id);if(sb)sb.addEventListener("click",()=>lernt(p.id))});
+  app.querySelectorAll(".jump [data-p]").forEach(b=>b.onclick=()=>{const c=document.getElementById("pc-"+b.dataset.p);if(c)c.scrollIntoView({block:"start",behavior:"smooth"})});
+  $("#nx").onclick=()=>startRound("namen");$("#hq").onclick=hoerStart;
+  if(sel){const c=document.getElementById("pc-"+sel);if(c)c.scrollIntoView({block:"start"})}else scrollTo(0,0)}
 
 /* ================= Aufgaben ================= */
 const others=(p,k)=>shuffle(P.filter(x=>x!==p)).slice(0,k);
@@ -557,11 +579,12 @@ function hoerStart(){hush();stopMusic();R=null;
   const s1=sterne(P.reduce((a,p)=>a+dots("hoeren",p.id),0)/21),s2=S.best.hoeren2||0;
   app.innerHTML=`${chead("Hör-Quiz")}
     <section class="panel"><p>In der Klassenarbeit hörst du vielleicht ein Stück Musik und sollst sagen, welcher Planet das ist. Hier kannst du das üben!</p>
-      <p class="small">Tipp: Hör auf die Stimmung. Ist es laut und bedrohlich? Ruhig? Schnell? Fröhlich? Geheimnisvoll?</p></section>
+      <p class="small">Tipp: Hör auf die Stimmung. Ist es laut und bedrohlich? Ruhig? Schnell? Fröhlich? Geheimnisvoll?</p>
+      ${S.seen.length<7?`<p class="small">Du hast erst <b>${S.seen.length} von 7</b> Planeten angehört. Lern sie zuerst in der Übersicht!</p>`:""}<button class="ghost" id="lern">Erst lernen: Planeten-Übersicht</button></section>
     <div class="levels"><button id="l1"><b>Anfänge</b><span>Der Anfang jedes Stücks, 3 Planeten zur Wahl</span><span class="stars">${[0,1,2].map(i=>I.star(i<s1)).join("")}</span></button>
       <button id="l2"><b>Profi</b><span>Auch Stellen aus der Mitte, 4 zur Wahl, ohne Namen</span><span class="stars">${[0,1,2].map(i=>I.star(i<s2)).join("")}</span></button></div>
     <section class="panel"><h3>Hör-Spickzettel</h3>${P.map(p=>`<div class="row" style="flex-wrap:nowrap;align-items:flex-start">${planet(p.id).replace('class="pl ','class="pl " style="width:40px;height:40px" ')}<p class="grow"><b>${esc(p.n)}</b>: ${esc(p.merk)}</p></div>`).join("")}</section>`;
-  $("#cbk").onclick=home;$("#l1").onclick=()=>startRound("hoeren",1);$("#l2").onclick=()=>startRound("hoeren",2);
+  $("#cbk").onclick=home;$("#l1").onclick=()=>startRound("hoeren",1);$("#lern").onclick=()=>entdecken();$("#l2").onclick=()=>startRound("hoeren",2);
   scrollTo(0,0)}
 
 /* ================= Runde ================= */

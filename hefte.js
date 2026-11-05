@@ -100,7 +100,7 @@ window.LW_HEFTE = [
     anker: ['staat', 'entdecken', 'lage', 'name', 'stadt', 'land', 'mix'] },
   { id: 'planeten', stufe: 'gs3', abzeichen: 'Planeten-Lauscherin', fach: 'musik', thema: 'Komponisten', name: 'Holsts Planeten',
     info: 'Gustav Holst und „Die Planeten“: sein Leben, Holsts Namen für die Planeten und ein Hör-Quiz mit echter Musik', key: 'holst-planeten-v1',
-    kapitel: ['Wer war Gustav Holst?', 'Die sieben Planeten', 'Holsts Namen für die Planeten', 'Wie klingt der Planet?', 'Lückentext: Holsts Leben', 'Hör-Quiz', 'Großer Mix'],
+    kapitel: ['Wer war Gustav Holst?', 'Planeten-Übersicht', 'Holsts Namen für die Planeten', 'Wie klingt der Planet?', 'Lückentext: Holsts Leben', 'Hör-Quiz', 'Großer Mix'],
     anker: ['leben', 'planeten', 'namen', 'klang', 'luecke', 'hoeren', 'mix'] }
 ];
 
