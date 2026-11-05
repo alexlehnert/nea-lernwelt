@@ -1,0 +1,638 @@
+<!doctype html><html lang="de"><head><meta charset=utf8><script src="/api/config"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="/sync.js"></script><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"><link rel="manifest" href="/manifest.webmanifest"><meta name="apple-mobile-web-app-title" content="Lernwelt"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="theme-color" content="#5B3FE6"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Rechengesetze</title>
+<style>
+/* Rechengesetze der Addition: Kommutativgesetz K⁺, Assoziativgesetz A⁺, neutrales Element N⁺ (aus Neas Regelheft).
+   Kapitel 1 ist die Merkseite mit Bildern zum Ausprobieren, danach Runden mit Sternen.
+   Interaktiv: Zahlen ziehen zum Tauschen, Klammer-Gondel setzen, Zahlen-Pärchen zusammenschieben.
+   Farben und Schriften kommen aus lernwelt-app.css (hell und dunkel). */
+:root{color-scheme:light dark}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{margin:0;background:var(--lw-bg);color:var(--lw-ink);font-family:var(--lw-f-b);font-size:17px;line-height:1.45;-webkit-tap-highlight-color:transparent;padding-top:env(safe-area-inset-top,0px)}
+.wrap{max-width:640px;margin:0 auto;padding:14px max(16px,env(safe-area-inset-right,0px)) 130px max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px}
+h1,h2,h3{font-family:var(--lw-f-d);font-weight:700;margin:0;line-height:1.15;text-wrap:balance}
+h2{font-size:1.6rem}
+h3{font-size:1.15rem}
+p{margin:0}
+b{font-weight:700}
+sup{font-size:.6em;line-height:0;position:relative;top:-.15em;vertical-align:super}
+button{font:inherit;color:inherit;cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+button:focus-visible{outline:3px solid var(--lw-brand);outline-offset:2px}
+svg{display:block}
+.small{font-size:.88rem;color:var(--lw-muted)}
+.lead{font-size:1.05rem}
+.num{white-space:nowrap;font-variant-numeric:tabular-nums}
+.panel{background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--lw-ma)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.grow{flex:1}
+.ghost{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:8px 14px}
+.ghost svg,.go svg{width:18px;height:18px;flex:none}
+.go{display:inline-flex;align-items:center;justify-content:center;gap:8px}
+
+/* Startseite */
+.hero{display:flex;flex-direction:column;gap:8px}
+.lawchips{display:flex;gap:8px;flex-wrap:wrap}
+.lawchip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:99px;background:var(--lw-ma-s);color:var(--lw-ma);font:700 .95rem/1.1 var(--lw-f-d)}
+.stations{display:flex;flex-direction:column;gap:12px}
+.st{display:flex;align-items:center;gap:14px;text-align:left;width:100%;padding:14px;border-radius:22px;background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:5px}
+.st:active{transform:translateY(3px);border-bottom-width:2px}
+.st .ico{width:56px;height:56px;flex:none;border-radius:16px;background:var(--lw-ma-s);color:var(--lw-ma);display:grid;place-items:center;font:700 1.25rem/1 var(--lw-f-d)}
+.st .ico svg{width:30px;height:30px}
+.st h3{font-size:1.12rem}
+.st p{font-size:.9rem;color:var(--lw-muted);line-height:1.3;margin-top:2px}
+.st .n{font:700 12px var(--lw-f-b);letter-spacing:.1em;text-transform:uppercase;color:var(--lw-ma)}
+.stars{display:flex;gap:2px;margin-top:6px}
+.stars svg{width:20px;height:20px}
+.st.read .ico{background:var(--lw-sun);color:#5B3A00}
+.seen{display:inline-block;margin-top:6px;font-size:.82rem;font-weight:700;color:var(--lw-ok-ink);background:var(--lw-ok-bg);padding:2px 10px;border-radius:99px}
+
+/* Merkseite (Regelheft) */
+.chead{display:flex;align-items:center;gap:12px}
+.backb{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:6px 14px 6px 10px;border-radius:14px;border:2px solid var(--lw-line);border-bottom-width:4px;background:var(--lw-card);font-weight:700;color:var(--lw-muted)}
+.backb svg{width:18px;height:18px}
+.law{gap:12px}
+.lawhead{display:flex;align-items:center;gap:12px}
+.lawhead .badge{width:52px;height:52px;flex:none;border-radius:16px;background:var(--lw-ma);color:#fff;display:grid;place-items:center;font:700 1.4rem/1 var(--lw-f-d)}
+.lawhead .badge sup{font-size:.6em}
+.lawhead h3{font-size:1.2rem}
+.lawhead .small{margin-top:2px}
+/* wie im Regelheft: Regel im roten Kasten */
+.formel{align-self:center;border:3px solid #D94A3A;border-radius:10px;padding:8px 18px;font:700 clamp(1.35rem,6.5vw,1.8rem)/1.2 var(--lw-f-d);white-space:nowrap;background:var(--lw-card)}
+.bsp{font:600 1.1rem/1.5 var(--lw-f-d);font-variant-numeric:tabular-nums}
+.bsp .k{font:400 .85rem var(--lw-f-b);color:var(--lw-muted);display:block}
+.worte{border-left:5px solid var(--lw-ma);padding:4px 0 4px 12px}
+.worte .wl{display:block;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;color:var(--lw-ma)}
+.meta{background:var(--lw-soft);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.meta .mt{display:flex;gap:10px;align-items:flex-start}
+.meta .em{font-size:1.9rem;line-height:1}
+.meta .mt b{display:block;font-family:var(--lw-f-d);font-size:1.05rem}
+.falle{background:var(--lw-bad-bg);color:var(--lw-ink);border-radius:18px;padding:14px;display:flex;gap:10px;align-items:flex-start}
+.falle .em{font-size:1.6rem;line-height:1}
+.falle s{color:var(--lw-bad-ink);text-decoration-thickness:3px}
+.falle b.r{color:var(--lw-ok-ink)}
+.words{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:4px 6px;align-items:end;text-align:center;font:700 1.6rem/1 var(--lw-f-d)}
+.words small{font:700 .72rem/1.2 var(--lw-f-b);color:var(--lw-ma);letter-spacing:.04em;display:block;margin-top:6px}
+
+/* Demo: Murmeln tauschen */
+.lz{white-space:nowrap}
+.demo,.zrow,.gline{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.demo{display:flex;flex-direction:column;align-items:center;gap:10px;background:var(--lw-card);border-radius:16px;padding:12px}
+.demo .go{width:100%}
+.bags{display:flex;align-items:center;justify-content:center;gap:10px;width:100%}
+.bag{flex:1;max-width:150px;border:2px solid var(--lw-line);border-radius:16px;padding:8px;display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--lw-card)}
+.bag b{font:700 1.8rem/1 var(--lw-f-d)}
+.dots{display:flex;flex-wrap:wrap;justify-content:center;gap:4px;max-width:110px}
+.dots i{width:12px;height:12px;border-radius:50%;background:var(--c)}
+.demo .sumline{font:700 1.5rem/1.2 var(--lw-f-d);font-variant-numeric:tabular-nums}
+.pl{font:700 1.6rem/1 var(--lw-f-d);color:var(--lw-muted)}
+
+/* Klammer = Gondel */
+.gline{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;font:700 clamp(1.5rem,7.5vw,2.1rem)/1.2 var(--lw-f-d);font-variant-numeric:tabular-nums}
+.gon{display:inline-flex;align-items:center;gap:6px;padding:4px 8px 6px;border-radius:14px 14px 18px 18px;background:var(--lw-ma-s);border:3px solid var(--lw-ma);position:relative;transition:background .2s}
+.gon::before{content:"";position:absolute;left:50%;top:-12px;width:3px;height:10px;background:var(--lw-ma);transform:translateX(-50%)}
+.gon .br{color:var(--lw-ma)}
+.steps{font:600 1.1rem/1.5 var(--lw-f-d);text-align:center;font-variant-numeric:tabular-nums}
+.plus{min-width:44px;min-height:44px;border-radius:12px;border:2px dashed var(--lw-ma);background:none;color:var(--lw-ma);font:700 1em/1 var(--lw-f-d);padding:0 4px}
+.plus.in{border-style:solid;background:var(--lw-ma);color:#fff}
+
+/* Runde */
+.topbar{display:flex;align-items:center;gap:12px}
+.track{flex:1;display:flex;gap:4px}
+.track i{flex:1;height:12px;border-radius:99px;background:var(--lw-line)}
+.track i.ok{background:var(--lw-ok)}
+.track i.no{background:var(--lw-bad)}
+.track i.now{background:var(--lw-ma)}
+.q{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.q b{display:block;font:700 1.3rem/1.2 var(--lw-f-d)}
+.q .lk{flex:none;padding:4px 10px;border-radius:99px;background:var(--lw-ma-s);color:var(--lw-ma);font:700 .95rem/1.2 var(--lw-f-d)}
+.stage{display:flex;flex-direction:column;gap:14px}
+.show{background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:22px;padding:18px 12px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center}
+.eq{font:700 clamp(1.5rem,7.5vw,2.3rem)/1.25 var(--lw-f-d);display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:0 .3em;font-variant-numeric:tabular-nums}
+.slot{display:inline-grid;place-items:center;min-width:1.6em;min-height:1.25em;padding:0 .2em;border-radius:12px;border:2px dashed var(--lw-ma);background:var(--lw-ma-s);color:var(--lw-ma);font-variant-numeric:tabular-nums;white-space:nowrap}
+.slot.full{border-style:solid}
+.slot.ok{border-color:var(--lw-ok);background:var(--lw-ok-bg);color:var(--lw-ok-ink)}
+.slot.bad{border-color:var(--lw-bad);background:var(--lw-bad-bg);color:var(--lw-bad-ink)}
+.sub{font-size:.95rem;color:var(--lw-muted)}
+.opts{display:grid;grid-template-columns:1fr;gap:10px}
+.opts.g2{grid-template-columns:1fr 1fr}
+.opt{width:100%;padding:10px 12px;display:flex;align-items:center;justify-content:center;text-align:center;font-variant-numeric:tabular-nums}
+.opt:disabled{cursor:default}
+.opt sup{font-size:.6em}
+.kp{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.kp button{min-height:54px;border-radius:16px;border:2px solid var(--lw-line);border-bottom-width:5px;background:var(--lw-card);font:700 1.5rem/1 var(--lw-f-d);color:var(--lw-ink);display:grid;place-items:center}
+.kp button:active{transform:translateY(3px);border-bottom-width:2px}
+.kp button:disabled{opacity:.45}
+.kp .del{color:var(--lw-muted)}
+.kp .del svg{width:26px;height:26px}
+.kp .ok{background:var(--lw-ma);border-color:var(--lw-ma-d);color:#fff;font-size:1.15rem;letter-spacing:.04em}
+.fb .big{font:700 1.4rem/1.3 var(--lw-f-d);color:var(--lw-ink);font-variant-numeric:tabular-nums}
+.fb p{margin-top:4px}
+.lw-sheet .ghost{width:100%;min-height:50px}
+
+/* Zahlenkärtchen zum Ziehen */
+.zrow{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;font:700 clamp(1.5rem,7.5vw,2.1rem)/1 var(--lw-f-d)}
+.zt{min-width:72px;min-height:64px;padding:6px 12px;border-radius:18px;border:3px solid var(--lw-ma);border-bottom-width:6px;background:var(--lw-card);color:var(--lw-ink);font:700 1em/1 var(--lw-f-d);font-variant-numeric:tabular-nums;touch-action:none;position:relative;transition:transform .35s cubic-bezier(.3,1.4,.5,1),background .15s,border-color .15s}
+.zt.drag{transition:none;z-index:50;box-shadow:0 10px 24px rgba(30,27,58,.25);cursor:grabbing}
+.zt.sel{background:var(--lw-ma);color:#fff;border-color:var(--lw-ma-d)}
+.zt.over{background:var(--lw-sun);border-color:#D99A00;color:#3A2600}
+.zt.shake{animation:shake .4s}
+.zt.pop{animation:pop .45s}
+.zt.ten{border-color:var(--lw-ok);background:var(--lw-ok-bg);color:var(--lw-ok-ink)}
+.zt:disabled{cursor:default}
+.op{color:var(--lw-muted)}
+#pz{gap:6px;font-size:clamp(1.3rem,6.4vw,1.8rem)}
+#pz .zt{min-width:58px;padding:6px 8px}
+.res{min-width:1.6em}
+.res.q{color:var(--lw-muted)}
+.res.diff{color:var(--lw-bad-ink)}
+.res.same{color:var(--lw-ok-ink)}
+.before{font:600 1.05rem/1.3 var(--lw-f-d);color:var(--lw-muted);font-variant-numeric:tabular-nums}
+.hint{font-size:.95rem;color:var(--lw-muted);display:flex;align-items:center;gap:6px;justify-content:center}
+.hint svg{width:22px;height:22px;flex:none;color:var(--lw-ma)}
+@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+@keyframes pop{0%{transform:scale(.4)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+
+/* Ergebnis */
+.result{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;padding-top:20px}
+.bigstars{display:flex;gap:8px}
+.bigstars svg{width:64px;height:64px}
+.bigstars .s1{animation:pop .5s .1s both}.bigstars .s2{animation:pop .5s .35s both}.bigstars .s3{animation:pop .5s .6s both}
+.result .go,.result .ghost{width:100%}
+.missed{align-self:stretch;text-align:left}
+.missed ul{margin:6px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+.chatbox{min-width:0}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style><!--lw-look--><link rel="stylesheet" href="/lernwelt-app.css"><script src="/lernwelt-app.js"></script><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap"><style id="lw-look">
+/* Übungs-Bausteine im Lernwelt-Look (wie im Konzept: Antwortkacheln, grüne Rückmeldung, dicke Knöpfe) */
+.go,.next,.check{background:var(--lw-c);color:#fff;border:none;border-radius:16px;min-height:54px;padding:12px 22px;
+  font-family:var(--lw-f-d);font-weight:700;font-size:1.05rem;letter-spacing:.04em;text-transform:uppercase;box-shadow:0 5px 0 var(--lw-cd)}
+.go:active,.next:active,.check:active{transform:translateY(3px);box-shadow:0 2px 0 var(--lw-cd)}
+.ghost{background:var(--lw-card);color:var(--lw-ink);border:2px solid var(--lw-line);border-bottom-width:4px;border-radius:14px;min-height:44px;font-weight:700}
+.chip{background:var(--lw-card);color:var(--lw-ink);border:2px solid var(--lw-line);border-radius:99px;min-height:40px;padding:6px 14px;font-weight:700}
+.chip[aria-pressed="true"]{background:var(--lw-c);border-color:var(--lw-c);color:#fff}
+.progress{height:14px;background:var(--lw-line);border-radius:99px}
+.progress i{background:var(--lw-ok);border-radius:99px}
+.card{background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:22px;box-shadow:none}
+.card-top{background:none;color:var(--lw-c);padding:16px 18px 0;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase}
+.card-top .tag{font-size:.8rem}
+.card-body{background-image:none}
+.prompt{font-family:var(--lw-f-d);font-weight:700}
+.opts{gap:12px}
+.opt{background:var(--lw-card);color:var(--lw-ink);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:18px;min-height:60px;
+  font-family:var(--lw-f-d);font-weight:600;font-size:1.12rem}
+.opt:not(:disabled):active{transform:translateY(3px);border-bottom-width:2px}
+.opt.ok{border:3px solid var(--lw-ok);border-bottom-width:6px;background:var(--lw-ok-bg);color:var(--lw-ok-ink)}
+.opt.bad{border-color:var(--lw-bad);background:var(--lw-bad-bg);color:var(--lw-bad-ink)}
+.tile{background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:4px;border-radius:12px;font-family:var(--lw-f-d);font-weight:700}
+.slots{border-radius:16px}
+.slots .tile{background:var(--lw-cs);border-color:var(--lw-c)}
+.inp input,.field{border-radius:16px}
+.fb{border-radius:22px;padding:16px 16px 18px;gap:8px}
+.fb.ok{background:var(--lw-ok-bg);border:none;color:var(--lw-ink)}
+.fb.bad{background:var(--lw-bad-bg);border:none;color:var(--lw-ink)}
+.fb strong{font-family:var(--lw-f-d);font-weight:700;font-size:1.3rem;display:flex;align-items:center;gap:10px}
+.fb.ok strong{color:var(--lw-ok-ink)}
+.fb.bad strong{color:var(--lw-bad-ink)}
+.fb.ok strong::before,.fb.bad strong::before{content:"";flex:none;width:36px;height:36px;border-radius:50%;background:var(--lw-ok) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/20px no-repeat}
+.fb.bad strong::before{background:var(--lw-bad) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3.4' stroke-linecap='round'%3E%3Cpath d='M7 7l10 10M17 7L7 17'/%3E%3C/svg%3E") center/18px no-repeat}
+.card-top .tag{color:var(--lw-c);font-family:var(--lw-f-b);font-weight:700;letter-spacing:.12em}
+.card-top .fachtag{background:var(--lw-cs);color:var(--lw-c);font-family:var(--lw-f-b);font-weight:700}
+/* @kit */
+/* Rechengesetze sind von Anfang an im Lernwelt-Look gebaut: nur die Fach-Farbe setzen. */
+:root:root:root{--lw-c:var(--lw-ma); --lw-cd:var(--lw-ma-d); --lw-cs:var(--lw-ma-s)}
+.go{width:auto}
+.go:disabled{opacity:.5}
+</style><!--/lw-look--><script src="/lernwelt-chat.js"></script></head><body><nav id="lw-bar" class="lw-bar lw-ma" aria-label="Lernwelt"><a class="lw-back" href="index.html#heft-rechengesetze" aria-label="Zurück zum Heft"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a><span class="lw-t"><span class="lw-eyebrow">Mathe</span><span class="lw-name">Rechengesetze</span></span></nav>
+<main class="wrap" id="app"></main>
+<script>
+"use strict";
+/* ================= Grundlagen ================= */
+const $=s=>document.querySelector(s);
+const app=$("#app");
+const rand=n=>Math.floor(Math.random()*n);
+const rnd=(a,b)=>a+rand(b-a+1);
+const pick=a=>a[rand(a.length)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=rand(i+1);[a[i],a[j]]=[a[j],a[i]]}return a};
+const notTen=(a,b)=>{let n;do{n=rnd(a,b)}while(n%10===0);return n};
+const K=`<span class="lz">K<sup>+</sup></span>`,A=`<span class="lz">A<sup>+</sup></span>`,N=`<span class="lz">N<sup>+</sup></span>`;
+
+/* ================= Zustand ================= */
+const KEY="rechengesetze-v1";
+const DEF={best:{},chat:{},seen:false};
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&typeof s==="object")return Object.assign(JSON.parse(JSON.stringify(DEF)),s)}catch(e){}return JSON.parse(JSON.stringify(DEF))}
+let S=load();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+
+/* kurze Töne für richtig/falsch */
+let AC=null;
+function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){AC=null}}if(AC&&AC.state==="suspended")AC.resume();return AC}
+function beep(fs,len,type,vol){const a=ac();if(!a)return;let t=a.currentTime+.02;fs.forEach(f=>{const o=a.createOscillator(),g=a.createGain();o.type=type||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol||.18,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+len);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+len+.02);t+=len*.75})}
+const sfxOk=()=>beep([1046.5,1318.5],.14);
+const sfxBad=()=>beep([233,175],.18,"triangle",.12);
+const sfxPop=()=>beep([784],.08,"sine",.12);
+
+/* ================= Symbole ================= */
+const I={
+  back:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>`,
+  del:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 5H9l-6 7 6 7h12z"/><path d="M12.5 9.5l5 5M17.5 9.5l-5 5"/></svg>`,
+  book:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/><path d="M9 8h7M9 12h5"/></svg>`,
+  swap:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h14l-4-4M20 16H6l4 4"/></svg>`,
+  hand:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11V4.5a1.5 1.5 0 0 1 3 0V10"/><path d="M12 9.5a1.5 1.5 0 0 1 3 0V11"/><path d="M15 10.5a1.5 1.5 0 0 1 3 0V15a6 6 0 0 1-6 6h-1a6 6 0 0 1-4.6-2.2L4 15.6a1.5 1.5 0 0 1 2.3-1.9L9 16"/></svg>`,
+  search:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg>`,
+  chat:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9.5h8M8 12.5h5"/></svg>`,
+  mix:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h3.5c4 0 6 10 10 10H21M3 17h3.5c1.6 0 2.8-1.6 3.8-3.5M13.7 9.5C14.7 8.2 15.6 7 17 7h4M18.5 4.5L21 7l-2.5 2.5M18.5 14.5L21 17l-2.5 2.5"/></svg>`,
+  star:on=>`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z" fill="${on?"#FFC93C":"var(--lw-line)"}" stroke="${on?"#D99A00":"none"}" stroke-width="1.2" stroke-linejoin="round"/></svg>`
+};
+const dotsHTML=(n,c)=>`<span class="dots" style="--c:${c}">${"<i></i>".repeat(n)}</span>`;
+
+/* ================= Ziehen oder Antippen ================= */
+/* Kärtchen .zt in box: auf ein anderes ziehen ODER erst eins, dann das andere antippen → onPair(a, b) */
+function pairTiles(box,onPair){let sel=null;
+  const tiles=()=>[...box.querySelectorAll(".zt:not(:disabled)")];
+  const under=(t,x,y)=>tiles().find(o=>{if(o===t)return false;const r=o.getBoundingClientRect();return x>=r.left-6&&x<=r.right+6&&y>=r.top-6&&y<=r.bottom+6});
+  const clear=()=>{if(sel)sel.classList.remove("sel");sel=null};
+  box.addEventListener("pointerdown",e=>{const t=e.target.closest(".zt");if(!t||t.disabled||!box.contains(t))return;
+    e.preventDefault();try{t.setPointerCapture(e.pointerId)}catch(x){}
+    const x0=e.clientX,y0=e.clientY;let moved=false;
+    const mv=ev=>{const dx=ev.clientX-x0,dy=ev.clientY-y0;
+      if(!moved&&Math.hypot(dx,dy)>8){moved=true;t.classList.add("drag");clear()}
+      if(moved){t.style.transform=`translate(${dx}px,${dy}px) scale(1.08)`;const o=under(t,ev.clientX,ev.clientY);tiles().forEach(x=>x.classList.toggle("over",x===o))}};
+    const up=ev=>{t.removeEventListener("pointermove",mv);t.removeEventListener("pointerup",up);t.removeEventListener("pointercancel",up);
+      tiles().forEach(x=>x.classList.remove("over"));t.classList.remove("drag");t.style.transform="";
+      if(ev.type==="pointercancel")return;
+      if(moved){const o=under(t,ev.clientX,ev.clientY);if(o)onPair(t,o);return}
+      if(sel===t){clear();return}
+      if(sel){const a=sel;clear();onPair(a,t);return}
+      sel=t;t.classList.add("sel")};
+    t.addEventListener("pointermove",mv);t.addEventListener("pointerup",up);t.addEventListener("pointercancel",up)});
+  /* Tastatur: Enter/Leertaste wie Antippen */
+  box.addEventListener("click",e=>{if(e.detail!==0)return;const t=e.target.closest(".zt");if(!t||t.disabled)return;
+    if(sel===t){clear();return}if(sel){const a=sel;clear();onPair(a,t);return}sel=t;t.classList.add("sel")});
+}
+/* zwei Kärtchen sichtbar die Plätze tauschen lassen */
+function flipSwap(a,b,setVals){const ra=a.getBoundingClientRect(),rb=b.getBoundingClientRect();
+  setVals();
+  a.style.transition=b.style.transition="none";
+  a.style.transform=`translate(${rb.left-ra.left}px,${rb.top-ra.top}px)`;b.style.transform=`translate(${ra.left-rb.left}px,${ra.top-rb.top}px)`;
+  a.offsetWidth;a.style.transition=b.style.transition="";a.style.transform=b.style.transform=""}
+
+/* ================= Aufgaben ================= */
+/* Jede Aufgabe: {law, q, kind: mc|kp|swap|gon|pairs, show, …, ex (Erklärung danach)} */
+const calc=(a,op,b)=>op==="+"?a+b:op==="−"?a-b:a/b;
+const T={
+  /* --- K⁺: Tauschen --- */
+  swapTest(){const op=pick(["+","+","+","−",":"]);let a,b;
+    if(op==="+"){a=rnd(3,60);b=rnd(2,40);if(a===b)b++}
+    else if(op==="−"){b=rnd(2,20);a=b+rnd(3,30)}
+    else{b=rnd(2,9);let k;do{k=rnd(2,9)}while(k===b);a=b*k}
+    return {law:op==="+"?"K":null,lk:op==="+"?K:"Test",kind:"swap",a,op,b,q:"Tausch die beiden Zahlen. Bleibt das Ergebnis gleich?"}},
+  gapK(){const a=rnd(12,89),b=rnd(3,49);const v=rand(2);
+    return {law:"K",lk:K,kind:"kp",q:"Welche Zahl fehlt?",show:v?`<div class="eq"><span>${a} + ${b}</span><span>=</span><span>${b} +</span><span class="slot" id="slot">?</span></div>`
+      :`<div class="eq"><span>${a} + ${b}</span><span>=</span><span class="slot" id="slot">?</span><span>+ ${a}</span></div>`,ans:String(v?a:b),
+      ex:`Tauschen erlaubt: ${a} + ${b} = ${b} + ${a}. Beide Seiten sind ${a+b}.`}},
+  sameK(){const a=rnd(13,68),b=rnd(14,68);const o=shuffle([[`${b} + ${a}`,true],[`${Math.max(a,b)} − ${Math.min(a,b)}`,false],[`${a} + ${String(b).split("").reverse().join("")}`,false],[`${b} + ${b}`,false]]);
+    /* gespiegelte Zahl kann gleich sein (z. B. 22) → dann ersetzen */
+    const opts=o.map(([h,ok])=>({h,ok})).filter((x,i,arr)=>arr.findIndex(y=>y.h===x.h)===i);
+    return {law:"K",lk:K,kind:"mc",q:"Welcher Term hat denselben Wert?",show:`<div class="eq"><span>${a} + ${b}</span></div>`,opts,
+      ex:`Beim Plus darf man tauschen: ${a} + ${b} = ${b} + ${a} = ${a+b}.`}},
+  trueK(){const a=rnd(12,40),b=rnd(2,11);const v=pick(["plus","plus","minus","geteilt"]);
+    if(v==="plus")return {law:"K",lk:K,kind:"mc",q:"Stimmt das?",show:`<div class="eq"><span>${a} + ${b} = ${b} + ${a}</span></div>`,opts:[{h:"Stimmt",ok:true},{h:"Stimmt nicht",ok:false}],g2:true,
+      ex:`Stimmt! Beide Seiten sind ${a+b}. Beim Plus darf man tauschen.`};
+    if(v==="minus")return {law:null,lk:"Test",kind:"mc",q:"Stimmt das?",show:`<div class="eq"><span>${a} − ${b} = ${b} − ${a}</span></div>`,opts:[{h:"Stimmt",ok:false},{h:"Stimmt nicht",ok:true}],g2:true,
+      ex:`Stimmt nicht! ${a} − ${b} = ${a-b}, aber ${b} − ${a} geht mit unseren Zahlen gar nicht. Beim Minus darf man <b>nicht</b> tauschen.`};
+    const d=rnd(2,6),q=rnd(2,9);return {law:null,lk:"Test",kind:"mc",q:"Stimmt das?",show:`<div class="eq"><span>${d*q} : ${d} = ${d} : ${d*q}</span></div>`,opts:[{h:"Stimmt",ok:false},{h:"Stimmt nicht",ok:true}],g2:true,
+      ex:`Stimmt nicht! ${d*q} : ${d} = ${q}, aber ${d} : ${d*q} ist kleiner als 1. Beim Teilen darf man <b>nicht</b> tauschen.`}},
+  wordK(){return {law:"K",lk:K,kind:"mc",q:"Was sagt das Kommutativgesetz?",show:`<div class="formel">a + b = b + a</div>`,opts:shuffle([
+      {h:"Man darf die Summanden vertauschen.",ok:true},{h:"Man darf Klammern umsetzen.",ok:false},{h:"Plus 0 ändert nichts.",ok:false},{h:"Man darf bei Minus tauschen.",ok:false}]),
+      ex:"Kommutativ kommt von lateinisch <i>commutare</i>: vertauschen. Bei einer Summe ändert sich der Wert beim Vertauschen nicht."}},
+
+  /* --- A⁺: Klammer-Gondel --- */
+  gondel(){/* ein Paar ergibt einen glatten Zehner */const right=rand(2);let x,y,z;
+    if(right){x=notTen(12,69);y=notTen(11,58);z=(10-y%10)+10*rnd(0,2);if((x+y)%10===0)x++}
+    else{x=notTen(11,58);y=(10-x%10)+10*rnd(0,2);z=notTen(12,69);if((y+z)%10===0)z++}
+    return {law:"A",lk:A,kind:"gon",x,y,z,best:right?1:0,q:"Setz die Klammer-Gondel und rechne geschickt."}},
+  gapA(){const a=rnd(3,30),b=rnd(2,30),c=rnd(2,30);const v=rand(2);
+    return {law:"A",lk:A,kind:"kp",q:"Welche Zahl fehlt?",show:v?`<div class="eq"><span>(${a} + ${b}) + ${c}</span><span>=</span><span>${a} + (</span><span class="slot" id="slot">?</span><span>+ ${c})</span></div>`
+      :`<div class="eq"><span>${a} + (${b} + ${c})</span><span>=</span><span>(${a} +</span><span class="slot" id="slot">?</span><span>) + ${c}</span></div>`,ans:String(b),
+      ex:`Die Zahlen bleiben gleich, nur die Klammer zieht um: (${a} + ${b}) + ${c} = ${a} + (${b} + ${c}) = ${a+b+c}.`}},
+  stepA(){const a=rnd(11,60),b=notTen(2,19);const c=(10-b%10)+10*rnd(0,1);
+    return {law:"A",lk:A,kind:"kp",q:"Rechne zuerst die Klammer.",show:`<div class="eq"><span>${a} + (${b} + ${c})</span><span>=</span><span>${a} +</span><span class="slot" id="slot">?</span></div>`,ans:String(b+c),
+      ex:`${b} + ${c} = ${b+c}, ein glatter Zehner. Dann ${a} + ${b+c} = ${a+b+c}. Klammer umsetzen macht das Rechnen oft leichter.`}},
+  sameA(){const a=rnd(12,40),b=rnd(3,11),c=rnd(2,9);
+    const opts=shuffle([{h:`${a} + (${b} + ${c})`,ok:true},{h:`${a} + (${b} − ${c})`,ok:false},{h:`(${a} − ${b}) + ${c}`,ok:false},{h:`(${a} + ${b}) · ${c}`,ok:false}]);
+    return {law:"A",lk:A,kind:"mc",q:"Welcher Term hat denselben Wert?",show:`<div class="eq"><span>(${a} + ${b}) + ${c}</span></div>`,opts,
+      ex:`Klammer umsetzen ist erlaubt, Rechenzeichen ändern nicht: (${a} + ${b}) + ${c} = ${a} + (${b} + ${c}) = ${a+b+c}.`}},
+  minusA(){const a=rnd(14,30),b=rnd(4,9),c=rnd(2,b-1);
+    return {law:null,lk:"Test",kind:"mc",q:"Stimmt das?",show:`<div class="eq"><span>(${a} − ${b}) − ${c}</span><span>=</span><span>${a} − (${b} − ${c})</span></div>`,opts:[{h:"Stimmt",ok:false},{h:"Stimmt nicht",ok:true}],g2:true,
+      ex:`Stimmt nicht! Links: ${a-b} − ${c} = ${a-b-c}. Rechts: ${a} − ${b-c} = ${a-b+c}. Beim Minus darf man die Klammer <b>nicht</b> umsetzen.`}},
+
+  /* --- N⁺: die neutrale Null --- */
+  zeroKp(){const a=rnd(5,999);const v=rand(3);
+    const show=v===0?`<span>${a} + 0</span><span>=</span><span class="slot" id="slot">?</span>`:v===1?`<span>0 + ${a}</span><span>=</span><span class="slot" id="slot">?</span>`:`<span class="slot" id="slot">?</span><span>+ 0 = ${a}</span>`;
+    return {law:"N",lk:N,kind:"kp",q:"Welche Zahl fehlt?",show:`<div class="eq">${show}</div>`,ans:String(a),
+      ex:`Plus 0 ändert nichts: ${v===1?`0 + ${a}`:`${a} + 0`} = ${a}. Die Zahl bleibt, wie sie ist.`}},
+  zeroTrue(){const a=rnd(3,99);const v=pick(["falle","falle","ok","ok0","eins","buchst"]);
+    const M={falle:[`${a} + 0 = 0`,false,`Stimmt nicht! Das ist die Abschreib-Falle. Plus 0 ändert nichts, also ${a} + 0 = <b>${a}</b>.`],
+      ok:[`0 + ${a} = ${a}`,true,`Stimmt! Die 0 darf auch vorne stehen (tauschen, ${K}). Der Wert bleibt ${a}.`],
+      ok0:["0 + 0 = 0",true,"Stimmt! Null plus null ist null. Auch hier ändert die 0 nichts."],
+      eins:[`${a} + 1 = ${a}`,false,`Stimmt nicht! Plus 1 macht die Zahl um eins größer: ${a} + 1 = ${a+1}. Nur die 0 ändert nichts.`],
+      buchst:["a + 0 = 0",false,"Stimmt nicht! Richtig heißt die Regel <b>a + 0 = a</b>: Die Zahl a bleibt übrig, nicht die 0."]}[v];
+    return {law:"N",lk:N,kind:"mc",q:"Stimmt das?",show:`<div class="eq"><span>${M[0]}</span></div>`,opts:[{h:"Stimmt",ok:M[1]},{h:"Stimmt nicht",ok:!M[1]}],g2:true,ex:M[2]}},
+  zeroWhich(){const v=rand(2);
+    if(v)return {law:"N",lk:N,kind:"mc",q:"Welche Zahl ist das neutrale Element der Addition?",show:`<div class="eq"><span>a + ? = a</span></div>`,
+      opts:shuffle([{h:"0",ok:true},{h:"1",ok:false},{h:"10",ok:false},{h:"a",ok:false}]),g2:true,ex:"Die 0: Sie ändert beim Addieren nichts. Darum heißt sie neutrales Element der Addition."};
+    return {law:"N",lk:N,kind:"mc",q:"Warum heißt die 0 „neutral“?",show:`<div class="formel">a + 0 = a</div>`,
+      opts:shuffle([{h:"Sie ändert beim Plus nichts.",ok:true},{h:"Sie macht jede Summe zu 0.",ok:false},{h:"Sie ist die kleinste Zahl.",ok:false},{h:"Man darf sie weglassen, wenn sie vorne steht.",ok:false}]),
+      ex:"Neutral heißt: Sie hält sich raus, wie eine Schiedsrichterin, die zu keiner Mannschaft hält. Plus 0 ändert die Zahl nicht."}},
+
+  /* --- Geschickt rechnen: K⁺ und A⁺ zusammen --- */
+  pairs(){const n=rand(3)?4:3;const p=()=>{const a=notTen(11,79);return [a,(10-a%10)+10*rnd(0,3)]};
+    let nums;do{nums=n===4?[...p(),...p()]:[...p(),notTen(11,69)];nums=shuffle(nums)}while(!badStart(nums));
+    return {law:"KA",lk:K+" "+A,kind:"pairs",nums,q:"Schieb zwei Zahlen zusammen, die einen glatten Zehner ergeben."}},
+  clever(){const a=notTen(3,9),b=notTen(21,78),c=10-a;
+    const opts=shuffle([{h:`(${a} + ${c}) + ${b}`,ok:true},{h:`(${a} + ${b}) + ${c}`,ok:false},{h:`${a} + (${b} + ${c})`,ok:false}]);
+    return {law:"KA",lk:K+" "+A,kind:"mc",q:"Wie rechnest du am geschicktesten?",show:`<div class="eq"><span>${a} + ${b} + ${c}</span></div>`,opts,
+      ex:`Erst ${c} nach vorne tauschen (${K}), dann zusammen klammern (${A}): ${a} + ${c} = 10, und 10 + ${b} = ${a+b+c}. Alle drei Wege geben ${a+b+c}, aber der erste ist am leichtesten.`}},
+  clever100(){const a=pick([25,75,40,60,35,65,45,55]),c=100-a,b=notTen(13,89);
+    return {law:"KA",lk:K+" "+A,kind:"kp",q:"Rechne geschickt im Kopf.",show:`<div class="eq"><span>${a} + ${b} + ${c}</span><span>=</span><span class="slot" id="slot">?</span></div>`,ans:String(a+b+c),
+      ex:`${a} + ${c} = 100. Tauschen und klammern: (${a} + ${c}) + ${b} = 100 + ${b} = ${a+b+c}.`}},
+
+  /* --- Detektivin: welches Gesetz? --- */
+  which(){const a=rnd(4,60),b=rnd(3,40),c=rnd(2,30);const v=pick(["K","A","N","X","X2"]);
+    const M={K:[`${a} + ${b} = ${b} + ${a}`,"K",`Die Zahlen haben die Plätze getauscht: Kommutativgesetz ${K}.`],
+      A:[`(${a} + ${b}) + ${c} = ${a} + (${b} + ${c})`,"A",`Gleiche Reihenfolge, nur die Klammer ist umgezogen: Assoziativgesetz ${A}.`],
+      N:[pick([`${a} + 0 = ${a}`,`0 + ${a} = ${a}`]),"N",`Plus 0 ändert nichts: Gesetz vom neutralen Element ${N}.`],
+      X:[`${a+b} − ${b} = ${b} − ${a+b}`,"X",`Das stimmt gar nicht: Beim Minus darf man nicht tauschen.`],
+      X2:[`${a} + 0 = 0`,"X",`Das stimmt nicht: ${a} + 0 = ${a}. Richtig wäre a + 0 = a.`]}[v];
+    return {law:v[0]==="X"?null:v,lk:"Welches?",kind:"mc",q:"Welches Gesetz steckt dahinter?",show:`<div class="eq"><span>${M[0]}</span></div>`,g2:true,
+      opts:[{h:`${K} tauschen`,ok:M[1]==="K"},{h:`${A} Klammer`,ok:M[1]==="A"},{h:`${N} Null`,ok:M[1]==="N"},{h:"Stimmt nicht!",ok:M[1]==="X"}],ex:M[2]}},
+  name(){const v=pick(["K","A","N"]);const nm={K:"Kommutativgesetz",A:"Assoziativgesetz",N:"Gesetz vom neutralen Element"};
+    const f={K:"a + b = b + a",A:"(a + b) + c = a + (b + c)",N:"a + 0 = a"};
+    return {law:v,lk:"Welches?",kind:"mc",q:"Wie heißt dieses Gesetz?",show:`<div class="formel">${f[v]}</div>`,opts:shuffle(["K","A","N"].map(k=>({h:nm[k],ok:k===v}))),
+      ex:`${f[v]} ist das ${nm[v]} (${{K,A,N}[v]}).`}},
+  fach(){return {law:null,lk:"Fachwort",kind:"mc",q:"Wie heißen die Zahlen, die man addiert?",show:`<div class="eq"><span>5 + 6 = 11</span></div>`,
+      opts:shuffle([{h:"Summanden",ok:true},{h:"Summen",ok:false},{h:"Faktoren",ok:false},{h:"Differenzen",ok:false}]),
+      ex:"5 und 6 sind die <b>Summanden</b>. 5 + 6 ist die <b>Summe</b>, 11 ist der <b>Wert der Summe</b>."}}
+};
+/* Bei Pärchen nicht schon nebeneinander starten, damit man ziehen muss */
+function badStart(nums){for(let i=0;i<nums.length-1;i++)if((nums[i]+nums[i+1])%10===0)return false;return true}
+
+/* ================= Kapitel ================= */
+const CH=[
+  {id:"regeln",t:"Mein Regelheft",d:"Die drei Gesetze aus deinem Heft, mit Bildern zum Ausprobieren",ico:"book",read:true},
+  {id:"tauschen",t:"Tauschen erlaubt? (K⁺)",d:"Zahlen ziehen und testen, wann Tauschen klappt",ico:"swap",n:8,types:["swapTest","swapTest","swapTest","gapK","sameK","trueK","trueK","wordK"]},
+  {id:"klammern",t:"Klammer-Karussell (A⁺)",d:"Wer fährt zusammen in der Gondel?",ico:"( )",n:8,types:["gondel","gondel","gondel","gapA","stepA","sameA","minusA"]},
+  {id:"null",t:"Die neutrale Null (N⁺)",d:"Plus 0 ändert nichts, und eine fiese Falle",ico:"+0",n:8,types:["zeroKp","zeroKp","zeroTrue","zeroTrue","zeroTrue","zeroWhich"]},
+  {id:"geschickt",t:"Geschickt rechnen",d:"Zahlen-Pärchen finden, die glatte Zehner geben",ico:"10",n:7,types:["pairs","pairs","pairs","clever","clever100"]},
+  {id:"detektiv",t:"Gesetz-Detektivin",d:"Welches Gesetz steckt dahinter?",ico:"search",n:8,types:["which","which","which","which","name","fach"]},
+  {id:"chat",t:"Hilf im Klassenchat",d:"Deine Freunde haben Fragen zu den Gesetzen",ico:"chat",chat:true},
+  {id:"mix",t:"Großer Mix",d:"Alles durcheinander",ico:"mix",n:12,types:null}
+];
+const chOf=id=>CH.find(c=>c.id===id);
+const stars=c=>c.read?(S.seen?3:0):(S.best[c.id]||0);
+const ALL=Object.keys(T);
+
+/* ================= Startseite ================= */
+function home(){R=null;
+  app.innerHTML=`
+  <section class="panel hero"><span class="eyebrow">Rechengesetze der Addition</span>
+    <h2 style="font-size:1.4rem">Drei Regeln, die dir das Rechnen leichter machen</h2>
+    <div class="lawchips"><span class="lawchip">${K} Tauschen</span><span class="lawchip">${A} Klammer umsetzen</span><span class="lawchip">${N} Plus 0</span></div></section>
+  <div class="stations">${CH.map((c,k)=>{const b=stars(c);const ico=I[c.ico]||`<span>${c.ico}</span>`;
+    const st=c.read?(S.seen?`<span class="seen">✓ gelesen</span>`:""):`<span class="stars" aria-label="${b} von 3 Sternen">${[0,1,2].map(i=>I.star(i<b)).join("")}</span>`;
+    return `<button class="st ${c.read?"read":""}" data-ch="${c.id}"><span class="ico">${ico}</span><span class="grow"><span class="n">Kapitel ${k+1}</span><h3>${c.t}</h3><p>${c.d}</p>${st}</span></button>`}).join("")}</div>`;
+  app.querySelectorAll(".st[data-ch]").forEach(b=>b.onclick=()=>openCh(b.dataset.ch));
+  scrollTo(0,0)}
+function openCh(id){const c=chOf(id);if(!c)return;if(c.read)return regeln();if(c.chat)return chat();startRound(id)}
+
+/* ================= Kapitel 1: Regelheft ================= */
+function regeln(){R=null;
+  app.innerHTML=`<div class="chead"><button class="backb" id="cbk">${I.back}Alle Kapitel</button></div>
+  <div><span class="eyebrow">Kapitel 1</span><h2>Mein Regelheft</h2><p class="small" style="margin-top:4px">Das steht in deinem Regelheft. Zu jedem Gesetz gibt es ein Bild zum Ausprobieren.</p></div>
+
+  <section class="panel">
+    <h3>Erst die Fachwörter</h3>
+    <div class="words"><span>5<small>Summand</small></span><span>+</span><span>6<small>Summand</small></span><span>=</span><span>11<small>Wert der Summe</small></span></div>
+    <p class="small">Der ganze Term 5 + 6 heißt <b>Summe</b>. Die Zahlen darin sind die <b>Summanden</b>.</p>
+  </section>
+
+  <section class="panel law">
+    <div class="lawhead"><span class="badge">${K}</span><div><span class="eyebrow">Gesetz 1</span><h3>Kommutativgesetz</h3><p class="small">Das Vertauschungsgesetz</p></div></div>
+    <div class="formel">a + b = b + a</div>
+    <p class="bsp"><span class="k">Beispiel</span>5 + 6 = 11 und 6 + 5 = 11</p>
+    <p class="worte"><span class="wl">In Worten</span>Bei einer Summe ändert sich der Wert beim Vertauschen der Summanden nicht.</p>
+    <div class="meta"><div class="mt"><span class="em">🎒</span><div><b>Stell dir vor: Murmeln in den Rucksack</b>Ob du zuerst 5 Murmeln und dann 6 einpackst oder zuerst 6 und dann 5: Im Rucksack sind am Ende immer 11.</div></div>
+      <div class="demo" id="dK"></div></div>
+  </section>
+
+  <section class="panel law">
+    <div class="lawhead"><span class="badge">${A}</span><div><span class="eyebrow">Gesetz 2</span><h3>Assoziativgesetz</h3><p class="small">Das Verbindungsgesetz</p></div></div>
+    <div class="formel">(a + b) + c = a + (b + c)</div>
+    <p class="bsp"><span class="k">Beispiel</span>(2 + 3) + 4 = 5 + 4 = 9<br>und 2 + (3 + 4) = 2 + 7 = 9</p>
+    <p class="worte"><span class="wl">In Worten</span>Bei einer Summe aus drei Summanden ändert sich der Wert nicht, wenn man zuerst den 2. und 3. Summanden addiert statt den 1. und 2.</p>
+    <div class="meta"><div class="mt"><span class="em">🎠</span><div><b>Stell dir vor: Die Klammer ist eine Karussell-Gondel</b>Wer zusammen in der Gondel sitzt, wird zuerst zusammengezählt. Egal, wer mit wem fährt: Am Ende steigen gleich viele aus.</div></div>
+      <div class="demo" id="dA"></div></div>
+  </section>
+
+  <section class="panel law">
+    <div class="lawhead"><span class="badge">${N}</span><div><span class="eyebrow">Gesetz 3</span><h3>Gesetz vom neutralen Element</h3><p class="small">Die Null ändert nichts</p></div></div>
+    <div class="formel">a + 0 = a</div>
+    <p class="bsp"><span class="k">Beispiel</span>44 + 0 = 44</p>
+    <p class="worte"><span class="wl">In Worten</span>Bei einer Summe aus einer Zahl und 0 ist der Wert der Summe die Zahl selbst. Da die 0 den Wert einer Zahl beim Addieren nicht ändert, nennt man sie <b>neutrales Element der Addition</b>.</p>
+    <div class="falle"><span class="em">⚠️</span><div><b>Achtung, Abschreib-Falle!</b><br>Nicht <s>a + 0 = 0</s>, sondern <b class="r">a + 0 = a</b>.<br><span class="small">Hinter dem = steht wieder die Zahl selbst, nicht die 0. Schau mal in dein Regelheft, ob es dort richtig steht.</span></div></div>
+    <div class="meta"><div class="mt"><span class="em">🧸</span><div><b>Stell dir vor: Eine leere Tüte Gummibärchen</b>Du hast 44 Gummibärchen und schüttest eine leere Tüte dazu: Du hast immer noch 44. „Neutral“ heißt: Die 0 hält sich raus, wie eine Schiedsrichterin, die zu keiner Mannschaft hält.</div></div>
+      <div class="demo" id="dN"></div></div>
+  </section>
+
+  <section class="panel"><h3>Kurz gemerkt</h3>
+    <p><b>${K}</b> Summanden darf man tauschen.<br><b>${A}</b> Klammern darf man umsetzen.<br><b>${N}</b> Plus 0 ändert nichts.</p>
+    <p class="small">Aber nur beim Plus! Bei Minus und Geteilt klappt Tauschen und Klammer-Umsetzen nicht. Probier es im nächsten Kapitel aus.</p>
+    <button class="go" id="gelesen">${S.seen?"Weiter: Tauschen erlaubt?":"Alles gelesen ✓"}</button></section>`;
+  $("#cbk").onclick=home;
+  $("#gelesen").onclick=()=>{const first=!S.seen;S.seen=true;save();if(first)beep([523.25,659.25,783.99],.16);startRound("tauschen")};
+  demoK($("#dK"));demoA($("#dA"));demoN($("#dN"));
+  scrollTo(0,0)}
+function demoK(el){let a=5,b=6;const ca="var(--lw-ma)",cb="#F2A100";let swapped=false;
+  el.innerHTML=`<div class="bags zrow" id="kb"><button class="zt bag" data-i="0"></button><span class="pl">+</span><button class="zt bag" data-i="1"></button></div>
+    <div class="sumline" id="ks"></div><p class="hint">${I.hand}Zieh eine Tüte auf die andere oder tipp auf Tauschen.</p><button class="go" id="kgo">${I.swap}<span>Tauschen</span></button>`;
+  const [t0,t1]=el.querySelectorAll(".zt");
+  const paint=()=>{const L=swapped?[b,cb]:[a,ca],Rr=swapped?[a,ca]:[b,cb];
+    t0.innerHTML=`<b>${L[0]}</b>${dotsHTML(L[0],L[1])}`;t1.innerHTML=`<b>${Rr[0]}</b>${dotsHTML(Rr[0],Rr[1])}`;
+    $("#ks").innerHTML=`${L[0]} + ${Rr[0]} = <span style="color:var(--lw-ok-ink)">11</span>`};
+  const go=()=>{flipSwap(t0,t1,()=>{swapped=!swapped;paint()});sfxPop()};
+  paint();pairTiles($("#kb"),go);$("#kgo").onclick=go}
+function demoA(el){let g=0;const n=[2,3,4];
+  el.innerHTML=`<div class="gline" id="ag"></div><div class="steps" id="as"></div><button class="go" id="ago">🎠 <span>Gondel weiterdrehen</span></button>`;
+  const paint=()=>{const L=g===0;
+    $("#ag").innerHTML=L?`<span class="gon"><span class="br">(</span>2 + 3<span class="br">)</span></span><span>+ 4</span>`:`<span>2 +</span><span class="gon"><span class="br">(</span>3 + 4<span class="br">)</span></span>`;
+    $("#as").innerHTML=L?`= 5 + 4 = <b style="color:var(--lw-ok-ink)">9</b>`:`= 2 + 7 = <b style="color:var(--lw-ok-ink)">9</b>`};
+  paint();$("#ago").onclick=()=>{g=1-g;paint();sfxPop();const gn=el.querySelector(".gon");if(gn){gn.classList.add("pop");}}}
+function demoN(el){let a=44;
+  el.innerHTML=`<div class="gline"><span id="na">44</span><span>+</span><span>0</span><span>=</span><span id="nr" style="color:var(--lw-ok-ink)">44</span></div>
+    <button class="go" id="ngo">🎲 <span>Andere Zahl ausprobieren</span></button><p class="small" id="nt">Egal welche Zahl: Sie bleibt, wie sie ist.</p>`;
+  $("#ngo").onclick=()=>{let b;do{b=pick([7,13,99,250,1000,3,58,2026,1,0])}while(b===a);a=b;$("#na").textContent=a;const r=$("#nr");r.textContent=a;r.classList.remove("pop");r.offsetWidth;r.style.display="inline-block";r.classList.add("pop");sfxPop()}}
+
+/* ================= Runde ================= */
+let R=null;
+function startRound(id){const c=chOf(id);
+  const pool=c.types||ALL;let list=[];
+  /* jede Aufgabenart mindestens einmal (wenn Platz), Rest zufällig, nie zweimal dieselbe Art hintereinander */
+  const base=shuffle(c.types?Array.from(new Set(c.types)):pool).slice(0,c.n);
+  while(base.length<c.n)base.push(pick(pool));
+  list=shuffle(base);for(let i=1;i<list.length;i++)if(list[i]===list[i-1]){const j=list.findIndex((x,k)=>k>i&&x!==list[i]&&x!==list[i-1]);if(j>0)[list[i],list[j]]=[list[j],list[i]]}
+  R={id,i:0,ok:0,res:[],miss:[],tasks:list.map(k=>T[k]())};R.n=R.tasks.length;showTask()}
+function track(){$("#track").innerHTML=Array.from({length:R.n},(_,i)=>`<i class="${i<R.res.length?(R.res[i]?"ok":"no"):(i===R.i?"now":"")}"></i>`).join("")}
+function showTask(){const t=R.tasks[R.i];R.locked=false;R.typed="";
+  app.innerHTML=`<div class="topbar"><button id="quit" aria-label="Runde beenden"></button><div class="track" id="track"></div></div>
+    <div class="q"><b>${t.q}</b><span class="lk">${t.lk}</span></div>
+    <section class="stage" id="cb"></section>`;
+  $("#quit").onclick=home;track();
+  const cb=$("#cb");
+  if(t.kind==="swap")return swapTask(t,cb);
+  if(t.kind==="gon")return gonTask(t,cb);
+  if(t.kind==="pairs")return pairsTask(t,cb);
+  let h=`<div class="show">${t.show}</div>`;
+  if(t.kind==="mc")h+=`<div class="opts ${t.g2?"g2":""}">${t.opts.map((o,i)=>`<button class="opt" data-i="${i}">${o.h}</button>`).join("")}</div>`;
+  else h+=keypad();
+  cb.innerHTML=h;
+  if(t.kind==="mc")cb.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{if(R.locked)return;const o=t.opts[+b.dataset.i];
+    cb.querySelectorAll(".opt").forEach((x,i)=>{x.disabled=true;if(t.opts[i].ok)x.classList.add("ok")});if(!o.ok)b.classList.add("bad");done(o.ok,t.ex)});
+  else wireKeypad(cb,t.ans,4,(ok,typed)=>done(ok,(ok?"":`Richtig ist <b>${t.ans}</b>. `)+t.ex));
+  scrollTo(0,0)}
+function keypad(){return `<div class="kp">${[1,2,3,4,5,6,7,8,9].map(n=>`<button data-k="${n}">${n}</button>`).join("")}<button class="del" data-k="del" aria-label="Löschen">${I.del}</button><button data-k="0">0</button><button class="ok" data-k="ok" disabled>OK</button></div>`}
+/* Ziffernblock (eigener, damit keine Handy-Tastatur aufspringt) */
+function wireKeypad(cb,ans,max,fin){R.kp=k=>{if(R.locked)return;
+    if(k==="ok"){if(!R.typed)return;const ok=R.typed===ans;const sl=$("#slot");sl.classList.add(ok?"ok":"bad");cb.querySelectorAll(".kp button").forEach(b=>b.disabled=true);fin(ok,R.typed);return}
+    if(k==="del")R.typed=R.typed.slice(0,-1);else if(R.typed.length<max)R.typed=(R.typed==="0"?"":R.typed)+k;
+    const sl=$("#slot");sl.textContent=R.typed||"?";sl.classList.toggle("full",!!R.typed);cb.querySelector(".kp .ok").disabled=!R.typed};
+  cb.querySelectorAll(".kp button").forEach(b=>b.onclick=()=>R.kp(b.dataset.k))}
+document.addEventListener("keydown",e=>{if(!R||!R.kp||R.locked||e.metaKey||e.ctrlKey||e.altKey||!$(".kp"))return;
+  if(/^[0-9]$/.test(e.key))R.kp(e.key);else if(e.key==="Backspace")R.kp("del");else if(e.key==="Enter"){e.preventDefault();R.kp("ok")}});
+
+/* --- Tausch-Test: Zahlen ziehen, dann sagen, ob das Ergebnis gleich bleibt --- */
+function swapTask(t,cb){R.kp=null;const r0=calc(t.a,t.op,t.b);let L=t.a,Rr=t.b,n=0;
+  const res=(x,y)=>{const v=calc(x,t.op,y);return Number.isInteger(v)&&v>=0?v:null};
+  cb.innerHTML=`<div class="show"><div class="zrow" id="sw"><button class="zt" data-i="0">${L}</button><span class="op">${t.op}</span><button class="zt" data-i="1">${Rr}</button><span class="op">=</span><span class="res" id="rs">${r0}</span></div>
+    <p class="before" id="bf" hidden></p><p class="hint" id="hn">${I.hand}Zieh eine Zahl auf die andere, um sie zu tauschen.</p></div>
+    <div class="opts g2" id="ans" hidden><button class="opt" data-v="1">Bleibt gleich</button><button class="opt" data-v="0">Ändert sich</button></div>`;
+  const [z0,z1]=cb.querySelectorAll(".zt");
+  pairTiles($("#sw"),()=>{if(R.locked)return;flipSwap(z0,z1,()=>{[L,Rr]=[Rr,L];z0.textContent=L;z1.textContent=Rr});sfxPop();n++;
+    const v=res(L,Rr),rs=$("#rs"),same=v===r0;
+    rs.textContent=v==null?"?":v;rs.className="res "+(L===t.a?"":(same?"same":"diff"));
+    $("#bf").hidden=L===t.a;$("#bf").innerHTML=`Vorher: ${t.a} ${t.op} ${t.b} = ${r0}`+(v==null&&L!==t.a?`<br>${L} ${t.op} ${Rr} geht mit unseren Zahlen nicht auf.`:"");
+    $("#hn").hidden=true;$("#ans").hidden=false});
+  cb.querySelectorAll("#ans .opt").forEach(b=>b.onclick=()=>{if(R.locked)return;const same=t.op==="+";const ok=(b.dataset.v==="1")===same;
+    cb.querySelectorAll("#ans .opt").forEach(x=>{x.disabled=true;if((x.dataset.v==="1")===same)x.classList.add("ok")});if(!ok)b.classList.add("bad");
+    const ex=same?`${t.a} + ${t.b} = ${t.b} + ${t.a} = ${r0}. Beim Plus darf man tauschen (${K}).`
+      :t.op==="−"?`${t.a} − ${t.b} = ${r0}, aber ${t.b} − ${t.a} geht nicht auf. Beim Minus darf man <b>nicht</b> tauschen.`
+      :`${t.a} : ${t.b} = ${r0}, aber ${t.b} : ${t.a} ist kleiner als 1. Beim Teilen darf man <b>nicht</b> tauschen.`;
+    done(ok,ex)});
+  scrollTo(0,0)}
+
+/* --- Klammer-Gondel: auf ein Plus tippen, dann rechnen --- */
+function gonTask(t,cb){let g=null;const ns=[t.x,t.y,t.z],tot=t.x+t.y+t.z;
+  cb.innerHTML=`<div class="show"><div class="gline" id="gl"></div><div class="steps" id="gs"><span class="hint">${I.hand}Tipp auf ein Plus: Diese zwei Zahlen fahren zusammen in der Gondel.</span></div>
+    <div class="eq"><span>=</span><span class="slot" id="slot">?</span></div></div>${keypad()}`;
+  const paint=()=>{const p=i=>`<button class="plus ${g===i?"in":""}" data-g="${i}" aria-label="Klammer um ${ns[i]} und ${ns[i+1]}">+</button>`;
+    $("#gl").innerHTML=g===0?`<span class="gon"><span class="br">(</span>${ns[0]} ${p(0)} ${ns[1]}<span class="br">)</span></span>${p(1)}<span>${ns[2]}</span>`
+      :g===1?`<span>${ns[0]}</span>${p(0)}<span class="gon"><span class="br">(</span>${ns[1]} ${p(1)} ${ns[2]}<span class="br">)</span></span>`
+      :`<span>${ns[0]}</span>${p(0)}<span>${ns[1]}</span>${p(1)}<span>${ns[2]}</span>`;
+    if(g!=null){const s=ns[g]+ns[g+1],zehn=s%10===0;$("#gs").innerHTML=g===0?`= <b>${s}</b> + ${ns[2]}`:`= ${ns[0]} + <b>${s}</b>`;
+      $("#gs").innerHTML+=`<div class="small">${zehn?"👍 Ein glatter Zehner, jetzt ist es leicht!":"Geht auch, aber mit der anderen Gondel wird es leichter."}</div>`}
+    $("#gl").querySelectorAll(".plus").forEach(b=>b.onclick=()=>{if(R.locked)return;g=+b.dataset.g;paint();sfxPop();cb.querySelectorAll(".kp button:not(.ok)").forEach(x=>x.disabled=false)})};
+  paint();cb.querySelectorAll(".kp button").forEach(b=>b.disabled=true);
+  wireKeypad(cb,String(tot),4,(ok)=>{const bp=t.best,s=ns[bp]+ns[bp+1];
+    const way=bp===0?`(${ns[0]} + ${ns[1]}) + ${ns[2]} = ${s} + ${ns[2]} = ${tot}`:`${ns[0]} + (${ns[1]} + ${ns[2]}) = ${ns[0]} + ${s} = ${tot}`;
+    done(ok,(ok?"":`Richtig ist <b>${tot}</b>. `)+`Am leichtesten: ${way}. ${g===bp?"Du hast die geschickte Gondel gewählt!":"Die Klammer darf man umsetzen (A⁺), das Ergebnis bleibt gleich."}`)});
+  scrollTo(0,0)}
+
+/* --- Zahlen-Pärchen: zwei Zahlen zusammenschieben, die einen glatten Zehner geben --- */
+function pairsTask(t,cb){R.kp=null;let nums=t.nums.slice(),miss=0;const tot=nums.reduce((a,b)=>a+b,0),log=[];
+  cb.innerHTML=`<div class="show"><div class="zrow" id="pz"></div><p class="hint" id="ph">${I.hand}Zieh eine Zahl auf ihre Partnerin oder tipp beide an.</p><div class="steps" id="pl"></div></div>`;
+  const paint=(fresh)=>{$("#pz").innerHTML=nums.map((v,i)=>`${i?`<span class="op">+</span>`:""}<button class="zt ${v%10===0?"ten":""} ${fresh===i?"pop":""}" data-i="${i}">${v}</button>`).join("")+(nums.length===1?"":"");
+    $("#pl").innerHTML=log.map(x=>`<div>${x}</div>`).join("")};
+  const anyTen=()=>{for(let i=0;i<nums.length;i++)for(let j=i+1;j<nums.length;j++)if((nums[i]+nums[j])%10===0)return true;return false};
+  paint();
+  pairTiles($("#pz"),(a,b)=>{if(R.locked)return;const i=+a.dataset.i,j=+b.dataset.i,s=nums[i]+nums[j];
+    if(s%10!==0&&anyTen()){miss++;sfxBad();[a,b].forEach(x=>{x.classList.remove("shake");x.offsetWidth;x.classList.add("shake")});
+      $("#ph").innerHTML=`${nums[i]} + ${nums[j]} = ${s}, kein glatter Zehner. Schau auf die Einer: Welche zwei ergeben zusammen 10?`;return}
+    log.push(`${nums[i]} + ${nums[j]} = <b>${s}</b>`);const lo=Math.min(i,j);nums=nums.filter((_,k)=>k!==i&&k!==j);nums.splice(lo,0,s);sfxPop();paint(lo);
+    if(nums.length===1){R.locked=true;$("#ph").innerHTML=`Fertig! Zusammen sind es <b>${tot}</b>.`;
+      setTimeout(()=>done(miss===0,`${t.nums.join(" + ")} = ${tot}. Tauschen (${K}) und neu klammern (${A}) darf man beim Plus, darum kannst du dir die Pärchen frei aussuchen.`+(miss?` Du hast ${miss}-mal ein Paar ohne glatten Zehner probiert.`:""),true),500)}
+    else $("#ph").innerHTML=anyTen()?`${I.hand}Super! Weiter, welche zwei passen jetzt?`:`${I.hand}Jetzt den Rest zusammenschieben.`});
+  scrollTo(0,0)}
+
+function done(ok,ex,force){if(R.locked&&!force)return;R.locked=true;const t=R.tasks[R.i];
+  R.res.push(ok);if(ok)R.ok++;else R.miss.push(t);
+  ok?sfxOk():sfxBad();track();
+  const fb=document.createElement("div");fb.className="fb "+(ok?"ok":"bad");fb.setAttribute("role","status");
+  fb.innerHTML=`<strong>${ok?pick(["Richtig!","Super!","Genau!","Klasse!","Stark!"]):"Nicht ganz"}</strong><p>${ex}</p>`;
+  const nx=document.createElement("button");nx.className="next";nx.type="button";nx.textContent=R.i+1>=R.n?"Ergebnis":"Weiter";
+  nx.onclick=()=>{R.i++;R.i>=R.n?endRound():showTask()};
+  lwSheet($("#cb"),ok,[fb,nx])}
+const LAWNAME={K:"Tauschen (K⁺)",A:"Klammer umsetzen (A⁺)",N:"Plus 0 (N⁺)",KA:"Geschickt rechnen (K⁺ und A⁺)"};
+function endRound(){const n=R.n,ok=R.ok,q=ok/n;const st=q>=.9?3:q>=.7?2:q>=.5?1:0;
+  S.best[R.id]=Math.max(S.best[R.id]||0,st);save();
+  const k=CH.findIndex(c=>c.id===R.id),nxt=CH[k+1];
+  const cheer=["Dranbleiben, das wird!","Gut gemacht!","Stark!","Super, du kennst die Gesetze!"][st];
+  const laws=[...new Set(R.miss.map(t=>t.law?LAWNAME[t.law]:"Wann Tauschen nicht klappt (Minus, Geteilt)"))];
+  app.innerHTML=`<section class="result"><h2>${cheer}</h2><div class="bigstars">${[0,1,2].map(i=>I.star(i<st).replace("<svg",`<svg class="s${i+1}"`)).join("")}</div>
+    <p class="lead"><b>${ok} von ${n}</b> richtig</p>
+    ${laws.length?`<div class="panel missed"><b>Schau dir das noch einmal an:</b><ul>${laws.map(x=>`<li>${x}</li>`).join("")}</ul><button class="ghost" id="rg">${I.book}Im Regelheft nachlesen</button></div>`:""}
+    <button class="go" id="again">Nochmal üben</button>
+    ${nxt&&st>=2?`<button class="ghost" id="nx">Weiter: ${nxt.t}</button>`:""}
+    <button class="ghost" id="hm">Alle Kapitel</button></section>`;
+  if(st>=2)beep([523.25,659.25,783.99,1046.5],.2);
+  const id=R.id;R=null;
+  $("#again").onclick=()=>startRound(id);$("#hm").onclick=home;if($("#nx"))$("#nx").onclick=()=>openCh(nxt.id);if($("#rg"))$("#rg").onclick=regeln;
+  scrollTo(0,0)}
+
+/* ================= Klassenchat (lernwelt-chat.js) ================= */
+const CHATS=[
+ {name:'Hausaufgabe',title:'Klasse 5b 💬',sub:'Lena, Tom, Mia, du',ava:'5b',lines:[
+  {w:'Tom',t:'Leute, Aufgabe 3: 38 + 17 + 2. Das ist so viel 😩'},
+  {w:'Lena',t:'Ich hab erst 38 + 17 gerechnet. Geht, ist aber nervig.'},
+  {t:'Rechne zuerst 38 + ___, das gibt genau 40!',a:['2'],o:['2','17','38'],ex:'Die 8 von 38 und die 2 ergeben zusammen 10. 38 + 2 = 40.'},
+  {w:'Tom',t:'Darf man die 2 einfach nach vorne holen? 🤔'},
+  {t:'Ja! Beim Plus darf man tauschen. Das ist das ___.',a:['Kommutativgesetz'],o:['Kommutativgesetz','Assoziativgesetz','Gesetz vom neutralen Element'],ex:'Tauschen heißt Kommutativgesetz K⁺: a + b = b + a.'},
+  {t:'Dann noch 40 + 17 = ___',a:['57'],o:['57','55','67'],ex:'40 + 17 = 57.'},
+  {w:'Mia',t:'Mega, danke! 🙌'}]},
+ {name:'Regelheft-Check',title:'Mia',sub:'online',ava:'M',lines:[
+  {w:'Mia',t:'Kannst du mal mein Regelheft checken? 📒'},
+  {w:'Mia',t:'Ich hab geschrieben: a + 0 = 0',photo:'Regelheft Seite 12',pic:'📒'},
+  {t:'Fast! Richtig ist a + 0 = ___',a:['a'],o:['a','0','1'],ex:'Plus 0 ändert nichts, die Zahl bleibt: 44 + 0 = 44, also a + 0 = a.'},
+  {w:'Mia',t:'Oh stimmt, 44 + 0 sind ja 44 😅'},
+  {w:'Mia',t:'Und wie heißt die 0 da nochmal?'},
+  {t:'Das ___ Element der Addition.',a:['neutrale'],o:['neutrale','natürliche','kleinste'],ex:'Neutral heißt: Sie hält sich raus und ändert nichts.'},
+  {w:'Mia',t:'Danke, ich bessere das gleich aus ✏️'}]},
+ {name:'Klammer-Frage',title:'Tom',sub:'online',ava:'T',lines:[
+  {w:'Tom',t:'Bei (2 + 3) + 4 und bei 2 + (3 + 4) kommt bei mir dasselbe raus. Zufall? 🤔'},
+  {t:'Kein Zufall! Beides ist ___.',a:['9'],o:['9','10','24'],ex:'(2 + 3) + 4 = 5 + 4 = 9 und 2 + (3 + 4) = 2 + 7 = 9.'},
+  {t:'Das ist das ___: Klammern darf man umsetzen.',a:['Assoziativgesetz'],o:['Assoziativgesetz','Kommutativgesetz','Gesetz vom neutralen Element'],ex:'Klammer umsetzen heißt Assoziativgesetz A⁺.'},
+  {w:'Tom',t:'Geht das bei Minus auch? (10 − 4) − 2 und 10 − (4 − 2)?'},
+  {t:'___! Das eine ist 4, das andere 8.',a:['Nein'],o:['Nein','Ja'],ex:'(10 − 4) − 2 = 6 − 2 = 4, aber 10 − (4 − 2) = 10 − 2 = 8. Die Gesetze gelten nur beim Plus.'},
+  {w:'Tom',t:'Krass. Also nur beim Plus 👍'}]}
+];
+function chat(){R=null;
+  app.innerHTML=`<div class="chead"><button class="backb" id="cbk">${I.back}Alle Kapitel</button></div>
+    <div><span class="eyebrow">Kapitel 7</span><h2>Hilf im Klassenchat</h2><p class="small" style="margin-top:4px">Deine Freunde haben Fragen zu den Rechengesetzen. Schreib die passende Antwort. Jeder Chat ohne Fehler bringt einen Stern.</p></div>
+    <div class="chatbox" id="chatbox"></div>`;
+  $("#cbk").onclick=home;
+  if(!window.lwChatPanel){$("#chatbox").innerHTML=`<p class="small">Der Chat lädt gerade nicht. Versuch es später nochmal.</p>`;return}
+  lwChatPanel($("#chatbox"),{fach:'ma',people:{Lena:'#E0567A',Tom:'#2F80ED',Mia:'#8B4FE0'},chats:CHATS,
+    onEnd:function(i,res){if(res.every(r=>r.ok)){S.chat[i]=true;S.best.chat=Math.min(3,Object.keys(S.chat).length);save();beep([523.25,659.25,783.99],.16)}}});
+  scrollTo(0,0)}
+
+/* Lernwelt: direkt ins Kapitel (rechengesetze.html#null …), Anker stehen in hefte.js */
+function kapitelSprung(){const id=location.hash.slice(1);if(!chOf(id))return false;openCh(id);return true}
+kapitelSprung()||home();
+</script>
+<script>/* Lernwelt: Kapitel-Fortschritt für die Startseite (siehe sync.js) */
+if(window.LW&&LW.kapitel){
+LW.kapitel(function(){
+  return CH.map(function(c){return {t:c.t,p:stars(c)/3}});
+});
+}</script>
+</body></html>
