@@ -48,6 +48,10 @@ window.LW_HEFTE = [
     info: '2er- und 10er-Potenzen bis Hochzahl 20 auswendig, mit Zahlennamen zum Anhören', key: 'potenz-quiz-v1',
     kapitel: ['2er-Potenzen bis 2¹⁰', '2er-Potenzen bis 2²⁰', '10er-Potenzen bis 10²⁰', 'Namen der großen Zahlen', 'Hör-Quiz', 'Großer Mix'],
     anker: ['zwei1', 'zwei2', 'zehn', 'namen', 'hoeren', 'mix'] },
+  { id: 'rechengesetze', abzeichen: 'Gesetzes-Hüterin', fach: 'mathe', thema: 'Rechengesetze', name: 'Rechengesetze der Addition',
+    info: 'Tauschen, Klammern umsetzen, plus 0: die drei Gesetze aus dem Regelheft zum Ziehen und Ausprobieren', key: 'rechengesetze-v1',
+    kapitel: ['Mein Regelheft', 'Tauschen erlaubt? (K⁺)', 'Klammer-Karussell (A⁺)', 'Die neutrale Null (N⁺)', 'Geschickt rechnen', 'Gesetz-Detektivin', 'Hilf im Klassenchat', 'Großer Mix'],
+    anker: ['regeln', 'tauschen', 'klammern', 'null', 'geschickt', 'detektiv', 'chat', 'mix'] },
   { id: 'englisch', abzeichen: 'Vokabel-Champion', fach: 'englisch', thema: 'Vokabeln und Grammatik', name: 'English trainer',
     info: 'Vokabeln S. 170–185 und Grammatik Seite für Seite, mit Chats zum Mitschreiben, oder alles gemischt im Karteikasten', key: 'englisch-kartei-5-v1',
     // Ein Kapitel pro Buchseite, Grammatik dort eingeordnet, wo sie thematisch passt (muss zu KAPS in englisch.html passen)
