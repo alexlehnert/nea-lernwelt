@@ -202,6 +202,12 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--navy);outline-o
 button.fach{border:none;background:none;padding:0;font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
 button.fach:disabled{cursor:default}
 button.fach:not(:disabled):active .stack{background:rgba(0,0,0,.3)}
+.fresh{background:var(--lw-card,#fff);border:2px solid var(--lw-line,#e3e3ea);border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.fresh-h{display:flex;gap:8px;align-items:center}
+.fresh ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+.fresh li{display:flex;justify-content:space-between;gap:10px;font-size:.9rem}
+.fresh li span{min-width:0;overflow-wrap:anywhere}
+.fresh li b{color:var(--muted);font-variant-numeric:tabular-nums;flex:none}
 .boxtip{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.16);border-radius:12px;padding:7px 10px;margin:0 4px 10px;font-size:.85rem;color:#fff}
 .kv{display:flex;flex-direction:column;gap:12px}
 .kv-top{display:flex;align-items:center;gap:10px}
@@ -1468,6 +1474,9 @@ function start(){
       <button type="button" id="m-g" data-mode="g" aria-pressed="${m==='g'}"><b>Grammatik</b><span>G1 · G2 · G3 · G6 · G7</span></button>
       <button type="button" id="m-b" data-mode="b" aria-pressed="${m==='b'}"><b>Beides</b><span>gemischt</span></button>
     </div>
+    <div class="lbl">Reihenfolge</div>
+    <div class="chips"><button type="button" class="chip" data-fresh="1" aria-pressed="${freshOn()}">Neueste zuerst</button><button type="button" class="chip" data-fresh="0" aria-pressed="${!freshOn()}">Alles gemischt</button></div>
+    ${freshOn()?freshHTML():''}
     ${m!=='g'?`<div class="row" style="justify-content:space-between"><span class="lbl">Vokabel-Seiten</span><button class="ghost" type="button" id="allsec">${S.secs.length===SECS.length?'keine':'alle'}</button></div>
     <div class="chips">${SECS.map((s,i)=>`<button type="button" class="chip" data-sec="${i}" aria-pressed="${S.secs.includes(i)}">${s.p} · ${esc(s.n)}</button>`).join('')}</div>`:''}
     ${m!=='v'?`<div class="lbl">Grammatik-Themen</div>
@@ -1484,6 +1493,7 @@ function start(){
   document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{S.mode=b.dataset.mode;save();start()});
   document.querySelectorAll('[data-sec]').forEach(b=>b.onclick=()=>{const i=+b.dataset.sec;S.secs=S.secs.includes(i)?S.secs.filter(x=>x!==i):[...S.secs,i];save();start()});
   document.querySelectorAll('[data-top]').forEach(b=>b.onclick=()=>{const k=b.dataset.top;S.tops=S.tops.includes(k)?S.tops.filter(x=>x!==k):[...S.tops,k];save();start()});
+  document.querySelectorAll('[data-fresh]').forEach(b=>b.onclick=()=>{S.fresh=b.dataset.fresh==='1';save();start()});
   document.querySelectorAll('[data-len]').forEach(b=>b.onclick=()=>{S.len=+b.dataset.len;save();start()});
   const all=$('#allsec');if(all)all.onclick=()=>{S.secs=S.secs.length===SECS.length?[]:SECS.map((_,i)=>i);save();start()};
   let armed=false;
@@ -1495,16 +1505,70 @@ function start(){
 
 /* ===== Runde ===== */
 let R=null;
+/* ===== Neueste zuerst: Fokus auf die jüngsten Kapitel, ältere kommen nach und nach dazu =====
+   Vokabeln und Grammatik getrennt: von hinten (neuestes Kapitel) nach vorne gehen.
+   Fokus = neueste Kapitel, mindestens FR.minV Vokabeln bzw. ein Grammatik-Thema.
+   Ist alles im Fokus gefestigt (jede Karte ab Fach FR.fest), rutscht das nächstältere Kapitel mit hinein.
+   Ältere, schon geübte Karten kommen als Wiederholung dazu: anfangs ca. 10 %, mit wachsender Festigung bis 50 %. */
+const FR={minV:15,fest:3};
+const dayDiff=d=>{if(!d)return 99;const a=new Date(d+'T12:00'),b=new Date(today()+'T12:00');return Math.max(0,Math.round((b-a)/864e5))};
+function freshPlan(){
+  const groups=[];
+  if(S.mode!=='g')groups.push({v:1,L:KAPS.filter(K=>!K.g&&S.secs.includes(K.s)).reverse()});
+  if(S.mode!=='v')groups.push({v:0,L:KAPS.filter(K=>K.g&&S.tops.includes(K.g)).reverse()});
+  const focus=[],older=[],fk=[];
+  groups.forEach(({v,L})=>{
+    let n=0,fest=true,i=0;
+    for(;i<L.length;i++){
+      if(i>0&&!fest&&(!v||n>=FR.minV))break;
+      const ids=kapIds(L[i]);fk.push(L[i]);focus.push(...ids);n+=ids.length;
+      if(!ids.every(id=>bx(id)>=FR.fest))fest=false;
+    }
+    L.slice(i).forEach((K,d)=>kapIds(K).forEach(id=>older.push({id,d})));
+  });
+  const festN=focus.filter(id=>bx(id)>=FR.fest).length,festQ=focus.length?festN/focus.length:1;
+  const rev=older.filter(o=>bx(o.id)>0);
+  const nRev=rev.length?Math.min(rev.length,Math.max(1,Math.round(S.len*(.1+.4*festQ)))):0;
+  const fAv=focus.filter(id=>bx(id)>0).length+Math.min(focus.filter(id=>bx(id)===0).length,Math.ceil(S.len*.6)),nRevShow=Math.min(rev.length,Math.max(nRev,S.len-fAv));
+  return {focus,rev,fk,festQ,nRev,nRevShow,older:older.length};
+}
+const freshOn=()=>S.fresh!==false;
+function drawW(cand,n,out,cnt){
+  while(out.length<n&&cand.length){
+    const tot=cand.reduce((s,c)=>s+c.w,0);let r=Math.random()*tot,k=0;
+    while(k<cand.length-1&&r>cand[k].w){r-=cand[k].w;k++}
+    const c=cand.splice(k,1)[0];
+    if(bx(c.id)===0){if(cnt.n>=cnt.max)continue;cnt.n++}
+    out.push(c.id);
+  }
+}
+function freshHTML(){
+  if(!pool().length)return '';
+  const P=freshPlan(),pc=Math.round(P.festQ*100);
+  const li=P.fk.map(K=>{const ids=kapIds(K),f=ids.filter(id=>bx(id)>=FR.fest).length;return `<li><span>${esc(kapTitle(K))}</span><b>${f}/${ids.length}</b></li>`}).join('');
+  return `<div class="fresh">
+    <div class="fresh-h"><span aria-hidden="true">🎯</span><b>Im Fokus: die neuesten Kapitel</b></div>
+    <ul>${li}</ul>
+    <span class="kmeter" aria-hidden="true"><i style="width:${pc}%;background:var(--k3)"></i></span>
+    <p class="small" style="margin:0">${pc}% gefestigt (ab Fach ${FR.fest}). ${P.older?(P.nRevShow?`Dazu ca. ${P.nRevShow} von ${S.len} Karten Wiederholung aus älteren Kapiteln. Je fester die neuen sitzen, desto mehr alte kommen dazu.`:'Ältere Kapitel kommen dazu, sobald du die neuen festigst.'):'Alle ausgewählten Kapitel sind jetzt dabei.'}</p>
+  </div>`;
+}
 function startRound(only,opt){
   closeDetail();opt=opt||{};
-  const ids=only&&only.length?only:pool(),Wt=[opt.maxNew?12:6,16,8,4,2,1];let cand=ids.map(id=>({id,w:Wt[bx(id)]}));
-  const out=[],maxNew=opt.maxNew||Math.ceil(S.len*.6);let nNew=0;
-  while(out.length<S.len&&cand.length){
-    const tot=cand.reduce((s,c)=>s+c.w,0);let r=Math.random()*tot,k=0;
-    while(r>cand[k].w){r-=cand[k].w;k++}
-    const c=cand.splice(k,1)[0];
-    if(bx(c.id)===0){if(nNew>=maxNew)continue;nNew++}
-    out.push(c.id);
+  let ids=only&&only.length?only:pool();
+  const out=[],cnt={n:0,max:opt.maxNew||Math.ceil(S.len*.6)};
+  if(!(only&&only.length)&&KAP==null&&freshOn()){
+    const P=freshPlan(),Wf=[12,16,8,4,2,1],Wr=[0,16,8,4,2,1];
+    /* Wiederholung: tiefe Fächer, nähere Kapitel und lange nicht gesehene Karten bevorzugt */
+    const rc=P.rev.map(o=>{const h=S.hist[o.id];return {id:o.id,w:Wr[bx(o.id)]/(1+o.d*.25)*(dayDiff(h&&h.d)>=3?2:1)}});
+    drawW(rc,P.nRev,out,cnt);
+    drawW(P.focus.map(id=>({id,w:Wf[bx(id)]})),S.len,out,cnt);
+    if(out.length<S.len)drawW(rc,S.len,out,cnt);
+    const fc=P.focus.filter(id=>ALL[id].t==='chat');ids=fc.length?fc:P.rev.map(o=>o.id);
+    out.splice(0,out.length,...shuffle(out));
+  }else{
+    const Wt=[opt.maxNew?12:6,16,8,4,2,1];
+    drawW(ids.map(id=>({id,w:Wt[bx(id)]})),S.len,out,cnt);
   }
   /* Mindestens ein Chat pro Runde, wenn die Auswahl einen hat (Nea mag die Chats) */
   const chats=ids.filter(id=>ALL[id].t==='chat');
