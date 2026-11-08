@@ -296,7 +296,7 @@ a.klink.small{color:var(--lw-en);font-weight:700;padding:6px}
 
 <div class="wrap">
   <header>
-    <h1>English trainer<small>Vokabeln S. 170–185 · Grammatik G1, G2, G3, G6</small></h1>
+    <h1>English trainer<small>Vokabeln S. 170–186 · Grammatik G1, G2, G3, G6</small></h1>
     <span class="vol" aria-label="Klasse 5">5</span>
   </header>
   <section class="box" aria-label="Karteikasten">
@@ -727,7 +727,23 @@ sink|Becken; Spülbecken; Abwaschbecken|[sɪŋk]|Ruby, Ryan! Don't wash Sherlock
 toilet|Toilette|[ˈtɔɪlət]|Where's the *toilet*, please?
 TV (= television)|Fernsehen; Fernseher|[ˌtiːˈviː]|Let's watch *TV*.
 wardrobe|Kleiderschrank|[ˈwɔːdrəʊb]|Look at the cat! – Where? – On the *wardrobe*!
-washbasin|Waschbecken|[ˈwɒʃbeɪsn]|The *washbasin* is in the bathroom.`]];
+washbasin|Waschbecken|[ˈwɒʃbeɪsn]|The *washbasin* is in the bathroom.`],
+['S. 186','Things in the house',`bookshelf|Bücherregal|[ˈbʊkʃelf]|There are lots of books on the *bookshelf* in our living room.|Merk dir: *book* + *shelf* = *bookshelf*. Plural: *bookshelves*.
+mirror|Spiegel|[ˈmɪrə]|Look in the *mirror*, Sherlock! Is that you?
+towel|Handtuch|[ˈtaʊəl]|Here's a *towel* for your shower.
+counter|Tresen; Arbeitsplatte|[ˈkaʊntə]|The bananas are on the kitchen *counter*.
+dishes (pl)|Geschirr|[ˈdɪʃɪz]|Can you wash the *dishes*, please?|*Dishes* steht im Plural: The *dishes are* in the sink.
+extractor hood|Abzugshaube|[ɪkˈstræktə hʊd]|The *extractor hood* is over the cooker.
+oven|Backofen|[ˈʌvn]|The pizza is in the *oven*.|Achtung Aussprache: *oven* klingt wie [ʌ] in *love*, nicht wie „o“.
+pot|Topf|[pɒt]|There's soup in the *pot* on the cooker.
+rubbish bin|Mülleimer|[ˈrʌbɪʃ bɪn]|Put your banana skin in the *rubbish bin*, please.`],
+['S. 186','Unit 2 · Wörter',`shoe|Schuh|[ʃuː]|Sherlock, don't eat my *shoe*!
+glasses (pl)|Brille|[ˈɡlɑːsɪz]|My *glasses are* new.|*Glasses* steht immer im Plural: My *glasses are* new.
+banana|Banane|[bəˈnɑːnə]|*Bananas* are yellow.
+fire|Feuer|[ˈfaɪə]|Don't play with *fire*!
+flat|Wohnung|[flæt]|Lily lives with her dad in his *flat* in Greenwich.
+fantasy|Fantasie; Traum-|[ˈfæntəsi]|Is this a picture of your house? – No, it's a *fantasy* house.
+because|weil; da|[bɪˈkɒz]|I like my room. – Why? – *Because* the walls are pink!|Auf die Frage *Why?* antwortest du mit *Because …*`]];
 const SECS=VRAW.map(([p,n])=>({p,n}));
 const V=[];
 VRAW.forEach(([p,n,txt],si)=>txt.split('\n').forEach(l=>{const [en,de,ipa,ex,tip]=l.split('|'),v={id:'v'+V.length,en,de,s:si};if(ipa)v.ipa=ipa;if(ex)v.ex=ex;if(tip)v.tip=tip;V.push(v)}));
@@ -1231,7 +1247,7 @@ function movesHTML(){
 }
 
 /* ===== Kapitel-Modus: ein Kapitel pro Buchseite, Grammatik eingeordnet (Reihenfolge wie hefte.js) ===== */
-const KAPS=[{a:'s0',s:0},{a:'g2',g:'G2'},{a:'s1',s:1},{a:'g1',g:'G1'},{a:'s2',s:2},{a:'g3',g:'G3'},{a:'s3',s:3},{a:'s4',s:4},{a:'g6',g:'G6'},{a:'s5',s:5},{a:'s6',s:6},{a:'s7',s:7},{a:'s8',s:8},{a:'s9',s:9},{a:'s10',s:10},{a:'s11',s:11},{a:'s12',s:12},{a:'s13',s:13},{a:'s14',s:14},{a:'s15',s:15},{a:'s16',s:16},{a:'s17',s:17},{a:'s18',s:18},{a:'s19',s:19}];
+const KAPS=[{a:'s0',s:0},{a:'g2',g:'G2'},{a:'s1',s:1},{a:'g1',g:'G1'},{a:'s2',s:2},{a:'g3',g:'G3'},{a:'s3',s:3},{a:'s4',s:4},{a:'g6',g:'G6'},{a:'s5',s:5},{a:'s6',s:6},{a:'s7',s:7},{a:'s8',s:8},{a:'s9',s:9},{a:'s10',s:10},{a:'s11',s:11},{a:'s12',s:12},{a:'s13',s:13},{a:'s14',s:14},{a:'s15',s:15},{a:'s16',s:16},{a:'s17',s:17},{a:'s18',s:18},{a:'s19',s:19},{a:'s20',s:20},{a:'s21',s:21}];
 const OLD_ANKER={v1:'s0',v2:'s4',v3:'s7'};
 let KAP=null;
 const kapTitle=K=>K.g?TOP[K.g]:`${SECS[K.s].p} · ${SECS[K.s].n}`;
@@ -1314,7 +1330,7 @@ function start(){
   $('#screen').innerHTML=`<button class="ghost kbtn" type="button" id="kwords">Meine Wörter ansehen ›</button><section class="panel">
     <div><div class="lbl">Was möchtest du üben?</div></div>
     <div class="seg" role="group" aria-label="Schwerpunkt">
-      <button type="button" id="m-v" data-mode="v" aria-pressed="${m==='v'}"><b>Vokabeln</b><span>S. 170–185</span></button>
+      <button type="button" id="m-v" data-mode="v" aria-pressed="${m==='v'}"><b>Vokabeln</b><span>S. 170–186</span></button>
       <button type="button" id="m-g" data-mode="g" aria-pressed="${m==='g'}"><b>Grammatik</b><span>G1 · G2 · G3 · G6</span></button>
       <button type="button" id="m-b" data-mode="b" aria-pressed="${m==='b'}"><b>Beides</b><span>gemischt</span></button>
     </div>
