@@ -53,7 +53,7 @@ window.LW_HEFTE = [
     kapitel: ['Mein Regelheft', 'Tauschen erlaubt? (K⁺)', 'Klammer-Karussell (A⁺)', 'Die neutrale Null (N⁺)', 'Geschickt rechnen', 'Gesetz-Detektivin', 'Hilf im Klassenchat', 'Großer Mix'],
     anker: ['regeln', 'tauschen', 'klammern', 'null', 'geschickt', 'detektiv', 'chat', 'mix'] },
   { id: 'englisch', abzeichen: 'Vokabel-Champion', fach: 'englisch', thema: 'Vokabeln und Grammatik', name: 'English trainer',
-    info: 'Vokabeln S. 170–186 und Grammatik Seite für Seite, mit Chats zum Mitschreiben, oder alles gemischt im Karteikasten', key: 'englisch-kartei-5-v1',
+    info: 'Vokabeln S. 170–186 und Grammatik Seite für Seite, mit Chats zum Mitschreiben, oder im Karteikasten mit den neuesten Kapiteln zuerst', key: 'englisch-kartei-5-v1',
     // Ein Kapitel pro Buchseite, Grammatik dort eingeordnet, wo sie thematisch passt (muss zu KAPS in englisch.html passen)
     kapitel: ['S. 170 · Hello!', 'G2 · to be', 'S. 171 · Welcome to London!', 'G1 · a/an & Plural', 'S. 172 · In the park', 'G3 · there is/are',
       'S. 173 · Zahlen, Farben, Freunde', 'S. 174 · Freunde & Hobbys', 'G6 · Pronomen & my/your…', 'S. 175 · Bis morgen!', 'S. 176 · Schulsachen',
@@ -62,7 +62,7 @@ window.LW_HEFTE = [
       'S. 184 · Texte am Computer', 'S. 185 · Unit 2 Check-in', 'S. 185 · Unit 2 Station 1', 'G7 · ’s und s’ (wem gehört’s?)',
       'S. 186 · Things in the house', 'S. 186 · Unit 2 · Wörter'],
     anker: ['s0', 'g2', 's1', 'g1', 's2', 'g3', 's3', 's4', 'g6', 's5', 's6', 's7', 's8', 's9', 's10', 's11', 's12', 's13', 's14', 's15', 's16', 's17', 's18', 's19', 'g7', 's20', 's21'],
-    frei: { t: 'Karteikasten · alles gemischt', s: 'Alle Karten frei üben und sehen, was in welchem Fach liegt' } },
+    frei: { t: 'Karteikasten · Neueste zuerst', s: 'Erst die neuesten Kapitel festigen, ältere kommen nach und nach dazu' } },
   { id: 'bio-expedition', abzeichen: 'Bio-Forscherin', fach: 'biologie', thema: 'Zellen und Körper', name: 'Bio-Expedition',
     info: 'Zellen, Mikroskopier-Führerschein und Skelett', key: 'zellstadt-v1',
     kapitel: ['Zellbestandteile', 'Pflanze oder Tier', 'Fotosynthese & Atmung', 'Wasser & Turgor', 'Mikroskop & Größen', 'Mikroskopier-Führerschein',
