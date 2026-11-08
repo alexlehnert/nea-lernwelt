@@ -115,6 +115,24 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--navy);outline-o
 .end{display:flex;flex-direction:column;gap:14px}
 .score{font-family:var(--f-d);font-weight:800;font-size:3rem;line-height:1;font-variant-numeric:tabular-nums}
 .list{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:4px}
+.prompt .gap.gh{min-width:0;padding:0 .25em;font-size:.8em;color:var(--muted);font-weight:600}
+.gpicq{margin:0;display:flex;align-items:center;gap:12px}
+.gpicq span{font-size:2.6rem;line-height:1;letter-spacing:.05em;white-space:nowrap;flex:none}
+.gpicq small{color:var(--muted);font-size:.9rem}
+.grules{display:flex;flex-direction:column;gap:10px}
+.grules p{margin:0}
+.gex{display:flex;align-items:center;gap:12px;background:var(--chip);border-radius:12px;padding:10px 12px}
+.gex .gpic{font-size:1.9rem;line-height:1;flex:none;min-width:2.6em;text-align:center}
+.gex b{display:block;font-size:1.12rem}
+.gex small{display:block;color:var(--muted);font-size:.86rem;line-height:1.3}
+.grule{font-family:var(--f-d);font-size:1.1rem;border-left:4px solid var(--navy);padding:4px 0 4px 12px}
+.gnote{background:var(--navy-soft);border-radius:12px;padding:10px 12px;font-size:.95rem}
+.gsteps{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:10px}
+.kkey{display:inline-grid;place-items:center;min-width:2em;height:1.9em;padding:0 .45em;border-radius:7px;background:var(--paper);border:1.5px solid var(--line);border-bottom-width:3px;font-family:var(--f-d);font-weight:700;font-size:.9rem;line-height:1;vertical-align:middle;color:var(--ink)}
+.kkey.hot{background:var(--sun);border-color:#b48a00;color:#3b2e00;font-size:1.1rem}
+.apos{border:1.5px dashed var(--line);border-radius:12px;padding:8px 12px;font-size:.92rem}
+.apos summary{cursor:pointer;font-weight:700;color:var(--navy);min-height:32px;display:flex;align-items:center}
+.apos p{margin:6px 0 0;line-height:2}
 @media (max-width:460px){.opts{grid-template-columns:1fr}.seg button span{display:none}.fach .t{font-size:.6rem}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style><!--lw-look--><link rel="stylesheet" href="/lernwelt-app.css"><script src="/lernwelt-app.js"></script><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap"><style id="lw-look">
@@ -296,7 +314,7 @@ a.klink.small{color:var(--lw-en);font-weight:700;padding:6px}
 
 <div class="wrap">
   <header>
-    <h1>English trainer<small>Vokabeln S. 170–186 · Grammatik G1, G2, G3, G6</small></h1>
+    <h1>English trainer<small>Vokabeln S. 170–186 · Grammatik G1, G2, G3, G6, G7</small></h1>
     <span class="vol" aria-label="Klasse 5">5</span>
   </header>
   <section class="box" aria-label="Karteikasten">
@@ -748,7 +766,7 @@ const SECS=VRAW.map(([p,n])=>({p,n}));
 const V=[];
 VRAW.forEach(([p,n,txt],si)=>txt.split('\n').forEach(l=>{const [en,de,ipa,ex,tip]=l.split('|'),v={id:'v'+V.length,en,de,s:si};if(ipa)v.ipa=ipa;if(ex)v.ex=ex;if(tip)v.tip=tip;V.push(v)}));
 
-const TOP={G1:'G1 · a/an & Plural',G2:'G2 · to be',G3:'G3 · there is/are',G6:'G6 · Pronomen & my/your…'};
+const TOP={G1:'G1 · a/an & Plural',G2:'G2 · to be',G3:'G3 · there is/are',G6:'G6 · Pronomen & my/your…',G7:'G7 · ’s und s’ (wem gehört’s?)'};
 const EXD={
  G1:'a vor Konsonant-Laut, an vor Vokal-Laut (a, e, i, o, u). Plural meistens +s, nach s, sh, ch, x +es.',
  G2:"I am · you/we/they are · he/she/it is. Verneint: I'm not, isn't, aren't.",
@@ -844,6 +862,73 @@ const G=GRAW.map(([g,t,q,a,o,ex],i)=>{
   if(t==='c'&&!opts){opts=DEF[g].slice();const cap=a[0]===a[0].toUpperCase()&&/[a-z]/i.test(a[0]);opts=opts.map(x=>cap?x[0].toUpperCase()+x.slice(1):x.toLowerCase());}
   return {id:'g'+i,g,t,q,a:Array.isArray(a)?a:[a],opts,ex:ex||EXD[g]};
 });
+/* ===== G7 · Possessive form ’s und s’ (Unit 2, S. 40 Nr. 7 und Station 1 Nr. 8) =====
+   k: 1 = ein Besitzer, 2 = mehrere Besitzer, 3 = besondere Fälle, t = selbst schreiben (wie im Buch).
+   h = Wort in Klammern, wie im Buch: Karam is (Ryan) best friend.  pic/pd = kleines Bild wie im Buch. */
+const P1="Ein Besitzer → Wort + ’s.",P2="Mehrere Besitzer, das Wort endet schon auf s → nur noch ’ dahinter: s’.";
+const G7RAW=[
+ {k:1,t:'c',pic:'🧒 🐕',pd:'Ein Junge mit seinem Hund',q:'the ___ dog',h:'boy',a:"boy's",o:["boy's","boys'","boys"],ex:'Ein Junge → '+P1},
+ {k:1,t:'c',pic:'👧 🥪🥪',pd:'Ein Mädchen mit ihren Sandwiches',q:'the ___ sandwiches',h:'girl',a:"girl's",o:["girl's","girls'","girls"],ex:'Ein Mädchen → '+P1},
+ {k:1,t:'c',q:'Sherlock is in ___ bedroom.',h:'Ruby',a:"Ruby's",o:["Ruby's","Rubys'","Rubys"],ex:'Ruby ist eine Person → '+P1},
+ {k:1,t:'c',q:'Lulu is ___ cat.',h:'Lily',a:"Lily's",o:["Lily's","Lilys'","Lilys"],ex:'Bei Namen hängst du ’s an: Lily’s cat.'},
+ {k:1,t:'c',pic:'👩‍🏫 📕',pd:'Eine Lehrerin mit ihrem Buch',q:"the ___ book",h:'teacher',a:"teacher's",o:["teacher's","teachers'","teachers"],ex:'Eine Lehrerin → '+P1},
+ {k:1,t:'c',q:'___ hobbies are football and netball.',h:'Ruby',a:"Ruby's",o:["Ruby's","Rubys'","Rubys"],ex:'Ruby ist eine Person → '+P1},
+ {k:2,t:'c',pic:'🧒🧒 🐕',pd:'Zwei Jungen mit einem Hund',q:'the ___ dog',h:'boys',a:"boys'",o:["boys'","boy's","boys's"],ex:'Zwei Jungen → '+P2},
+ {k:2,t:'c',pic:'👧👧 🥪🥪',pd:'Zwei Mädchen mit ihren Sandwiches',q:'the ___ sandwiches',h:'girls',a:"girls'",o:["girls'","girl's","girls's"],ex:'Zwei Mädchen → '+P2},
+ {k:2,t:'c',pic:'🐕🐕 ⚽⚽',pd:'Zwei Hunde mit ihren Bällen',q:'the ___ balls',h:'dogs',a:"dogs'",o:["dogs'","dog's","dogs"],ex:'Zwei Hunde → '+P2},
+ {k:2,t:'c',pic:'🐈🐈 🥣',pd:'Zwei Katzen und ihr Futter',q:'the ___ food',h:'cats',a:"cats'",o:["cats'","cat's","cats's"],ex:'Zwei Katzen → '+P2},
+ {k:2,t:'c',pic:'🧑‍🎓🧑‍🎓 ✏️✏️',pd:'Zwei Schüler mit ihren Stiften',q:'the ___ pens',h:'students',a:"students'",o:["students'","student's","students"],ex:'Mehrere Schüler → '+P2},
+ {k:2,t:'c',q:'Sherlock is the ___ dog.',h:'twins',a:"twins'",o:["twins'","twin's","twins's"],ex:'Die Zwillinge Ruby und Ryan sind zwei → '+P2},
+ {k:2,t:'c',q:'Mrs Wilson is the ___ teacher.',h:'friends',a:"friends'",o:["friends'","friend's","friends's"],ex:'Mehrere Freunde → '+P2},
+ {k:3,t:'c',q:'The ___ house is at 67 Kidbrooke Gardens.',h:'Eatons',a:"Eatons'",o:["Eatons'","Eaton's","Eatons's"],ex:'Die Eatons sind die ganze Familie, also mehrere → s’.'},
+ {k:3,t:'c',q:'Sherlock wants to eat ___ sandwiches.',h:'Ryan and Ruby',a:"Ryan and Ruby's",o:["Ryan and Ruby's","Ryan's and Ruby's","Ryan and Rubys'"],ex:'Gehört etwas zwei Personen zusammen, bekommt nur der letzte Name ’s.'},
+ {k:3,t:'c',pic:'🧒👧🧒 🧸',pd:'Kinder mit ihren Spielsachen',q:'the ___ toys',h:'children',a:"children's",o:["children's","childrens'","childrens"],ex:'children ist schon Mehrzahl, endet aber nicht auf s → ’s.'},
+ {k:3,t:'c',q:"He's my best friend. – Was bedeutet ’s hier?",a:'he is (Kurzform)',o:['he is (Kurzform)','Besitz: sein …'],ex:"he's = he is. Das ’s ist hier eine Kurzform, kein Besitz."},
+ {k:3,t:'c',q:"Karam's football – Was bedeutet ’s hier?",a:'Besitz: der Fußball von Karam',o:['Besitz: der Fußball von Karam','Karam is (Kurzform)'],ex:'Hinter dem ’s steht ein Ding (football). Dann zeigt ’s, wem es gehört.'},
+ {k:3,t:'c',q:"It's Lily's bike. – Welches ’s zeigt Besitz?",a:"Lily's",o:["It's","Lily's"],ex:"It's = it is (Kurzform). Lily's bike = das Fahrrad von Lily."},
+ {k:'t',t:'t',q:'Karam is ___ best friend.',h:'Ryan',a:"Ryan's",ex:'Ryan ist eine Person → '+P1},
+ {k:'t',t:'t',q:'Lulu is ___ cat.',h:'Lily',a:"Lily's",ex:'Lily ist eine Person → '+P1},
+ {k:'t',t:'t',q:'Football is ___ favourite sport.',h:'Karam',a:"Karam's",ex:'Karam ist eine Person → '+P1},
+ {k:'t',t:'t',q:'___ hobbies are football and netball.',h:'Ruby',a:"Ruby's",ex:'Ruby ist eine Person → '+P1},
+ {k:'t',t:'t',q:'Sherlock is the ___ dog.',h:'twins',a:"twins'",ex:'Die Zwillinge sind zwei → '+P2},
+ {k:'t',t:'t',q:'The ___ house is at 67 Kidbrooke Gardens.',h:'Eatons',a:"Eatons'",ex:'Die Eatons = die ganze Familie, also mehrere → s’.'},
+ {k:'t',t:'t',q:'Mrs Wilson is the ___ teacher.',h:'friends',a:"friends'",ex:'Mehrere Freunde → '+P2},
+ {k:'t',t:'t',q:'Sherlock wants to eat ___ sandwiches.',h:'Ryan and Ruby',a:"Ryan and Ruby's",ex:'Zwei Personen, ein Ding: nur der letzte Name bekommt ’s.'},
+ {k:'t',t:'t',pic:'🧑‍🎓🧑‍🎓 ✏️✏️',pd:'Zwei Schüler mit ihren Stiften',q:'the ___ pens',h:'students',a:"students'",ex:'Mehrere Schüler → '+P2},
+ {k:'t',t:'t',pic:'🧑‍🎓 ✏️',pd:'Ein Schüler mit seinen Stiften',q:"the ___ pens",h:'student',a:"student's",ex:'Ein Schüler → '+P1},
+ {k:'t',t:'t',pic:'👩‍🏫 📕📕',pd:'Eine Lehrerin mit ihren Büchern',q:'the ___ books',h:'teacher',a:"teacher's",ex:'Eine Lehrerin → '+P1},
+ {k:'t',t:'t',pic:'🐕🐕 ⚽⚽',pd:'Zwei Hunde mit ihren Bällen',q:'the ___ balls',h:'dogs',a:"dogs'",ex:'Zwei Hunde → '+P2},
+ {k:'t',t:'t',pic:'🐈 🥣',pd:'Eine Katze und ihr Futter',q:'the ___ food',h:'cat',a:"cat's",ex:'Eine Katze → '+P1},
+ {k:'t',t:'t',q:'My ___ bedroom is next to my room.',h:'brother',a:"brother's",ex:'Ein Bruder → '+P1},
+ {k:'t',t:'t',q:'My ___ flat is in Greenwich.',h:'family',a:"family's",ex:'family ist ein Wort (Einzahl) → ’s: my family’s flat.'},
+ {k:'t',t:'t',q:'The ___ toys are in the box.',h:'children',a:"children's",ex:'children ist Mehrzahl ohne s am Ende → ’s.'}];
+EXD.G7="Ein Besitzer: ’s (the boy’s dog, Ruby’s room). Mehrere Besitzer mit s am Ende: s’ (the boys’ dog). Achtung: he’s = he is ist eine Kurzform, kein Besitz.";
+G7RAW.forEach((x,i)=>G.push({id:'gp'+i,g:'G7',t:x.t,k:x.k,q:x.q,h:x.h,pic:x.pic,pd:x.pd,a:[x.a],opts:x.o,ex:x.ex}));
+/* Erklär-Karten, die im ersten Durchgang zwischen den Aufgaben kommen (auch im Kapitel unter „Erklärung ansehen“) */
+const KB=k=>`<span class="kkey">${k}</span>`;
+const RULES={G7:[
+ {h:'Wem gehört das? → ’s',b:`<p>Mit <b>’s</b> zeigst du im Englischen, wem etwas gehört. Auf Deutsch sagst du: <i>der Hund des Jungen</i> oder <i>Rubys Zimmer</i>.</p>
+  <div class="gex"><span class="gpic">🧒 🐕</span><span><b>the boy’s dog</b><small>ein Junge → der Hund des Jungen</small></span></div>
+  <div class="gex"><span class="gpic">👧 🥪</span><span><b>the girl’s sandwiches</b><small>ein Mädchen → die Sandwiches des Mädchens</small></span></div>
+  <div class="gex"><span class="gpic">🐶 🛏️</span><span><b>Sherlock is in Ruby’s bedroom.</b><small>Name + ’s</small></span></div>
+  <p class="grule">Ein Besitzer: <b>Wort + ’s</b></p>`,say:"the boy's dog. the girl's sandwiches. Sherlock is in Ruby's bedroom."},
+ {h:'Mehrere Besitzer → s’',b:`<p>Gehört etwas <b>mehreren</b>, hat das Wort schon ein Plural-s: <i>boys, girls</i>. Dann hängst du nur noch das Apostroph hinten an.</p>
+  <div class="gex"><span class="gpic">🧒🧒 🐕</span><span><b>the boys’ dog</b><small>zwei Jungen → der Hund der Jungen</small></span></div>
+  <div class="gex"><span class="gpic">👧👧 🥪</span><span><b>the girls’ sandwiches</b><small>zwei Mädchen → ihre Sandwiches</small></span></div>
+  <p class="grule">Mehrere Besitzer: <b>boys → boys’</b></p>
+  <p class="gnote">👂 <b>boy’s</b> und <b>boys’</b> klingen gleich! Den Unterschied siehst du nur beim Schreiben. Frag dich immer: <i>Ist es einer oder sind es mehrere?</i></p>`,say:"the boys' dog. the girls' sandwiches."},
+ {h:'Besondere Fälle',b:`<div class="gex"><span class="gpic">👫</span><span><b>Ryan and Ruby’s sandwiches</b><small>zwei Namen, ein Ding: nur der letzte Name bekommt ’s</small></span></div>
+  <div class="gex"><span class="gpic">🏠</span><span><b>the Eatons’ house</b><small>die Eatons = die ganze Familie, also mehrere → s’</small></span></div>
+  <div class="gex"><span class="gpic">🧸</span><span><b>the children’s toys</b><small>Mehrzahl ohne s (children, men, women) → ’s</small></span></div>
+  <p class="gnote">⚠️ <b>he’s, she’s, it’s</b> sind Kurzformen: he’s = he is. Das ist kein Besitz! Zeigt ’s Besitz, steht danach ein Ding: <i>Karam’s football</i>.</p>`,say:"Ryan and Ruby's sandwiches. the Eatons' house. the children's toys."},
+ {h:'Jetzt tippst du selbst: das Apostroph ’',b:`<p>Gleich schreibst du die Wörter selbst, so wie im Buch: <i>Karam is (Ryan) best friend.</i> → <b>Ryan’s</b></p>
+  <p class="lbl" style="margin:4px 0 0">So findest du ’ auf dem iPhone</p>
+  <ol class="gsteps">
+   <li>Tipp unten links auf ${KB('123')}</li>
+   <li>In der dritten Reihe stehen ${KB('.')} ${KB(',')} ${KB('?')} ${KB('!')} <span class="kkey hot">'</span> Tipp auf das Apostroph.</li>
+   <li>Mit ${KB('ABC')} kommst du zurück zu den Buchstaben.</li></ol>
+  <p class="gnote">✨ <b>Profi-Trick:</b> Halt ${KB('123')} gedrückt, wisch zum <b>'</b> und lass los. Dann springt die Tastatur von allein zurück.</p>
+  <p class="small" style="margin:0">Ob das Zeichen gerade (') oder schräg (’) aussieht, ist egal. Beides zählt. Am Computer: ${KB('⇧')} + ${KB('#')}</p>`}]};
 /* ===== Chat-Aufgaben: Neas Nachrichten haben Lücken (lwChat aus lernwelt-chat.js) ===== */
 const PEOPLE={Ruby:'#E0567A',Ryan:'#2F80ED',Karam:'#E07B12',Lily:'#8B4FE0',Sophie:'#0E9AA7'};
 const BE=['am','is','are'],BE_C=['Am','Is','Are'];
@@ -953,16 +1038,41 @@ const CHATS=[
   {t:'Three ___? So cute!',a:['babies'],o:['babies','babys','baby'],ex:'Konsonant + y wird zu -ies.'},
   {w:'Karam',t:'And there are two men with a big camera. 📷'},
   {t:'Two ___? Maybe they are from TV!',a:['men'],o:['men','mans','mens'],ex:'man → men: unregelmäßig, auswendig lernen!'}]}
+,
+ {g:'G7',title:'Ruby',sub:'online',ava:'R',lines:[
+  {w:'Ruby',t:'Help! Where is Sherlock? 🐶'},
+  {t:"He's in ___ bedroom. 🛏️",a:["Ryan's"],o:["Ryan's","Ryans'","Ryans"],ex:'Ein Besitzer (Ryan) → ’s.'},
+  {w:'Ruby',t:'Oh no! What is he doing?'},
+  {t:"He's eating the ___ sandwiches! Yours AND Ryan's! 🥪",a:["twins'"],o:["twins'","twin's","twins"],ex:'Die Zwillinge sind zwei → s’.'},
+  {w:'Ruby',t:'Not our sandwiches! 😱'},
+  {t:"Don't worry. I'm putting ___ food in his bowl. 🥣",a:["Sherlock's"],o:["Sherlock's","Sherlocks'","Sherlocks"],ex:'Sherlock ist einer → ’s.'},
+  {w:'Ruby',t:'Thanks! You are the best! 💛'}]},
+ {g:'G7',title:'Lily',sub:'online',ava:'L',lines:[
+  {w:'Lily',t:'Nice photo! Is this your house? 🏠',photo:'Ein Haus mit Garten und einem Trampolin',pic:'🏡'},
+  {t:"No, it's my ___ house. She lives in Leipzig.",a:["grandma's"],o:["grandma's","grandmas'","grandmas"],ex:'Eine Oma → ’s.'},
+  {w:'Lily',t:'Who are the two boys on the trampoline?'},
+  {t:"My cousins! It's the ___ trampoline. 🤸",a:["boys'"],o:["boys'","boy's","boys"],ex:'Zwei Jungen → s’.'},
+  {w:'Lily',t:'Cool! And whose cat is that? 🐈'},
+  {t:"It's my ___ cat. She loves it!",a:["sister's"],o:["sister's","sisters'","sisters"],ex:'Eine Schwester (she) → ’s.'}]},
+ {g:'G7',title:'Karam',sub:'online',ava:'K',lines:[
+  {w:'Karam',t:'Is that Ryan’s bike? 🚲'},
+  {t:"No, ___ Ruby's bike.",a:["it's"],o:["it's","its","it"],ex:"it's = it is (Kurzform)."},
+  {w:'Karam',t:'And where is Ryan?'},
+  {t:"___ at the park with Sherlock.",a:["He's"],o:["He's","His","He"],ex:"He's = he is (Kurzform)."},
+  {w:'Karam',t:'Oh, is that my football or Ryan’s? ⚽'},
+  {t:"It's ___ football. Yours is at home!",a:["Ryan's"],o:["Ryan's","Ryans","Ryans'"],ex:'Hinter dem ’s steht ein Ding → Besitz.'}]}
 ];
 CHATS.forEach((c,i)=>{const k=c.lines.find(l=>l.a);G.push({id:'gc'+i,g:c.g,t:'chat',q:k.t,a:k.a,opts:k.o||k.a,ex:EXD[c.g],chat:c})});
 const ALL={};V.forEach(v=>ALL[v.id]=v);G.forEach(x=>ALL[x.id]=x);
 
 /* ===== Speicher ===== */
 const KEY='englisch-kartei-5-v1';
-let S={box:{},mode:'v',secs:SECS.map((_,i)=>i),tops:['G1','G2','G3','G6'],len:10};
+let S={box:{},mode:'v',secs:SECS.map((_,i)=>i),tops:['G1','G2','G3','G6','G7'],len:10};
 try{const s=JSON.parse(localStorage.getItem(KEY)||'null');if(s&&s.box)S=Object.assign(S,s)}catch(e){}
 /* Verlauf pro Karte: d = Tag der letzten Antwort, r = letzte 4 Ergebnisse (1 richtig, 0 falsch), neueste hinten */
 if(!S.hist||typeof S.hist!=='object')S.hist={};
+/* Neue Grammatik-Themen einmal in die freie Auswahl aufnehmen */
+if(!S.newTops)S.newTops=[];['G7'].forEach(g=>{if(!S.newTops.includes(g)){S.newTops.push(g);if(!S.tops.includes(g))S.tops.push(g)}});
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 const bx=id=>S.box[id]||0;
 
@@ -1247,7 +1357,7 @@ function movesHTML(){
 }
 
 /* ===== Kapitel-Modus: ein Kapitel pro Buchseite, Grammatik eingeordnet (Reihenfolge wie hefte.js) ===== */
-const KAPS=[{a:'s0',s:0},{a:'g2',g:'G2'},{a:'s1',s:1},{a:'g1',g:'G1'},{a:'s2',s:2},{a:'g3',g:'G3'},{a:'s3',s:3},{a:'s4',s:4},{a:'g6',g:'G6'},{a:'s5',s:5},{a:'s6',s:6},{a:'s7',s:7},{a:'s8',s:8},{a:'s9',s:9},{a:'s10',s:10},{a:'s11',s:11},{a:'s12',s:12},{a:'s13',s:13},{a:'s14',s:14},{a:'s15',s:15},{a:'s16',s:16},{a:'s17',s:17},{a:'s18',s:18},{a:'s19',s:19},{a:'s20',s:20},{a:'s21',s:21}];
+const KAPS=[{a:'s0',s:0},{a:'g2',g:'G2'},{a:'s1',s:1},{a:'g1',g:'G1'},{a:'s2',s:2},{a:'g3',g:'G3'},{a:'s3',s:3},{a:'s4',s:4},{a:'g6',g:'G6'},{a:'s5',s:5},{a:'s6',s:6},{a:'s7',s:7},{a:'s8',s:8},{a:'s9',s:9},{a:'s10',s:10},{a:'s11',s:11},{a:'s12',s:12},{a:'s13',s:13},{a:'s14',s:14},{a:'s15',s:15},{a:'s16',s:16},{a:'s17',s:17},{a:'s18',s:18},{a:'s19',s:19},{a:'g7',g:'G7'},{a:'s20',s:20},{a:'s21',s:21}];
 const OLD_ANKER={v1:'s0',v2:'s4',v3:'s7'};
 let KAP=null;
 const kapTitle=K=>K.g?TOP[K.g]:`${SECS[K.s].p} · ${SECS[K.s].n}`;
@@ -1290,6 +1400,7 @@ function kapStart(){
     ${kapMeter(K)}
     <p style="margin:0">${kapNext(K)}</p>
     <button class="go" type="button" id="kgo">${seen?'Weiter üben':"Los geht's"}</button>
+    ${isG&&RULES[K.g]?'<button class="ghost kbtn" type="button" id="kexpl">Erklärung ansehen</button>':''}
     <button class="ghost kbtn" type="button" id="kseek">${isG?'Aufgaben ansehen':'Wörter ansehen'}</button>
     <a class="ghost kbtn klink" href="index.html#heft-englisch">Zurück zum Heft</a>
     ${isG?'':spkToggle()}
@@ -1297,10 +1408,33 @@ function kapStart(){
   </section>`;
   $('#kgo').onclick=kapRound;
   $('#kseek').onclick=()=>openWords('g:'+(K.g||'s'+K.s));
+  if($('#kexpl'))$('#kexpl').onclick=()=>explainAll(K.g);
   bindSpk();
   window.scrollTo(0,0);
 }
-function kapRound(){startRound(kapIds(KAPS[KAP]),{maxNew:5})}
+function kapRound(){const K=KAPS[KAP];if(K.g&&RULES[K.g]&&!kapIds(K).some(id=>bx(id)>0))return guidedRound(K.g);startRound(kapIds(K),{maxNew:5})}
+/* Erster Durchgang eines Themas mit Erklär-Karten: erst klicken, zwischendurch erklären, am Ende selbst tippen und chatten */
+function guidedRound(g){
+  closeDetail();
+  const pick=(k,n)=>shuffle(G.filter(x=>x.g===g&&x.k===k).map(x=>x.id)).slice(0,n);
+  const chat=shuffle(G.filter(x=>x.g===g&&x.t==='chat').map(x=>x.id)).slice(0,1);
+  const out=['ex:'+g+':0',...pick(1,2),'ex:'+g+':1',...pick(2,2),'ex:'+g+':2',...pick(3,2),'ex:'+g+':3',...pick('t',3),...chat];
+  const was={};out.forEach(id=>was[id]=bx(id));
+  R={q:out,i:0,right:0,first:out.length,nx:out.filter(id=>id.startsWith('ex:')).length,missed:[],retried:new Set(),was,intro:[],ii:0};
+  window.scrollTo(0,0);task();
+}
+function ruleHTML(g,n){const x=RULES[g][n];return `<p class="prompt" style="font-size:1.35rem">${esc(x.h)}</p><div class="grules">${x.b}</div>${x.say?`<p class="row" style="margin:0;gap:8px;align-items:center">${sayBtn(x.say)}<span class="small">Beispiele anhören</span></p>`:''}`}
+function explainCard(g,n,onNext,top,last){
+  $('#screen').innerHTML=`<div class="topbar"><span>${top}</span><button class="ghost" type="button" id="quit" aria-label="Beenden">Beenden</button></div>
+  ${R?`<div class="progress" aria-hidden="true"><i style="width:${Math.round(R.i/R.q.length*100)}%"></i></div>`:''}
+  <article class="card"><div class="card-top"><span class="tag">Erklärung ${n+1} von ${RULES[g].length}</span><span class="fachtag">${esc(TOP[g].split(' · ')[0])}</span></div><div class="card-body" id="cb">${ruleHTML(g,n)}
+  <button class="go" type="button" id="inext">${last}</button></div></article>`;
+  $('#quit').onclick=home;bindSay($('#cb'));
+  $('#inext').onclick=onNext;window.scrollTo(0,0);
+}
+/* Alle Erklärungen nochmal ansehen (Knopf im Kapitel) */
+function explainAll(g,n){n=n||0;const L=RULES[g].length;
+  explainCard(g,n,()=>n+1<L?explainAll(g,n+1):kapStart(),`Erklärung · ${esc(TOP[g])}`,n+1<L?'Weiter':'Fertig');}
 /* Kennenlernen: neue Wörter zuerst ansehen und anhören, neue Grammatik zuerst als Regel-Karte */
 function introCard(){
   const id=R.intro[R.ii],last=R.ii+1>=R.intro.length,x=ALL[id],isRule=id.startsWith('rule:');
@@ -1331,7 +1465,7 @@ function start(){
     <div><div class="lbl">Was möchtest du üben?</div></div>
     <div class="seg" role="group" aria-label="Schwerpunkt">
       <button type="button" id="m-v" data-mode="v" aria-pressed="${m==='v'}"><b>Vokabeln</b><span>S. 170–186</span></button>
-      <button type="button" id="m-g" data-mode="g" aria-pressed="${m==='g'}"><b>Grammatik</b><span>G1 · G2 · G3 · G6</span></button>
+      <button type="button" id="m-g" data-mode="g" aria-pressed="${m==='g'}"><b>Grammatik</b><span>G1 · G2 · G3 · G6 · G7</span></button>
       <button type="button" id="m-b" data-mode="b" aria-pressed="${m==='b'}"><b>Beides</b><span>gemischt</span></button>
     </div>
     ${m!=='g'?`<div class="row" style="justify-content:space-between"><span class="lbl">Vokabel-Seiten</span><button class="ghost" type="button" id="allsec">${S.secs.length===SECS.length?'keine':'alle'}</button></div>
@@ -1397,7 +1531,9 @@ function task(){
   stopMic();renderBox();
   if(R.intro&&R.ii<R.intro.length)return introCard();
   if(R.i>=R.q.length)return end();
-  const id=R.q[R.i],it=ALL[id],b=bx(id),isV=id[0]==='v';
+  const id=R.q[R.i];
+  if(id.startsWith('ex:')){const [,g,n]=id.split(':'),nxt=R.q[R.i+1];return explainCard(g,+n,()=>{R.i++;task()},`${KAP!=null?`Kapitel ${KAP+1} · `:''}Erklärung`,nxt&&ALL[nxt]&&ALL[nxt].t==='t'?'Selbst schreiben':'Jetzt üben')}
+  const it=ALL[id],b=bx(id),isV=id[0]==='v';
   let kind=isV?vocabType(it,b):it.t;
   if(!isV&&it.t==='c'&&b>=3&&it.q.includes('___')&&/^[A-Za-z']+$/.test(it.a[0])&&!it.opts.includes(SND[0]))kind='t';
   const tag=isV?`Vokabel · ${SECS[it.s].p}`:TOP[it.g];
@@ -1507,12 +1643,15 @@ function tileGame(cb,id,parts,instr,prompt,target,prefix,joiner,letters,speak){
 }
 
 /* ===== Grammatik-Aufgaben ===== */
-const showQ=q=>esc(q).replace('___','<span class="gap">&nbsp;?&nbsp;</span>');
+const showQ=(q,h)=>esc(q).replace('___',h?`<span class="gap gh">(${esc(h)})</span>`:'<span class="gap">&nbsp;?&nbsp;</span>');
+const picHTML=it=>it.pic?`<p class="gpicq"><span aria-hidden="true">${it.pic}</span><small>${esc(it.pd||'')}</small></p>`:'';
+/* Hinweis fürs iPhone, wenn ein Apostroph getippt werden muss */
+const aposHelp=it=>it.a.some(a=>a.includes("'"))&&it.g==='G7'?`<details class="apos"><summary>Wo ist das ’ auf dem iPhone?</summary><p>Tipp auf <span class="kkey">123</span>, dann in der dritten Reihe auf <span class="kkey hot">'</span>. Mit <span class="kkey">ABC</span> geht es zurück. Trick: <span class="kkey">123</span> gedrückt halten, zum <b>'</b> wischen, loslassen.</p></details>`:'';
 const fillQ=(q,a)=>esc(q).replace('___',`<b>${esc(a)}</b>`);
 const GT={
   c(cb,it){
     const o=shuffle(it.opts),long=o.some(x=>x.length>14);
-    cb.innerHTML=`<p class="instr">Klick die richtige Lösung an.</p><p class="prompt">${showQ(it.q)}</p>
+    cb.innerHTML=`<p class="instr">${it.g==='G7'&&it.h?'Klick die richtige Form an: ’s oder s’?':'Klick die richtige Lösung an.'}</p>${picHTML(it)}<p class="prompt">${showQ(it.q,it.h)}</p>
     <div class="opts${long?' one':''}">${o.map((x,i)=>`<button class="opt" type="button" data-i="${i}">${esc(x)}</button>`).join('')}</div>`;
     cb.querySelectorAll('.opt').forEach(btn=>btn.onclick=()=>{
       const x=o[+btn.dataset.i],ok=it.a.includes(x);
@@ -1533,8 +1672,8 @@ const GT={
         grade(it.id,ok,`<strong>${ok?praise()+' Alles richtig geschrieben.':`${k?"Fast! ":""}${k} von ${n} richtig.`}</strong>${ok?'':`<span class="ex">So wäre es richtig:</span>${wrong}`}<span class="ex">${esc(EXD[it.g])}</span>`)}});
   },
   t(cb,it){
-    cb.innerHTML=`<p class="instr">${it.q.includes('___')?'Schreibe das fehlende Wort.':'Schreibe die Lösung.'}</p><p class="prompt">${showQ(it.q)}</p>
-    <form class="inp" id="f"><input id="ans" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Deine Antwort"><button class="check" type="submit">Prüfen</button></form>`;
+    cb.innerHTML=`<p class="instr">${it.g==='G7'&&it.h?`Schreibe die richtige Form von <b>${esc(it.h)}</b>: mit ’s oder s’.`:it.q.includes('___')?'Schreibe das fehlende Wort.':'Schreibe die Lösung.'}</p>${picHTML(it)}<p class="prompt">${showQ(it.q,it.h)}</p>
+    <form class="inp" id="f"><input id="ans" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Deine Antwort"><button class="check" type="submit">Prüfen</button></form>${aposHelp(it)}`;
     const inp=$('#ans');inp.focus({preventScroll:true});
     $('#f').onsubmit=e=>{e.preventDefault();const raw=strip(inp.value);if(!raw)return;inp.disabled=true;e.target.querySelector('button').disabled=true;
       const lo=raw.toLowerCase(),hit=it.a.map(strip).find(a=>a.toLowerCase()===lo),target=strip(it.a[0]);
@@ -1543,17 +1682,18 @@ const GT={
         const cn=hit!==raw&&/^[A-Z]|\bI\b/.test(hit)?`<span class="ex">Achte auf Groß- und Kleinschreibung: <b>${esc(hit)}</b></span>`:'';
         grade(it.id,true,`<strong>${praise()}</strong>${full}${cn}<span class="ex">${esc(it.ex)}</span>`);
       }else{inp.classList.add('bad');
-        grade(it.id,false,`<strong>Richtig wäre:</strong><span class="sol">${diffHTML(raw,target)}</span>${it.a.length>1?`<span class="ex">Auch richtig: ${it.a.slice(1).map(esc).join(' · ')}</span>`:''}<span class="ex">${esc(it.ex)}</span>`)}};
+        const ap=x=>x.toLowerCase().replace(/'/g,''),apN=target.includes("'")&&ap(raw)===ap(target)?`<span class="ex"><b>${raw.includes("'")?'Fast! Das Apostroph steht an der falschen Stelle.':'Fast! Es fehlt nur das Apostroph.'}</b></span>`:'';
+        grade(it.id,false,`<strong>Richtig wäre:</strong><span class="sol">${diffHTML(raw,target)}</span>${apN}${it.a.length>1?`<span class="ex">Auch richtig: ${it.a.slice(1).map(esc).join(' · ')}</span>`:''}<span class="ex">${esc(it.ex)}</span>`)}};
   }
 };
 
 /* ===== Ende ===== */
 function end(){
-  const uniq=[...new Set(R.q)],mv={sure:[],up:[],down:[]};
+  const uniq=[...new Set(R.q)].filter(id=>ALL[id]),mv={sure:[],up:[],down:[]};
   uniq.forEach(id=>{const a=R.was[id]??0,b=bx(id);if(b===5&&a<5)mv.sure.push([id,a,b]);else if(a===0&&b===1)return;else if(b>a)mv.up.push([id,a,b]);else if(b<a)mv.down.push([id,a,b])});
   R.moves=mv;
   renderBox();
-  const n=R.first,r=R.right,ids=pool(),sure=ids.filter(id=>bx(id)===5).length;
+  const n=R.first-(R.nx||0),r=R.right,ids=pool(),sure=ids.filter(id=>bx(id)===5).length;
   const msg=r===n?'Alles richtig – stark!':r>=n*.8?'Sehr gut gemacht!':r>=n*.5?'Gut! Die falschen Karten stehen jetzt in Fach 1.':'Dranbleiben – morgen sitzt es schon besser.';
   $('#screen').innerHTML=`<section class="panel end">
     <div class="lbl">Runde geschafft</div>
