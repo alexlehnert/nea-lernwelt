@@ -86,6 +86,13 @@ Die Karte der Länder-Reise ist aus [deutschlandGeoJSON](https://github.com/isel
    Chat-Aufgabe (wie der Klassenchat in Ethik): `<script src="/lernwelt-chat.js"></script>` einbinden und `lwChat(container, {title, fach, lines, onEnd})` aufrufen. Der Chat läuft Nachricht für Nachricht ab, an Lücken in Neas Nachrichten tippt sie einen Vorschlag an oder schreibt das Wort selbst. Beschreibung der Felder oben in [`lernwelt-chat.js`](lernwelt-chat.js), Beispiele: die Grammatik-Chats in `englisch.html` (`CHATS`) und die Himmelsrichtungs-Chats in `atlas.html` (`DCHATS`). Für Seiten ohne Runden gibt es `lwChatPanel(container, {fach, chats, onEnd})` mit Auswahl und „Chat starten“ (Terme im Alltag, Zell-Chat in der Pflanzenzelle).
 5. In `hefte.js` einen Eintrag in `LW_HEFTE` anlegen: Fach, Thema, Name, eine Zeile Beschreibung und die Kapitel. Wenn die App etwas in `localStorage` speichert, den Schlüssel als `key` angeben, dann zeigt die Lernwelt „angefangen“ an. Ein neues Fach kommt in `LW_FAECHER` und erscheint, sobald es ein Heft hat.
 
+## Lernkonzept: Lernpfad, Entdecken, Großer Test
+
+- Die Heft-Seite der Lernwelt ist die einzige Startseite eines Hefts. Der Lernpfad (Kapitel der Reihe nach) ist der Hauptweg.
+- Darüber stehen bis zu zwei Kacheln aus `hefte.js`: `entdecken` (Modell zum Antippen, ohne Sterne) und `test` (gemischte Runde über alle Kapitel; die App meldet den Bestwert unter `test.kap`, er zählt für Sterne und Edelsteine, aber nicht als Kapitel).
+- Ein Kapitel beginnt mit einem kurzen Lernteil, dann „Jetzt üben“. Raus geht es immer eine Ebene hoch: Runde → Kapitel → Heft-Seite.
+- Apps starten mit `lwStart('home', kapitelSprung)` (aus `lernwelt-app.js`): Mit Anker springt die App ins Kapitel, und `home()` führt danach zur Heft-Seite statt in die eigene Übersicht.
+
 ## Aufbau der Startseite
 
 - **Lernen:** Begrüßung mit Avatar, „Weitermachen“ mit dem zuletzt geöffneten Heft, alle Fächer, Links zum Nachschlagen.

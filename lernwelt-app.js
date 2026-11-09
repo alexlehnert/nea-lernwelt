@@ -26,13 +26,36 @@
     return sh;
   };
 
+  // Zurück zur Heft-Seite (Lernkonzept: raus geht es immer eine Ebene hoch, nie in eine eigene Übersicht der App).
+  // Kam Nea von der Lernwelt, per Verlauf zurück (die Heft-Seite steht dann an derselben Stelle), sonst per Link.
+  function fromHub() {
+    var r = document.referrer, o = location.origin;
+    return r.indexOf(o + '/') === 0 && /^\/(index\.html)?$/.test(r.slice(o.length).replace(/[?#].*$/, '')) && history.length > 1;
+  }
+  window.lwHeft = function () {
+    var id = location.pathname.replace(/^.*\//, '').replace(/\.html$/, '');
+    if (fromHub() && !moved) history.back();
+    else location.href = 'index.html#heft-' + id;
+  };
+  // Start einer App: lwStart('home', kapitelSprung). Ohne Anker zeigt die App ihre Übersicht wie bisher.
+  // Mit Anker (Nea kam über ein Kapitel der Lernwelt) springt sie ins Kapitel, und danach führt jeder
+  // Aufruf von home() zurück zur Heft-Seite statt in die eigene Übersicht der App.
+  window.lwStart = function (name, jump) {
+    var real = window[name];
+    if (!location.hash) { real(); return; }
+    var boot = true;
+    window[name] = function () { return boot ? real.apply(this, arguments) : window.lwHeft(); };
+    var ok = false;
+    try { ok = jump(); } finally { boot = false; }
+    if (!ok) { window[name] = real; real(); }
+  };
+
   var moved = false;
   window.addEventListener('hashchange', function () { moved = true; });
   document.addEventListener('click', function (e) {
     var a = e.target.closest && e.target.closest('.lw-back');
     if (!a || moved) return;
-    var r = document.referrer, o = location.origin;
-    if (r.indexOf(o + '/') === 0 && /^\/(index\.html)?$/.test(r.slice(o.length).replace(/[?#].*$/, '')) && history.length > 1) {
+    if (fromHub()) {
       e.preventDefault();
       history.back();
     }

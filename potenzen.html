@@ -451,7 +451,8 @@ function tafel(){hush();R=null;TAF=false;const b=S.taf===10?10:2;
 
 /* Lernwelt: direkt ins Kapitel (potenzen.html#namen …), Anker stehen in hefte.js */
 function kapitelSprung(){const id=location.hash.slice(1);if(id==="tafel"){tafel();return true}if(!chOf(id))return false;startRound(id);return true}
-kapitelSprung()||home();
+// Kam Nea über ein Kapitel der Lernwelt, führt „Alle Kapitel/Startseite“ zurück zur Heft-Seite
+window.lwStart?lwStart('home',kapitelSprung):(kapitelSprung()||home());
 </script>
 <script>/* Lernwelt: Kapitel-Fortschritt für die Startseite (siehe sync.js) */
 if(window.LW&&LW.kapitel){

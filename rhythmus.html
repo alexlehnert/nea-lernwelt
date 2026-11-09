@@ -785,8 +785,9 @@ function bkPlay(){const box=$("#bkb");const its=[0,1].map(bkItems),n0=its[0].len
     onStop:()=>{const b2=$("#pl");if(b2)b2.lastChild.textContent="Abspielen";box.querySelectorAll(".it.on").forEach(x=>x.classList.remove("on"))}})}
 
 /* Lernwelt: direkt ins Kapitel (rhythmus.html#takt …), Anker stehen in hefte.js */
-function kapitelSprung(){const id=location.hash.slice(1);if(!stOf(id))return false;chapter(id);return true}
-kapitelSprung()||home();
+function kapitelSprung(){const id=location.hash.slice(1);if(id==="baukasten"){builder();return true}if(!stOf(id))return false;chapter(id);return true}
+// Kam Nea über ein Kapitel der Lernwelt, führt „Alle Kapitel/Startseite“ zurück zur Heft-Seite
+window.lwStart?lwStart('home',kapitelSprung):(kapitelSprung()||home());
 </script>
 <script>/* Lernwelt: Kapitel-Fortschritt für die Startseite (siehe sync.js) */
 if(window.LW&&LW.kapitel){

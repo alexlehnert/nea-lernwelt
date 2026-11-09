@@ -716,7 +716,8 @@ function confetti(level){
 if(canSpeak){try{speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=()=>{};}catch(e){}}
 /* Lernwelt: direkt in eine Station springen (schatzsuche.html#dk …), Anker stehen in hefte.js */
 function kapitelSprung(){const id=location.hash.slice(1);if(!ST.some(s=>s.id===id))return false;renderHome();startRound(id);return true}
-kapitelSprung()||renderHome();
+// Kam Nea über ein Kapitel der Lernwelt, führt „Startseite“ zurück zur Heft-Seite
+window.lwStart?lwStart('renderHome',kapitelSprung):(kapitelSprung()||renderHome());
 </script>
 <script>/* Lernwelt: Kapitel-Fortschritt für die Startseite (siehe sync.js). Stationen = Kapitel. */
 if(window.LW&&LW.kapitel){

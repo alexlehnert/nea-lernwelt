@@ -310,6 +310,11 @@ svg .spark{opacity:0}
 svg .stack.nodisc.jump~.spark{animation:spark .5s}
 @keyframes spark{20%,60%{opacity:1}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+/* Lernkonzept: Kapitel = erst lernen, dann üben */
+.merk{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:8px;line-height:1.45}
+.merk b{color:var(--accent)}
+.startbar{position:sticky;bottom:0;z-index:5;display:flex;justify-content:center;padding:14px 0 calc(14px + env(safe-area-inset-bottom,0px));background:linear-gradient(to bottom,transparent,var(--lw-bg,#1d1b19) 40%)}
+.startbar .go{width:100%;max-width:420px}
 </style><!--lw-look--><link rel="stylesheet" href="/lernwelt-app.css"><script src="/lernwelt-app.js"></script><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap"><style id="lw-look">
 /* Übungs-Bausteine im Lernwelt-Look (wie im Konzept: Antwortkacheln, grüne Rückmeldung, dicke Knöpfe) */
 .go,.next,.check{background:var(--lw-c);color:#fff;border:none;border-radius:16px;min-height:54px;padding:12px 22px;
@@ -640,6 +645,21 @@ MC.push(
  ['sk_modell','Welche Frage untersucht der Papprollen-Versuch?',['Warum besteht die Wirbelsäule aus vielen einzelnen Wirbeln?','Wie schwer ist ein Knochen?','Ist Papier stabiler als Knochen?','Wie lang ist die Wirbelsäule?'],'Vermutung: für eine bessere Beweglichkeit.']
 );
 
+/* =================== LERNKARTEN (erst lernen, dann üben) ===================
+   ex = Modell zum Antippen unter der Karte: [Art, Ansicht] wie bei explore() */
+const LEARN={
+ organellen:{p:['Jede Zelle ist wie eine kleine <b>Stadt</b>: Jeder Bestandteil hat eine feste Aufgabe.','Der <b>Zellkern</b> steuert die Zelle, <b>Mitochondrien</b> gewinnen Energie, <b>Ribosomen</b> bauen Eiweiße, <b>ER</b> und <b>Golgi-Apparat</b> stellen Stoffe her und verschicken sie.','Die <b>Zellmembran</b> entscheidet, was hinein- und hinausdarf. Alles liegt im <b>Zellplasma</b>.'],ex:['cell']},
+ vergleich:{p:['Pflanzen- und Tierzellen haben vieles gemeinsam: Zellmembran, Zellplasma, Zellkern, Mitochondrien, Ribosomen, ER und Golgi-Apparat.','Nur die <b>Pflanzenzelle</b> hat drei Dinge mehr: die feste <b>Zellwand</b>, eine große <b>Vakuole</b> mit Zellsaft und grüne <b>Chloroplasten</b>.','Merke: Wand, Vakuole, Chloroplast = Pflanze.'],ex:['cell']},
+ energie:{p:['<b>Fotosynthese</b> passiert in den Chloroplasten: Kohlenstoffdioxid + Wasser → Traubenzucker + Sauerstoff. Dafür braucht die Pflanze <b>Licht</b>.','<b>Zellatmung</b> passiert in den Mitochondrien: Traubenzucker + Sauerstoff → Kohlenstoffdioxid + Wasser + <b>Energie</b>.','Pflanzen machen beides. Tiere und Menschen machen nur die Zellatmung.']},
+ wasser:{p:['Ist genug Wasser da, füllt sich die <b>Vakuole</b> und drückt gegen die Zellwand. Die Zelle ist <b>prall</b>, das nennt man <b>Turgor</b>. So steht die Pflanze.','Fehlt Wasser, gibt die Vakuole Wasser ab. Der Druck sinkt und die Pflanze wird <b>welk</b>.','In Salzwasser strömt Wasser aus der Zelle, die Membran löst sich von der Wand: <b>Plasmolyse</b>. In Leitungswasser wird die Zelle wieder prall.']},
+ mikro:{p:['Mit dem <b>Lichtmikroskop</b> siehst du Zellwand, Zellkern, Vakuole und Chloroplasten.','Ribosomen, ER, Golgi-Apparat und Mitochondrien sind dafür zu klein. Sie sieht man nur mit dem <b>Elektronenmikroskop</b>.','Größen: 1 mm = 1000 µm (Mikrometer), 1 µm = 1000 nm (Nanometer). Eine Blattzelle ist etwa 50 µm groß, ein Ribosom nur 25 nm.']},
+ fuehrerschein:{p:['Tippe unten jeden Teil des Mikroskops an und lies, wozu er da ist.','<b>Gesamtvergrößerung</b> = Okular × Objektiv, zum Beispiel 10 × 40 = 400-fach.','Immer mit dem <b>kleinsten Objektiv</b> anfangen, von der Seite mit dem Grobtrieb heranfahren, dann mit Feintrieb und Blende nachregeln.'],ex:['scope']},
+ sg_aufbau:{p:['Das Skelett besteht aus ungefähr <b>206 Knochen</b>.','Es hat drei Teile: <b>Schädel</b>-Skelett, <b>Rumpf</b>-Skelett und <b>Extremitäten</b>-Skelett (Arme und Beine).','Seine Aufgaben: <b>schützen</b>, <b>stützen</b>, Ansatz für <b>Muskeln und Sehnen</b> und zusammen mit Gelenken, Muskeln und Nerven die <b>Bewegung</b>.'],ex:['skelett','body']},
+ sg_schaedel:{p:['Der <b>Schädel</b> ist die Gesamtheit der Knochen des Kopfes.','Man unterscheidet den <b>Gehirnschädel</b> und den <b>Gesichtsschädel</b>.','Die wichtigste Aufgabe des Gehirnschädels ist der <b>Schutz</b> des Gehirns. Tippe die Knochen an: Stirnbein, Nasenbein, Jochbein, Ober- und Unterkiefer.'],ex:['skelett','skull']},
+ sg_rumpf:{p:['Zum <b>Rumpf-Skelett</b> gehören Wirbelsäule, Rippen, Brustbein, Schlüsselbein, Schulterblatt und Becken.','Die <b>Rippen</b> bilden mit dem Brustbein den Brustkorb und schützen Herz und Lunge.','Tippe die Knochen an und lies, wozu sie da sind.'],ex:['skelett','body']},
+ sg_wirbel:{p:['Die Wirbelsäule hat <b>7</b> Halswirbel, <b>12</b> Brustwirbel und <b>5</b> Lendenwirbel. Darunter sind die Wirbel zu <b>Kreuzbein</b> und <b>Steißbein</b> verwachsen.','Zwischen den Wirbeln liegen <b>Bandscheiben</b> aus Knorpel. Sie federn Stöße ab.','Alle Wirbel zusammen bilden einen Kanal, in dem das <b>Rückenmark</b> verläuft.'],ex:['skelett','spine']}
+};
+
 /* =================== SPEICHER =================== */
 const KEY='zellstadt-v1';
 let S={lv:{},len:10,groups:Object.keys(GROUPS),rounds:0,best:0};
@@ -786,7 +806,7 @@ function startZelle(scr){
   document.querySelectorAll('.m').forEach(b=>b.onclick=()=>pick(b.dataset.k));
   Object.entries(P.leaves).forEach(([k,g])=>{g.addEventListener('click',()=>pick(k));g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(k);}});});
 }
-function startMikro(scr){
+function startMikro(scr,plain){
   const stamps=MKS.filter(k=>lv(k)>=4).length,all=stamps===MKS.length;
   if(all&&!S.mkDate){S.mkDate=new Date().toLocaleDateString('de-DE');save();}
   const fs=document.createElement('section');fs.className='panel licence';
@@ -794,12 +814,13 @@ function startMikro(scr){
    <label class="lic-name">Name: <input id="lname" type="text" maxlength="30" autocomplete="off" value="${esc(S.name||'')}" placeholder="dein Name"></label>
    <div class="stamps">${MKS.map(k=>{const L=lv(k);return `<div class="stamp${L>=4?' got':''}" style="--p:${Math.min(L,4)/4}" title="${esc(SK_NAME[k])}"><span>${esc(STAMP[k]||SK_NAME[k])}</span></div>`;}).join('')}</div>
    <p class="small">${all?'Alle Stempel gesammelt – du darfst mikroskopieren!':`${stamps} von ${MKS.length} Stempeln. Einen Stempel gibt es, wenn ein Teil richtig sicher sitzt.`}</p>
-   <div class="row"><button class="go" type="button" id="mkgo">Führerschein üben</button><button class="ghost" type="button" id="mkex">Mikroskop erkunden</button></div>`;
+   ${plain?'':'<div class="row"><button class="go" type="button" id="mkgo">Führerschein üben</button><button class="ghost" type="button" id="mkex">Mikroskop erkunden</button></div>'}`;
   scr.appendChild(fs);
   $('#lname').oninput=e=>{S.name=e.target.value;save();};
+  if(plain)return;
   $('#mkgo').onclick=()=>startRound(['fuehrerschein']);$('#mkex').onclick=()=>explore('scope');
 }
-function startSkelett(scr){
+function startSkelett(scr,plain){
   const p=document.createElement('section');p.className='panel';
   const done=BK.filter(k=>lv(k)>=4).length+SKT.filter(k=>lv(k)>=4).length,all=done===SKALL.length;
   p.innerHTML=`<h2>Dein leuchtendes Skelett</h2><p class="small">Am Anfang ist dein Skelett noch dunkel. Jeder Knochen leuchtet heller, je sicherer du ihn kennst. ${all?'<b>Alles leuchtet – du bist ein echter Knochen-Profi!</b>':'Schaffst du es, dass alles strahlt?'}</p><div class="plantwrap skelwrap"><div id="pl"></div><div><div class="mastery" id="mg"></div><p class="plantcap" id="pcap">Tippe auf einen Knochen.</p></div></div>`;
@@ -811,6 +832,7 @@ function startSkelett(scr){
     document.querySelectorAll('.m').forEach(b=>b.setAttribute('aria-pressed',b.dataset.k===k));$('#pcap').textContent=`${SK_NAME[k]}: ${word[lv(k)]}`;};
   document.querySelectorAll('.m').forEach(b=>b.onclick=()=>pick(b.dataset.k));
   Object.entries(P.G).forEach(([g,e])=>e.addEventListener('click',()=>{const k=g==='sk_kopf'?'sk_schaedel':g==='sk_arme'||g==='sk_beine'?'sk_aufbau':g==='sk_wirbelsaeule'?'sk_wirbelsaeule':g;pick(k);}));
+  if(plain)return;
   const q=document.createElement('section');q.className='panel';
   q.innerHTML=`<div class="row" style="justify-content:space-between"><button class="go" type="button" id="skgo">Los geht's</button><button class="ghost" type="button" id="skex">Skelett erkunden</button></div>`;
   scr.appendChild(q);
@@ -837,17 +859,18 @@ function settingsPanel(scr){
 
 /* =================== ERKUNDEN =================== */
 function exTabs(){return '';}
-function bindTabs(){document.querySelectorAll('[data-ex]').forEach(b=>b.onclick=()=>explore(b.dataset.ex));$('#back').onclick=start;}
-function explore(kind,view){
-  window.scrollTo(0,0);
-  const scr=$('#screen');
+function bindTabs(){document.querySelectorAll('[data-ex]').forEach(b=>b.onclick=()=>explore(b.dataset.ex));if($('#back'))$('#back').onclick=()=>start();}
+// host: eingebettet in eine Kapitel- oder Entdecken-Seite (ohne eigene Kopfzeile)
+function explore(kind,view,host){
+  if(!host)window.scrollTo(0,0);
+  const scr=host||$('#screen'),top=t=>host?'':`<div class="topbar"><span>${t}</span><button class="ghost" type="button" id="back">Zurück</button></div>`;
   if(kind==='skelett'){
    view=view||'body';
    const V={body:'Körper',skull:'Schädel',spine:'Wirbelsäule',wirbel:'Wirbel im Schnitt'};
-   scr.innerHTML=`<div class="topbar"><span>Skelett erkunden</span><button class="ghost" type="button" id="back">Zurück</button></div>
+   scr.innerHTML=`${top('Skelett erkunden')}
    <section class="card">${exTabs('skelett')}<div class="chips" id="vw">${Object.entries(V).map(([k,n])=>`<button class="chip" type="button" data-v="${k}" aria-pressed="${view===k}">${n}</button>`).join('')}</div>
    <p class="instr">Tippe auf einen Knochen oder Teil.</p><div class="cellbox fig${view==='spine'?' spinebox':''}" id="cb"></div><div class="info" id="info"></div></section>`;
-   bindTabs();document.querySelectorAll('#vw .chip').forEach(b=>b.onclick=()=>explore('skelett',b.dataset.v));
+   bindTabs();document.querySelectorAll('#vw .chip').forEach(b=>b.onclick=()=>explore('skelett',b.dataset.v,host));
    const C=view==='skull'?makeSkull():view==='spine'?makeSpine(null,{labels:true}):view==='wirbel'?makeWirbel():makeBody();$('#cb').appendChild(C.svg);
    const show=k=>{C.svg.classList.add('sel-on');Object.entries(C.G).forEach(([x,g])=>g.classList.toggle('sel',x===k));
      let t,d;if(B[k]){t=B[k].n;d=`${B[k].nom} ${B[k].fn}.`;}else if(SP[k]){t=SP[k].n;d=SP[k].c?`Sie besteht aus ${SP[k].c} einzelnen Wirbeln.`:'Hier sind die Wirbelknochen miteinander verwachsen – man kann keine einzelnen Wirbel erkennen.';}
@@ -859,7 +882,7 @@ function explore(kind,view){
    return;
   }
   if(kind==='scope'){
-   scr.innerHTML=`<div class="topbar"><span>Mikroskop erkunden</span><button class="ghost" type="button" id="back">Zurück</button></div>
+   scr.innerHTML=`${top('Mikroskop erkunden')}
    <section class="card">${exTabs('scope')}<p class="instr">Tippe auf einen Teil des Mikroskops oder unten auf einen Namen.</p><div class="cellbox" id="cb"></div>
    <div class="chips" id="ech">${MKP.map(k=>`<button class="chip" type="button" data-k="${k}" aria-pressed="false">${esc(M[k].n)}</button>`).join('')}</div><div class="info" id="info"></div></section>`;
    bindTabs();
@@ -869,7 +892,7 @@ function explore(kind,view){
    MKP.forEach(k=>C.G[k].addEventListener('click',()=>show(k)));document.querySelectorAll('#ech .chip').forEach(b=>b.onclick=()=>show(b.dataset.k));show('mk_okular');
    return;
   }
-  scr.innerHTML=`<div class="topbar"><span>Zelle erkunden</span><button class="ghost" type="button" id="back">Zurück</button></div>
+  scr.innerHTML=`${top('Zelle erkunden')}
   <section class="card">${exTabs('cell')}<p class="instr">Tippe auf einen Bestandteil der Zelle oder unten auf einen Namen.</p><div class="cellbox" id="cb"></div>
   <div class="chips" id="ech">${ORG.map(k=>`<button class="chip" type="button" data-k="${k}" aria-pressed="false">${esc(O[k].short||O[k].n)}</button>`).join('')}</div>
   <div class="info" id="info"></div></section>`;
@@ -882,6 +905,28 @@ function explore(kind,view){
   document.querySelectorAll('#ech .chip').forEach(b=>b.onclick=()=>show(b.dataset.k));
   show('chloroplast');
 }
+
+/* =================== KAPITEL · ENTDECKEN · TEST =================== */
+const EXK={zelle:'cell',mikro:'scope',skelett:'skelett'};
+function kapitel(g){
+  R=null;renderStats();window.scrollTo(0,0);
+  const scr=$('#screen'),gs=CH[S.ch].groups,i=gs.indexOf(g),L=LEARN[g]||{p:[]};
+  scr.innerHTML=`<div class="topbar"><span>Kapitel ${i+1} von ${gs.length}</span><button class="ghost" type="button" id="back">Zum Heft</button></div>
+   <section class="panel"><div class="lbl">Das lernst du</div><h2>${esc(GROUPS[g].n)}</h2><ul class="merk">${L.p.map(x=>`<li>${x}</li>`).join('')}</ul></section>
+   <div id="exhost"></div>
+   <div class="startbar"><button class="go" type="button" id="kgo">Jetzt üben</button></div>`;
+  $('#back').onclick=()=>start();$('#kgo').onclick=()=>startRound([g],{kap:g});
+  if(L.ex)explore(L.ex[0],L.ex[1],$('#exhost'));
+}
+function entdecken(){
+  R=null;renderStats();window.scrollTo(0,0);
+  const scr=$('#screen');
+  scr.innerHTML=`<div class="topbar"><span>Entdecken</span><button class="ghost" type="button" id="back">Zum Heft</button></div>`;
+  $('#back').onclick=()=>start();
+  if(S.ch==='skelett')startSkelett(scr,true);else if(S.ch==='mikro')startMikro(scr,true);else startZelle(scr);
+  const h=document.createElement('div');scr.appendChild(h);explore(EXK[S.ch],null,h);
+}
+function grosserTest(){startRound(CH[S.ch].groups,{test:true,len:12});}
 
 /* =================== RUNDE PLANEN =================== */
 let R=null;
@@ -905,7 +950,7 @@ function pickOrgs(n,must){const rest=shuffle(ORG.filter(k=>k!==must));rest.sort(
 function planRound(gs){
   const pool=[...new Set((gs||S.groups).flatMap(g=>GROUPS[g].sk))];
   const out=[],used={},recent=[];let lastT=null;const usedTF=new Set(),usedMC=new Set();
-  for(let i=0;i<S.len;i++){
+  for(let i=0;i<(planRound.len||S.len);i++){
     const cand=pool.filter(k=>!recent.includes(k));const k=pickWeighted(cand.length?cand:pool,k=>Math.pow(6-lv(k),2)+.5);
     recent.push(k);if(recent.length>Math.min(3,pool.length-1))recent.shift();
     let types=typesFor(k).filter(t=>!(MULTI.has(t)&&used[t]));
@@ -947,9 +992,9 @@ function makeSpec(t,k,usedTF,usedMC){
 }
 function pickParts(n,must,noPair){let rest=shuffle(MKP.filter(k=>k!==must));if(noPair&&(must==='mk_grobtrieb'||must==='mk_feintrieb'))rest=rest.filter(k=>k!=='mk_grobtrieb'&&k!=='mk_feintrieb');rest.sort((a,b)=>lv(a)-lv(b)+(Math.random()-.5)*2);
   const out=[must];for(const k of rest){if(out.length>=n)break;if(noPair&&(k==='mk_grobtrieb'||k==='mk_feintrieb')&&out.some(x=>x==='mk_grobtrieb'||x==='mk_feintrieb'))continue;out.push(k);}return shuffle(out);}
-function startRound(gs){
-  gs=Array.isArray(gs)?gs:null;const q=planRound(gs);
-  R={gs,ch:S.ch,q,i:0,first:q.length,right:0,streak:0,missed:[],before:Object.assign({},S.lv),retried:new Set()};
+function startRound(gs,o){
+  o=o||{};gs=Array.isArray(gs)?gs:null;planRound.len=o.len||0;const q=planRound(gs);planRound.len=0;
+  R={gs,ch:S.ch,q,i:0,first:q.length,right:0,streak:0,missed:[],before:Object.assign({},S.lv),retried:new Set(),kap:o.kap||null,test:!!o.test};
   task();
 }
 
@@ -964,7 +1009,7 @@ function task(){
   $('#screen').innerHTML=`<div class="topbar"><span>Aufgabe ${R.i+1} von ${R.q.length}${R.i>=R.first?' · Wiederholung':''}${R.streak>=3?` · Serie ${R.streak}`:''}</span><button class="ghost" type="button" id="quit" aria-label="Runde beenden">Beenden</button></div>
   <div class="progress" aria-hidden="true"><i style="width:${pct}%"></i></div>
   <article class="card"><div class="tags"><span class="tag">${TLABEL[sp.t]}</span><span class="tag soft">${esc(SK_NAME[sp.k])}</span></div><div id="cb" style="display:flex;flex-direction:column;gap:14px"></div></article>`;
-  $('#quit').onclick=start;window.scrollTo(0,0);
+  $('#quit').onclick=()=>R.kap?kapitel(R.kap):start();window.scrollTo(0,0);
   T[sp.t]($('#cb'),sp);
 }
 
@@ -1754,6 +1799,8 @@ function end(){
   renderStats();window.scrollTo(0,0);
   const n=R.first,r=R.right,pct=Math.round(r/n*100);S.rounds++;S.best=Math.max(S.best,pct);save();
   const stars=pct>=90?3:pct>=70?2:pct>=40?1:0;
+  if(R.test){S.test=S.test||{};S.test[R.ch]=Math.max(S.test[R.ch]||0,stars);save();}
+  const gs0=CH[R.ch].groups,nx=R.kap?gs0[gs0.indexOf(R.kap)+1]:null;
   const sk=R.ch==='skelett',mk=R.ch==='mikro';
   const msg=pct===100?(sk?'Alles richtig – dein Skelett strahlt!':mk?'Alles richtig – du bist ein Mikroskop-Profi!':'Alles richtig – deine Pflanze strahlt!'):pct>=80?'Sehr gut gemacht!':pct>=50?'Gut! Was noch wackelt, kommt in der nächsten Runde öfter dran.':'Dranbleiben – morgen sitzt es schon besser.';
   let info='',fig=null;
@@ -1769,25 +1816,30 @@ function end(){
    <h2>${msg}</h2>${info}
    ${fig?'<div id="pl" style="max-width:220px;align-self:center;width:60%"></div>':''}
    ${R.missed.length?`<div><div class="lbl" style="margin-bottom:6px">Das schaust du dir am besten noch mal an</div><ul class="misslist">${R.missed.map(m=>`<li>${m}</li>`).join('')}</ul></div>`:''}
-   <div class="row"><button class="go" type="button" id="again">Neue Runde</button><button class="ghost" type="button" id="home">Startseite</button></div></section>`;
+   <div class="row"><button class="go" type="button" id="again">Nochmal üben</button>${nx&&stars>=2?`<button class="ghost" type="button" id="nx">Weiter: ${esc(GROUPS[nx].n)}</button>`:''}<button class="ghost" type="button" id="home">Zurück zum Heft</button></div></section>`;
   if(fig)$('#pl').appendChild(fig());
-  $('#again').onclick=()=>startRound(R.gs);$('#home').onclick=start;
+  const o={kap:R.kap,test:R.test,len:R.test?12:0};
+  $('#again').onclick=()=>startRound(R.gs,o);$('#home').onclick=()=>start();if($('#nx'))$('#nx').onclick=()=>kapitel(nx);
 }
 document.addEventListener('keydown',e=>{if(e.key==='Enter'){const nx=document.querySelector('.next');const a=document.activeElement;if(nx&&a!==nx&&!(a&&a.tagName==='INPUT'&&!a.disabled)){e.preventDefault();nx.click();}}});
 /* Lernwelt: direkt ins Kapitel (bio-expedition.html#organellen …), Anker stehen in hefte.js */
 function kapitelSprung(){
   const g=location.hash.slice(1);
+  if(g==='entdecken'){entdecken();return true;}
+  if(g==='test'){grosserTest();return true;}
   if(!CH[S.ch].groups.includes(g))return false;
-  start();startRound([g]);return true;
+  kapitel(g);return true;
 }
-kapitelSprung()||start();
+// Kam Nea über die Lernwelt (Anker), führt „Zum Heft“ zurück zur Heft-Seite statt in die Übersicht der App
+if(location.hash&&window.lwHeft&&kapitelSprung())start=window.lwHeft;else if(!kapitelSprung())start();
 
 /* Lernwelt: Kapitel-Fortschritt für die Startseite (siehe sync.js) */
 if(window.LW&&LW.kapitel){
 LW.kapitel(function(){
   var gs=CH[S.ch].groups;
   return gs.map(function(g){var sk=GROUPS[g].sk;
-    return {t:GROUPS[g].n,p:sk.reduce(function(s,k){return s+Math.min(1,lv(k)/4)},0)/sk.length}});
+    return {t:GROUPS[g].n,p:sk.reduce(function(s,k){return s+Math.min(1,lv(k)/4)},0)/sk.length}})
+    .concat([{t:'Großer Test',p:((S.test||{})[S.ch]||0)/3}]);
 });
 }
 })();
