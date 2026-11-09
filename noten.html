@@ -739,7 +739,8 @@ function cheat(){hideFb();stopAll();const DX=46,X0=70;
 
 /* Lernwelt: direkt ins Kapitel (noten.html#name …), Anker stehen in hefte.js */
 function kapitelSprung(){const id=location.hash.slice(1);if(!STATIONS.some(s=>s.id===id))return false;home();openStation(id);return true}
-kapitelSprung()||home();
+// Kam Nea über ein Kapitel der Lernwelt, führt „Alle Kapitel/Startseite“ zurück zur Heft-Seite
+window.lwStart?lwStart('home',kapitelSprung):(kapitelSprung()||home());
 </script>
 
 <script>/* Lernwelt: Kapitel-Fortschritt für die Startseite (siehe sync.js) */

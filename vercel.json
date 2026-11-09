@@ -1,4 +1,14 @@
 {
+  "rewrites": [
+    {
+      "source": "/mikroskop.html",
+      "destination": "/bio-expedition.html"
+    },
+    {
+      "source": "/skelett.html",
+      "destination": "/bio-expedition.html"
+    }
+  ],
   "headers": [
     {
       "source": "/sync.js",

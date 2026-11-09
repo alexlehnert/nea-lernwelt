@@ -677,7 +677,8 @@ function luecke(){hush();stopMusic();R=null;
 
 /* Lernwelt: direkt ins Kapitel (planeten.html#hoeren …), Anker stehen in hefte.js */
 function kapitelSprung(){const id=location.hash.slice(1);if(!chOf(id))return false;openCh(id);return true}
-kapitelSprung()||home();
+// Kam Nea über ein Kapitel der Lernwelt, führt „Alle Kapitel/Startseite“ zurück zur Heft-Seite
+window.lwStart?lwStart('home',kapitelSprung):(kapitelSprung()||home());
 </script>
 <script>/* Lernwelt: Kapitel-Fortschritt für die Startseite (siehe sync.js) */
 if(window.LW&&LW.kapitel){
