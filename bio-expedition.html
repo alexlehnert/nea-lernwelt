@@ -555,8 +555,13 @@ Object.assign(GROUPS,{
  sg_rumpf:{n:'Rumpfskelett',sk:BBODY},
  sg_wirbel:{n:'Wirbelsäule',sk:['sk_wirbel','sk_bau','sk_modell']}
 });
+/* Eine Datei, drei Lernhefte: bio-expedition.html (Zellen), mikroskop.html und skelett.html
+   (die beiden letzten leitet vercel.json auf diese Datei um). Welches Heft gerade läuft, steht im Pfad. */
+const HEFT=location.pathname.replace(/^.*\//,'').replace(/\.html$/,'');
+const PLANT=SKILLS.filter(k=>k!=='mikro');
 const CH={
- zelle:{n:'Kapitel 3',t:'Lebewesen bestehen aus Zellen',groups:['organellen','vergleich','energie','wasser','mikro','fuehrerschein'],skills:[...SKILLS,...MKS]},
+ zelle:{n:'Kapitel 3',t:'Lebewesen bestehen aus Zellen',groups:['organellen','vergleich','energie','wasser'],skills:PLANT},
+ mikro:{n:'Mikroskop',t:'Mit dem Mikroskop forschen',groups:['mikro','fuehrerschein'],skills:['mikro',...MKS]},
  skelett:{n:'Kapitel 4',t:'Das Skelett ist unsere Stütze',groups:['sg_aufbau','sg_schaedel','sg_rumpf','sg_wirbel'],skills:SKALL}
 };
 const SP={
@@ -641,7 +646,12 @@ let S={lv:{},len:10,groups:Object.keys(GROUPS),rounds:0,best:0};
 try{const s=JSON.parse(localStorage.getItem(KEY)||'null');if(s&&s.lv)S=Object.assign(S,s);}catch(e){}
 if(!S.mk){S.mk=1;if(!S.groups.includes('fuehrerschein'))S.groups.push('fuehrerschein');}
 if(!S.skx){S.skx=1;CH.skelett.groups.forEach(g=>{if(!S.groups.includes(g))S.groups.push(g);});S.ch='skelett';}
-if(!CH[S.ch])S.ch='zelle';
+S.ch={skelett:'skelett',mikroskop:'mikro'}[HEFT]||'zelle';
+// Eltern-Bereich: „Heft zurücksetzen“ setzt nur eine Marke, weil sich die drei Hefte einen Speicher teilen
+try{if(localStorage.getItem(HEFT+'-zuruecksetzen')){CH[S.ch].skills.forEach(k=>delete S.lv[k]);if(S.ch==='mikro')S.mkDate='';localStorage.removeItem(HEFT+'-zuruecksetzen');save();}}catch(e){}
+(function(){const T={zelle:['Zellen-Expedition','Zellen · Fotosynthese · Wasser'],mikro:['Mikroskopier-Führerschein','Mikroskop · Vergrößerung · Größen'],skelett:['Das Skelett','Knochen · Schädel · Wirbelsäule']}[S.ch];
+  document.title=T[0];const h=document.querySelector('header.top h1');if(h)h.innerHTML=T[0]+'<small>'+T[1]+'</small>';
+  const n=document.querySelector('#lw-bar .lw-name');if(n)n.textContent=T[0];const b=document.querySelector('#lw-bar .lw-back');if(b)b.setAttribute('href','index.html#heft-'+(HEFT||'bio-expedition'));})();
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
 const lv=k=>S.lv[k]||0;
 
@@ -737,7 +747,7 @@ function plantSVG(newSet){
   el('path',{d:'M180,542 C 172,430 190,300 178,170 C 174,120 182,92 180,74',style:'fill:none;stroke:var(--leaf);stroke-width:7;stroke-linecap:round'},svg);
   el('path',{d:'M180,542 C 172,430 190,300 178,170 C 174,120 182,92 180,74',style:'fill:none;stroke:var(--leaf-d);stroke-width:1.5'},svg);
   const leaves={};
-  SKILLS.forEach((k,i)=>{
+  PLANT.forEach((k,i)=>{
     const y=516-i*29.5,x=180+5*Math.sin(i*.7),side=i%2?1:-1,len=88-i*2.2,a=side>0?-24-i*.8:-156+i*.8,L=lv(k);
     const g=el('g',{class:'leaf'+(newSet&&newSet.has(k)?' new':''),'data-k':k,transform:`translate(${x.toFixed(1)},${y.toFixed(1)}) rotate(${a.toFixed(1)})`,tabindex:'0',role:'button','aria-label':`${SK_NAME[k]}: Stufe ${L} von 5`},svg);
     const op=[0,.3,.48,.66,.84,1][L];
@@ -746,26 +756,23 @@ function plantSVG(newSet){
     leaves[k]=g;
   });
   // Blüte: jedes Thema auf Stufe 5 = ein Blütenblatt
-  const f=el('g',{transform:'translate(180,64)'},svg);const full=SKILLS.filter(k=>lv(k)>=5).length;
-  SKILLS.forEach((k,i)=>{const on=i<full;el('path',{d:'M0,0 C 7,-7 24,-7 30,0 C 24,7 7,7 0,0 Z',transform:`rotate(${i*24-90})`,style:on?'fill:var(--petal);stroke:var(--c-wall-d);stroke-width:1':'fill:none;stroke:var(--line);stroke-width:1;stroke-dasharray:2 3'},f);});
+  const f=el('g',{transform:'translate(180,64)'},svg);const full=PLANT.filter(k=>lv(k)>=5).length;
+  PLANT.forEach((k,i)=>{const on=i<full;el('path',{d:'M0,0 C 7,-7 24,-7 30,0 C 24,7 7,7 0,0 Z',transform:`rotate(${(i*360/PLANT.length-90).toFixed(1)})`,style:on?'fill:var(--petal);stroke:var(--c-wall-d);stroke-width:1':'fill:none;stroke:var(--line);stroke-width:1;stroke-dasharray:2 3'},f);});
   el('circle',{r:10,style:'fill:var(--accent)'},f);
   return {svg,leaves};
 }
-function stage(){const t=SKILLS.reduce((s,k)=>s+lv(k),0);return {pts:t,max:SKILLS.length*5,green:SKILLS.filter(k=>lv(k)>=4).length,full:SKILLS.filter(k=>lv(k)>=5).length};}
+function stage(){const t=PLANT.reduce((s,k)=>s+lv(k),0);return {pts:t,max:PLANT.length*5,green:PLANT.filter(k=>lv(k)>=4).length,full:PLANT.filter(k=>lv(k)>=5).length};}
 /* =================== START =================== */
 function renderStats(){
   if(S.ch==='skelett'){$('#stats').innerHTML=`<span class="pill">Knochen <b>${BK.filter(k=>lv(k)>=4).length}/${BK.length}</b></span><span class="pill">Themen <b>${SKT.filter(k=>lv(k)>=4).length}/${SKT.length}</b></span>`;return;}
-  const s=stage();$('#stats').innerHTML=`<span class="pill">Blätter <b>${SKILLS.filter(k=>lv(k)>0).length}/${SKILLS.length}</b></span><span class="pill">Blüte <b>${s.full}/${SKILLS.length}</b></span><span class="pill">Stempel <b>${MKS.filter(k=>lv(k)>=4).length}/${MKS.length}</b></span>`;
+  if(S.ch==='mikro'){$('#stats').innerHTML=`<span class="pill">Stempel <b>${MKS.filter(k=>lv(k)>=4).length}/${MKS.length}</b></span>`;return;}
+  const s=stage();$('#stats').innerHTML=`<span class="pill">Blätter <b>${PLANT.filter(k=>lv(k)>0).length}/${PLANT.length}</b></span><span class="pill">Blüte <b>${s.full}/${PLANT.length}</b></span>`;
 }
 function masteryGrid(list){return list.map(k=>`<button class="m" type="button" data-k="${k}" aria-pressed="false"><span>${esc(SK_NAME[k])}</span><span class="pips">${[1,2,3,4,5].map(i=>`<i class="${lv(k)>=i?'on':''}"></i>`).join('')}</span></button>`).join('');}
 function start(){
   R=null;renderStats();window.scrollTo(0,0);
   const scr=$('#screen');scr.innerHTML='';
-  const tabs=document.createElement('nav');tabs.className='chtabs';tabs.setAttribute('aria-label','Kapitel');
-  tabs.innerHTML=Object.entries(CH).map(([k,c])=>`<button type="button" data-ch="${k}" aria-pressed="${S.ch===k}"><small>${c.n}</small>${esc(c.t)}</button>`).join('');
-  scr.appendChild(tabs);
-  tabs.querySelectorAll('button').forEach(b=>b.onclick=()=>{S.ch=b.dataset.ch;save();start();});
-  if(S.ch==='skelett')startSkelett(scr);else startZelle(scr);
+  if(S.ch==='skelett')startSkelett(scr);else if(S.ch==='mikro')startMikro(scr);else startZelle(scr);
   settingsPanel(scr);
 }
 function startZelle(scr){
@@ -773,11 +780,13 @@ function startZelle(scr){
   p.innerHTML=`<h2>Deine Wissens-Pflanze</h2><p class="small">Jedes Blatt ist ein Thema. Je öfter du es richtig weißt, desto grüner wird es. Ist ein Thema ganz sicher, wächst ein Blütenblatt.</p><div class="plantwrap"><div id="pl"></div><div><div class="mastery" id="mg"></div><p class="plantcap" id="pcap">Tippe auf ein Blatt.</p></div></div>`;
   scr.appendChild(p);
   const P=plantSVG();$('#pl').appendChild(P.svg);
-  $('#mg').innerHTML=masteryGrid(SKILLS);
+  $('#mg').innerHTML=masteryGrid(PLANT);
   const pick=k=>{Object.values(P.leaves).forEach(g=>g.classList.toggle('hl',g.dataset.k===k));document.querySelectorAll('.m').forEach(b=>b.setAttribute('aria-pressed',b.dataset.k===k));
     const L=lv(k);$('#pcap').textContent=`${SK_NAME[k]}: ${['noch nicht geübt','gerade gekeimt','wächst','wird kräftig','fast sicher','ganz sicher – Blütenblatt!'][L]}`;};
   document.querySelectorAll('.m').forEach(b=>b.onclick=()=>pick(b.dataset.k));
   Object.entries(P.leaves).forEach(([k,g])=>{g.addEventListener('click',()=>pick(k));g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(k);}});});
+}
+function startMikro(scr){
   const stamps=MKS.filter(k=>lv(k)>=4).length,all=stamps===MKS.length;
   if(all&&!S.mkDate){S.mkDate=new Date().toLocaleDateString('de-DE');save();}
   const fs=document.createElement('section');fs.className='panel licence';
@@ -821,13 +830,13 @@ function settingsPanel(scr){
   scr.appendChild(q);
   q.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>{const g=b.dataset.g;S.groups=S.groups.includes(g)?S.groups.filter(x=>x!==g):[...S.groups,g];save();b.setAttribute('aria-pressed',S.groups.includes(g));});
   q.querySelectorAll('[data-len]').forEach(b=>b.onclick=()=>{S.len=+b.dataset.len;save();q.querySelectorAll('[data-len]').forEach(x=>x.setAttribute('aria-pressed',x===b));});
-  let armed=false;$('#reset').onclick=e=>{if(!armed){armed=true;e.target.textContent='Wirklich zurücksetzen?';return;}ch.skills.forEach(k=>delete S.lv[k]);if(S.ch==='zelle')S.mkDate='';save();start();};
+  let armed=false;$('#reset').onclick=e=>{if(!armed){armed=true;e.target.textContent='Wirklich zurücksetzen?';return;}ch.skills.forEach(k=>delete S.lv[k]);if(S.ch==='mikro')S.mkDate='';save();start();};
   $('#go').onclick=()=>{const gs=S.groups.filter(g=>ch.groups.includes(g));if(!gs.length){$('#note').textContent='Wähle mindestens ein Thema aus.';return;}startRound(gs);};
   if($('#explore'))$('#explore').onclick=()=>explore('cell');
 }
 
 /* =================== ERKUNDEN =================== */
-function exTabs(cur){return `<div class="chips">${[['cell','Zelle'],['scope','Mikroskop'],['skelett','Skelett']].map(([k,n])=>`<button class="chip" type="button" data-ex="${k}" aria-pressed="${cur===k}">${n}</button>`).join('')}</div>`;}
+function exTabs(){return '';}
 function bindTabs(){document.querySelectorAll('[data-ex]').forEach(b=>b.onclick=()=>explore(b.dataset.ex));$('#back').onclick=start;}
 function explore(kind,view){
   window.scrollTo(0,0);
@@ -1745,15 +1754,16 @@ function end(){
   renderStats();window.scrollTo(0,0);
   const n=R.first,r=R.right,pct=Math.round(r/n*100);S.rounds++;S.best=Math.max(S.best,pct);save();
   const stars=pct>=90?3:pct>=70?2:pct>=40?1:0;
-  const sk=R.ch==='skelett';
-  const msg=pct===100?(sk?'Alles richtig – dein Skelett strahlt!':'Alles richtig – deine Pflanze strahlt!'):pct>=80?'Sehr gut gemacht!':pct>=50?'Gut! Was noch wackelt, kommt in der nächsten Runde öfter dran.':'Dranbleiben – morgen sitzt es schon besser.';
+  const sk=R.ch==='skelett',mk=R.ch==='mikro';
+  const msg=pct===100?(sk?'Alles richtig – dein Skelett strahlt!':mk?'Alles richtig – du bist ein Mikroskop-Profi!':'Alles richtig – deine Pflanze strahlt!'):pct>=80?'Sehr gut gemacht!':pct>=50?'Gut! Was noch wackelt, kommt in der nächsten Runde öfter dran.':'Dranbleiben – morgen sitzt es schon besser.';
   let info='',fig=null;
   if(sk){const up=SKALL.filter(k=>lv(k)>(R.before[k]||0));info=up.length?`<p class="small">Heller geworden: ${up.map(k=>esc(SK_NAME[k])).join(', ')}.</p>`:'<p class="small">Diesmal ist nichts heller geworden – nicht aufgeben!</p>';fig=()=>progressBody(new Set(up)).svg;}
-  else{const grown=new Set(SKILLS.filter(k=>lv(k)>(R.before[k]||0)));
-    const newSt=MKS.filter(k=>lv(k)>=4&&(R.before[k]||0)<4),mkUp=MKS.filter(k=>lv(k)>(R.before[k]||0));
-    info=`${grown.size||!mkUp.length?`<p class="small">${grown.size?`Gewachsen: ${[...grown].map(k=>esc(SK_NAME[k])).join(', ')}.`:'Diesmal ist kein Blatt gewachsen – nicht aufgeben!'}</p>`:''}
-     ${mkUp.length?`<p class="small">Führerschein: ${newSt.length?`neue Stempel für <b>${newSt.map(k=>esc(SK_NAME[k])).join(', ')}</b>!`:`sicherer geworden bei ${mkUp.map(k=>esc(SK_NAME[k])).join(', ')}.`} Stempel: ${MKS.filter(k=>lv(k)>=4).length}/${MKS.length}</p>`:''}`;
-    if(grown.size||!mkUp.length)fig=()=>plantSVG(grown).svg;}
+  else if(mk){const up=CH.mikro.skills.filter(k=>lv(k)>(R.before[k]||0)),newSt=MKS.filter(k=>lv(k)>=4&&(R.before[k]||0)<4);
+    info=up.length?`<p class="small">Sicherer geworden: ${up.map(k=>esc(SK_NAME[k])).join(', ')}.</p>`:'<p class="small">Diesmal ist nichts sicherer geworden – nicht aufgeben!</p>';
+    info+=`<p class="small">Führerschein: ${newSt.length?`neue Stempel für <b>${newSt.map(k=>esc(SK_NAME[k])).join(', ')}</b>! `:''}Stempel ${MKS.filter(k=>lv(k)>=4).length}/${MKS.length}</p>`;}
+  else{const grown=new Set(PLANT.filter(k=>lv(k)>(R.before[k]||0)));
+    info=`<p class="small">${grown.size?`Gewachsen: ${[...grown].map(k=>esc(SK_NAME[k])).join(', ')}.`:'Diesmal ist kein Blatt gewachsen – nicht aufgeben!'}</p>`;
+    fig=()=>plantSVG(grown).svg;}
   $('#screen').innerHTML=`<section class="panel"><div class="lbl">Runde geschafft</div>
    <div class="row" style="justify-content:space-between;align-items:flex-end"><div class="score">${r}<span> / ${n}</span></div><div class="stars" aria-label="${stars} von 3 Sternen">${'★'.repeat(stars)}${'☆'.repeat(3-stars)}</div></div>
    <h2>${msg}</h2>${info}
@@ -1766,16 +1776,16 @@ function end(){
 document.addEventListener('keydown',e=>{if(e.key==='Enter'){const nx=document.querySelector('.next');const a=document.activeElement;if(nx&&a!==nx&&!(a&&a.tagName==='INPUT'&&!a.disabled)){e.preventDefault();nx.click();}}});
 /* Lernwelt: direkt ins Kapitel (bio-expedition.html#organellen …), Anker stehen in hefte.js */
 function kapitelSprung(){
-  const g=location.hash.slice(1),ch=Object.keys(CH).find(k=>CH[k].groups.includes(g));
-  if(!ch)return false;
-  S.ch=ch;save();start();startRound([g]);return true;
+  const g=location.hash.slice(1);
+  if(!CH[S.ch].groups.includes(g))return false;
+  start();startRound([g]);return true;
 }
 kapitelSprung()||start();
 
 /* Lernwelt: Kapitel-Fortschritt für die Startseite (siehe sync.js) */
 if(window.LW&&LW.kapitel){
 LW.kapitel(function(){
-  var gs=CH.zelle.groups.concat(CH.skelett.groups);
+  var gs=CH[S.ch].groups;
   return gs.map(function(g){var sk=GROUPS[g].sk;
     return {t:GROUPS[g].n,p:sk.reduce(function(s,k){return s+Math.min(1,lv(k)/4)},0)/sk.length}});
 });

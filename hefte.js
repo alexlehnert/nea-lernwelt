@@ -15,6 +15,8 @@
  *   abzeichen  Name des Abzeichens, das es gibt, wenn alle Kapitel 3 Sterne haben
  *   stufe  für welche Klassenstufe das Heft ist (id aus LW_STUFEN, ohne Angabe 'gym5')
  *   bald   optional: Heft ist angekündigt, aber noch nicht fertig (dann ohne App-Datei)
+ *   teilt  optional: die App teilt ihren Speicher mit anderen Heften; Zurücksetzen setzt dann nur die Marke <id>-zuruecksetzen
+ *   von    optional: Heft war früher Teil von Heft <von>; dessen Kapitel-Fortschritt wird einmal (per Kapitelname) übernommen
  */
 // Klassenstufen. Jedes Kind sieht nur die Hefte seiner Stufe (einstellbar im Eltern-Bereich).
 window.LW_STUFEN = [
@@ -63,15 +65,24 @@ window.LW_HEFTE = [
       'S. 186 · Things in the house', 'S. 186 · Unit 2 · Wörter'],
     anker: ['s0', 'g2', 's1', 'g1', 's2', 'g3', 's3', 's4', 'g6', 's5', 's6', 's7', 's8', 's9', 's10', 's11', 's12', 's13', 's14', 's15', 's16', 's17', 's18', 's19', 'g7', 's20', 's21'],
     frei: { t: 'Karteikasten · Neueste zuerst', s: 'Erst die neuesten Kapitel festigen, ältere kommen nach und nach dazu' } },
-  { id: 'bio-expedition', abzeichen: 'Bio-Forscherin', fach: 'biologie', thema: 'Zellen und Körper', name: 'Bio-Expedition',
-    info: 'Zellen, Mikroskopier-Führerschein und Skelett', key: 'zellstadt-v1',
-    kapitel: ['Zellbestandteile', 'Pflanze oder Tier', 'Fotosynthese & Atmung', 'Wasser & Turgor', 'Mikroskop & Größen', 'Mikroskopier-Führerschein',
-      'Aufbau & Aufgaben', 'Schädel', 'Rumpfskelett', 'Wirbelsäule'],
-    anker: ['organellen', 'vergleich', 'energie', 'wasser', 'mikro', 'fuehrerschein', 'sg_aufbau', 'sg_schaedel', 'sg_rumpf', 'sg_wirbel'] },
-  { id: 'pflanzenzelle', abzeichen: 'Zell-Expertin', fach: 'biologie', thema: 'Zellen und Körper', name: 'Expedition Pflanzenzelle',
+  // Zellen, Mikroskop und Skelett laufen in einer App (bio-expedition.html, teilt: gemeinsamer Speicher zellstadt-v1).
+  // mikroskop.html und skelett.html leitet vercel.json auf bio-expedition.html um; von = Fortschritt aus der Zeit, als es ein Heft war.
+  { id: 'bio-expedition', abzeichen: 'Bio-Forscherin', fach: 'biologie', thema: 'Zellen', name: 'Zellen-Expedition',
+    info: 'Zellbestandteile, Pflanze oder Tier, Fotosynthese und Wasser: deine Wissens-Pflanze wächst mit', teilt: true,
+    kapitel: ['Zellbestandteile', 'Pflanze oder Tier', 'Fotosynthese & Atmung', 'Wasser & Turgor'],
+    anker: ['organellen', 'vergleich', 'energie', 'wasser'] },
+  { id: 'pflanzenzelle', abzeichen: 'Zell-Expertin', fach: 'biologie', thema: 'Zellen', name: 'Expedition Pflanzenzelle',
     info: 'Eine Pflanzenzelle auseinandernehmen und erkunden',
     kapitel: ['Wer wohnt in der Zelle?', 'Ein Tag in der Blattzelle', 'Warum Pflanzen stehen können', 'Wie klein ist eine Zelle?', 'Teste dich'],
     anker: ['entdecken', 'arbeit', 'wasser', 'groesse', 'quiz'] },
+  { id: 'mikroskop', fach: 'biologie', thema: 'Mikroskop', name: 'Mikroskopier-Führerschein',
+    info: 'Die Teile des Mikroskops, Vergrößerung und Größen: Stempel sammeln bis zum Führerschein', teilt: true, von: 'bio-expedition',
+    kapitel: ['Mikroskop & Größen', 'Mikroskopier-Führerschein'],
+    anker: ['mikro', 'fuehrerschein'] },
+  { id: 'skelett', abzeichen: 'Skelett-Kennerin', fach: 'biologie', thema: 'Skelett', name: 'Das Skelett',
+    info: 'Aufbau und Aufgaben, Schädel, Rumpf und Wirbelsäule: bring dein Skelett zum Leuchten', teilt: true, von: 'bio-expedition',
+    kapitel: ['Aufbau & Aufgaben', 'Schädel', 'Rumpfskelett', 'Wirbelsäule'],
+    anker: ['sg_aufbau', 'sg_schaedel', 'sg_rumpf', 'sg_wirbel'] },
   { id: 'atlas', abzeichen: 'Atlas-Detektivin', fach: 'erdkunde', thema: 'Die Erde', name: 'Atlas-Detektiv',
     info: 'Kontinente, Ozeane, Himmelsrichtungen und der Globus', key: 'atlas-detektiv-v1',
     kapitel: ['Kontinente & Ozeane', 'Himmelsrichtungen', 'Der Globus'],

@@ -20,7 +20,9 @@ Fächer und Hefte stehen in [`hefte.js`](hefte.js).
 | Mathe | Terme verstehen | `terme.html` |
 | Mathe | Potenz-Quiz (2er- und 10er-Potenzen bis 20) | `potenzen.html` |
 | Mathe | Rechengesetze der Addition (Kommutativ-, Assoziativgesetz, neutrales Element) | `rechengesetze.html` |
-| Biologie | Bio-Expedition | `bio-expedition.html` |
+| Biologie | Zellen-Expedition | `bio-expedition.html` |
+| Biologie | Mikroskopier-Führerschein | `mikroskop.html` (Umleitung auf `bio-expedition.html`, siehe `vercel.json`) |
+| Biologie | Das Skelett | `skelett.html` (Umleitung auf `bio-expedition.html`) |
 | Biologie | Expedition Pflanzenzelle | `pflanzenzelle.html` |
 | Erdkunde | Atlas-Detektiv | `atlas.html` |
 | Musik | Notenwerkstatt | `noten.html` |

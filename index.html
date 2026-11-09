@@ -381,6 +381,10 @@ function einst(){let e={};try{e=JSON.parse(get(EINST)||'{}')||{}}catch(x){}retur
 const zielMin=()=>+einst().ziel||15;
 function kapitel(h){
   let r=null;try{r=JSON.parse(get('lernwelt-fortschritt-'+h.id)||'null')}catch(e){}
+  // Heft war früher Teil eines anderen Hefts (hefte.js von): dessen Fortschritt einmal per Kapitelname übernehmen
+  if(!r&&h.von&&h.kapitel){let o=null;try{o=JSON.parse(get('lernwelt-fortschritt-'+h.von)||'null')}catch(e){}
+    const ok=o&&Array.isArray(o.k)?o.k:[];
+    if(ok.some(x=>h.kapitel.includes(x.t))){r={k:h.kapitel.map(t=>({t,p:+(ok.find(x=>x.t===t)||{}).p||0}))};put('lernwelt-fortschritt-'+h.id,JSON.stringify(r))}}
   let list=r&&Array.isArray(r.k)&&r.k.length?r.k:(h.kapitel||[]).map(t=>({t,p:0}));
   // Hat sich die Kapitel-Liste eines Hefts geändert, gelten die Titel aus hefte.js (Fortschritt per Titel), bis die App neu meldet
   if(h.kapitel&&h.kapitel.length&&list.length!==h.kapitel.length)list=h.kapitel.map(t=>({t,p:+((r&&r.k||[]).find(x=>x.t===t)||{}).p||0}));
@@ -390,7 +394,7 @@ function stand(h){
   const k=kapitel(h),done=k.filter(x=>x.p>=.999).length,cur=k.findIndex(x=>x.p<.999);
   return {k,done,n:k.length,cur:cur<0?null:cur,any:k.some(x=>x.p>0)};
 }
-const started=h=>!!(h.key&&get(h.key))||stand(h).any;
+const started=h=>!!(h.key&&!h.teilt&&get(h.key))||stand(h).any;
 const sterne=p=>p>=.999?3:p>=2/3?2:p>=1/3?1:0;
 const kapLink=(h,i)=>{const a=(h.anker||[])[i];return `${h.id}.html${a?'#'+a:''}`};
 const dayKey=d=>d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);
@@ -423,7 +427,7 @@ function abzeichenListe(){
     {id:'stunde',name:'Erste Lernstunde',cls:'de',ic:'clock',wie:'Lerne insgesamt 60 Minuten.',ok:()=>gesamtMin()>=60},
     {id:'kapitel-10',name:'Zehn Kapitel',cls:'br',ic:'flag',wie:'Schaffe 10 Kapitel mit 3 Sternen.',ok:()=>summe().done>=10},
     {id:'karteikasten',heft:'rechenheft',name:'Karteikasten-Heldin',cls:'ma',ic:'box',wie:'Hol dir 3 Sterne bei „Terme üben“ und „Potenzen üben“ im Rechenheft.',ok:()=>kapOk('rechenheft',['Terme üben','Potenzen üben'])},
-    {id:'mikroskop',heft:'bio-expedition',name:'Mikroskopier-Führerschein',cls:'bio',ic:'micro',wie:'Hol dir 3 Sterne beim Mikroskopier-Führerschein in der Bio-Expedition.',ok:()=>kapOk('bio-expedition',['Mikroskopier-Führerschein'])},
+    {id:'mikroskop',heft:'mikroskop',name:'Mikroskopier-Führerschein',cls:'bio',ic:'micro',wie:'Hol dir 3 Sterne im Kapitel „Mikroskopier-Führerschein“.',ok:()=>kapOk('mikroskop',['Mikroskopier-Führerschein'])},
     {id:'kontinente',heft:'atlas',name:'Kontinente-Kennerin',cls:'geo',ic:'geo',wie:'Hol dir 3 Sterne bei „Kontinente & Ozeane“ im Atlas-Detektiv.',ok:()=>kapOk('atlas',['Kontinente & Ozeane'])}
   ].filter(a=>!a.heft||heft(a.heft)).concat(HEFTE.filter(h=>h.abzeichen).map(h=>{const f=fach(h.fach)||{};
     return {id:'heft-'+h.id,heft:h.id,name:h.abzeichen,cls:f.cls,ic:f.cls,wie:`Schaffe alle Kapitel in „${h.name}“ mit 3 Sternen.`,ok:()=>stand(h).cur==null&&stand(h).n>0}}));
@@ -777,7 +781,10 @@ function elternSperre(){
       <button class="btn br" type="submit">Öffnen</button><p class="err" id="eErr" role="alert"></p></form></div>`;
 }
 /* Fortschritt eines Hefts löschen: Speicher der App, Kapitel-Fortschritt und besuchte Abschnitte. Abzeichen bleiben. */
-function heftLeeren(h){[h.key,'lernwelt-fortschritt-'+h.id,h.id+'-besucht'].forEach(k=>{if(k)put(k,null)})}
+function heftLeeren(h){
+  // Teilt sich die App den Speicher mit anderen Heften, löscht sie beim nächsten Öffnen nur die Kapitel dieses Hefts
+  if(h.teilt){put(h.id+'-zuruecksetzen','1');put('lernwelt-fortschritt-'+h.id,JSON.stringify({k:[]}));put(h.id+'-besucht',null);return}
+  [h.key,'lernwelt-fortschritt-'+h.id,h.id+'-besucht'].forEach(k=>{if(k)put(k,null)})}
 V.eltern=function(){
   if(!elternOffen())return elternSperre();
   const z=zeit(),Z=zielMin(),WT=['So','Mo','Di','Mi','Do','Fr','Sa'];
