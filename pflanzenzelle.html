@@ -912,8 +912,42 @@ function buildQuiz(){
   box.appendChild(d);
  });
 }
-function updScore(){$('q-score').textContent=`${qRight} von ${QZ.length} richtig`+(qDone===QZ.length?(qRight===QZ.length?' · Perfekt!':' · Schau dir die Erklärungen an.'):'');}
+function updScore(){$('q-score').textContent=`${qRight} von ${QZ.length} richtig`+(qDone===QZ.length?(qRight===QZ.length?' · Perfekt!':' · Schau dir die Erklärungen an.'):'');
+ if(qDone===QZ.length)bestSet('quiz',qRight/QZ.length);}
 $('q-reset').addEventListener('click',buildQuiz);
+
+/* ---------- KURZ-CHECK pro Kapitel (Lernpfad): drei Fragen, bester Durchgang zählt ---------- */
+const NEU={
+ kern:['Wo steckt die Erbinformation der Zelle?',['im Zellkern','in der Vakuole','in der Zellwand','in den Chloroplasten'],0,'Der Zellkern ist die Steuerzentrale. Er enthält die Erbinformation (DNA).'],
+ foto:['Was entsteht bei der Fotosynthese?',['Traubenzucker und Sauerstoff','Kohlenstoffdioxid und Wasser','nur Energie','Stärke und Salz'],0,'Kohlenstoffdioxid + Wasser → Traubenzucker + Sauerstoff. Das passiert mit Licht im Chloroplasten.'],
+ mito:['Wo gewinnt die Zelle aus Traubenzucker Energie?',['in den Mitochondrien','in der Zellwand','in der Vakuole','im Zellkern'],0,'Die Mitochondrien sind die Kraftwerke. Bei der Zellatmung wird aus Traubenzucker und Sauerstoff Energie frei.'],
+ halt:['Was gibt einer Pflanze ohne Knochen Halt?',['Die prall gefüllten Vakuolen drücken gegen die Zellwände.','Die Chloroplasten.','Die Mitochondrien.','Nur die Wurzeln.'],0,'Der Innendruck der Vakuolen (Turgor) drückt gegen die feste Zellwand, wie Luft in einem Fahrradreifen.'],
+ mm:['Wie viele Mikrometer (µm) sind 1 Millimeter?',['1000','100','10','1 000 000'],0,'1 mm = 1000 µm. Und 1 µm = 1000 nm.']
+};
+const CHECK={entdecken:[QZ[2],QZ[3],NEU.kern],arbeit:[QZ[0],NEU.foto,NEU.mito],wasser:[QZ[4],QZ[6],NEU.halt],groesse:[QZ[5],QZ[1],NEU.mm]};
+const BKEY='pflanzenzelle-check';
+function best(){try{return JSON.parse(localStorage.getItem(BKEY)||'{}')||{}}catch(e){return {}}}
+function bestSet(id,v){const b=best();if(v>(b[id]||0)){b[id]=v;try{localStorage.setItem(BKEY,JSON.stringify(b))}catch(e){}}if(window.pzKap)pzKap.refresh();}
+window.pzBest=best;
+function checkPanel(id){
+ const sec=document.getElementById(id);if(!sec)return;
+ const w=document.createElement('div');w.className='check';
+ w.innerHTML=`<div class="sec-head" style="margin-top:22px"><span class="bracket">[ Kurz-Check ]</span><h3 style="margin:0">Hast du es verstanden?</h3></div><div class="score"><span class="ck-s"></span><button class="btn ghost ck-r">Neu beginnen</button></div><div class="quiz"></div>`;
+ sec.appendChild(w);
+ const box=w.querySelector('.quiz'),sc=w.querySelector('.ck-s'),L=CHECK[id];let r=0,d=0;
+ const upd=()=>{sc.textContent=`${r} von ${L.length} richtig`+(d===L.length?(r===L.length?' · Perfekt!':' · Lies die Erklärungen und versuch es noch einmal.'):'');if(d===L.length)bestSet(id,r/L.length);};
+ const build=()=>{box.innerHTML='';r=0;d=0;upd();
+  L.forEach((q,qi)=>{const o=q[1].map((t,i)=>[t,i]).sort(()=>Math.random()-.5);
+   const el=document.createElement('div');el.className='q';
+   el.innerHTML=`<h3><span class="qn">${qi+1}</span> ${q[0]}</h3><div class="opts">${o.map(([t,i])=>`<button data-i="${i}">${t}</button>`).join('')}</div><p class="expl" hidden></p>`;
+   el.querySelector('.opts').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.disabled)return;
+    const i=+b.dataset.i,bs=el.querySelectorAll('.opts button');bs.forEach(x=>x.disabled=true);
+    el.querySelector(`.opts button[data-i="${q[2]}"]`).classList.add('right');if(i!==q[2])b.classList.add('wrong');else r++;d++;
+    const ex=el.querySelector('.expl');ex.hidden=false;ex.innerHTML=(i===q[2]?'<b style="color:var(--good)">Richtig.</b> ':'<b style="color:var(--bad)">Nicht ganz.</b> ')+q[3];upd();});
+   box.appendChild(el);});};
+ w.querySelector('.ck-r').addEventListener('click',build);build();
+}
+Object.keys(CHECK).forEach(checkPanel);
 buildQuiz();
 })();
 </script>
@@ -955,16 +989,17 @@ lwChatPanel(host,{fach:'bio',people:{Chloroplast:'#16A05A',Mitochondrium:'#E07B1
 })();
 </script>
 
-<script>/* Lernwelt: Kapitel-Fortschritt für die Startseite (siehe sync.js) */
-if(window.LW&&LW.kapitel){
+<script>/* Lernwelt: Lernpfad und Kapitel-Fortschritt (siehe lwKapitel in lernwelt-app.js und sync.js)
+   Kapitel = bester Kurz-Check (3 Fragen), „Teste dich“ ist der Große Test. */
 (function(){
-  var K='pflanzenzelle-besucht',IDS=["entdecken", "arbeit", "wasser", "groesse", "quiz"],NAMES=["Wer wohnt in der Zelle?", "Ein Tag in der Blattzelle", "Warum Pflanzen stehen können", "Wie klein ist eine Zelle?", "Teste dich"],seen={};
-  try{seen=JSON.parse(localStorage.getItem(K)||'{}')||{}}catch(e){}
-  function mark(e){var s=e.target.closest&&e.target.closest('section[id]');
-    if(!s||IDS.indexOf(s.id)<0||seen[s.id])return;
-    seen[s.id]=1;try{localStorage.setItem(K,JSON.stringify(seen))}catch(e){}}
-  ['pointerdown','input','keydown'].forEach(function(ev){document.addEventListener(ev,mark,true)});
-  LW.kapitel(function(){return IDS.map(function(id,i){return {t:NAMES[i],p:seen[id]?1:0}})});
+  var IDS=["entdecken", "arbeit", "wasser", "groesse"],NAMES=["Wer wohnt in der Zelle?", "Ein Tag in der Blattzelle", "Warum Pflanzen stehen können", "Wie klein ist eine Zelle?"];
+  var best=function(){return window.pzBest?pzBest():{}};
+  // Früher zählte schon das Anschauen (pflanzenzelle-besucht); das bleibt als geschafft stehen
+  var seen={};try{seen=JSON.parse(localStorage.getItem('pflanzenzelle-besucht')||'{}')||{}}catch(e){}
+  function anteil(id){return seen[id]?1:(best()[id]||0)}
+  if(window.lwKapitel)window.pzKap=lwKapitel({ids:IDS,names:NAMES,test:'quiz',hide:['.jump','.teacher'],
+    stand:function(id){var v=id==='quiz'?(best().quiz||0):anteil(id),n=Math.round(v*(id==='quiz'?7:3));return v>=.999?'geschafft':id==='quiz'?(n?'bestes Ergebnis '+n+' von 7':''):n+' von 3 im Kurz-Check'}});
+  if(window.LW&&LW.kapitel)LW.kapitel(function(){return IDS.map(function(id,i){return {t:NAMES[i],p:anteil(id)}}).concat([{t:'Teste dich',p:best().quiz||0}])});
 })();
-}</script>
+</script>
 </body></html>

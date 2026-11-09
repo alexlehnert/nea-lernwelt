@@ -508,16 +508,18 @@ function fmt(n){ if(typeof n!=='number' && !isNum(n)) return String(n); if(Numbe
 const T = s => s.split(' ');
 
 /* Sterne */
-const earned = new Set();
+const SKEY='terme-sterne';let earned;try{earned=new Set(JSON.parse(localStorage.getItem(SKEY)||'[]'))}catch(e){earned=new Set()}
 function award(id){
   if(earned.has(id)) return;
-  earned.add(id);
+  earned.add(id);try{localStorage.setItem(SKEY,JSON.stringify([...earned]))}catch(e){}
+  if(window.termeKap)termeKap.refresh();
   $('#starN').textContent = earned.size;
   const s=$('#stars'); s.classList.remove('bump'); void s.offsetWidth; s.classList.add('bump');
   $('#finalStars').textContent = 'Du hast schon ' + earned.size + (earned.size===1?' Stern':' Sterne') + ' gesammelt. Super!';
 }
 window.termeAward = award;
-$('#finalStars').textContent = 'Sammle Sterne, indem du die Aufgaben oben löst.';
+$('#starN').textContent = earned.size;
+$('#finalStars').textContent = earned.size?'Du hast schon ' + earned.size + (earned.size===1?' Stern':' Sterne') + ' gesammelt. Super!':'Sammle Sterne, indem du die Aufgaben oben löst.';
 
 /* Terme anzeigen */
 function renderTokens(arr, opt){
@@ -976,16 +978,18 @@ lwChatPanel(host,{fach:'ma',people:{Lena:'#E0567A',Tom:'#2F80ED',Mia:'#8B4FE0'},
 })();
 </script>
 
-<script>/* Lernwelt: Kapitel-Fortschritt für die Startseite (siehe sync.js) */
-if(window.LW&&LW.kapitel){
+<script>/* Lernwelt: Lernpfad und Kapitel-Fortschritt (siehe lwKapitel in lernwelt-app.js und sync.js)
+   Ein Kapitel ist geschafft, wenn genug Sterne aus seinen Aufgaben gesammelt sind (ZIEL). */
 (function(){
-  var K='terme-besucht',IDS=["was", "einsetzen", "alltag", "namen"],NAMES=["Was ist ein Term?", "Zahlen einsetzen", "Terme im Alltag", "Wie heißen die Teile?"],seen={};
-  try{seen=JSON.parse(localStorage.getItem(K)||'{}')||{}}catch(e){}
-  function mark(e){var s=e.target.closest&&e.target.closest('section[id]');
-    if(!s||IDS.indexOf(s.id)<0||seen[s.id])return;
-    seen[s.id]=1;try{localStorage.setItem(K,JSON.stringify(seen))}catch(e){}}
-  ['pointerdown','input','keydown'].forEach(function(ev){document.addEventListener(ev,mark,true)});
-  LW.kapitel(function(){return IDS.map(function(id,i){return {t:NAMES[i],p:seen[id]?1:0}})});
+  var IDS=["was", "einsetzen", "alltag", "namen"],NAMES=["Was ist ein Term?", "Zahlen einsetzen", "Terme im Alltag", "Wie heißen die Teile?"];
+  var PRE={was:/^(builder-var|termcheck|tc)/,einsetzen:/^(machine|wt-)/,alltag:/^(ice|match|story|chat)/,namen:/^(tab|det|g)/},ZIEL={was:3,einsetzen:3,alltag:4,namen:4};
+  function sterne(id){var a=[];try{a=JSON.parse(localStorage.getItem('terme-sterne')||'[]')}catch(e){}return a.filter(function(x){return PRE[id].test(x)}).length}
+  // Früher zählte schon das Anschauen eines Abschnitts (terme-besucht); das bleibt als geschafft stehen
+  var seen={};try{seen=JSON.parse(localStorage.getItem('terme-besucht')||'{}')||{}}catch(e){}
+  function anteil(id){return seen[id]?1:Math.min(1,sterne(id)/ZIEL[id])}
+  if(window.lwKapitel)window.termeKap=lwKapitel({ids:IDS,names:NAMES,hide:['.jump','.intro','.merk','.banner'],
+    stand:function(id){var n=Math.min(sterne(id),ZIEL[id]);return seen[id]||n>=ZIEL[id]?'geschafft':n+' von '+ZIEL[id]+' Sternen'}});
+  if(window.LW&&LW.kapitel)LW.kapitel(function(){return IDS.map(function(id,i){return {t:NAMES[i],p:anteil(id)}})});
 })();
-}</script>
+</script>
 </body></html>

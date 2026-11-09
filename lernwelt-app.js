@@ -50,6 +50,42 @@
     if (!ok) { window[name] = real; real(); }
   };
 
+  /* Lernpfad für Lernseiten, die alle Kapitel als <section id> untereinander haben (Terme, Pflanzenzelle).
+   * lwKapitel({ ids, names, test, hide, stand })
+   *   ids/names  Kapitel in der Reihenfolge des Hefts; test = id eines Abschnitts, der der Große Test ist
+   *   hide       Selektoren, die im Kapitel-Modus verschwinden (Sprungleiste, Merkzettel …)
+   *   stand(id)  optional: Text unter der Kapitel-Leiste, z. B. „2 von 3 Sternen“
+   * Mit #<kapitel> zeigt die Seite nur dieses Kapitel und unten „Weiter“ und „Zum Heft“.
+   * Ohne Anker oder mit #alles bleibt alles auf einer Seite (Entdecken). */
+  window.lwKapitel = function (o) {
+    var all = o.ids.concat(o.test ? [o.test] : []);
+    var nav = document.createElement('nav');
+    nav.className = 'lw-kapnav';
+    nav.setAttribute('aria-label', 'Lernpfad');
+    function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+    function render() {
+      var h = location.hash.slice(1), on = all.indexOf(h) >= 0;
+      document.documentElement.classList.toggle('lw-kapmode', on);
+      all.forEach(function (id) { var e = document.getElementById(id); if (e) e.hidden = on && id !== h; });
+      (o.hide || []).forEach(function (sel) { document.querySelectorAll(sel).forEach(function (e) { e.hidden = on; }); });
+      if (!on) { nav.remove(); return; }
+      var i = o.ids.indexOf(h), isTest = h === o.test, nx = i >= 0 ? o.ids[i + 1] : null;
+      var head = isTest ? 'Großer Test' : 'Kapitel ' + (i + 1) + ' von ' + o.ids.length;
+      var st = o.stand ? o.stand(h) : '';
+      nav.innerHTML = '<div class="lw-kapnav-t"><b>' + head + '</b>' + (st ? '<span>' + esc(st) + '</span>' : '') + '</div>' +
+        (nx ? '<a class="lw-kapnav-go" href="#' + nx + '">Weiter: ' + esc(o.names[i + 1]) + '</a>'
+          : (!isTest && o.test ? '<a class="lw-kapnav-go" href="#' + o.test + '">Zum Großen Test</a>' : '')) +
+        '<button type="button" class="lw-kapnav-heft">Zum Heft</button>';
+      nav.querySelector('.lw-kapnav-heft').onclick = function () { window.lwHeft(); };
+      var sec = document.getElementById(h);
+      if (sec) sec.after(nav);
+    }
+    window.addEventListener('hashchange', function () { render(); window.scrollTo(0, 0); });
+    render();
+    if (all.indexOf(location.hash.slice(1)) >= 0) setTimeout(function () { window.scrollTo(0, 0); }, 0);
+    return { refresh: render };
+  };
+
   var moved = false;
   window.addEventListener('hashchange', function () { moved = true; });
   document.addEventListener('click', function (e) {
