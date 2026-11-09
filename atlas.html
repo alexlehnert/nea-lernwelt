@@ -1583,7 +1583,7 @@ function drawGlobe(svg, size, spin) {
 }
 // Lernwelt: direkt ins Kapitel (atlas.html#welt, #kompass, #globus), Anker stehen in hefte.js
 function kapitelSprung() { const tp = location.hash.slice(1); if (!['welt', 'kompass', 'globus'].includes(tp)) return false; SAVE.topic = tp; persist(); startScreen(); newRound(); return true; }
-if (window.d3) { drawGlobe(document.getElementById('stamp'), 44, false); kapitelSprung() || startScreen(); }
+if (window.d3) { drawGlobe(document.getElementById('stamp'), 44, false); window.lwStart ? lwStart('startScreen', kapitelSprung) : (kapitelSprung() || startScreen()); }
 else $('#screen').innerHTML = '<div class="card">Die Kartenbibliothek konnte nicht geladen werden. Bitte Internetverbindung prüfen und neu laden.</div>';
 </script>
 

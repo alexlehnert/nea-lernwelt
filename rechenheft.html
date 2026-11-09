@@ -1016,7 +1016,8 @@ function kapitelSprung(){
   if(!A[h])return false;
   S.area=A[h];S.tops[S.area]=Object.keys(TOP[S.area]);save();home();startRound();return true;
 }
-kapitelSprung()||home();
+// Kam Nea über ein Kapitel der Lernwelt, führt „Zur Übersicht/Beenden“ danach zur Heft-Seite
+if(location.hash&&window.lwHeft){const h0=home;let boot=true;home=function(){return boot?h0.apply(this,arguments):window.lwHeft()};const ok=kapitelSprung();boot=false;if(!ok){home=h0;home();}}else kapitelSprung()||home();
 
 /* Lernwelt: Kapitel-Fortschritt für die Startseite (siehe sync.js) */
 if(window.LW&&LW.kapitel){
