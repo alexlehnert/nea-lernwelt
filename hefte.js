@@ -68,8 +68,8 @@ window.LW_HEFTE = [
       'S. 176/177 · Unit 1 Check-in', 'S. 178/179 · Station 1', 'S. 180 · Station 2',
       'S. 181 · Station 2 · Chill-out', 'S. 181 · Station 3', 'S. 182 · Station 3 · Teil 2', 'S. 182 · School words', 'S. 183 · Story', 'S. 183 · Check-out', 'S. 183/184 · Media smart',
       'S. 184 · Texte am Computer', 'S. 185 · Unit 2 Check-in', 'S. 185 · Unit 2 Station 1', 'G7 · ’s und s’ (wem gehört’s?)',
-      'S. 186 · Things in the house', 'S. 186 · Unit 2 · Wörter'],
-    anker: ['s0', 'g2', 's1', 'g1', 's2', 'g3', 's3', 's4', 'g6', 's5', 's6', 's7', 's8', 's9', 's10', 's11', 's12', 's13', 's14', 's15', 's16', 's17', 's18', 's19', 'g7', 's20', 's21'],
+      'S. 186 · Things in the house', 'S. 186 · Unit 2 · Wörter', 'G8 · have got / has got'],
+    anker: ['s0', 'g2', 's1', 'g1', 's2', 'g3', 's3', 's4', 'g6', 's5', 's6', 's7', 's8', 's9', 's10', 's11', 's12', 's13', 's14', 's15', 's16', 's17', 's18', 's19', 'g7', 's20', 's21', 'g8'],
     frei: { t: 'Karteikasten · Neueste zuerst', s: 'Erst die neuesten Kapitel festigen, ältere kommen nach und nach dazu' } },
   // Zellen, Mikroskop und Skelett laufen in einer App (bio-expedition.html, teilt: gemeinsamer Speicher zellstadt-v1).
   // mikroskop.html und skelett.html leitet vercel.json auf bio-expedition.html um; von = Fortschritt aus der Zeit, als es ein Heft war.

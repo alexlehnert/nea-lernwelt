@@ -125,6 +125,9 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--navy);outline-o
 .gex .gpic{font-size:1.9rem;line-height:1;flex:none;min-width:2.6em;text-align:center}
 .gex b{display:block;font-size:1.12rem}
 .gex small{display:block;color:var(--muted);font-size:.86rem;line-height:1.3}
+.gex.gok{background:var(--ok-bg)}.gex.gok .gpic{color:var(--ok);font-weight:900}
+.gex.gno{background:var(--bad-bg)}.gex.gno .gpic{color:var(--bad);font-weight:900}.gex.gno b{text-decoration:line-through;text-decoration-color:var(--bad);text-decoration-thickness:2px}
+.grules s{text-decoration-color:var(--bad);text-decoration-thickness:2px}
 .grule{font-family:var(--f-d);font-size:1.1rem;border-left:4px solid var(--navy);padding:4px 0 4px 12px}
 .gnote{background:var(--navy-soft);border-radius:12px;padding:10px 12px;font-size:.95rem}
 .gsteps{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:10px}
@@ -320,7 +323,7 @@ a.klink.small{color:var(--lw-en);font-weight:700;padding:6px}
 
 <div class="wrap">
   <header>
-    <h1>English trainer<small>Vokabeln S. 170–186 · Grammatik G1, G2, G3, G6, G7</small></h1>
+    <h1>English trainer<small>Vokabeln S. 170–186 · Grammatik G1, G2, G3, G6, G7, G8</small></h1>
     <span class="vol" aria-label="Klasse 5">5</span>
   </header>
   <section class="box" aria-label="Karteikasten">
@@ -935,6 +938,95 @@ const RULES={G7:[
    <li>Mit ${KB('ABC')} kommst du zurück zu den Buchstaben.</li></ol>
   <p class="gnote">✨ <b>Profi-Trick:</b> Halt ${KB('123')} gedrückt, wisch zum <b>'</b> und lass los. Dann springt die Tastatur von allein zurück.</p>
   <p class="small" style="margin:0">Ob das Zeichen gerade (') oder schräg (’) aussieht, ist egal. Beides zählt. Am Computer: ${KB('⇧')} + ${KB('#')}</p>`}]};
+/* ===== G8 · have got / has got (haben, besitzen) =====
+   k: 1 = have oder has, 2 = Kurzformen, 3 = Verneinung, 4 = Fragen & Kurzantworten, 5 = typische Fehler, t = selbst schreiben.
+   h = Grundform in Klammern, wie im Buch: Ryan (have got) a dog.  (✘) = verneinen.  in = eigene Aufgabenstellung. */
+TOP.G8='G8 · have got / has got';
+const HG1='I, you, we, they → have got.',HG3='he, she, it (eine Person, ein Tier, ein Ding) → has got.';
+const G8RAW=[
+ {k:1,t:'c',q:'I ___ a new bike. 🚲',h:'have got',a:'have got',o:['have got','has got'],ex:HG1},
+ {k:1,t:'c',q:'Ryan ___ a dog. His name is Sherlock.',h:'have got',a:'has got',o:['have got','has got'],ex:'Ryan = he → '+HG3},
+ {k:1,t:'c',q:'Ruby and Ryan ___ a big house in Greenwich.',h:'have got',a:'have got',o:['have got','has got'],ex:'Ruby and Ryan = they → '+HG1},
+ {k:1,t:'c',q:'Lily ___ a cat. Her name is Lulu.',h:'have got',a:'has got',o:['have got','has got'],ex:'Lily = she → '+HG3},
+ {k:1,t:'c',pic:'🐶',pd:'Sherlock mit braunen Ohren',q:'Sherlock ___ brown ears.',h:'have got',a:'has got',o:['have got','has got'],ex:'Sherlock = he (ein Tier) → has got. Auch fürs Aussehen sagst du have got.'},
+ {k:1,t:'c',q:'We ___ a great teacher.',h:'have got',a:'have got',o:['have got','has got'],ex:'we → have got.'},
+ {k:1,t:'c',pic:'🤧',pd:'Jemand niest',q:"I've got a cold. – Was heißt das?",a:'Ich bin erkältet.',o:['Ich bin erkältet.','Ich bekomme eine Erkältung.','Ich hatte eine Erkältung.'],ex:'Bei Krankheiten sagst du have got: I’ve got a cold. = Ich habe eine Erkältung.'},
+ {k:2,t:'c',q:'I have got → ___',a:"I've got",o:["I've got","I'm got","I's got"],ex:'have got → ’ve got. Das ha fällt weg, dafür kommt das Apostroph.'},
+ {k:2,t:'c',q:'she has got → ___',a:"she's got",o:["she's got","she've got","she has'got"],ex:'has got → ’s got.'},
+ {k:2,t:'c',q:'they have got → ___',a:"they've got",o:["they've got","they's got","their got"],ex:'they → have got → they’ve got.'},
+ {k:2,t:'c',q:"She's got a brother. – Was bedeutet ’s hier?",a:'has (she has got)',o:['has (she has got)','is (she is)'],ex:'Steht got dahinter, ist ’s = has.'},
+ {k:2,t:'c',q:"She's eleven. – Was bedeutet ’s hier?",a:'is (she is)',o:['has (she has got)','is (she is)'],ex:'Kein got dahinter → ’s = is: she is eleven.'},
+ {k:2,t:'c',q:"He's got blue eyes. – Was bedeutet ’s hier?",a:'has (he has got)',o:['has (he has got)','is (he is)'],ex:'got steht dahinter → he has got blue eyes.'},
+ {k:3,t:'c',q:'Lily ___ a dog. (✘)',a:"hasn't got",o:["hasn't got","haven't got","doesn't have got"],ex:"Lily = she → hasn't got. Kein doesn't bei have got!"},
+ {k:3,t:'c',q:'I ___ a brother. (✘)',a:"haven't got",o:["haven't got","hasn't got","don't have got"],ex:"I → haven't got. Kein don't bei have got!"},
+ {k:3,t:'c',q:'Ruby and Ryan ___ a cat. (✘)',a:"haven't got",o:["haven't got","hasn't got","aren't got"],ex:"they → haven't got."},
+ {k:3,t:'c',pic:'🐶 😢',pd:'Sherlock ist traurig',q:'Sherlock ___ a ball. (✘)',a:"hasn't got",o:["hasn't got","haven't got","isn't got"],ex:"Sherlock = he → hasn't got."},
+ {k:3,t:'c',q:'Kurzform: has not got → ___',a:"hasn't got",o:["hasn't got","hasnt' got","has'nt got"],ex:'Das Apostroph steht da, wo das o von not fehlt: has not → hasn’t.'},
+ {k:4,t:'c',q:'___ you got a pet?',a:'Have',o:['Have','Has','Do'],ex:'Frage: Have/Has kommt nach vorne. Kein Do!'},
+ {k:4,t:'c',q:'___ Karam got a sister?',a:'Has',o:['Has','Have','Does'],ex:'Karam = he → Has … got …? Kein Does!'},
+ {k:4,t:'c',q:'What ___ you got in your bag? 🎒',a:'have',o:['have','has','do'],ex:'What have you got …? = Was hast du …?'},
+ {k:4,t:'c',q:'Have you got a bike? (✔)',a:'Yes, I have.',o:['Yes, I have.','Yes, I have got.',"Yes, I've."],ex:'In der Kurzantwort steht kein got. Und bei Yes keine Kurzform.'},
+ {k:4,t:'c',q:'Has Lily got a brother? (✘)',a:"No, she hasn't.",o:["No, she hasn't.","No, she hasn't got.","No, she haven't."],ex:"Kurzantwort ohne got: No, she hasn't."},
+ {k:4,t:'c',q:'Have Ruby and Ryan got a dog? (✔)',a:'Yes, they have.',o:['Yes, they have.','Yes, they has.',"Yes, they've."],ex:'Ruby and Ryan = they → Yes, they have.'},
+ {k:4,t:'c',q:'Has Sherlock got a bed? (✔)',a:'Yes, he has.',o:['Yes, he has.','Yes, he have.',"Yes, he's."],ex:'Sherlock = he → Yes, he has.'},
+ {k:5,t:'c',q:'Welcher Satz ist richtig?',a:'Have you got a pen?',o:['Have you got a pen?','Do you have got a pen?','You have got a pen?'],ex:'Bei have got gibt es kein do. Die Frage beginnt mit Have oder Has.'},
+ {k:5,t:'c',q:'Welcher Satz ist richtig?',a:"He hasn't got a bike.",o:["He hasn't got a bike.","He doesn't have got a bike.","He hasn't a bike."],ex:"Verneint: hasn't got. Kein doesn't und das got nicht vergessen."},
+ {k:5,t:'c',q:'Ich habe einen Hund. 🐕',a:"I've got a dog.",o:["I've got a dog.","I got a dog.","I'm got a dog."],ex:'Ohne have heißt got „bekam“. Für „ich habe“ brauchst du have got: I’ve got.'},
+ {k:5,t:'c',pic:'🤕',pd:'Jemand hält sich den Kopf',q:'Ich habe Kopfschmerzen.',a:"I've got a headache.",o:["I've got a headache.","I've got headache.","I am a headache."],ex:'Bei Krankheiten: have got + a: a headache, a cold, a temperature.'},
+ {k:5,t:'c',pic:'🥣 ⏰',pd:'Frühstück am Morgen',q:'Every morning I ___ breakfast at 7.',a:'have',o:['have','have got','has got'],ex:'Für Tätigkeiten sagst du nur have, ohne got: have breakfast (frühstücken).'},
+ {k:5,t:'c',pic:'🎉',pd:'Eine Party',q:"We always ___ fun at Ruby's parties.",a:'have',o:['have','have got','has got'],ex:'have fun = Spaß haben, das ist eine Tätigkeit → nur have.'},
+ {k:'t',t:'t',q:'Karam ___ a sister.',h:'have got',a:['has got',"'s got"],ex:'Karam = he → has got.'},
+ {k:'t',t:'t',q:'I ___ a new phone. 📱',h:'have got',a:['have got',"'ve got"],ex:'I → have got.'},
+ {k:'t',t:'t',q:'Ruby and Ryan ___ a dog.',h:'have got',a:['have got',"'ve got"],ex:'they → have got.'},
+ {k:'t',t:'t',pic:'👩‍🦰',pd:'Ein Mädchen mit langen roten Haaren',q:'She ___ long red hair.',h:'have got',a:['has got',"'s got"],ex:'she → has got. Fürs Aussehen sagst du have got.'},
+ {k:'t',t:'t',q:'Lily ___ a brother. (✘)',h:'have got',a:["hasn't got","has not got"],ex:"Lily = she → hasn't got."},
+ {k:'t',t:'t',q:'I ___ a bike. (✘)',h:'have got',a:["haven't got","have not got"],ex:"I → haven't got."},
+ {k:'t',t:'t',q:'We ___ a garden. (✘) 🏢',h:'have got',a:["haven't got","have not got"],ex:"we → haven't got."},
+ {k:'t',t:'t',q:'___ you got a pet?',a:['Have'],ex:'Frage: Have you got …? Kein Do!'},
+ {k:'t',t:'t',q:'___ Sherlock got a ball?',a:['Has'],ex:'Sherlock = he → Has … got …?'},
+ {k:'t',t:'t',q:'Has Karam got a sister? (✔) – Yes, he ___.',a:['has'],ex:'Kurzantwort ohne got: Yes, he has.'},
+ {k:'t',t:'t',q:'Have the twins got a cat? (✘) – No, they ___.',a:["haven't","have not"],ex:"Kurzantwort ohne got: No, they haven't."},
+ {k:'t',t:'t',q:'Schreibe die Kurzform: they have got',a:["they've got"],ex:'have got → ’ve got.'},
+ {k:'t',t:'t',q:'Schreibe die Kurzform: he has not got',a:["he hasn't got"],ex:'has not → hasn’t.'}];
+EXD.G8="I, you, we, they → have got · he, she, it → has got. Verneint: haven't got / hasn't got. Frage: Have you got …? – Yes, I have. Kein do, und in der Kurzantwort kein got.";
+G8RAW.forEach((x,i)=>G.push({id:'hg'+i,g:'G8',t:x.t,k:x.k,q:x.q,h:x.h,pic:x.pic,pd:x.pd,a:Array.isArray(x.a)?x.a:[x.a],opts:x.o,ex:x.ex}));
+const OKB=(w,d)=>`<div class="gex gok"><span class="gpic">✔</span><span><b>${w}</b>${d?`<small>${d}</small>`:''}</span></div>`,NOB=(w,d)=>`<div class="gex gno"><span class="gpic">✘</span><span><b>${w}</b>${d?`<small>${d}</small>`:''}</span></div>`;
+RULES.G8=[
+ {k:null,h:'have got = haben, besitzen',b:`<p>Mit <b>have got</b> sagst du, was jemand <b>hat</b>. Das <i>got</i> übersetzt du nicht extra: <i>I’ve got a dog.</i> = Ich habe einen Hund.</p>
+  <div class="gex"><span class="gpic">🚲</span><span><b>I’ve got a new bike.</b><small>Dinge, die dir gehören</small></span></div>
+  <div class="gex"><span class="gpic">👨‍👩‍👧</span><span><b>Karam has got a sister.</b><small>Familie, Freunde und Haustiere</small></span></div>
+  <div class="gex"><span class="gpic">👀</span><span><b>Lily has got long hair.</b><small>Aussehen: Haare, Augen, Ohren</small></span></div>
+  <div class="gex"><span class="gpic">🤧</span><span><b>I’ve got a cold.</b><small>Krankheiten: a cold, a headache</small></span></div>`,say:"I've got a new bike. Karam has got a sister. Lily has got long hair. I've got a cold."},
+ {k:1,h:'have got oder has got?',b:`<p>Wie bei <i>to be</i> kommt es auf die Person an:</p>
+  <div class="gex"><span class="gpic">🙋</span><span><b>I / you / we / they have got</b><small>I have got a pen. They have got a dog.</small></span></div>
+  <div class="gex"><span class="gpic">🧍</span><span><b>he / she / it has got</b><small>Ryan has got a dog. Sherlock has got brown ears.</small></span></div>
+  <p class="grule">he, she, it → <b>has got</b>. Alle anderen → <b>have got</b>.</p>
+  <p class="gnote">💡 Ein Name, ein Tier oder ein Ding ist immer he, she oder it: <i>Lily</i> → she → <b>has got</b>. Zwei Namen sind they: <i>Ruby and Ryan</i> → <b>have got</b>.</p>`,say:'I have got a pen. They have got a dog. Ryan has got a dog. Sherlock has got brown ears.'},
+ {k:2,h:'Kurzformen: ’ve got und ’s got',b:`<p>Beim Sprechen und in Nachrichten nimmst du fast immer die Kurzform:</p>
+  <div class="gex"><span class="gpic">✂️</span><span><b>I’ve got · you’ve got · we’ve got · they’ve got</b><small>have → ’ve</small></span></div>
+  <div class="gex"><span class="gpic">✂️</span><span><b>he’s got · she’s got · it’s got</b><small>has → ’s</small></span></div>
+  <p class="gnote">⚠️ <b>she’s</b> kann zwei Sachen heißen! <i>She’s got a cat.</i> = she <b>has</b> got. <i>She’s eleven.</i> = she <b>is</b>. Trick: Steht <b>got</b> dahinter, ist ’s = has.</p>`,say:"I've got a cat. She's got a cat. She's eleven."},
+ {k:3,h:'Verneinung: haven’t got / hasn’t got',b:`<p>Hat jemand etwas <b>nicht</b>, kommt <b>not</b> zwischen have und got:</p>
+  <div class="gex"><span class="gpic">🙅</span><span><b>I haven’t got a brother.</b><small>have not got → haven’t got</small></span></div>
+  <div class="gex"><span class="gpic">🐈‍⬛</span><span><b>Lily hasn’t got a dog.</b><small>has not got → hasn’t got</small></span></div>
+  <p class="grule">have not → <b>haven’t</b> · has not → <b>hasn’t</b> · got bleibt!</p>
+  <p class="gnote">⚠️ Kein <b>don’t</b> und kein <b>doesn’t</b>: <s>I don’t have got</s> gibt es nicht.</p>`,say:"I haven't got a brother. Lily hasn't got a dog."},
+ {k:4,h:'Fragen und Kurzantworten',b:`<p>In der Frage tauschen <b>Have/Has</b> und die Person den Platz. <b>got</b> bleibt hinter der Person.</p>
+  <div class="gex"><span class="gpic">🐾</span><span><b>Have you got a pet?</b><small>Yes, I have. / No, I haven’t.</small></span></div>
+  <div class="gex"><span class="gpic">👧</span><span><b>Has Karam got a sister?</b><small>Yes, he has. / No, he hasn’t.</small></span></div>
+  <div class="gex"><span class="gpic">🎒</span><span><b>What have you got in your bag?</b><small>Fragewort + have/has + Person + got</small></span></div>
+  <p class="gnote">⚠️ In der Kurzantwort steht <b>kein got</b>: <i>Yes, I have.</i> Nicht: <s>Yes, I have got.</s> Und bei Yes keine Kurzform: <s>Yes, I’ve.</s></p>`,say:"Have you got a pet? Yes, I have. No, I haven't. Has Karam got a sister? Yes, he has. No, he hasn't."},
+ {k:5,h:'Achtung: so nicht!',b:`${NOB('Do you have got a pen?')}${OKB('Have you got a pen?','Bei have got gibt es kein do.')}
+  ${NOB('I got a dog.')}${OKB('I’ve got a dog.','Ohne have heißt got „bekam“.')}
+  ${NOB('I’ve got breakfast at 7.')}${OKB('I have breakfast at 7.','Tätigkeiten nur mit have: have breakfast, have a shower, have fun.')}
+  <p class="grule">have got = <b>haben, besitzen</b>. Etwas <b>tun</b> → nur <b>have</b>.</p>`,say:"Have you got a pen? I've got a dog. I have breakfast at 7."},
+ {k:'t',h:'Jetzt tippst du selbst',b:`<p>Gleich schreibst du die richtige Form selbst, so wie im Buch: <i>Karam (have got) a sister.</i> → <b>has got</b>. Steht <b>(✘)</b> dahinter, schreibst du die Verneinung.</p>
+  <p class="lbl" style="margin:4px 0 0">Für haven’t und hasn’t brauchst du das Apostroph ’</p>
+  <ol class="gsteps">
+   <li>Tipp unten links auf ${KB('123')}</li>
+   <li>In der dritten Reihe tippst du auf <span class="kkey hot">'</span></li>
+   <li>Mit ${KB('ABC')} kommst du zurück zu den Buchstaben.</li></ol>
+  <p class="gnote">✨ <b>Profi-Trick:</b> Halt ${KB('123')} gedrückt, wisch zum <b>'</b> und lass los.</p>`}];
 /* ===== Chat-Aufgaben: Neas Nachrichten haben Lücken (lwChat aus lernwelt-chat.js) ===== */
 const PEOPLE={Ruby:'#E0567A',Ryan:'#2F80ED',Karam:'#E07B12',Lily:'#8B4FE0',Sophie:'#0E9AA7'};
 const BE=['am','is','are'],BE_C=['Am','Is','Are'];
@@ -1067,18 +1159,41 @@ const CHATS=[
   {t:"___ at the park with Sherlock.",a:["He's"],o:["He's","His","He"],ex:"He's = he is (Kurzform)."},
   {w:'Karam',t:'Oh, is that my football or Ryan’s? ⚽'},
   {t:"It's ___ football. Yours is at home!",a:["Ryan's"],o:["Ryan's","Ryans","Ryans'"],ex:'Hinter dem ’s steht ein Ding → Besitz.'}]}
+,
+ {g:'G8',title:'Ruby',sub:'online',ava:'R',lines:[
+  {w:'Ruby',t:'Have you got a pet? 🐾'},
+  {t:'Yes, I ___. A cat called Mia. 🐱',a:['have'],o:['have','have got',"'ve"],ex:'Kurzantwort ohne got: Yes, I have.'},
+  {w:'Ruby',t:'Cool! Has she got stripes?'},
+  {t:"No, she ___. She's all black. 🖤",a:["hasn't"],o:["hasn't","hasn't got","haven't"],ex:"Kurzantwort ohne got: No, she hasn't."},
+  {w:'Ruby',t:"Sherlock has got a new ball. He's so happy! ⚽"},
+  {t:'Ha! Mia ___ lots of toys too! 😄',a:['has got'],o:['has got','have got','is got'],ex:'Mia = she → has got.'}]},
+ {g:'G8',title:'Lily',sub:'online',ava:'L',lines:[
+  {w:'Lily',t:"I'm not at school today. 🤒"},
+  {t:'Oh no! ___ you got a cold?',a:['Have'],o:['Have','Do','Has'],ex:'Frage mit have got: Have you got …? Kein do!'},
+  {w:'Lily',t:"Yes, and I've got a headache too. 😩"},
+  {t:'Poor you! I ___ your English homework. 📚',a:['have got'],o:['have got','has got','am got'],ex:'I → have got.'},
+  {w:'Lily',t:'Thanks! Has Mrs Wilson got my test?'},
+  {t:'Yes, she ___. Get well soon! 💐',a:['has'],o:['has','have','has got'],ex:'Kurzantwort ohne got: Yes, she has.'}]},
+ {g:'G8',title:'Karam',sub:'online',ava:'K',lines:[
+  {w:'Karam',t:'My cousin Amir is new at our school. Can you help him? 🎒'},
+  {t:'Sure! ___ he got dark hair?',a:['Has'],o:['Has','Have','Does'],ex:'Amir = he → Has he got …?'},
+  {w:'Karam',t:"Yes, he has. And he's got glasses. 👓"},
+  {t:'I can see him! He ___ a big red bag.',a:['has got'],o:['has got','have got','is got'],ex:'he → has got.'},
+  {w:'Karam',t:"That's him! 😄 Have you got time for lunch with us?"},
+  {t:"Sorry, I ___ time today. I've got a piano lesson. 🎹",a:["haven't got"],o:["haven't got","hasn't got","don't have got"],ex:"I → haven't got. Kein don't bei have got."},
+  {w:'Karam',t:'No problem. See you tomorrow! 👋'}]}
 ];
 CHATS.forEach((c,i)=>{const k=c.lines.find(l=>l.a);G.push({id:'gc'+i,g:c.g,t:'chat',q:k.t,a:k.a,opts:k.o||k.a,ex:EXD[c.g],chat:c})});
 const ALL={};V.forEach(v=>ALL[v.id]=v);G.forEach(x=>ALL[x.id]=x);
 
 /* ===== Speicher ===== */
 const KEY='englisch-kartei-5-v1';
-let S={box:{},mode:'v',secs:SECS.map((_,i)=>i),tops:['G1','G2','G3','G6','G7'],len:10};
+let S={box:{},mode:'v',secs:SECS.map((_,i)=>i),tops:['G1','G2','G3','G6','G7','G8'],len:10};
 try{const s=JSON.parse(localStorage.getItem(KEY)||'null');if(s&&s.box)S=Object.assign(S,s)}catch(e){}
 /* Verlauf pro Karte: d = Tag der letzten Antwort, r = letzte 4 Ergebnisse (1 richtig, 0 falsch), neueste hinten */
 if(!S.hist||typeof S.hist!=='object')S.hist={};
 /* Neue Grammatik-Themen einmal in die freie Auswahl aufnehmen */
-if(!S.newTops)S.newTops=[];['G7'].forEach(g=>{if(!S.newTops.includes(g)){S.newTops.push(g);if(!S.tops.includes(g))S.tops.push(g)}});
+if(!S.newTops)S.newTops=[];['G7','G8'].forEach(g=>{if(!S.newTops.includes(g)){S.newTops.push(g);if(!S.tops.includes(g))S.tops.push(g)}});
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 const bx=id=>S.box[id]||0;
 
@@ -1363,7 +1478,7 @@ function movesHTML(){
 }
 
 /* ===== Kapitel-Modus: ein Kapitel pro Buchseite, Grammatik eingeordnet (Reihenfolge wie hefte.js) ===== */
-const KAPS=[{a:'s0',s:0},{a:'g2',g:'G2'},{a:'s1',s:1},{a:'g1',g:'G1'},{a:'s2',s:2},{a:'g3',g:'G3'},{a:'s3',s:3},{a:'s4',s:4},{a:'g6',g:'G6'},{a:'s5',s:5},{a:'s6',s:6},{a:'s7',s:7},{a:'s8',s:8},{a:'s9',s:9},{a:'s10',s:10},{a:'s11',s:11},{a:'s12',s:12},{a:'s13',s:13},{a:'s14',s:14},{a:'s15',s:15},{a:'s16',s:16},{a:'s17',s:17},{a:'s18',s:18},{a:'s19',s:19},{a:'g7',g:'G7'},{a:'s20',s:20},{a:'s21',s:21}];
+const KAPS=[{a:'s0',s:0},{a:'g2',g:'G2'},{a:'s1',s:1},{a:'g1',g:'G1'},{a:'s2',s:2},{a:'g3',g:'G3'},{a:'s3',s:3},{a:'s4',s:4},{a:'g6',g:'G6'},{a:'s5',s:5},{a:'s6',s:6},{a:'s7',s:7},{a:'s8',s:8},{a:'s9',s:9},{a:'s10',s:10},{a:'s11',s:11},{a:'s12',s:12},{a:'s13',s:13},{a:'s14',s:14},{a:'s15',s:15},{a:'s16',s:16},{a:'s17',s:17},{a:'s18',s:18},{a:'s19',s:19},{a:'g7',g:'G7'},{a:'s20',s:20},{a:'s21',s:21},{a:'g8',g:'G8'}];
 const OLD_ANKER={v1:'s0',v2:'s4',v3:'s7'};
 let KAP=null;
 const kapTitle=K=>K.g?TOP[K.g]:`${SECS[K.s].p} · ${SECS[K.s].n}`;
@@ -1424,7 +1539,8 @@ function guidedRound(g){
   closeDetail();
   const pick=(k,n)=>shuffle(G.filter(x=>x.g===g&&x.k===k).map(x=>x.id)).slice(0,n);
   const chat=shuffle(G.filter(x=>x.g===g&&x.t==='chat').map(x=>x.id)).slice(0,1);
-  const out=['ex:'+g+':0',...pick(1,2),'ex:'+g+':1',...pick(2,2),'ex:'+g+':2',...pick(3,2),'ex:'+g+':3',...pick('t',3),...chat];
+  /* Jede Erklär-Karte bringt danach ihre Aufgaben mit (k an der Karte, sonst 1, 2, 3, t wie bei G7; k:null = nur Erklärung) */
+  const out=[];RULES[g].forEach((r,n)=>{const k='k' in r?r.k:[1,2,3,'t'][n];out.push('ex:'+g+':'+n);if(k!=null)out.push(...pick(k,k==='t'?3:2))});out.push(...chat);
   const was={};out.forEach(id=>was[id]=bx(id));
   R={q:out,i:0,right:0,first:out.length,nx:out.filter(id=>id.startsWith('ex:')).length,missed:[],retried:new Set(),was,intro:[],ii:0};
   window.scrollTo(0,0);task();
@@ -1471,7 +1587,7 @@ function start(){
     <div><div class="lbl">Was möchtest du üben?</div></div>
     <div class="seg" role="group" aria-label="Schwerpunkt">
       <button type="button" id="m-v" data-mode="v" aria-pressed="${m==='v'}"><b>Vokabeln</b><span>S. 170–186</span></button>
-      <button type="button" id="m-g" data-mode="g" aria-pressed="${m==='g'}"><b>Grammatik</b><span>G1 · G2 · G3 · G6 · G7</span></button>
+      <button type="button" id="m-g" data-mode="g" aria-pressed="${m==='g'}"><b>Grammatik</b><span>G1 · G2 · G3 · G6 · G7 · G8</span></button>
       <button type="button" id="m-b" data-mode="b" aria-pressed="${m==='b'}"><b>Beides</b><span>gemischt</span></button>
     </div>
     <div class="lbl">Reihenfolge</div>
@@ -1596,7 +1712,7 @@ function task(){
   if(R.intro&&R.ii<R.intro.length)return introCard();
   if(R.i>=R.q.length)return end();
   const id=R.q[R.i];
-  if(id.startsWith('ex:')){const [,g,n]=id.split(':'),nxt=R.q[R.i+1];return explainCard(g,+n,()=>{R.i++;task()},`${KAP!=null?`Kapitel ${KAP+1} · `:''}Erklärung`,nxt&&ALL[nxt]&&ALL[nxt].t==='t'?'Selbst schreiben':'Jetzt üben')}
+  if(id.startsWith('ex:')){const [,g,n]=id.split(':'),nxt=R.q[R.i+1];return explainCard(g,+n,()=>{R.i++;task()},`${KAP!=null?`Kapitel ${KAP+1} · `:''}Erklärung`,nxt&&nxt.startsWith('ex:')?'Weiter':nxt&&ALL[nxt]&&ALL[nxt].t==='t'?'Selbst schreiben':'Jetzt üben')}
   const it=ALL[id],b=bx(id),isV=id[0]==='v';
   let kind=isV?vocabType(it,b):it.t;
   if(!isV&&it.t==='c'&&b>=3&&it.q.includes('___')&&/^[A-Za-z']+$/.test(it.a[0])&&!it.opts.includes(SND[0]))kind='t';
@@ -1710,12 +1826,13 @@ function tileGame(cb,id,parts,instr,prompt,target,prefix,joiner,letters,speak){
 const showQ=(q,h)=>esc(q).replace('___',h?`<span class="gap gh">(${esc(h)})</span>`:'<span class="gap">&nbsp;?&nbsp;</span>');
 const picHTML=it=>it.pic?`<p class="gpicq"><span aria-hidden="true">${it.pic}</span><small>${esc(it.pd||'')}</small></p>`:'';
 /* Hinweis fürs iPhone, wenn ein Apostroph getippt werden muss */
-const aposHelp=it=>it.a.some(a=>a.includes("'"))&&it.g==='G7'?`<details class="apos"><summary>Wo ist das ’ auf dem iPhone?</summary><p>Tipp auf <span class="kkey">123</span>, dann in der dritten Reihe auf <span class="kkey hot">'</span>. Mit <span class="kkey">ABC</span> geht es zurück. Trick: <span class="kkey">123</span> gedrückt halten, zum <b>'</b> wischen, loslassen.</p></details>`:'';
+const aposHelp=it=>it.a.some(a=>a.includes("'"))&&(it.g==='G7'||it.g==='G8')?`<details class="apos"><summary>Wo ist das ’ auf dem iPhone?</summary><p>Tipp auf <span class="kkey">123</span>, dann in der dritten Reihe auf <span class="kkey hot">'</span>. Mit <span class="kkey">ABC</span> geht es zurück. Trick: <span class="kkey">123</span> gedrückt halten, zum <b>'</b> wischen, loslassen.</p></details>`:'';
+const negHint=it=>it.q.includes('(✘)')?' ✘ = verneinen.':'';
 const fillQ=(q,a)=>esc(q).replace('___',`<b>${esc(a)}</b>`);
 const GT={
   c(cb,it){
     const o=shuffle(it.opts),long=o.some(x=>x.length>14);
-    cb.innerHTML=`<p class="instr">${it.g==='G7'&&it.h?'Klick die richtige Form an: ’s oder s’?':'Klick die richtige Lösung an.'}</p>${picHTML(it)}<p class="prompt">${showQ(it.q,it.h)}</p>
+    cb.innerHTML=`<p class="instr">${it.g==='G7'&&it.h?'Klick die richtige Form an: ’s oder s’?':it.g==='G8'&&it.h?`Klick die richtige Form von <b>${esc(it.h)}</b> an.${negHint(it)}`:'Klick die richtige Lösung an.'}</p>${picHTML(it)}<p class="prompt">${showQ(it.q,it.h)}</p>
     <div class="opts${long?' one':''}">${o.map((x,i)=>`<button class="opt" type="button" data-i="${i}">${esc(x)}</button>`).join('')}</div>`;
     cb.querySelectorAll('.opt').forEach(btn=>btn.onclick=()=>{
       const x=o[+btn.dataset.i],ok=it.a.includes(x);
@@ -1736,7 +1853,7 @@ const GT={
         grade(it.id,ok,`<strong>${ok?praise()+' Alles richtig geschrieben.':`${k?"Fast! ":""}${k} von ${n} richtig.`}</strong>${ok?'':`<span class="ex">So wäre es richtig:</span>${wrong}`}<span class="ex">${esc(EXD[it.g])}</span>`)}});
   },
   t(cb,it){
-    cb.innerHTML=`<p class="instr">${it.g==='G7'&&it.h?`Schreibe die richtige Form von <b>${esc(it.h)}</b>: mit ’s oder s’.`:it.q.includes('___')?'Schreibe das fehlende Wort.':'Schreibe die Lösung.'}</p>${picHTML(it)}<p class="prompt">${showQ(it.q,it.h)}</p>
+    cb.innerHTML=`<p class="instr">${it.g==='G7'&&it.h?`Schreibe die richtige Form von <b>${esc(it.h)}</b>: mit ’s oder s’.`:it.g==='G8'&&it.h?`Schreibe die richtige Form von <b>${esc(it.h)}</b>.${negHint(it)}`:it.q.includes('___')?'Schreibe das fehlende Wort.':'Schreibe die Lösung.'}</p>${picHTML(it)}<p class="prompt">${showQ(it.q,it.h)}</p>
     <form class="inp" id="f"><input id="ans" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Deine Antwort"><button class="check" type="submit">Prüfen</button></form>${aposHelp(it)}`;
     const inp=$('#ans');inp.focus({preventScroll:true});
     $('#f').onsubmit=e=>{e.preventDefault();const raw=strip(inp.value);if(!raw)return;inp.disabled=true;e.target.querySelector('button').disabled=true;
