@@ -181,6 +181,10 @@ svg{display:block}
 .dirs .opt{min-height:72px!important}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .map .sea{fill:#0F2A3D}:root:not([data-theme="light"]) .map{background:#0F2A3D}:root:not([data-theme="light"]) .map .ctx{fill:#2A2A33;stroke:#1d1d24}:root:not([data-theme="light"]) .map .sealbl{fill:#7DB8E0}}
 :root[data-theme="dark"] .map .sea{fill:#0F2A3D}:root[data-theme="dark"] .map{background:#0F2A3D}:root[data-theme="dark"] .map .ctx{fill:#2A2A33;stroke:#1d1d24}:root[data-theme="dark"] .map .sealbl{fill:#7DB8E0}
+.caps{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.caps li{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--lw-line)}
+.caps li:last-child{border-bottom:0}
+.caps b{color:var(--lw-c)}
 </style><!--/lw-look--></head><body><nav id="lw-bar" class="lw-bar lw-su" aria-label="Lernwelt"><a class="lw-back" href="index.html#heft-nachbarn" aria-label="Zurück zum Heft"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a><span class="lw-t"><span class="lw-eyebrow">Sachunterricht</span><span class="lw-name">Deutschlands Nachbarn</span></span></nav>
 <main class="wrap" id="app"></main>
 <script>
@@ -212,6 +216,7 @@ const RN={N:"Norden",O:"Osten",S:"Süden",W:"Westen"};
 const nm=l=>(l.a?l.a+" ":"")+l.n;                       // „die Schweiz“
 const Nm=l=>(l.a?"Die ":"")+l.n;
 const liegt=l=>l.pl?"liegen":"liegt";
+const von=l=>l.a?"der "+l.n:"von "+l.n;                // „die Hauptstadt der Schweiz“
 /* Länder, die oft für Nachbarn gehalten werden, es aber nicht sind */
 const KEIN=["Italien","Spanien","Schweden","Ungarn","England","Norwegen","Griechenland","Portugal"];
 
@@ -222,7 +227,7 @@ const OVC={Berlin:[0,-8,"middle"],Kopenhagen:[0,-8,"middle"],Warschau:[-6,4,"end
 
 /* ================= Zustand ================= */
 const KEY="nachbarn-v1";
-const DEF={seen:[],m:{},best:{},ton:true,rate:.85,ov:{n:true,c:false}};
+const DEF={seen:[],m:{},best:{},ton:true,rate:.85,ov:{n:true,c:true}};
 function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&typeof s==="object")return Object.assign(JSON.parse(JSON.stringify(DEF)),s)}catch(e){}return JSON.parse(JSON.stringify(DEF))}
 let S=load();
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
@@ -273,6 +278,9 @@ function mapSVG(o){o=o||{};const c=o.cls||{};
     if(ov.n){const [x,y]=OVN[id];out.push(`<text class="nlbl${o.sel===id?" hl":""}" x="${x}" y="${y}" text-anchor="middle">${esc(l.n)}</text>`)}};
   L.forEach(l=>l.id===o.sel?lay({n:true,c:true},l.id):lay(ov,l.id));
   if(ov.c){const [x,y]=MAP.cap.Berlin,[dx,dy,a]=OVC.Berlin;out.push(`<circle class="city ov" cx="${x}" cy="${y}" r="3.6"/><text class="clbl" x="${x+dx}" y="${y+dy}" text-anchor="${a}">Berlin</text>`)}
+  // o.dots: Hauptstädte als Punkte ohne Namen, o.big: eine Stadt groß markiert
+  (o.dots||[]).forEach(n=>{const [x,y]=MAP.cap[n];out.push(`<circle class="city" cx="${x}" cy="${y}" r="4"/>`)});
+  if(o.big){const [x,y]=MAP.cap[o.big];out.push(`<circle class="city big" cx="${x}" cy="${y}" r="7"/>`)}
   const labels=(o.label||[]).map(id=>{const [x,y]=OVN[id];return `<text class="lbl" x="${x}" y="${y+4}" text-anchor="middle">${esc(LAND(id).n)}</text>`}).join("");
   const rose=o.rose===false?"":`<g class="rose" transform="translate(350,38)"><path d="M0,-17 L5,0 L0,-4 L-5,0Z"/><path d="M0,17 L5,0 L0,4 L-5,0Z" opacity=".35"/><path d="M-17,0 L0,5 L-4,0 L0,-5Z" opacity=".35"/><path d="M17,0 L0,5 L4,0 L0,-5Z" opacity=".35"/>
     <text y="-21" text-anchor="middle">N</text><text y="31" text-anchor="middle">S</text><text x="-27" y="4" text-anchor="middle">W</text><text x="27" y="4" text-anchor="middle">O</text></g>`;
@@ -288,6 +296,7 @@ const CH=[
   {id:"lage",t:"Wo liegt das Land?",d:"Du hörst einen Namen und tippst das Land auf der Karte an",ico:"pin",n:8},
   {id:"name",t:"Wie heißt das Land?",d:"Ein Land leuchtet. Welches ist es?",ico:"look",n:8},
   {id:"richtung",t:"Norden, Osten, Süden, Westen",d:"In welcher Richtung liegt das Nachbarland?",ico:"flag",n:8},
+  {id:"stadt",t:"Hauptstädte der Nachbarn",d:"Wie heißt die Hauptstadt? Und wo liegt die Stadt?",ico:"city",n:8},
   {id:"nachbar",t:"Nachbar oder nicht?",d:"Welche Länder grenzen an Deutschland?",ico:"city",n:8},
   {id:"mix",t:"Große Nachbar-Reise",d:"Alles gemischt",ico:"mix",n:10}
 ];
@@ -300,10 +309,10 @@ const sterne=p=>p>=.999?3:p>=2/3?2:p>=1/3?1:0;
 
 /* ================= Startseite ================= */
 function home(){hush();R=null;
-  const sicher=L.filter(l=>["lage","name","richtung"].every(c=>dots(c,l.id)>=3)).length;
+  const sicher=L.filter(l=>["lage","name","richtung","stadt"].every(c=>dots(c,l.id)>=3)).length;
   app.innerHTML=`
   <section class="panel"><div class="hero"><span class="badge">${I.map}</span><div class="grow"><h2 style="font-size:1.35rem">Deutschland hat 9 Nachbarländer</h2>
-    <p class="small">Sie liegen rund um Deutschland herum. Wie viele kennst du schon?</p></div></div>
+    <p class="small">Sie liegen rund um Deutschland herum, und jedes hat eine Hauptstadt. Wie viele kennst du schon?</p></div></div>
     <div class="row" style="justify-content:space-between"><span class="small"><b style="color:var(--lw-ink)">${S.seen.length} von 9</b> entdeckt</span><span class="small"><b style="color:var(--lw-ink)">${sicher} von 9</b> sitzen ganz sicher</span></div>
     <div class="bar"><i style="width:${(S.seen.length/9*50+sicher/9*50)}%"></i></div></section>
   <div class="stations">${CH.map((c,k)=>{const b=sterne(anteil(c));
@@ -325,7 +334,7 @@ function openCh(id){id==="karte"?karte():startRound(id)}
 let SEL=null;
 const wo=l=>`${Nm(l)} ${liegt(l)} im ${RN[l.r]} von Deutschland`;
 function satz(l){return `${Nm(l)}. ${wo(l)}. Die Hauptstadt ist ${l.s}. ${l.f}`}
-const ov=()=>S.ov||(S.ov={n:true,c:false});
+const ov=()=>S.ov||(S.ov={n:true,c:true});
 function karte(sel){hush();R=null;SEL=sel||null;const l=SEL&&LAND(SEL),o=ov();
   const svg=mapSVG({tap:true,mh:"64vh",ov:o,sel:SEL,cls:SEL?{[SEL]:"on"}:{},base:x=>S.seen.includes(x.id)?"seen":""});
   app.innerHTML=`<div class="chead"><button class="backb" id="cbk">${I.back}Alle Kapitel</button></div>
@@ -340,10 +349,13 @@ function karte(sel){hush();R=null;SEL=sel||null;const l=SEL&&LAND(SEL),o=ov();
       :`<section class="panel"><p>${S.seen.length?`Du hast schon <b>${S.seen.length} von 9</b> Nachbarn angetippt. Die dunkleren kennst du schon.`:"Los geht's! Welches Nachbarland tippst du zuerst an?"}</p></section>`}
     <section class="panel"><h3>Merke dir die Richtungen</h3>
       <p><b>Norden:</b> Dänemark<br><b>Osten:</b> Polen, Tschechien<br><b>Süden:</b> Österreich, Schweiz<br><b>Westen:</b> Frankreich, Luxemburg, Belgien, Niederlande</p>
+      <h3 style="margin-top:6px">Die Hauptstädte</h3>
+      <ul class="caps">${L.map(x=>`<li><span>${esc(x.n)}</span><b>${esc(x.s)}</b></li>`).join("")}<li><span>Deutschland</span><b>Berlin</b></li></ul>
       ${TTS.ok?`<button class="ghost" id="hoerR">${I.spk}<span>Anhören</span></button>`:""}</section>
     <section class="panel"><h3>Selbst abfragen</h3>
-      <p class="small">Schalte oben die Ländernamen aus und schau, ob du noch alle weißt. Oder lass dich abfragen: Du hörst einen Namen und tippst auf die Karte.</p>
-      <button class="go" id="qz">${I.pin}<span>Tippe auf das Land</span></button></section>
+      <p class="small">Schalte oben die Ländernamen oder die Hauptstädte aus und schau, ob du noch alle weißt. Oder lass dich abfragen: Du hörst einen Namen und tippst auf die Karte.</p>
+      <button class="go" id="qz">${I.pin}<span>Tippe auf das Land</span></button>
+      <button class="go" id="qz2">${I.city}<span>Hauptstädte üben</span></button></section>
     <div class="chips">${L.map(x=>`<button class="lchip ${S.seen.includes(x.id)?"seen":""}" data-l="${x.id}" aria-pressed="${x.id===SEL}"><i></i>${esc(x.n)}</button>`).join("")}</div>`;
   $("#cbk").onclick=home;
   app.querySelectorAll("[data-ov]").forEach(b=>b.onclick=()=>{const k=b.dataset.ov;o[k]=!o[k];save();const y=scrollY;karte(SEL);scrollTo(0,y)});
@@ -352,8 +364,8 @@ function karte(sel){hush();R=null;SEL=sel||null;const l=SEL&&LAND(SEL),o=ov();
     const y=scrollY;karte(id);scrollTo(0,y);if(!el.closest(".chips")){const p=$(".info");if(p)p.scrollIntoView({block:"nearest",behavior:"smooth"})}
     speak(satz(LAND(id)))}));
   if($("#again"))$("#again").onclick=()=>speak(satz(l));
-  if($("#hoerR"))$("#hoerR").onclick=()=>speak("Im Norden liegt Dänemark. Im Osten liegen Polen und Tschechien. Im Süden liegen Österreich und die Schweiz. Im Westen liegen Frankreich, Luxemburg, Belgien und die Niederlande.");
-  $("#qz").onclick=()=>startRound("lage");
+  if($("#hoerR"))$("#hoerR").onclick=()=>speak("Im Norden liegt Dänemark. Im Osten liegen Polen und Tschechien. Im Süden liegen Österreich und die Schweiz. Im Westen liegen Frankreich, Luxemburg, Belgien und die Niederlande. Und jetzt die Hauptstädte. "+L.map(x=>`Die Hauptstadt ${von(x)} ist ${x.s}.`).join(" "));
+  $("#qz").onclick=()=>startRound("lage");$("#qz2").onclick=()=>startRound("stadt");
   if(!sel)scrollTo(0,0)}
 
 /* ================= Aufgaben ================= */
@@ -369,6 +381,12 @@ const T={
     const w=shuffle(L.filter(x=>x.r!==l.r)).slice(0,2),o=shuffle([l,...w]);
     return {l,ch:"richtung",kind:"mc",q:`Welches Nachbarland liegt im <em>${RN[l.r]}</em> von Deutschland?`,say:`Welches Nachbarland liegt im ${RN[l.r]} von Deutschland?`,
       map:{base:()=>"",mh:"36vh",deOn:true},opts:o.map(x=>({h:x.n,ok:x===l}))}},
+  stadt(l){const k=rand(3),caps=L.map(x=>x.s);
+    if(k===0){const o=shuffle([l,...others(l,2)]);return {l,ch:"stadt",kind:"mc",q:`Was ist die Hauptstadt <em>${esc(von(l))}</em>?`,say:`Was ist die Hauptstadt ${von(l)}?`,
+      map:{cls:{[l.id]:"on"},mh:"36vh"},opts:o.map(x=>({h:x.s,ok:x===l}))}}
+    if(k===1){const o=shuffle([l,...others(l,2)]);return {l,ch:"stadt",kind:"mc",q:`Von welchem Land ist <em>${esc(l.s)}</em> die Hauptstadt?`,say:`Von welchem Land ist ${l.s} die Hauptstadt?`,
+      map:{big:l.s,mh:"36vh"},opts:o.map(x=>({h:x.n,ok:x===l}))}}
+    return {l,ch:"stadt",kind:"map",city:true,q:`Wo liegt <em>${esc(l.s)}</em>?`,say:`Wo liegt die Stadt ${l.s}? Tippe das Land auf der Karte an.`,dots:caps}},
   nachbar(l){
     if(Math.random()<.15)return {l,ch:"nachbar",zahl:true,kind:"mc",q:"Wie viele Nachbarländer hat Deutschland?",say:"Wie viele Nachbarländer hat Deutschland?",
       opts:shuffle([7,9,12]).map(n=>({h:String(n),ok:n===9}))};
@@ -385,7 +403,7 @@ function choose(ch,n){const out=[];let rest=L.slice();
 /* ================= Runde ================= */
 let R=null;
 function startRound(id){hush();const c=chOf(id);
-  const tasks=choose(id,c.n).map(l=>T[id==="mix"?pick(["lage","lage","name","richtung","nachbar"]):id](l));
+  const tasks=choose(id,c.n).map(l=>T[id==="mix"?pick(["lage","lage","name","richtung","stadt","nachbar"]):id](l));
   R={id,i:0,ok:0,res:[],miss:[],tasks};R.n=tasks.length;showTask()}
 function track(){$("#track").innerHTML=Array.from({length:R.n},(_,i)=>`<i class="${i<R.res.length?(R.res[i]?"ok":"no"):(i===R.i?"now":"")}"></i>`).join("")}
 function showTask(){hush();const t=R.tasks[R.i];R.locked=false;
@@ -394,15 +412,19 @@ function showTask(){hush();const t=R.tasks[R.i];R.locked=false;
     <section class="stage" id="cb"></section>`;
   $("#quit").onclick=home;track();
   const cb=$("#cb");
-  if(t.kind==="map"){cb.innerHTML=mapSVG({tap:true,mh:"62vh"});
+  if(t.kind==="map"){
+    if(t.city)cb.insertAdjacentHTML("beforebegin",`<p class="small" style="margin-top:-6px">Tippe das Land an, in dem die Stadt liegt. Die Punkte sind die Hauptstädte.</p>`);
+    cb.innerHTML=mapSVG({tap:true,mh:"62vh",dots:t.dots});
     cb.querySelectorAll("[data-l]").forEach(el=>el.addEventListener("click",()=>{if(R.locked)return;const ok=el.dataset.l===t.l.id;
-      cb.innerHTML=mapSVG({mh:"62vh",cls:ok?{[t.l.id]:"ok"}:{[t.l.id]:"ok",[el.dataset.l]:"bad"},label:ok?[t.l.id]:[t.l.id,el.dataset.l]});
+      cb.innerHTML=mapSVG({mh:"62vh",cls:ok?{[t.l.id]:"ok"}:{[t.l.id]:"ok",[el.dataset.l]:"bad"},label:t.city?(ok?[]:[el.dataset.l]):ok?[t.l.id]:[t.l.id,el.dataset.l],
+        dots:t.dots,sel:t.city?t.l.id:null});
       done(ok,ok?null:LAND(el.dataset.l))}))}
   else{cb.innerHTML=(t.map?mapSVG(t.map):"")+`<div class="opts ${t.dirs?"dirs":""}">${t.opts.map((o,i)=>`<button class="opt" data-i="${i}">${esc(o.h)}</button>`).join("")}</div>`;
     cb.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{if(R.locked)return;const o=t.opts[+b.dataset.i];
       cb.querySelectorAll(".opt").forEach((x,i)=>{x.disabled=true;if(t.opts[i].ok)x.classList.add("ok")});if(!o.ok)b.classList.add("bad");
       // Nach der Antwort zeigt die Karte das gemeinte Land
-      if(t.ch==="nachbar"&&!t.zahl||t.ch==="richtung"&&!t.dirs){const m=cb.querySelector(".map"),h=mapSVG({mh:"36vh",cls:{[t.l.id]:"ok"},label:[t.l.id]});m?m.outerHTML=h:cb.insertAdjacentHTML("afterbegin",h)}
+      if(t.ch==="stadt"){cb.querySelector(".map").outerHTML=mapSVG({mh:"36vh",cls:{[t.l.id]:"ok"},sel:t.l.id})}
+      else if(t.ch==="nachbar"&&!t.zahl||t.ch==="richtung"&&!t.dirs){const m=cb.querySelector(".map"),h=mapSVG({mh:"36vh",cls:{[t.l.id]:"ok"},label:[t.l.id]});m?m.outerHTML=h:cb.insertAdjacentHTML("afterbegin",h)}
       done(o.ok,o.ok?null:o.h)})}
   if($("#say"))$("#say").onclick=()=>speak(t.say);
   if(S.ton)speak(t.say);
@@ -415,6 +437,8 @@ function done(ok,wrong){if(R.locked)return;R.locked=true;const t=R.tasks[R.i],l=
   let big,txt;
   if(t.zahl){big="Deutschland hat 9 Nachbarländer.";txt="Dänemark, Polen, Tschechien, Österreich, die Schweiz, Frankreich, Luxemburg, Belgien und die Niederlande."}
   else if(t.ch==="lage"){big=ok?`Das ${l.pl?"sind":"ist"} ${nm(l)}!`:`Das ${wrong.pl?"waren":"war"} ${nm(wrong)}.`;txt=ok?`${wo(l)}.`:`${Nm(l)} ${l.pl?"sind":"ist"} grün markiert. ${wo(l)}.`}
+  else if(t.ch==="stadt"){big=`Die Hauptstadt ${von(l)} ist ${l.s}.`;
+    txt=(t.city&&!ok?`Du hast ${nm(wrong)} angetippt. `:"")+(l.s===l.n?"Die Hauptstadt heißt genauso wie das Land. ":"")+`${wo(l)}.`}
   else if(t.ch==="name"){big=`Das ${l.pl?"sind":"ist"} ${nm(l)}.`;txt=l.f}
   else if(t.ch==="richtung"){big=`${wo(l)}.`;txt=(l.g?`Genauer gesagt im ${l.g}. `:"")+`Die Hauptstadt heißt ${l.s}.`}
   else{big=`${Nm(l)} ${l.pl?"sind":"ist"} ein Nachbar von Deutschland.`;txt=`${t.wrongs.join(" und ")} grenzen nicht an Deutschland. ${wo(l)}.`}
@@ -433,7 +457,7 @@ function endRound(){hush();const n=R.n,ok=R.ok,q=ok/n;const st=q>=.9?3:q>=.7?2:q
   const miss=R.miss,id=R.id;R=null;
   app.innerHTML=`<section class="result"><h2>${cheer}</h2><div class="bigstars">${[0,1,2].map(i=>I.star(i<st).replace("<svg",`<svg class="s${i+1}"`)).join("")}</div>
     <p style="font-size:1.15rem"><b>${ok} von ${n}</b> richtig</p>
-    ${miss.length?`<div class="panel missed"><b>Diese übst du noch einmal:</b><ul>${miss.map(l=>`<li>${esc(l.n)}: im ${RN[l.r]}</li>`).join("")}</ul></div>`:""}
+    ${miss.length?`<div class="panel missed"><b>Diese übst du noch einmal:</b><ul>${miss.map(l=>`<li>${esc(l.n)}: im ${RN[l.r]}, Hauptstadt ${esc(l.s)}</li>`).join("")}</ul></div>`:""}
     <button class="go" id="again">Nochmal üben</button>
     ${nxt&&st>=2?`<button class="ghost" id="nx">Weiter: ${esc(nxt.t)}</button>`:""}
     <button class="ghost" id="hm">Alle Kapitel</button></section>`;
