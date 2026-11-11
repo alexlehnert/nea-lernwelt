@@ -1,0 +1,455 @@
+<!doctype html><html lang="de"><head><meta charset=utf8><script src="/api/config"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="/sync.js"></script><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"><link rel="manifest" href="/manifest.webmanifest"><meta name="apple-mobile-web-app-title" content="Lernwelt"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="theme-color" content="#5B3FE6"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Deutschlands Nachbarn</title>
+<style>
+/* Deutschlands Nachbarn (Sachunterricht, Klasse 3): die 9 Nachbarländer und ihre Lage.
+   Karte als SVG (vereinfacht aus Natural Earth 1:50m, gemeinfrei; erzeugt mit tools/nachbarn_karte.py).
+   Aufbau wie die Länder-Reise: erst die Karte entdecken, dann Fragen. Jedes Land sammelt pro Kapitel 3 Punkte. */
+:root{color-scheme:light dark}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{margin:0;background:var(--lw-bg);color:var(--lw-ink);font-family:var(--lw-f-b);font-size:18px;line-height:1.45;-webkit-tap-highlight-color:transparent;padding-top:env(safe-area-inset-top,0px)}
+.wrap{max-width:640px;margin:0 auto;padding:14px max(16px,env(safe-area-inset-right,0px)) 130px max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px}
+h1,h2,h3{font-family:var(--lw-f-d);font-weight:700;margin:0;line-height:1.15;text-wrap:balance}
+h2{font-size:1.6rem}
+h3{font-size:1.2rem}
+p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+button:focus-visible{outline:3px solid var(--lw-brand);outline-offset:2px}
+svg{display:block}
+.small{font-size:.92rem;color:var(--lw-muted)}
+.panel{background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.grow{flex:1;min-width:0}
+.ghost{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:8px 14px}
+.ghost svg,.go svg{width:20px;height:20px;flex:none}
+.go{display:inline-flex;align-items:center;justify-content:center;gap:8px}
+
+/* Karte */
+.map{position:relative;background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:22px;padding:8px;display:flex;justify-content:center}
+.map svg{width:100%;height:auto;max-height:var(--mh,58vh)}
+.map .ld{fill:var(--lw-cs);stroke:var(--lw-card);stroke-width:1.6;stroke-linejoin:round;transition:fill .2s}
+.map .ld.seen{fill:color-mix(in srgb,var(--lw-c) 38%,var(--lw-card))}
+.map .ld.on{fill:var(--lw-c)}
+.map .ld.ok{fill:var(--lw-ok)}
+.map .ld.bad{fill:var(--lw-bad)}
+.map .ld.dim{fill:var(--lw-soft)}
+.map.tap .ld{cursor:pointer}
+@media (hover:hover){.map.tap .ld:hover{fill:color-mix(in srgb,var(--lw-c) 55%,var(--lw-card))}}
+.map .hit{fill:transparent;cursor:pointer}
+.map .ring{fill:none;stroke:var(--lw-c);stroke-width:2.4;stroke-dasharray:3 3;pointer-events:none}
+.map .city{fill:var(--lw-ink);stroke:var(--lw-card);stroke-width:2}
+.map .city.big{fill:#E11D48;stroke:#fff;stroke-width:3}
+.map .nlbl{font:600 10.5px var(--lw-f-d);fill:var(--lw-ink);opacity:.8;pointer-events:none}
+.map .nlbl.hl{fill:#fff;opacity:1;font-weight:700}
+.map .clbl{font:700 11px var(--lw-f-b);fill:var(--lw-ink);paint-order:stroke;stroke:var(--lw-card);stroke-width:3px;stroke-linejoin:round;pointer-events:none}
+.map .city.ov{fill:#E11D48;stroke:#fff;stroke-width:1.6;pointer-events:none}
+.map .lbl{font:700 15px var(--lw-f-d);fill:var(--lw-ink);paint-order:stroke;stroke:var(--lw-card);stroke-width:4px;stroke-linejoin:round;pointer-events:none}
+
+/* Startseite */
+.hero{display:flex;gap:14px;align-items:center}
+.hero .badge{width:64px;height:64px;flex:none;border-radius:20px;background:var(--lw-cs);color:var(--lw-c);display:grid;place-items:center}
+.hero .badge svg{width:38px;height:38px}
+.hero b{font:700 1.7rem/1 var(--lw-f-d);color:var(--lw-c)}
+.bar{height:12px;border-radius:99px;background:var(--lw-line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--lw-ok);border-radius:99px}
+.stations{display:flex;flex-direction:column;gap:12px}
+.st{display:flex;align-items:center;gap:14px;text-align:left;width:100%;padding:14px;border-radius:22px;background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:5px;min-height:92px}
+.st:active{transform:translateY(3px);border-bottom-width:2px}
+.st .ico{width:60px;height:60px;flex:none;border-radius:18px;background:var(--lw-cs);color:var(--lw-c);display:grid;place-items:center;font:700 1.5rem/1 var(--lw-f-d)}
+.st .ico svg{width:34px;height:34px}
+.st h3{font-size:1.18rem}
+.st p{font-size:.95rem;color:var(--lw-muted);line-height:1.3;margin-top:2px}
+.st .n{font:700 12px var(--lw-f-b);letter-spacing:.1em;text-transform:uppercase;color:var(--lw-c)}
+.stars{display:flex;gap:2px;margin-top:6px}
+.stars svg{width:22px;height:22px}
+.modes{display:flex;gap:6px;background:var(--lw-soft);border-radius:16px;padding:4px}
+.modes button{flex:1;min-height:48px;border:0;border-radius:12px;background:none;font-weight:700;color:var(--lw-muted)}
+.modes button[aria-pressed="true"]{background:var(--lw-card);color:var(--lw-ink);box-shadow:0 2px 0 var(--lw-shadow)}
+
+/* Entdecken */
+.chead{display:flex;align-items:center;gap:12px}
+.backb{display:inline-flex;align-items:center;gap:6px;min-height:48px;padding:6px 16px 6px 12px;border-radius:14px;border:2px solid var(--lw-line);border-bottom-width:4px;background:var(--lw-card);font-weight:700;color:var(--lw-muted)}
+.backb svg{width:18px;height:18px}
+.info{border-color:var(--lw-c)}
+.info .kick{font:700 12px var(--lw-f-b);letter-spacing:.12em;text-transform:uppercase;color:var(--lw-c)}
+.info h3{font-size:1.5rem}
+.info .cap{font-size:1.1rem}
+.info .cap b{color:var(--lw-c)}
+.chips{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.lchip{min-height:52px;padding:8px 10px;border-radius:16px;border:2px solid var(--lw-line);border-bottom-width:4px;background:var(--lw-card);font-weight:700;font-size:.95rem;line-height:1.2;text-align:left;display:flex;align-items:center;gap:8px}
+.lchip i{width:22px;height:22px;flex:none;border-radius:50%;border:2px solid var(--lw-line);display:grid;place-items:center}
+.lchip.seen i{background:var(--lw-ok);border-color:var(--lw-ok)}
+.lchip.seen i::after{content:"";width:9px;height:5px;border:solid #fff;border-width:0 0 3px 3px;transform:translateY(-1px) rotate(-45deg)}
+.lchip[aria-pressed="true"]{border-color:var(--lw-c);background:var(--lw-cs)}
+
+.toggles{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
+.tgl{min-width:0;min-height:50px;padding:8px 10px;font-size:.98rem;border-radius:16px;border:2px solid var(--lw-line);border-bottom-width:4px;background:var(--lw-card);font-weight:700;display:flex;align-items:center;gap:10px}
+.tgl i{flex:none;width:40px;height:24px;border-radius:99px;background:var(--lw-line);position:relative;transition:background .15s}
+.tgl i::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25);transition:transform .15s}
+.tgl[aria-pressed="true"]{border-color:var(--lw-c)}
+.tgl[aria-pressed="true"] i{background:var(--lw-c)}
+.tgl[aria-pressed="true"] i::after{transform:translateX(16px)}
+.text{gap:12px;font-size:1.08rem;line-height:1.55}
+.text mark{background:#FFE58A;color:#2A2100;border-radius:4px;padding:0 2px}
+/* Runde */
+.topbar{display:flex;align-items:center;gap:12px}
+.track{flex:1;display:flex;gap:4px}
+.track i{flex:1;height:14px;border-radius:99px;background:var(--lw-line)}
+.track i.ok{background:var(--lw-ok)}
+.track i.no{background:var(--lw-bad)}
+.track i.now{background:var(--lw-c)}
+.q{display:flex;align-items:center;gap:10px}
+.q b{flex:1;display:block;font:700 1.45rem/1.2 var(--lw-f-d)}
+.q b em{font-style:normal;color:var(--lw-c)}
+.say{flex:none;width:52px;height:52px;border-radius:16px;border:2px solid var(--lw-line);border-bottom-width:4px;background:var(--lw-card);color:var(--lw-c);display:grid;place-items:center}
+.say svg{width:26px;height:26px}
+.stage{display:flex;flex-direction:column;gap:14px}
+.opts{display:grid;grid-template-columns:1fr;gap:10px}
+.opt{width:100%;padding:10px 12px;display:flex;align-items:center;justify-content:center;text-align:center;min-height:64px!important;font-size:1.25rem!important}
+.opt:disabled{cursor:default}
+.lw-sheet .ghost{width:100%;min-height:52px}
+.fb .big{font:700 1.45rem/1.2 var(--lw-f-d);color:var(--lw-ink)}
+.fb p{margin-top:4px}
+
+/* Ergebnis */
+.result{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;padding-top:20px}
+.bigstars{display:flex;gap:8px}
+.bigstars svg{width:68px;height:68px}
+.bigstars .s1{animation:pop .5s .1s both}.bigstars .s2{animation:pop .5s .35s both}.bigstars .s3{animation:pop .5s .6s both}
+@keyframes pop{0%{transform:scale(0)}70%{transform:scale(1.2)}100%{transform:scale(1)}}
+.result .go,.result .ghost{width:100%}
+.missed{align-self:stretch;text-align:left}
+.missed ul{margin:6px 0 0;padding-left:20px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style><!--lw-look--><link rel="stylesheet" href="/lernwelt-app.css"><script src="/lernwelt-app.js"></script><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap"><style id="lw-look">
+/* Übungs-Bausteine im Lernwelt-Look (wie im Konzept: Antwortkacheln, grüne Rückmeldung, dicke Knöpfe) */
+.go,.next,.check{background:var(--lw-c);color:#fff;border:none;border-radius:16px;min-height:54px;padding:12px 22px;
+  font-family:var(--lw-f-d);font-weight:700;font-size:1.05rem;letter-spacing:.04em;text-transform:uppercase;box-shadow:0 5px 0 var(--lw-cd)}
+.go:active,.next:active,.check:active{transform:translateY(3px);box-shadow:0 2px 0 var(--lw-cd)}
+.ghost{background:var(--lw-card);color:var(--lw-ink);border:2px solid var(--lw-line);border-bottom-width:4px;border-radius:14px;min-height:44px;font-weight:700}
+.chip{background:var(--lw-card);color:var(--lw-ink);border:2px solid var(--lw-line);border-radius:99px;min-height:40px;padding:6px 14px;font-weight:700}
+.chip[aria-pressed="true"]{background:var(--lw-c);border-color:var(--lw-c);color:#fff}
+.progress{height:14px;background:var(--lw-line);border-radius:99px}
+.progress i{background:var(--lw-ok);border-radius:99px}
+.card{background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:22px;box-shadow:none}
+.card-top{background:none;color:var(--lw-c);padding:16px 18px 0;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase}
+.card-top .tag{font-size:.8rem}
+.card-body{background-image:none}
+.prompt{font-family:var(--lw-f-d);font-weight:700}
+.opts{gap:12px}
+.opt{background:var(--lw-card);color:var(--lw-ink);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:18px;min-height:60px;
+  font-family:var(--lw-f-d);font-weight:600;font-size:1.12rem}
+.opt:not(:disabled):active{transform:translateY(3px);border-bottom-width:2px}
+.opt.ok{border:3px solid var(--lw-ok);border-bottom-width:6px;background:var(--lw-ok-bg);color:var(--lw-ok-ink)}
+.opt.bad{border-color:var(--lw-bad);background:var(--lw-bad-bg);color:var(--lw-bad-ink)}
+.tile{background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:4px;border-radius:12px;font-family:var(--lw-f-d);font-weight:700}
+.slots{border-radius:16px}
+.slots .tile{background:var(--lw-cs);border-color:var(--lw-c)}
+.inp input,.field{border-radius:16px}
+.fb{border-radius:22px;padding:16px 16px 18px;gap:8px}
+.fb.ok{background:var(--lw-ok-bg);border:none;color:var(--lw-ink)}
+.fb.bad{background:var(--lw-bad-bg);border:none;color:var(--lw-ink)}
+.fb strong{font-family:var(--lw-f-d);font-weight:700;font-size:1.3rem;display:flex;align-items:center;gap:10px}
+.fb.ok strong{color:var(--lw-ok-ink)}
+.fb.bad strong{color:var(--lw-bad-ink)}
+.fb.ok strong::before,.fb.bad strong::before{content:"";flex:none;width:36px;height:36px;border-radius:50%;background:var(--lw-ok) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/20px no-repeat}
+.fb.bad strong::before{background:var(--lw-bad) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3.4' stroke-linecap='round'%3E%3Cpath d='M7 7l10 10M17 7L7 17'/%3E%3C/svg%3E") center/18px no-repeat}
+.card-top .tag{color:var(--lw-c);font-family:var(--lw-f-b);font-weight:700;letter-spacing:.12em}
+.card-top .fachtag{background:var(--lw-cs);color:var(--lw-c);font-family:var(--lw-f-b);font-weight:700}
+/* @kit */
+/* Wie die Länder-Reise von Anfang an im Lernwelt-Look gebaut: nur die Fach-Farbe setzen. */
+:root:root:root{--lw-c:var(--lw-su); --lw-cd:var(--lw-su-d); --lw-cs:var(--lw-su-s)}
+.go{width:auto}
+.go:disabled{opacity:.5}
+/* Nachbarn-Karte: Meer, andere Länder grau, Deutschland in der Mitte */
+.map{padding:0;overflow:hidden;background:#DCEEFB}
+.map .sea{fill:#DCEEFB}
+.map .ctx{fill:#ECEAE4;stroke:var(--lw-card);stroke-width:1;pointer-events:none}
+.map .de{fill:color-mix(in srgb,var(--lw-c) 30%,var(--lw-card));stroke:var(--lw-card);stroke-width:1.4;pointer-events:none}
+.map .de.on{fill:var(--lw-c)}
+.map .ld{fill:var(--lw-cs);stroke:var(--lw-card);stroke-width:1.2}
+.map .sealbl{font:italic 600 11px var(--lw-f-b);fill:#3B82B6;pointer-events:none;letter-spacing:.06em}
+.map .delbl{font:700 12px var(--lw-f-d);fill:var(--lw-ink);pointer-events:none;letter-spacing:.06em;opacity:.75}
+.map .nlbl{font:700 11.5px var(--lw-f-d);fill:var(--lw-ink);paint-order:stroke;stroke:var(--lw-cs);stroke-width:3px;stroke-linejoin:round;pointer-events:none}
+.map .nlbl.hl{fill:#fff;stroke:var(--lw-c)}
+.map .clbl{font:700 10.5px var(--lw-f-b);fill:var(--lw-ink);paint-order:stroke;stroke:var(--lw-card);stroke-width:3px;stroke-linejoin:round;pointer-events:none}
+.map .city.ov{fill:#E11D48;stroke:var(--lw-card);stroke-width:1.4;pointer-events:none}
+.map .rose text{font:700 11px var(--lw-f-b);fill:var(--lw-ink)}
+.map .rose path{fill:var(--lw-ink)}
+.map .lbl{font-size:14px}
+.dirs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dirs .opt{min-height:72px!important}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .map .sea{fill:#0F2A3D}:root:not([data-theme="light"]) .map{background:#0F2A3D}:root:not([data-theme="light"]) .map .ctx{fill:#2A2A33;stroke:#1d1d24}:root:not([data-theme="light"]) .map .sealbl{fill:#7DB8E0}}
+:root[data-theme="dark"] .map .sea{fill:#0F2A3D}:root[data-theme="dark"] .map{background:#0F2A3D}:root[data-theme="dark"] .map .ctx{fill:#2A2A33;stroke:#1d1d24}:root[data-theme="dark"] .map .sealbl{fill:#7DB8E0}
+</style><!--/lw-look--></head><body><nav id="lw-bar" class="lw-bar lw-su" aria-label="Lernwelt"><a class="lw-back" href="index.html#heft-nachbarn" aria-label="Zurück zum Heft"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a><span class="lw-t"><span class="lw-eyebrow">Sachunterricht</span><span class="lw-name">Deutschlands Nachbarn</span></span></nav>
+<main class="wrap" id="app"></main>
+<script>
+"use strict";
+const $=s=>document.querySelector(s);
+const app=$("#app");
+const rand=n=>Math.floor(Math.random()*n);
+const pick=a=>a[rand(a.length)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=rand(i+1);[a[i],a[j]]=[a[j],a[i]]}return a};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* ================= Deutschland und seine 9 Nachbarn ================= */
+const MAP={"w":400,"h":412,"l":{"DEU":{"d":"M154.3,341.9L147.3,337.1L141.2,337.5L140.1,336.0L139.3,335.6L138.0,336.1L134.8,333.6L132.0,335.1L131.4,336.5L131.6,337.3L134.4,337.5L134.8,338.2L131.9,339.7L127.1,339.2L125.0,340.2L121.6,340.6L116.9,340.4L114.2,339.2L113.4,337.0L113.6,333.7L114.7,329.3L114.5,324.1L115.2,321.1L117.0,317.0L119.8,305.3L126.0,297.0L125.8,294.1L123.1,292.9L115.1,291.2L113.3,290.4L111.8,288.3L106.7,289.5L105.0,289.1L103.3,289.6L102.6,287.3L100.3,286.4L98.0,288.2L97.1,288.0L93.0,280.3L91.4,278.7L89.1,278.4L89.8,273.5L92.0,269.9L92.0,267.0L87.3,264.5L84.9,261.2L84.3,257.2L85.6,252.7L89.5,249.9L89.0,245.4L85.7,243.1L85.5,242.3L86.9,240.7L81.9,235.6L83.0,230.5L82.2,229.0L79.9,227.9L79.1,226.4L80.8,226.0L84.7,222.5L84.9,221.9L83.7,221.4L83.6,220.0L86.1,212.5L83.9,206.3L81.0,202.2L81.0,200.9L85.5,198.3L89.3,200.2L90.8,199.1L92.7,199.2L97.3,197.4L98.5,195.1L96.7,193.2L96.9,191.8L102.1,187.6L103.0,185.6L103.3,181.9L102.6,180.6L101.9,179.8L99.1,179.8L97.4,179.1L96.2,176.9L96.6,174.1L97.4,173.5L102.8,173.5L106.2,162.6L106.6,152.2L103.7,149.1L104.8,143.1L106.8,139.9L108.4,139.0L115.5,138.5L123.3,138.7L126.5,143.6L125.3,146.1L127.2,147.2L128.1,146.8L129.9,141.5L133.2,144.5L133.2,148.5L134.1,143.1L133.5,139.4L133.9,135.7L135.8,132.6L141.5,133.9L147.8,133.3L150.2,134.7L155.6,141.7L157.4,142.8L159.7,143.2L156.5,141.7L150.0,133.2L143.1,130.9L141.6,128.5L141.7,119.9L139.1,118.2L136.3,118.8L136.4,115.4L142.6,113.1L142.7,110.8L137.1,102.4L136.8,98.7L141.6,99.0L147.4,100.7L148.8,101.9L156.2,100.3L158.8,101.3L158.9,101.9L161.9,102.8L164.6,106.3L164.7,109.4L161.4,112.9L167.0,112.4L168.5,115.0L171.5,114.1L179.1,118.1L184.9,116.0L185.9,119.3L184.8,122.5L180.7,126.0L181.6,128.2L182.9,128.7L186.8,128.2L192.8,130.3L200.9,123.7L207.4,123.0L208.6,121.1L216.9,113.1L226.2,115.0L228.7,119.2L234.8,123.9L240.5,123.5L242.5,127.9L243.4,133.3L246.7,136.2L251.5,137.4L254.7,152.1L254.6,154.9L253.7,158.0L252.2,160.6L249.0,163.7L248.8,165.5L251.4,168.6L256.7,173.1L258.9,177.0L257.5,182.6L258.8,185.3L260.1,186.2L260.6,190.8L261.6,191.7L260.0,197.5L258.5,199.9L261.0,205.6L261.0,210.1L264.7,212.1L267.0,219.0L265.0,227.1L261.9,233.4L258.7,232.1L259.0,230.2L257.3,227.6L252.7,226.1L251.4,227.3L253.7,230.7L244.1,235.2L237.1,237.1L234.6,240.5L233.3,239.8L230.5,241.3L229.4,243.5L226.0,244.2L224.5,246.9L220.8,246.1L216.4,247.4L214.4,248.8L210.8,254.3L208.7,250.8L207.9,250.1L207.0,250.4L209.4,257.1L214.5,261.8L215.6,263.8L213.1,268.9L219.1,279.6L221.8,282.4L223.9,282.4L228.5,288.1L231.6,290.1L233.9,294.0L234.7,294.7L236.9,294.6L242.4,300.9L241.8,306.9L240.5,308.3L239.5,309.0L235.6,307.0L233.3,314.3L223.5,319.5L220.7,322.7L220.7,323.7L224.7,329.8L224.7,332.6L223.5,335.4L226.3,336.1L226.8,337.6L225.9,343.4L225.0,343.5L221.7,341.3L221.0,338.1L219.2,337.1L215.0,338.2L212.6,336.5L209.4,335.5L208.9,338.8L199.3,339.9L192.7,343.1L190.7,345.2L185.5,346.2L184.2,346.1L182.0,342.0L173.1,341.0L171.7,347.1L170.5,348.8L167.9,350.0L168.2,347.2L165.5,346.2L165.3,344.4L163.5,342.5L159.0,340.2L156.9,341.8ZM240.2,115.9L240.7,118.1L240.2,119.2L237.8,117.4L235.5,117.4L234.1,120.3L233.1,120.4L229.5,117.8L229.0,116.5L229.3,110.6L230.4,109.3L230.6,107.5L232.6,105.5L234.3,105.5L235.7,108.2L239.1,110.1L239.4,110.9L237.5,113.2L238.0,114.5ZM250.5,130.1L250.5,132.8L244.6,132.5L244.5,128.6L242.6,126.5L242.6,124.3ZM190.4,114.7L187.3,114.8L184.9,113.2L185.5,111.5L186.4,110.9L189.4,112.0ZM129.4,102.6L128.9,103.2L129.1,98.6L131.4,93.6L132.3,93.7L131.1,96.0L130.9,98.9L136.0,99.1L135.4,100.0L130.2,100.6ZM135.1,105.0L134.3,105.8L132.4,105.7L131.3,105.0L131.6,104.2L133.5,103.5L134.8,103.8Z","c":[171.7,224.5]},"DNK":{"d":"M216.8,69.7L216.3,73.9L211.7,76.2L210.1,77.8L209.5,80.2L210.8,81.9L213.0,82.9L213.6,86.1L211.7,87.7L207.0,89.4L206.2,101.6L202.3,103.1L199.8,98.3L198.0,89.4L194.4,88.6L190.5,88.8L188.1,84.7L188.5,80.2L187.2,77.9L187.1,75.8L186.1,74.8L184.8,74.3L184.2,71.8L191.2,70.8L194.1,66.6L194.4,64.5L197.5,64.0L198.9,65.6L198.8,71.5L201.4,72.6L203.5,68.3L203.8,66.0L202.4,63.7L209.6,58.7L211.8,58.6L217.0,60.5L217.6,61.5L215.9,65.3ZM158.8,101.3L156.2,100.3L148.8,101.9L147.4,100.7L141.6,99.0L136.8,98.7L136.2,94.1L134.8,91.1L136.8,90.4L135.7,81.8L125.8,75.8L127.2,63.2L125.6,58.0L126.4,42.6L128.9,42.3L134.4,44.1L136.9,46.3L138.2,41.9L141.3,38.4L145.0,36.4L147.6,39.5L148.8,29.3L145.9,28.2L143.4,29.1L138.9,38.7L135.4,39.2L132.7,40.7L128.6,37.8L128.9,34.5L135.8,26.0L139.7,26.0L144.3,24.5L149.7,24.8L152.5,23.9L155.0,22.0L163.3,10.5L169.4,9.3L175.0,5.4L176.6,5.4L174.0,8.3L173.2,11.1L175.1,14.9L174.9,21.6L170.2,29.7L169.9,42.2L174.2,45.5L181.5,45.4L183.1,48.0L181.7,52.9L179.6,54.6L175.2,56.0L172.9,53.5L170.6,55.6L167.9,67.1L164.5,66.7L162.1,67.8L164.6,70.5L162.0,72.2L155.7,79.3L157.4,86.8L156.8,88.8L153.9,91.7L152.9,94.3L156.8,94.8L158.6,96.6L158.1,97.9ZM177.3,75.5L180.9,85.0L180.2,86.7L180.7,88.9L180.2,91.2L176.9,93.8L173.2,94.0L163.9,90.2L163.4,88.8L161.2,83.8L161.2,78.6L170.0,75.4L172.8,77.1L174.5,77.2ZM192.0,99.1L195.7,101.2L198.1,101.1L199.8,101.9L200.3,106.1L198.6,107.0L196.6,106.7L194.0,107.8L185.3,103.0L185.8,97.5L189.9,97.1ZM179.2,103.8L178.3,104.0L176.9,100.5L181.7,93.8L183.1,90.4L183.6,90.4L183.0,93.5ZM216.4,96.7L215.6,97.2L212.5,96.8L208.9,99.1L207.6,98.4L208.4,96.4L209.6,95.8L210.7,93.4L214.8,95.0ZM218.8,75.9L216.4,77.2L215.8,75.3L216.8,74.1L217.8,73.2ZM174.0,100.6L172.7,100.9L171.1,100.2L168.5,97.5L168.2,96.8L169.5,97.2L174.5,100.2ZM165.4,99.3L163.2,99.8L160.1,98.7L159.6,93.3L164.1,96.0ZM176.6,69.8L176.2,70.3L174.9,69.7L175.3,65.7L174.7,64.0L175.3,62.9L177.7,66.6ZM185.7,21.3L184.8,22.1L182.0,21.0L183.3,19.5L186.4,18.8L188.2,19.0ZM268.5,94.8L267.7,95.4L264.3,94.5L260.2,92.2L260.8,87.7L261.9,85.8L269.4,90.8L269.5,92.7Z","c":[150.9,54.7]},"POL":{"d":"M412.0,287.0L410.7,286.4L409.6,283.4L408.0,282.0L402.9,279.7L394.4,279.1L391.4,279.5L388.7,282.8L385.6,282.4L384.2,281.1L381.9,280.4L376.7,280.6L372.6,282.8L370.4,287.3L367.5,286.0L365.2,286.9L364.2,286.5L364.9,284.4L364.6,281.0L361.6,279.9L357.8,273.6L353.9,276.4L351.8,280.1L348.1,280.2L347.4,276.8L345.3,276.4L344.8,273.0L340.4,268.3L339.7,264.3L335.4,262.6L334.5,263.1L328.8,259.2L327.9,260.3L325.6,261.2L324.7,260.9L320.6,256.5L319.8,255.1L322.2,253.9L322.8,252.7L322.1,250.2L319.1,251.6L316.2,251.9L310.8,247.9L305.2,246.2L307.5,252.5L301.1,257.1L299.4,256.3L297.2,252.1L294.0,248.2L291.9,247.3L291.5,246.4L293.0,244.4L295.0,243.3L295.8,241.4L294.6,239.8L293.0,238.7L287.3,240.2L286.1,238.2L281.7,235.9L273.9,233.6L272.3,231.2L272.0,228.7L266.5,226.9L266.3,231.1L262.8,232.0L265.9,224.2L267.0,219.0L264.7,212.1L261.0,210.1L261.0,205.6L258.5,199.9L260.0,197.5L261.6,191.7L260.6,190.8L260.1,186.2L258.8,185.3L257.5,182.6L258.9,177.0L256.7,173.1L251.4,168.6L248.8,165.5L249.0,163.7L252.2,160.6L253.7,158.0L254.6,154.9L254.7,152.1L251.5,137.4L258.1,140.4L257.5,138.2L257.6,134.3L250.5,132.8L250.5,130.1L254.0,131.0L260.8,127.9L272.6,123.9L291.0,118.9L298.7,110.3L305.3,108.9L313.1,104.5L330.0,101.0L334.8,100.9L343.8,106.0L344.6,107.6L338.5,104.1L337.2,104.0L341.9,114.3L345.4,116.3L348.2,117.0L357.1,115.8L361.1,113.4L373.5,114.6L412.0,116.6Z","c":[340.9,188.5]},"CZE":{"d":"M345.3,276.4L340.4,277.1L336.7,280.4L335.7,282.2L331.5,284.8L330.0,291.1L326.4,293.3L323.3,297.0L320.5,298.5L317.6,298.9L311.6,297.9L310.5,298.5L309.0,300.5L306.7,306.5L305.3,303.0L301.8,302.0L298.3,300.0L297.0,299.9L294.7,301.9L288.4,301.3L283.6,297.7L281.0,297.9L273.0,294.1L270.0,295.0L268.0,293.3L266.5,293.2L265.1,300.8L263.0,300.7L262.3,301.6L260.6,304.1L260.3,306.5L256.2,305.6L253.7,307.2L250.0,307.2L247.2,306.4L245.9,303.4L242.4,300.9L236.9,294.6L234.7,294.7L233.9,294.0L231.6,290.1L228.5,288.1L223.9,282.4L221.8,282.4L220.5,281.2L213.1,268.9L215.6,263.8L214.5,261.8L209.4,257.1L207.0,250.4L207.9,250.1L208.7,250.8L210.8,254.3L214.4,248.8L216.4,247.4L220.8,246.1L224.5,246.9L225.6,245.3L226.0,244.2L229.4,243.5L230.5,241.3L233.3,239.8L234.6,240.5L235.3,240.0L237.1,237.1L244.1,235.2L253.7,230.7L251.4,227.3L252.0,226.4L257.3,227.6L259.0,230.2L258.7,232.1L261.0,233.5L261.9,233.4L262.8,232.0L266.3,231.1L266.5,226.9L272.0,228.7L272.3,231.2L273.9,233.6L281.7,235.9L286.1,238.2L287.3,240.2L293.0,238.7L294.6,239.8L295.8,241.4L295.0,243.3L293.0,244.4L291.5,246.4L291.9,247.3L294.0,248.2L300.3,257.0L301.1,257.1L307.5,252.5L305.2,246.2L310.8,247.9L316.2,251.9L319.1,251.6L322.1,250.2L322.8,252.7L322.2,253.9L319.8,255.1L320.6,256.5L324.7,260.9L325.6,261.2L327.9,260.3L328.8,259.2L334.5,263.1L335.4,262.6L339.7,264.3L340.4,268.3L344.8,273.0Z","c":[273.0,269.1]},"AUT":{"d":"M154.4,350.3L156.4,343.8L154.3,341.9L156.9,341.8L159.0,340.2L163.5,342.5L165.3,344.4L165.5,346.2L168.2,347.2L167.9,350.0L170.5,348.8L171.7,347.1L173.1,341.0L182.0,342.0L184.2,346.1L185.5,346.2L190.7,345.2L192.7,343.1L199.3,339.9L208.9,338.8L209.4,335.5L212.6,336.5L215.0,338.2L219.2,337.1L221.0,338.1L221.7,341.3L225.0,343.5L225.9,343.4L226.8,337.6L226.3,336.1L223.5,335.4L224.7,332.6L224.7,329.8L220.7,323.7L221.8,320.9L227.3,317.2L233.3,314.3L235.6,307.0L239.5,309.0L240.5,308.3L241.8,306.9L242.4,300.9L245.9,303.4L247.2,306.4L253.7,307.2L256.2,305.6L260.3,306.5L260.6,304.1L262.3,301.6L263.0,300.7L265.1,300.8L266.5,293.2L268.0,293.3L270.0,295.0L273.0,294.1L281.0,297.9L283.6,297.7L288.4,301.3L294.7,301.9L297.0,299.9L298.3,300.0L301.8,302.0L305.3,303.0L306.6,306.8L304.9,311.7L304.9,313.5L309.5,324.9L310.7,326.0L309.5,327.4L308.3,331.6L309.1,335.9L303.3,336.8L299.3,334.4L295.8,336.9L300.3,339.1L301.1,341.5L300.0,344.4L296.3,346.0L296.7,350.2L295.7,351.8L296.2,354.4L297.3,355.1L296.5,358.9L294.0,359.1L292.4,360.1L287.9,364.3L286.7,365.7L286.3,369.8L282.4,368.7L279.6,369.1L275.7,371.4L271.1,370.9L264.5,372.2L261.7,375.7L257.4,379.0L242.7,375.3L229.1,373.3L215.0,370.0L213.1,369.0L208.3,361.3L207.8,359.7L209.3,357.2L208.6,356.5L200.5,359.6L195.4,359.3L189.6,360.0L187.4,361.3L185.1,365.9L183.1,366.8L179.7,366.0L178.2,364.2L173.4,363.6L172.6,360.3L171.3,359.7L166.8,364.1L161.6,361.2L160.9,358.9L155.5,357.3L156.1,355.6Z","c":[248.7,339.9]},"CHE":{"d":"M154.3,341.9L156.4,343.8L153.5,353.5L153.6,357.1L156.3,357.3L160.9,358.9L161.6,361.2L166.8,364.1L171.3,359.7L172.6,360.3L173.4,362.5L172.3,370.2L173.1,371.7L172.9,374.0L169.7,373.5L168.1,371.7L165.9,372.4L164.9,376.2L166.4,380.2L166.7,384.3L164.9,384.3L162.9,380.2L161.7,380.0L156.7,382.4L154.4,382.0L152.4,376.2L149.8,375.8L148.9,376.5L148.7,382.7L143.7,391.6L144.5,396.2L144.1,397.2L142.6,397.7L139.0,392.2L139.9,389.6L136.2,388.5L132.5,384.0L132.0,377.9L130.7,377.5L125.0,383.2L125.6,386.8L122.9,391.6L120.0,393.9L118.7,394.7L113.6,392.8L109.3,395.0L105.2,396.1L103.0,394.6L101.6,391.6L97.9,386.7L98.8,383.1L97.6,378.4L90.8,377.9L86.9,381.2L87.7,383.8L86.1,385.8L83.8,387.3L81.5,387.1L81.4,385.0L84.0,382.9L84.6,379.6L83.3,378.0L85.3,372.0L90.5,367.2L91.4,360.9L95.7,358.3L101.6,350.4L102.6,348.0L101.0,347.3L100.5,346.2L101.9,344.2L103.7,343.0L105.4,343.0L106.7,344.9L109.6,344.9L111.2,344.2L112.7,341.1L115.2,339.6L116.9,340.4L121.6,340.6L125.0,340.2L127.1,339.2L132.4,339.5L134.6,338.6L134.7,337.7L132.3,337.7L131.4,336.5L132.0,335.1L134.8,333.6L138.0,336.1L139.3,335.6L140.1,336.0L141.2,337.5L147.3,337.1Z","c":[127.3,365.9]},"FRA":{"d":"M115.2,339.6L112.7,341.1L111.2,344.2L109.6,344.9L106.7,344.9L105.4,343.0L103.7,343.0L101.9,344.2L100.5,346.2L102.6,348.5L95.7,358.3L91.4,360.9L90.5,367.2L85.3,372.0L83.4,377.0L83.3,378.0L84.6,379.6L84.0,382.9L81.4,385.0L81.5,387.1L82.2,387.4L83.8,387.3L86.1,385.8L87.7,383.8L86.9,381.2L90.8,377.9L93.9,377.7L98.0,378.7L98.8,383.1L97.9,386.7L101.6,391.6L103.0,394.6L98.6,398.2L98.3,400.7L102.8,408.6L105.7,411.9L104.2,417.2L102.2,418.0L99.3,420.6L96.3,420.3L94.9,421.2L96.0,424.0L-12.0,424.0L-12.0,257.1L-8.4,252.0L-9.2,250.6L-8.6,236.0L-6.7,231.2L-1.8,227.7L9.1,225.2L10.8,224.2L12.3,228.8L12.2,231.5L15.6,235.6L17.2,236.9L22.7,234.6L23.7,235.6L25.3,238.5L26.1,242.8L27.0,243.6L32.7,244.6L34.7,250.2L35.9,249.0L40.0,249.2L41.9,249.7L44.6,252.2L43.8,255.6L45.0,257.2L43.8,260.3L44.6,261.6L48.6,262.1L52.2,261.6L54.5,260.2L55.5,257.1L57.8,255.3L58.7,255.8L57.2,261.6L58.3,263.1L58.8,267.3L61.7,267.6L67.3,270.9L71.9,276.4L77.7,275.5L78.4,276.6L82.3,278.6L85.8,276.8L87.0,277.0L89.1,278.4L91.4,278.7L93.0,280.3L97.1,288.0L98.0,288.2L100.3,286.4L102.6,287.3L103.3,289.6L105.0,289.1L106.7,289.5L111.8,288.3L113.3,290.4L115.1,291.2L123.1,292.9L125.8,294.1L126.0,297.0L119.8,305.3L117.0,317.0L115.2,321.1L113.4,337.0L114.2,339.2Z","c":[43.2,336.7]},"LUX":{"d":"M84.4,256.3L84.9,261.2L87.3,264.5L92.0,267.0L92.0,269.9L89.8,273.5L89.1,278.4L85.8,276.8L82.3,278.6L80.6,277.5L78.4,276.6L77.7,275.5L79.6,272.0L76.4,266.6L76.8,263.0L79.3,257.6L81.6,254.8L83.9,255.2Z","c":[83.6,268.0]},"BEL":{"d":"M45.7,214.6L48.7,215.6L49.3,215.3L48.9,213.3L51.4,211.7L53.1,213.5L54.0,213.5L56.5,211.2L58.4,214.1L60.4,213.9L62.2,211.9L63.6,215.9L65.9,218.2L67.9,218.8L71.3,218.0L74.0,220.8L77.9,222.3L78.3,224.5L76.9,229.0L74.7,232.5L75.8,234.8L76.9,235.3L81.9,235.6L86.9,240.7L85.5,242.3L86.2,243.9L88.1,244.3L89.0,245.4L89.5,249.9L85.6,252.7L84.4,256.3L83.9,255.2L81.6,254.8L79.3,257.6L76.8,263.0L76.4,266.6L79.6,272.0L78.7,274.2L77.7,275.5L71.9,276.4L67.3,270.9L61.7,267.6L58.8,267.3L58.3,263.1L57.2,261.6L58.7,255.8L57.8,255.3L56.9,255.7L55.5,257.1L54.5,260.2L52.2,261.6L48.6,262.1L44.6,261.6L43.8,260.3L45.0,257.2L43.8,255.6L44.6,252.2L41.9,249.7L40.0,249.2L35.9,249.0L34.7,250.2L32.7,244.6L27.0,243.6L26.1,242.8L25.3,238.5L22.7,234.6L17.2,236.9L12.2,231.5L12.3,228.8L10.8,224.2L25.1,215.8L27.7,214.9L28.3,217.8L29.4,219.3L32.4,217.9L39.0,220.5L44.6,217.2Z","c":[54.2,239.2]},"NLD":{"d":"M81.9,235.6L76.9,235.3L75.8,234.8L74.7,232.5L76.9,229.0L78.3,224.5L77.9,222.3L74.0,220.8L71.3,218.0L67.9,218.8L65.9,218.2L63.6,215.9L62.2,211.9L60.4,213.9L58.4,214.1L56.5,211.2L54.0,213.5L53.1,213.5L51.4,211.7L48.9,213.3L49.3,215.3L48.7,215.6L41.2,212.8L37.4,213.9L34.7,212.5L32.6,212.4L29.7,209.5L31.8,208.0L35.8,207.7L38.7,208.4L43.9,212.3L46.6,211.8L41.1,207.7L44.8,207.3L39.9,200.7L42.8,194.6L45.3,192.5L50.9,184.2L52.6,179.8L54.9,167.7L56.8,163.4L59.2,164.5L62.8,162.8L68.9,158.3L70.7,154.4L72.5,152.6L79.5,149.1L83.3,148.0L98.8,146.9L101.9,150.7L106.6,152.2L106.5,161.5L103.6,169.9L103.2,173.0L102.8,173.5L97.4,173.5L96.6,174.1L96.2,176.9L97.4,179.1L99.1,179.8L101.9,179.8L103.3,181.9L102.1,187.6L96.9,191.8L96.7,193.2L98.5,195.5L97.3,197.4L92.7,199.2L90.8,199.1L89.3,200.2L85.5,198.3L81.0,200.9L81.0,202.2L83.9,206.3L86.1,212.5L83.6,220.0L83.7,221.4L84.9,221.9L84.7,222.5L80.8,226.0L79.1,226.4L79.9,227.9L82.2,229.0L83.0,230.5ZM45.7,214.6L44.6,217.2L39.0,220.5L32.4,217.9L30.2,219.4L28.8,218.7L27.7,214.9L29.2,214.4L32.6,214.2L38.6,215.7L41.3,214.3L43.3,215.5ZM80.6,146.3L76.6,146.9L75.0,146.1L76.1,145.9ZM63.8,151.3L60.0,153.7L59.6,153.3L62.1,151.2ZM68.2,148.8L65.4,148.6L70.1,147.2L73.5,147.0ZM59.2,159.1L57.2,161.5L55.6,160.3L56.2,158.5L59.2,155.4ZM40.0,203.0L42.6,206.0L40.0,206.7L37.3,204.5L35.5,205.0L34.8,203.3ZM97.1,142.3L95.2,142.4L97.5,140.9L98.5,140.9Z","c":[74.7,185.1]}},"ctx":"M350.3,2.1L348.6,2.9L347.6,5.2L344.9,6.4L344.4,13.7L346.8,16.5L344.3,17.8L342.6,21.7L338.0,24.3L336.1,26.8L335.2,30.4L333.3,31.9L331.2,32.3L332.4,29.3L334.1,26.9L332.5,25.3L330.4,20.7L331.3,18.5L331.0,11.3L339.2,2.3L343.0,1.2L344.7,2.2L345.5,-0.0L346.7,-0.5ZM298.0,53.0L297.0,54.7L296.0,54.6L295.4,52.4L295.6,43.9L300.1,33.7L302.1,32.9L307.6,19.2L308.2,18.3L310.1,19.1L308.7,20.4L308.8,22.8L305.3,30.1L304.4,34.9L303.1,36.1ZM302.4,-12.0L303.0,-10.4L301.5,-8.6L301.4,-0.6L299.4,-0.4L298.6,2.9L299.6,10.9L300.6,13.2L300.1,15.5L296.9,20.9L298.0,27.4L294.3,39.2L290.3,46.1L287.1,55.3L283.6,58.5L279.5,56.5L273.4,57.6L267.7,56.9L262.2,57.3L260.8,58.2L261.6,61.5L259.6,62.0L257.6,61.0L251.5,66.3L250.6,68.1L250.3,71.5L253.2,78.2L249.7,82.5L247.8,82.6L242.2,81.4L232.2,84.1L223.3,82.0L224.4,79.7L225.1,70.9L214.8,53.0L219.6,54.9L221.6,53.9L218.6,48.1L222.7,47.7L224.0,45.6L223.3,42.3L219.8,40.8L216.9,35.5L213.8,32.7L208.2,22.2L206.2,14.9L204.3,15.6L202.6,7.3L199.7,6.0L199.0,-2.4L195.9,-3.3L193.8,-7.2L193.6,-12.0ZM351.9,-0.7L351.6,1.3L350.5,1.2L349.5,-0.4L351.5,-2.7L355.5,-2.1ZM103.0,394.6L105.2,396.1L109.3,395.0L113.6,392.8L118.7,394.7L122.9,391.6L125.6,386.8L125.0,383.2L130.7,377.5L131.7,377.4L132.5,384.0L136.2,388.5L139.9,389.6L139.0,392.2L142.6,397.7L144.1,397.2L144.5,396.2L143.7,391.6L148.7,382.7L148.9,376.5L149.8,375.8L152.4,376.2L154.4,382.0L156.7,382.4L161.7,380.0L162.9,380.2L164.9,384.3L165.8,384.6L167.1,383.8L164.9,376.2L165.9,372.4L168.1,371.7L169.7,373.5L172.9,374.0L173.1,371.7L172.3,370.2L173.4,363.6L178.2,364.2L181.1,366.6L184.5,366.5L187.4,361.3L189.6,360.0L195.4,359.3L200.5,359.6L204.5,357.9L209.2,356.7L207.8,359.7L208.3,361.3L213.1,369.0L215.0,370.0L240.0,375.0L239.6,376.9L233.8,381.7L233.4,383.5L234.3,385.1L235.7,385.0L238.6,386.3L238.3,387.7L235.6,390.8L235.6,392.5L238.0,392.8L237.6,398.3L240.4,400.0L243.6,404.8L243.0,405.5L240.4,405.7L241.7,404.4L238.5,399.7L237.1,399.7L235.2,401.7L229.9,399.7L226.3,404.1L223.7,404.9L220.7,407.1L215.3,409.9L214.0,409.7L216.1,407.1L212.4,408.9L210.8,410.4L209.8,417.1L211.0,418.2L213.4,424.0L96.0,424.0L94.9,421.2L96.3,420.3L99.3,420.6L102.2,418.0L104.2,417.2L105.6,412.5L105.7,411.9L102.8,408.6L98.3,400.7L98.6,398.2ZM412.0,313.4L404.5,314.8L401.3,309.9L399.0,308.0L391.1,309.5L387.0,308.2L382.4,308.1L379.3,308.9L376.1,316.5L367.2,321.9L361.5,318.9L360.3,319.2L358.3,322.6L354.2,323.8L347.0,324.5L344.4,326.2L343.6,328.2L344.2,331.1L343.1,333.2L323.3,333.8L320.7,332.5L314.2,326.5L310.7,326.0L309.5,324.9L304.9,313.5L304.9,311.7L306.5,308.1L307.4,303.9L310.5,298.5L311.6,297.9L317.6,298.9L320.5,298.5L323.3,297.0L327.0,292.9L330.0,291.1L331.5,284.8L335.7,282.2L336.7,280.4L340.4,277.1L345.3,276.4L347.4,276.8L348.1,280.2L351.8,280.1L353.9,276.4L357.8,273.6L361.6,279.9L364.6,281.0L364.9,284.4L364.2,286.5L365.2,286.9L367.5,286.0L370.4,287.3L372.6,282.8L376.7,280.6L381.9,280.4L387.0,282.9L389.8,282.1L391.4,279.5L402.9,279.7L408.0,282.0L409.6,283.4L410.7,286.4L412.0,287.0ZM412.0,340.7L410.3,342.5L410.2,346.1L407.6,349.1L405.9,354.6L403.3,357.7L403.1,360.4L399.9,366.1L399.9,368.9L396.3,372.1L394.9,376.1L395.2,378.5L393.7,379.2L392.9,382.1L390.6,384.1L386.4,383.6L384.8,384.0L383.7,386.4L381.8,387.7L379.7,386.6L375.0,387.7L374.2,388.5L372.5,387.4L367.9,386.8L366.0,387.3L361.3,386.5L359.6,387.0L357.4,390.0L354.4,392.0L351.7,392.6L350.5,391.6L349.0,393.5L347.2,394.4L341.9,395.2L339.2,398.8L335.6,400.3L324.2,399.0L320.8,396.5L320.1,395.0L316.0,393.7L314.1,392.3L312.7,389.6L306.5,383.8L305.1,380.9L302.5,378.4L297.8,375.7L295.0,371.1L293.7,366.3L293.0,363.9L289.1,363.7L292.4,360.1L294.0,359.1L296.5,358.9L297.3,355.1L296.2,354.4L295.7,351.8L296.7,350.2L296.3,346.0L300.0,344.4L301.1,341.5L300.3,339.1L295.8,336.9L299.3,334.4L303.3,336.8L309.1,335.9L308.3,331.6L309.5,327.4L310.7,326.0L314.2,326.5L320.7,332.5L323.3,333.8L343.1,333.2L344.2,331.1L343.6,328.2L344.4,326.2L347.0,324.5L354.2,323.8L358.3,322.6L360.3,319.2L361.5,318.9L367.2,321.9L376.1,316.5L379.3,308.9L382.4,308.1L387.0,308.2L391.1,309.5L399.0,308.0L401.3,309.9L404.5,314.8L412.0,313.4ZM297.8,375.7L293.8,374.5L292.0,376.2L292.4,379.3L291.8,379.8L288.5,379.9L285.8,383.0L279.7,385.5L278.8,387.5L280.3,390.5L280.0,396.7L279.5,397.6L272.3,400.9L273.9,403.3L272.5,406.0L273.6,409.7L271.6,410.5L268.9,410.2L265.7,408.6L263.5,409.7L262.4,409.3L257.8,403.4L254.9,408.4L253.7,409.2L247.9,409.3L246.0,408.3L243.7,411.0L238.3,409.4L237.5,408.0L240.4,405.7L243.0,405.5L243.6,404.8L242.7,402.7L239.3,399.0L237.3,397.6L238.0,392.8L236.1,393.0L235.5,391.8L238.6,386.3L235.7,385.0L234.3,385.1L233.4,383.5L233.8,381.7L239.6,376.9L240.0,375.0L257.4,379.0L261.7,375.7L264.5,372.2L271.1,370.9L275.7,371.4L279.6,369.1L282.4,368.7L286.3,369.8L286.7,365.7L289.1,363.7L293.0,363.9L295.0,371.1ZM237.5,408.0L238.3,409.4L243.7,411.0L246.0,408.3L247.9,409.3L253.7,409.2L254.9,408.4L257.8,403.4L262.4,409.3L263.5,409.7L265.7,408.6L268.9,410.2L271.6,410.5L273.6,409.7L272.5,406.0L273.9,403.3L272.3,400.9L279.5,397.6L280.0,396.7L280.5,392.7L280.3,390.5L278.9,388.5L279.2,386.5L279.7,385.5L287.2,382.1L288.5,379.9L291.8,379.8L292.4,379.3L292.0,376.2L293.8,374.5L297.8,375.7L302.5,378.4L308.4,386.0L312.7,389.6L314.1,392.3L316.0,393.7L320.1,395.0L320.8,396.5L324.2,399.0L335.6,400.3L339.2,398.8L341.9,395.2L343.0,395.4L346.8,394.4L346.5,396.6L345.4,397.5L347.6,403.5L347.0,405.3L347.8,406.7L350.0,408.1L348.9,409.7L348.8,411.9L350.6,414.0L355.5,416.2L356.9,418.1L356.7,419.4L354.9,419.6L352.9,419.5L351.5,418.6L351.4,420.1L350.0,420.6L350.5,424.0L343.3,424.0L341.8,422.5L338.2,422.2L334.1,420.7L331.0,421.1L328.1,420.4L325.6,422.5L324.4,422.5L321.1,419.7L318.0,421.1L314.3,419.7L310.3,419.4L306.0,416.0L303.4,418.6L298.1,417.9L293.9,424.0L291.7,424.0L287.8,418.8L284.9,418.0L282.8,419.2L282.4,424.0L264.2,424.0L263.7,422.4L257.4,415.3L254.1,413.8L252.6,413.9L251.0,419.8L248.7,424.0L240.1,424.0L238.5,421.5L236.3,409.2ZM155.5,357.3L153.6,357.1L153.4,356.0L154.4,350.3L154.7,351.5L156.1,355.6ZM388.9,86.4L387.7,86.1L390.0,82.3L392.1,75.2L391.9,79.5ZM412.0,93.5L407.7,92.2L401.1,89.1L397.7,86.5L394.6,86.9L393.9,84.2L394.6,80.6L391.0,68.8L390.7,60.3L403.1,52.2L412.0,49.2ZM388.9,86.4L381.4,96.1L387.4,98.5L389.7,98.8L393.6,97.7L394.6,86.9L397.7,86.5L401.1,89.1L407.7,92.2L412.0,93.5L412.0,116.6L402.8,116.1L373.5,114.6L361.1,113.4L366.3,107.6L368.1,103.8L368.7,98.2L371.4,97.0L377.4,97.2L379.9,95.7L387.7,86.1Z","cap":{"Berlin":[233.8,177.3],"Kopenhagen":[216.8,73.2],"Warschau":[389.9,186.8],"Prag":[254.8,257.7],"Wien":[294.8,319.3],"Bern":[111.8,360.8],"Paris":[7.2,297.9],"Luxemburg":[84.7,273.2],"Brüssel":[48.2,232.3],"Amsterdam":[59.5,182.2]}};
+/* r = Himmelsrichtung von Deutschland aus (wie im Sachunterricht: Norden, Osten, Süden, Westen), g = genauer
+   a = Artikel („die Schweiz“), pl = Mehrzahl („die Niederlande liegen“) */
+const L=[
+ {id:"DNK",n:"Dänemark",r:"N",s:"Kopenhagen",f:"Dänemark ist unser einziger Nachbar im Norden. Von dort kommen die LEGO-Steine."},
+ {id:"POL",n:"Polen",r:"O",s:"Warschau",f:"Polen ist ein großes Land im Osten. Der Fluss Oder bildet einen Teil der Grenze zu Deutschland."},
+ {id:"CZE",n:"Tschechien",r:"O",g:"Südosten",s:"Prag",f:"Die Elbe fließt von Tschechien nach Deutschland. Die Hauptstadt Prag ist sehr alt und hat viele Türme."},
+ {id:"AUT",n:"Österreich",r:"S",s:"Wien",f:"Österreich liegt im Süden. Dort sprechen die Menschen auch Deutsch, und es gibt hohe Berge: die Alpen."},
+ {id:"CHE",n:"Schweiz",a:"die",r:"S",g:"Südwesten",s:"Bern",f:"Die Schweiz liegt im Süden. Sie ist berühmt für ihre Berge, ihren Käse und ihre Schokolade."},
+ {id:"FRA",n:"Frankreich",r:"W",g:"Südwesten",s:"Paris",f:"Frankreich ist unser größter Nachbar. In der Hauptstadt Paris steht der Eiffelturm."},
+ {id:"LUX",n:"Luxemburg",r:"W",s:"Luxemburg",f:"Luxemburg ist unser kleinster Nachbar, ungefähr so groß wie das Saarland. Die Hauptstadt heißt auch Luxemburg."},
+ {id:"BEL",n:"Belgien",r:"W",s:"Brüssel",f:"Belgien liegt im Westen. Es ist bekannt für Pommes frites, Waffeln und Schokolade."},
+ {id:"NLD",n:"Niederlande",a:"die",pl:1,r:"W",g:"Nordwesten",s:"Amsterdam",f:"Die Niederlande liegen im Westen, an der Nordsee. Dort gibt es viele Windmühlen, Tulpen und Fahrräder."}
+];
+const LAND=id=>L.find(x=>x.id===id);
+const RN={N:"Norden",O:"Osten",S:"Süden",W:"Westen"};
+const nm=l=>(l.a?l.a+" ":"")+l.n;                       // „die Schweiz“
+const Nm=l=>(l.a?"Die ":"")+l.n;
+const liegt=l=>l.pl?"liegen":"liegt";
+/* Länder, die oft für Nachbarn gehalten werden, es aber nicht sind */
+const KEIN=["Italien","Spanien","Schweden","Ungarn","England","Norwegen","Griechenland","Portugal"];
+
+/* Beschriftung der Übersichtskarte: Name (x, y), Hauptstadt (dx, dy, Ausrichtung) */
+const OVN={DNK:[150,60],POL:[340,176],CZE:[290,250],AUT:[250,340],CHE:[112,382],FRA:[34,350],LUX:[80,266],BEL:[42,256],NLD:[74,166]};
+const OVC={Berlin:[0,-8,"middle"],Kopenhagen:[0,-8,"middle"],Warschau:[-6,4,"end"],Prag:[0,13,"middle"],Wien:[0,-7,"middle"],
+  Bern:[6,4,"start"],Paris:[5,13,"start"],Luxemburg:[6,4,"start"],"Brüssel":[4,-5,"start"],Amsterdam:[5,12,"start"]};
+
+/* ================= Zustand ================= */
+const KEY="nachbarn-v1";
+const DEF={seen:[],m:{},best:{},ton:true,rate:.85,ov:{n:true,c:false}};
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&typeof s==="object")return Object.assign(JSON.parse(JSON.stringify(DEF)),s)}catch(e){}return JSON.parse(JSON.stringify(DEF))}
+let S=load();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+const dots=(ch,id)=>(S.m[ch]||{})[id]||0;
+
+/* ================= Vorlesen ================= */
+const TTS={ok:"speechSynthesis" in window&&"SpeechSynthesisUtterance" in window,v:null,run:0};
+function pickVoice(){if(!TTS.ok)return;const vs=speechSynthesis.getVoices().filter(v=>/^de/i.test(v.lang));
+  TTS.v=vs.find(v=>/de[-_]DE/i.test(v.lang)&&/anna|petra|helena|katja|google/i.test(v.name))||vs.find(v=>/de[-_]DE/i.test(v.lang))||vs[0]||null}
+if(TTS.ok){pickVoice();speechSynthesis.addEventListener&&speechSynthesis.addEventListener("voiceschanged",pickVoice)}
+function hush(){TTS.run++;if(TTS.ok)speechSynthesis.cancel()}
+function speak(text,onend){if(!TTS.ok){if(onend)onend();return false}
+  const id=++TTS.run;speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);u.lang="de-DE";if(TTS.v)u.voice=TTS.v;u.rate=S.rate;u.pitch=1.05;
+  let fired=false;const fin=()=>{if(fired)return;fired=true;if(id===TTS.run&&onend)onend()};u.onend=fin;u.onerror=fin;
+  speechSynthesis.speak(u);return true}
+let AC=null;
+function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){AC=null}}if(AC&&AC.state==="suspended")AC.resume();return AC}
+function beep(fs,len,type,vol){const a=ac();if(!a)return;let t=a.currentTime+.02;fs.forEach(f=>{const o=a.createOscillator(),g=a.createGain();o.type=type||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol||.18,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+len);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+len+.02);t+=len*.75})}
+const sfxOk=()=>beep([1046.5,1318.5],.14);
+const sfxBad=()=>beep([233,175],.18,"triangle",.12);
+
+/* ================= Symbole ================= */
+const I={
+  spk:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path d="M15.5 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11"/></svg>`,
+  back:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>`,
+  map:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg>`,
+  pin:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12z"/><circle cx="12" cy="9" r="2.6"/></svg>`,
+  look:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>`,
+  city:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M5 21V10l5-3v14M10 21V4l9 4v13"/><path d="M13 10h3M13 14h3M7 13h1M7 17h1"/></svg>`,
+  flag:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4M5 4h12l-2.5 4L17 12H5"/></svg>`,
+  mix:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h3.5c4 0 6 10 10 10H21M3 17h3.5c1.6 0 2.8-1.6 3.8-3.5M13.7 9.5C14.7 8.2 15.6 7 17 7h4M18.5 4.5L21 7l-2.5 2.5M18.5 14.5L21 17l-2.5 2.5"/></svg>`,
+  star:on=>`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z" fill="${on?"#FFC93C":"var(--lw-line)"}" stroke="${on?"#D99A00":"none"}" stroke-width="1.2" stroke-linejoin="round"/></svg>`
+};
+
+
+/* ================= Karte ================= */
+/* o: {cls:{id:"on"|"ok"|"bad"}, base:fn, tap, ov:{n,c}, sel:id, label:[id], deOn, mh} */
+function mapSVG(o){o=o||{};const c=o.cls||{};
+  const ps=L.map(l=>`<path class="ld ${c[l.id]||(o.base?o.base(l):"")}" data-l="${l.id}" d="${MAP.l[l.id].d}" fill-rule="evenodd"><title>${o.tap?"":esc(l.n)}</title></path>`).join("");
+  // Luxemburg ist winzig: größere unsichtbare Tippfläche
+  const hits=o.tap?`<circle class="hit" data-l="LUX" cx="${MAP.l.LUX.c[0]}" cy="${MAP.l.LUX.c[1]}" r="11"/>`:"";
+  const ov=o.ov||{},out=[];
+  // o.sel: das angetippte Land zeigt immer Namen und Hauptstadt
+  const lay=(ov,id)=>{const l=LAND(id);
+    if(ov.c){const [x,y]=MAP.cap[l.s],[dx,dy,a]=OVC[l.s];out.push(`<circle class="city ov" cx="${x}" cy="${y}" r="3.6"/>`+(ov.n&&l.s===l.n?"":`<text class="clbl" x="${x+dx}" y="${y+dy}" text-anchor="${a}">${esc(l.s)}</text>`))}
+    if(ov.n){const [x,y]=OVN[id];out.push(`<text class="nlbl${o.sel===id?" hl":""}" x="${x}" y="${y}" text-anchor="middle">${esc(l.n)}</text>`)}};
+  L.forEach(l=>l.id===o.sel?lay({n:true,c:true},l.id):lay(ov,l.id));
+  if(ov.c){const [x,y]=MAP.cap.Berlin,[dx,dy,a]=OVC.Berlin;out.push(`<circle class="city ov" cx="${x}" cy="${y}" r="3.6"/><text class="clbl" x="${x+dx}" y="${y+dy}" text-anchor="${a}">Berlin</text>`)}
+  const labels=(o.label||[]).map(id=>{const [x,y]=OVN[id];return `<text class="lbl" x="${x}" y="${y+4}" text-anchor="middle">${esc(LAND(id).n)}</text>`}).join("");
+  const rose=o.rose===false?"":`<g class="rose" transform="translate(350,38)"><path d="M0,-17 L5,0 L0,-4 L-5,0Z"/><path d="M0,17 L5,0 L0,4 L-5,0Z" opacity=".35"/><path d="M-17,0 L0,5 L-4,0 L0,-5Z" opacity=".35"/><path d="M17,0 L0,5 L4,0 L0,-5Z" opacity=".35"/>
+    <text y="-21" text-anchor="middle">N</text><text y="31" text-anchor="middle">S</text><text x="-27" y="4" text-anchor="middle">W</text><text x="27" y="4" text-anchor="middle">O</text></g>`;
+  return `<div class="map ${o.tap?"tap":""}" style="${o.mh?"--mh:"+o.mh:""}"><svg viewBox="0 0 ${MAP.w} ${MAP.h}" role="img" aria-label="Karte von Deutschland und seinen 9 Nachbarländern">
+    <rect class="sea" x="0" y="0" width="${MAP.w}" height="${MAP.h}"/><path class="ctx" d="${MAP.ctx}" fill-rule="evenodd"/>
+    <text class="sealbl" x="82" y="100" text-anchor="middle">Nordsee</text><text class="sealbl" x="262" y="84" text-anchor="middle">Ostsee</text>
+    <path class="de ${o.deOn?"on":""}" d="${MAP.l.DEU.d}" fill-rule="evenodd"/><text class="delbl" x="176" y="${ov.c?232:226}" text-anchor="middle" style="${o.deOn?"fill:#fff":""}">DEUTSCHLAND</text>
+    ${ps}${out.join("")}${hits}${labels}${rose}</svg></div>`}
+
+/* ================= Kapitel ================= */
+const CH=[
+  {id:"karte",t:"Deutschland und seine Nachbarn",d:"Die Karte entdecken: Tippe die 9 Nachbarländer an",ico:"map"},
+  {id:"lage",t:"Wo liegt das Land?",d:"Du hörst einen Namen und tippst das Land auf der Karte an",ico:"pin",n:8},
+  {id:"name",t:"Wie heißt das Land?",d:"Ein Land leuchtet. Welches ist es?",ico:"look",n:8},
+  {id:"richtung",t:"Norden, Osten, Süden, Westen",d:"In welcher Richtung liegt das Nachbarland?",ico:"flag",n:8},
+  {id:"nachbar",t:"Nachbar oder nicht?",d:"Welche Länder grenzen an Deutschland?",ico:"city",n:8},
+  {id:"mix",t:"Große Nachbar-Reise",d:"Alles gemischt",ico:"mix",n:10}
+];
+const chOf=id=>CH.find(c=>c.id===id);
+function anteil(c){
+  if(c.id==="karte")return S.seen.length/9;
+  if(c.id==="mix")return (S.best.mix||0)/3;
+  return L.reduce((a,l)=>a+dots(c.id,l.id),0)/(9*3)}
+const sterne=p=>p>=.999?3:p>=2/3?2:p>=1/3?1:0;
+
+/* ================= Startseite ================= */
+function home(){hush();R=null;
+  const sicher=L.filter(l=>["lage","name","richtung"].every(c=>dots(c,l.id)>=3)).length;
+  app.innerHTML=`
+  <section class="panel"><div class="hero"><span class="badge">${I.map}</span><div class="grow"><h2 style="font-size:1.35rem">Deutschland hat 9 Nachbarländer</h2>
+    <p class="small">Sie liegen rund um Deutschland herum. Wie viele kennst du schon?</p></div></div>
+    <div class="row" style="justify-content:space-between"><span class="small"><b style="color:var(--lw-ink)">${S.seen.length} von 9</b> entdeckt</span><span class="small"><b style="color:var(--lw-ink)">${sicher} von 9</b> sitzen ganz sicher</span></div>
+    <div class="bar"><i style="width:${(S.seen.length/9*50+sicher/9*50)}%"></i></div></section>
+  <div class="stations">${CH.map((c,k)=>{const b=sterne(anteil(c));
+    return `<button class="st" data-ch="${c.id}"><span class="ico">${I[c.ico]}</span><span class="grow"><span class="n">Kapitel ${k+1}</span><h3>${c.t}</h3><p>${c.d}</p><span class="stars" aria-label="${b} von 3 Sternen">${[0,1,2].map(i=>I.star(i<b)).join("")}</span></span></button>`}).join("")}</div>
+  <section class="panel"><h3>Vorlesen</h3>
+    ${TTS.ok?`<p class="small">Die Fragen werden laut vorgelesen. Mit dem Lautsprecher-Knopf hörst du sie noch einmal.</p>
+    <div class="modes" role="group" aria-label="Vorlesen">${[[true,"An"],[false,"Aus"]].map(([v,t])=>`<button data-ton="${v}" aria-pressed="${S.ton===v}">${t}</button>`).join("")}</div>
+    <div class="modes" role="group" aria-label="Sprechtempo">${[[.7,"Langsam"],[.85,"Normal"],[1,"Schnell"]].map(([v,t])=>`<button data-rate="${v}" aria-pressed="${S.rate===v}">${t}</button>`).join("")}</div>
+    <p class="small">Nichts zu hören? Lauter stellen und am iPhone den Stumm-Schalter prüfen.</p>`
+    :`<p class="small">Dieser Browser kann leider nicht vorlesen. Alles andere geht trotzdem.</p>`}
+  </section>`;
+  app.querySelectorAll(".st[data-ch]").forEach(b=>b.onclick=()=>openCh(b.dataset.ch));
+  app.querySelectorAll("[data-ton]").forEach(b=>b.onclick=()=>{S.ton=b.dataset.ton==="true";save();home();if(S.ton)speak("Vorlesen ist an.")});
+  app.querySelectorAll("[data-rate]").forEach(b=>b.onclick=()=>{S.rate=+b.dataset.rate;save();app.querySelectorAll("[data-rate]").forEach(x=>x.setAttribute("aria-pressed",x===b));speak("Die Schweiz liegt im Süden von Deutschland.")});
+  scrollTo(0,0)}
+function openCh(id){id==="karte"?karte():startRound(id)}
+
+/* ================= Karte entdecken ================= */
+let SEL=null;
+const wo=l=>`${Nm(l)} ${liegt(l)} im ${RN[l.r]} von Deutschland`;
+function satz(l){return `${Nm(l)}. ${wo(l)}. Die Hauptstadt ist ${l.s}. ${l.f}`}
+const ov=()=>S.ov||(S.ov={n:true,c:false});
+function karte(sel){hush();R=null;SEL=sel||null;const l=SEL&&LAND(SEL),o=ov();
+  const svg=mapSVG({tap:true,mh:"64vh",ov:o,sel:SEL,cls:SEL?{[SEL]:"on"}:{},base:x=>S.seen.includes(x.id)?"seen":""});
+  app.innerHTML=`<div class="chead"><button class="backb" id="cbk">${I.back}Alle Kapitel</button></div>
+    <div><h2>Deutschland und seine Nachbarn</h2><p class="small" style="margin-top:4px">Ein Nachbarland grenzt direkt an Deutschland. Deutschland hat 9 Nachbarn. Tippe ein Land an und hör zu.</p></div>
+    <div class="toggles" role="group" aria-label="Auf der Karte zeigen">
+      <button class="tgl" data-ov="n" aria-pressed="${o.n}"><i></i>Ländernamen</button>
+      <button class="tgl" data-ov="c" aria-pressed="${o.c}"><i></i>Hauptstädte</button></div>
+    ${svg}
+    ${l?`<section class="panel info" aria-live="polite"><span class="kick">Nachbarland ${S.seen.length} von 9 entdeckt</span><h3>${esc(l.n)}</h3>
+      <p class="cap">${esc(Nm(l))} ${liegt(l)} im <b>${RN[l.r]}</b>${l.g?` (genauer: im ${l.g})`:""}.</p><p class="small">Hauptstadt: <b style="color:var(--lw-ink)">${esc(l.s)}</b></p><p>${esc(l.f)}</p>
+      ${TTS.ok?`<button class="ghost" id="again">${I.spk}<span>Nochmal hören</span></button>`:""}</section>`
+      :`<section class="panel"><p>${S.seen.length?`Du hast schon <b>${S.seen.length} von 9</b> Nachbarn angetippt. Die dunkleren kennst du schon.`:"Los geht's! Welches Nachbarland tippst du zuerst an?"}</p></section>`}
+    <section class="panel"><h3>Merke dir die Richtungen</h3>
+      <p><b>Norden:</b> Dänemark<br><b>Osten:</b> Polen, Tschechien<br><b>Süden:</b> Österreich, Schweiz<br><b>Westen:</b> Frankreich, Luxemburg, Belgien, Niederlande</p>
+      ${TTS.ok?`<button class="ghost" id="hoerR">${I.spk}<span>Anhören</span></button>`:""}</section>
+    <section class="panel"><h3>Selbst abfragen</h3>
+      <p class="small">Schalte oben die Ländernamen aus und schau, ob du noch alle weißt. Oder lass dich abfragen: Du hörst einen Namen und tippst auf die Karte.</p>
+      <button class="go" id="qz">${I.pin}<span>Tippe auf das Land</span></button></section>
+    <div class="chips">${L.map(x=>`<button class="lchip ${S.seen.includes(x.id)?"seen":""}" data-l="${x.id}" aria-pressed="${x.id===SEL}"><i></i>${esc(x.n)}</button>`).join("")}</div>`;
+  $("#cbk").onclick=home;
+  app.querySelectorAll("[data-ov]").forEach(b=>b.onclick=()=>{const k=b.dataset.ov;o[k]=!o[k];save();const y=scrollY;karte(SEL);scrollTo(0,y)});
+  app.querySelectorAll("[data-l]").forEach(el=>el.addEventListener("click",()=>{const id=el.dataset.l;
+    if(!S.seen.includes(id)){S.seen.push(id);save()}
+    const y=scrollY;karte(id);scrollTo(0,y);if(!el.closest(".chips")){const p=$(".info");if(p)p.scrollIntoView({block:"nearest",behavior:"smooth"})}
+    speak(satz(LAND(id)))}));
+  if($("#again"))$("#again").onclick=()=>speak(satz(l));
+  if($("#hoerR"))$("#hoerR").onclick=()=>speak("Im Norden liegt Dänemark. Im Osten liegen Polen und Tschechien. Im Süden liegen Österreich und die Schweiz. Im Westen liegen Frankreich, Luxemburg, Belgien und die Niederlande.");
+  $("#qz").onclick=()=>startRound("lage");
+  if(!sel)scrollTo(0,0)}
+
+/* ================= Aufgaben ================= */
+const others=(l,k)=>shuffle(L.filter(x=>x!==l)).slice(0,k);
+const T={
+  lage(l){return {l,ch:"lage",kind:"map",q:`Wo ${liegt(l)} <em>${esc(nm(l))}</em>?`,say:`Wo ${liegt(l)} ${nm(l)}? Tippe das Land auf der Karte an.`}},
+  name(l){const o=shuffle([l,...others(l,2)]);return {l,ch:"name",kind:"mc",q:"Wie heißt das Nachbarland, das leuchtet?",say:"Wie heißt das Nachbarland, das leuchtet?",
+    map:{cls:{[l.id]:"on"},mh:"40vh"},opts:o.map(x=>({h:x.n,ok:x===l}))}},
+  richtung(l){
+    if(Math.random()<.55)return {l,ch:"richtung",kind:"mc",dirs:true,q:`In welcher Himmelsrichtung von Deutschland ${liegt(l)} <em>${esc(nm(l))}</em>?`,
+      say:`In welcher Himmelsrichtung von Deutschland ${liegt(l)} ${nm(l)}?`,map:{cls:{[l.id]:"on"},mh:"36vh"},
+      opts:["N","O","S","W"].map(r=>({h:RN[r],ok:r===l.r}))};
+    const w=shuffle(L.filter(x=>x.r!==l.r)).slice(0,2),o=shuffle([l,...w]);
+    return {l,ch:"richtung",kind:"mc",q:`Welches Nachbarland liegt im <em>${RN[l.r]}</em> von Deutschland?`,say:`Welches Nachbarland liegt im ${RN[l.r]} von Deutschland?`,
+      map:{base:()=>"",mh:"36vh",deOn:true},opts:o.map(x=>({h:x.n,ok:x===l}))}},
+  nachbar(l){
+    if(Math.random()<.15)return {l,ch:"nachbar",zahl:true,kind:"mc",q:"Wie viele Nachbarländer hat Deutschland?",say:"Wie viele Nachbarländer hat Deutschland?",
+      opts:shuffle([7,9,12]).map(n=>({h:String(n),ok:n===9}))};
+    const w=shuffle(KEIN).slice(0,2),o=shuffle([l.n,...w]);
+    return {l,ch:"nachbar",kind:"mc",q:"Welches Land ist ein Nachbar von Deutschland?",say:"Welches Land ist ein Nachbar von Deutschland?",wrongs:w,opts:o.map(x=>({h:x,ok:x===l.n}))}}
+};
+/* Länder mit wenig Punkten kommen öfter dran */
+function choose(ch,n){const out=[];let rest=L.slice();
+  while(out.length<n){if(!rest.length)rest=L.filter(l=>l!==out[out.length-1]);
+    const W=rest.map(l=>Math.pow(4-dots(ch==="mix"?"lage":ch,l.id),2)+.6);let r=Math.random()*W.reduce((a,b)=>a+b,0),k=0;while(r>W[k]&&k<W.length-1){r-=W[k];k++}
+    out.push(rest[k]);rest.splice(k,1)}
+  return out}
+
+/* ================= Runde ================= */
+let R=null;
+function startRound(id){hush();const c=chOf(id);
+  const tasks=choose(id,c.n).map(l=>T[id==="mix"?pick(["lage","lage","name","richtung","nachbar"]):id](l));
+  R={id,i:0,ok:0,res:[],miss:[],tasks};R.n=tasks.length;showTask()}
+function track(){$("#track").innerHTML=Array.from({length:R.n},(_,i)=>`<i class="${i<R.res.length?(R.res[i]?"ok":"no"):(i===R.i?"now":"")}"></i>`).join("")}
+function showTask(){hush();const t=R.tasks[R.i];R.locked=false;
+  app.innerHTML=`<div class="topbar"><button id="quit" aria-label="Runde beenden"></button><div class="track" id="track"></div></div>
+    <div class="q"><b>${t.q}</b>${TTS.ok?`<button class="say" id="say" aria-label="Frage vorlesen">${I.spk}</button>`:""}</div>
+    <section class="stage" id="cb"></section>`;
+  $("#quit").onclick=home;track();
+  const cb=$("#cb");
+  if(t.kind==="map"){cb.innerHTML=mapSVG({tap:true,mh:"62vh"});
+    cb.querySelectorAll("[data-l]").forEach(el=>el.addEventListener("click",()=>{if(R.locked)return;const ok=el.dataset.l===t.l.id;
+      cb.innerHTML=mapSVG({mh:"62vh",cls:ok?{[t.l.id]:"ok"}:{[t.l.id]:"ok",[el.dataset.l]:"bad"},label:ok?[t.l.id]:[t.l.id,el.dataset.l]});
+      done(ok,ok?null:LAND(el.dataset.l))}))}
+  else{cb.innerHTML=(t.map?mapSVG(t.map):"")+`<div class="opts ${t.dirs?"dirs":""}">${t.opts.map((o,i)=>`<button class="opt" data-i="${i}">${esc(o.h)}</button>`).join("")}</div>`;
+    cb.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{if(R.locked)return;const o=t.opts[+b.dataset.i];
+      cb.querySelectorAll(".opt").forEach((x,i)=>{x.disabled=true;if(t.opts[i].ok)x.classList.add("ok")});if(!o.ok)b.classList.add("bad");
+      // Nach der Antwort zeigt die Karte das gemeinte Land
+      if(t.ch==="nachbar"&&!t.zahl||t.ch==="richtung"&&!t.dirs){const m=cb.querySelector(".map"),h=mapSVG({mh:"36vh",cls:{[t.l.id]:"ok"},label:[t.l.id]});m?m.outerHTML=h:cb.insertAdjacentHTML("afterbegin",h)}
+      done(o.ok,o.ok?null:o.h)})}
+  if($("#say"))$("#say").onclick=()=>speak(t.say);
+  if(S.ton)speak(t.say);
+  scrollTo(0,0)}
+function done(ok,wrong){if(R.locked)return;R.locked=true;const t=R.tasks[R.i],l=t.l;
+  if(!t.zahl){const m=S.m[t.ch]=S.m[t.ch]||{};m[l.id]=ok?Math.min(3,(m[l.id]||0)+1):0}
+  if(!S.seen.includes(l.id)&&!t.zahl)S.seen.push(l.id);save();
+  R.res.push(ok);if(ok)R.ok++;else if(!t.zahl&&!R.miss.includes(l))R.miss.push(l);
+  ok?sfxOk():sfxBad();track();
+  let big,txt;
+  if(t.zahl){big="Deutschland hat 9 Nachbarländer.";txt="Dänemark, Polen, Tschechien, Österreich, die Schweiz, Frankreich, Luxemburg, Belgien und die Niederlande."}
+  else if(t.ch==="lage"){big=ok?`Das ${l.pl?"sind":"ist"} ${nm(l)}!`:`Das ${wrong.pl?"waren":"war"} ${nm(wrong)}.`;txt=ok?`${wo(l)}.`:`${Nm(l)} ${l.pl?"sind":"ist"} grün markiert. ${wo(l)}.`}
+  else if(t.ch==="name"){big=`Das ${l.pl?"sind":"ist"} ${nm(l)}.`;txt=l.f}
+  else if(t.ch==="richtung"){big=`${wo(l)}.`;txt=(l.g?`Genauer gesagt im ${l.g}. `:"")+`Die Hauptstadt heißt ${l.s}.`}
+  else{big=`${Nm(l)} ${l.pl?"sind":"ist"} ein Nachbar von Deutschland.`;txt=`${t.wrongs.join(" und ")} grenzen nicht an Deutschland. ${wo(l)}.`}
+  const fb=document.createElement("div");fb.className="fb "+(ok?"ok":"bad");fb.setAttribute("role","status");
+  fb.innerHTML=`<strong>${ok?pick(["Richtig!","Super!","Genau!","Klasse!","Toll!"]):"Nicht ganz"}</strong><div class="big">${esc(big)}</div><p>${esc(txt)}</p>`;
+  const extra=[];
+  if(TTS.ok){const b=document.createElement("button");b.className="ghost";b.type="button";b.innerHTML=I.spk+"<span>Anhören</span>";b.onclick=()=>speak(big+" "+txt);extra.push(b)}
+  const nx=document.createElement("button");nx.className="next";nx.type="button";nx.textContent=R.i+1>=R.n?"Ergebnis":"Weiter";
+  nx.onclick=()=>{R.i++;R.i>=R.n?endRound():showTask()};
+  lwSheet($("#cb"),ok,[fb,...extra,nx]);
+  if(S.ton)speak(big)}
+function endRound(){hush();const n=R.n,ok=R.ok,q=ok/n;const st=q>=.9?3:q>=.7?2:q>=.5?1:0;
+  S.best[R.id]=Math.max(S.best[R.id]||0,st);save();
+  const k=CH.findIndex(c=>c.id===R.id),nxt=CH[k+1];
+  const cheer=["Weiter üben, du schaffst das!","Gut gemacht!","Stark!","Super, du kennst dich aus!"][st];
+  const miss=R.miss,id=R.id;R=null;
+  app.innerHTML=`<section class="result"><h2>${cheer}</h2><div class="bigstars">${[0,1,2].map(i=>I.star(i<st).replace("<svg",`<svg class="s${i+1}"`)).join("")}</div>
+    <p style="font-size:1.15rem"><b>${ok} von ${n}</b> richtig</p>
+    ${miss.length?`<div class="panel missed"><b>Diese übst du noch einmal:</b><ul>${miss.map(l=>`<li>${esc(l.n)}: im ${RN[l.r]}</li>`).join("")}</ul></div>`:""}
+    <button class="go" id="again">Nochmal üben</button>
+    ${nxt&&st>=2?`<button class="ghost" id="nx">Weiter: ${esc(nxt.t)}</button>`:""}
+    <button class="ghost" id="hm">Alle Kapitel</button></section>`;
+  if(st>=2)beep([523.25,659.25,783.99,1046.5],.2);
+  if(S.ton)speak(cheer+` Du hast ${ok} von ${n} richtig.`);
+  $("#again").onclick=()=>startRound(id);$("#hm").onclick=home;if($("#nx"))$("#nx").onclick=()=>openCh(nxt.id);
+  scrollTo(0,0)}
+
+/* Lernwelt: direkt ins Kapitel (nachbarn.html#lage …), Anker stehen in hefte.js */
+function kapitelSprung(){const id=location.hash.slice(1);if(!chOf(id))return false;openCh(id);return true}
+window.lwStart?lwStart('home',kapitelSprung):(kapitelSprung()||home());
+</script>
+<script>/* Lernwelt: Kapitel-Fortschritt für die Startseite (siehe sync.js) */
+if(window.LW&&LW.kapitel){
+LW.kapitel(function(){
+  return CH.map(function(c){return {t:c.t,p:anteil(c)}});
+});
+}</script>
+</body></html>

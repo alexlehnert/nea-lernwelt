@@ -40,6 +40,10 @@ svg{display:block}
 .map .ring{fill:none;stroke:var(--lw-c);stroke-width:2.4;stroke-dasharray:3 3;pointer-events:none}
 .map .city{fill:var(--lw-ink);stroke:var(--lw-card);stroke-width:2}
 .map .city.big{fill:#E11D48;stroke:#fff;stroke-width:3}
+.map .nlbl{font:600 10.5px var(--lw-f-d);fill:var(--lw-ink);opacity:.8;pointer-events:none}
+.map .nlbl.hl{fill:#fff;opacity:1;font-weight:700}
+.map .clbl{font:700 11px var(--lw-f-b);fill:var(--lw-ink);paint-order:stroke;stroke:var(--lw-card);stroke-width:3px;stroke-linejoin:round;pointer-events:none}
+.map .city.ov{fill:#E11D48;stroke:#fff;stroke-width:1.6;pointer-events:none}
 .map .lbl{font:700 15px var(--lw-f-d);fill:var(--lw-ink);paint-order:stroke;stroke:var(--lw-card);stroke-width:4px;stroke-linejoin:round;pointer-events:none}
 
 /* Startseite */
@@ -79,6 +83,13 @@ svg{display:block}
 .lchip.seen i::after{content:"";width:9px;height:5px;border:solid #fff;border-width:0 0 3px 3px;transform:translateY(-1px) rotate(-45deg)}
 .lchip[aria-pressed="true"]{border-color:var(--lw-c);background:var(--lw-cs)}
 
+.toggles{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
+.tgl{min-width:0;min-height:50px;padding:8px 10px;font-size:.98rem;border-radius:16px;border:2px solid var(--lw-line);border-bottom-width:4px;background:var(--lw-card);font-weight:700;display:flex;align-items:center;gap:10px}
+.tgl i{flex:none;width:40px;height:24px;border-radius:99px;background:var(--lw-line);position:relative;transition:background .15s}
+.tgl i::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25);transition:transform .15s}
+.tgl[aria-pressed="true"]{border-color:var(--lw-c)}
+.tgl[aria-pressed="true"] i{background:var(--lw-c)}
+.tgl[aria-pressed="true"] i::after{transform:translateX(16px)}
 .text{gap:12px;font-size:1.08rem;line-height:1.55}
 .text mark{background:#FFE58A;color:#2A2100;border-radius:4px;padding:0 2px}
 /* Runde */
@@ -217,9 +228,25 @@ const FAKT=[
 ];
 const nm=l=>(l.das?"das ":"")+l.n;            // „das Saarland“
 const Nm=l=>(l.das?"Das ":"")+l.n;
+const vom=l=>l.das?"vom "+l.n:"von "+l.n;   // „die Hauptstadt vom Saarland“
 /* Beschriftungs-Punkte, wo der Schwerpunkt ungünstig liegt */
 const LBL={BB:[352,222],HB:[124,136],HH:[184,106],BE:[322,180]};
 const lbl=id=>LBL[id]||MAP.l[id].c;
+/* Übersichtskarte: Platz für Ländernamen (x, y, Zeilen) und für die Hauptstadt-Namen (dx, dy, Ausrichtung) */
+const OVN={SH:[150,84,["Schleswig-","Holstein"]],MV:[300,80,["Mecklenburg-","Vorpommern"]],NI:[110,190,["Nieder-","sachsen"]],
+  ST:[250,236,["Sachsen-","Anhalt"]],BB:[360,236,["Branden-","burg"]],NW:[78,226,["Nordrhein-","Westfalen"]],HE:[150,290,["Hessen"]],
+  TH:[220,306,["Thüringen"]],SN:[302,296,["Sachsen"]],RP:[72,330,["Rhein-","land-","Pfalz"]],SL:[38,416,["Saarland"]],
+  BW:[150,465,["Baden-","Württem-","berg"]],BY:[260,410,["Bayern"]],HH:[200,122,["Hamburg"]],HB:[120,126,["Bremen"]],BE:[335,172,["Berlin"]]};
+const OVC={Kiel:[7,-3,"start"],Schwerin:[0,-9,"middle"],Hamburg:[8,-4,"start"],Bremen:[-7,-5,"end"],Hannover:[0,15,"middle"],
+  Berlin:[8,-4,"start"],Potsdam:[-4,14,"end"],Magdeburg:[0,-9,"middle"],"Düsseldorf":[7,4,"start"],Erfurt:[0,-9,"middle"],
+  Dresden:[0,-9,"middle"],Wiesbaden:[3,-8,"start"],Mainz:[-6,11,"end"],"Saarbrücken":[7,4,"start"],Stuttgart:[0,15,"middle"],"München":[0,15,"middle"]};
+function ovLayer(ov,only,hl){const out=[];const ids=only||L.map(l=>l.id);
+  ids.forEach(id=>{const l=LAND(id);
+    if(ov.c){const [x,y]=MAP.cap[l.s],[dx,dy,a]=OVC[l.s];
+      out.push(`<circle class="city ov" cx="${x}" cy="${y}" r="4"/><text class="clbl" x="${x+dx}" y="${y+dy}" text-anchor="${a}">${esc(l.s)}</text>`)}
+    if(ov.n&&!(ov.c&&l.staat)){const [x,y,ls]=OVN[id];const y0=y-(ls.length-1)*6;
+      out.push(`<text class="nlbl${hl?" hl":""}" x="${x}" y="${y0}" text-anchor="middle">${ls.map((t,i)=>`<tspan x="${x}" dy="${i?12:0}">${esc(t)}</tspan>`).join("")}</text>`)}});
+  return out.join("")}
 
 /* ================= Zustand ================= */
 const KEY="bundeslaender-v1";
@@ -268,8 +295,9 @@ function mapSVG(o){o=o||{};const c=o.cls||{};
   const hits=o.tap?["HB","HH","BE"].map(id=>{const [x,y]=lbl(id);return `<circle class="hit" data-l="${id}" cx="${MAP.l[id].c[0]}" cy="${MAP.l[id].c[1]}" r="13"/>`}).join(""):"";
   const rings=(o.ring||[]).map(id=>`<circle class="ring" cx="${MAP.l[id].c[0]}" cy="${MAP.l[id].c[1]}" r="15"/>`).join("");
   const cities=(o.cities||[]).map(s=>{const [x,y]=MAP.cap[s];return `<circle class="city ${o.bigCity?"big":""}" cx="${x}" cy="${y}" r="${o.bigCity?8:4.5}"/>`}).join("");
+  const ovl=o.ov?ovLayer(o.ov,o.ovOnly):"";
   const labels=(o.label||[]).map(id=>{const [x,y]=lbl(id);return `<text class="lbl" x="${x}" y="${y+5}" text-anchor="middle">${esc(LAND(id).n.replace("-","-​"))}</text>`}).join("");
-  return `<div class="map ${o.tap?"tap":""}" style="${o.mh?"--mh:"+o.mh:""}"><svg viewBox="0 0 ${MAP.w} ${MAP.h}" role="img" aria-label="Karte von Deutschland mit den 16 Bundesländern">${ps}${rings}${cities}${hits}${labels}</svg></div>`}
+  return `<div class="map ${o.tap?"tap":""}" style="${o.mh?"--mh:"+o.mh:""}"><svg viewBox="0 0 ${MAP.w} ${MAP.h}" role="img" aria-label="Karte von Deutschland mit den 16 Bundesländern">${ps}${rings}${ovl}${cities}${hits}${labels}</svg></div>`}
 /* Fortschritt aller Länder in einem Kapitel: Land wird kräftiger, je mehr Punkte */
 
 /* ================= Kapitel ================= */
@@ -280,6 +308,7 @@ const CH=[
   {id:"name",t:"Wie heißt das Land?",d:"Ein Land leuchtet. Welches ist es?",ico:"look",n:8},
   {id:"stadt",t:"Hauptstädte",d:"Wie heißt die Hauptstadt von diesem Land?",ico:"city",n:8},
   {id:"land",t:"Zu welchem Land gehört die Stadt?",d:"Von der Hauptstadt zum Bundesland",ico:"city",n:8},
+  {id:"stadtlage",t:"Wo liegt die Hauptstadt?",d:"Du hörst eine Stadt und tippst ihr Land auf der Karte an",ico:"pin",n:8},
   {id:"mix",t:"Große Deutschland-Reise",d:"Alles gemischt",ico:"mix",n:10}
 ];
 const chOf=id=>CH.find(c=>c.id===id);
@@ -293,7 +322,7 @@ const sterne=p=>p>=.999?3:p>=2/3?2:p>=1/3?1:0;
 
 /* ================= Startseite ================= */
 function home(){hush();R=null;
-  const sicher=L.filter(l=>["lage","name","stadt","land"].every(c=>dots(c,l.id)>=3)).length;
+  const sicher=L.filter(l=>["lage","name","stadt","land","stadtlage"].every(c=>dots(c,l.id)>=3)).length;
   app.innerHTML=`
   <section class="panel"><div class="hero"><span class="badge">${I.map}</span><div class="grow"><h2 style="font-size:1.35rem">Die Bundesrepublik Deutschland hat 16 Bundesländer</h2>
     <p class="small">Jedes Land hat eine Hauptstadt. Wie viele kennst du schon?</p></div></div>
@@ -330,23 +359,34 @@ function lesen(){hush();R=null;
 /* ================= Entdecken ================= */
 let SEL=null;
 function satz(l){return `${Nm(l)}. Die Hauptstadt ist ${l.s}. ${l.staat?"":Nm(l)+" ist ein Flächenstaat. "}${l.f}`}
-function entdecken(sel){hush();R=null;SEL=sel||null;const l=SEL&&LAND(SEL);
+/* Schalter der Übersichtskarte: Ländernamen und Hauptstädte ein- oder ausblenden */
+const ov=()=>S.ov||(S.ov={n:true,c:true});
+function entdecken(sel){hush();R=null;SEL=sel||null;const l=SEL&&LAND(SEL),o=ov();
+  // Ein angetipptes Land zeigt immer seinen Namen und seine Hauptstadt, auch wenn die Schalter aus sind
+  const extra=l?ovLayer({n:true,c:true},[l.id],1):"";
   app.innerHTML=`<div class="chead"><button class="backb" id="cbk">${I.back}Alle Kapitel</button></div>
-    <div><h2>Deutschland entdecken</h2><p class="small" style="margin-top:4px">Tippe ein Land auf der Karte an. Du hörst, wie es heißt und wie seine Hauptstadt heißt.</p></div>
-    ${mapSVG({tap:true,mh:"56vh",cls:SEL?{[SEL]:"on"}:{},base:x=>S.seen.includes(x.id)?"seen":"",cities:l?[l.s]:[],ring:l&&l.staat?[l.id]:[],label:l?[l.id]:[]})}
+    <div><h2>Deutschland entdecken</h2><p class="small" style="margin-top:4px">Das ist die Deutschlandkarte mit allen 16 Ländern und ihren Hauptstädten. Tippe ein Land an und hör zu.</p></div>
+    <div class="toggles" role="group" aria-label="Auf der Karte zeigen">
+      <button class="tgl" data-ov="n" aria-pressed="${o.n}"><i></i>Ländernamen</button>
+      <button class="tgl" data-ov="c" aria-pressed="${o.c}"><i></i>Hauptstädte</button></div>
+    ${mapSVG({tap:true,mh:"72vh",ov:o,ovOnly:L.map(x=>x.id).filter(x=>x!==SEL),cls:SEL?{[SEL]:"on"}:{},base:x=>S.seen.includes(x.id)?"seen":"",ring:l&&l.staat?[l.id]:[]}).replace("</svg>",extra+"</svg>")}
     ${l?`<section class="panel info" aria-live="polite"><span class="kick">Bundesland ${S.seen.length} von 16 entdeckt</span><h3>${esc(l.n)}</h3>
       <p class="cap">Hauptstadt: <b>${esc(l.s)}</b></p><p class="small"><b style="color:var(--lw-ink)">${l.staat?"Stadtstaat":"Flächenstaat"}</b>${l.staat?": Stadt und Bundesland zugleich":""}</p><p>${esc(l.f)}</p>
       ${TTS.ok?`<button class="ghost" id="again">${I.spk}<span>Nochmal hören</span></button>`:""}</section>`
-      :`<section class="panel"><p>${S.seen.length?`Du hast schon <b>${S.seen.length} von 16</b> Ländern entdeckt. Die grünen kennst du schon.`:"Los geht's! Welches Land tippst du zuerst an?"}</p></section>`}
-    <div class="chips">${L.map(x=>`<button class="lchip ${S.seen.includes(x.id)?"seen":""}" data-l="${x.id}" aria-pressed="${x.id===SEL}"><i></i>${esc(x.n)}</button>`).join("")}</div>
-    ${S.seen.length===16?`<section class="panel"><b>Alle 16 entdeckt!</b><p class="small">Jetzt kannst du im nächsten Kapitel zeigen, wo die Länder liegen.</p><button class="go" id="nx">Weiter: Wo liegt das Land?</button></section>`:""}`;
+      :`<section class="panel"><p>${S.seen.length?`Du hast schon <b>${S.seen.length} von 16</b> Ländern angetippt. Die dunkleren kennst du schon.`:"Los geht's! Welches Land tippst du zuerst an?"}</p></section>`}
+    <section class="panel"><h3>Selbst abfragen</h3>
+      <p class="small">Schalte oben die Namen aus und schau, ob du noch alles weißt. Oder lass dich abfragen: Du hörst eine Frage und tippst auf die Karte.</p>
+      <button class="go" id="qz1">${I.pin}<span>Tippe auf das Land</span></button>
+      <button class="go" id="qz2">${I.city}<span>Wo liegt die Hauptstadt?</span></button></section>
+    <div class="chips">${L.map(x=>`<button class="lchip ${S.seen.includes(x.id)?"seen":""}" data-l="${x.id}" aria-pressed="${x.id===SEL}"><i></i>${esc(x.n)}</button>`).join("")}</div>`;
   $("#cbk").onclick=home;
+  app.querySelectorAll("[data-ov]").forEach(b=>b.onclick=()=>{const k=b.dataset.ov;o[k]=!o[k];save();const y=scrollY;entdecken(SEL);scrollTo(0,y)});
   app.querySelectorAll("[data-l]").forEach(el=>el.addEventListener("click",()=>{const id=el.dataset.l;
     if(!S.seen.includes(id)){S.seen.push(id);save()}
-    const y=scrollY;entdecken(id);if(el.closest(".chips"))scrollTo(0,y);else{const p=$(".info");if(p)p.scrollIntoView({block:"nearest",behavior:"smooth"})}
+    const y=scrollY;entdecken(id);if(el.closest(".chips"))scrollTo(0,y);else{scrollTo(0,y);const p=$(".info");if(p)p.scrollIntoView({block:"nearest",behavior:"smooth"})}
     speak(satz(LAND(id)))}));
   if($("#again"))$("#again").onclick=()=>speak(satz(l));
-  if($("#nx"))$("#nx").onclick=()=>startRound("lage");
+  $("#qz1").onclick=()=>startRound("lage");$("#qz2").onclick=()=>startRound("stadtlage");
   if(!sel)scrollTo(0,0)}
 
 /* ================= Aufgaben ================= */
@@ -363,8 +403,9 @@ const T={
   lage(l){return {l,ch:"lage",kind:"map",q:`Wo liegt <em>${esc(nm(l))}</em>?`,say:`Wo liegt ${nm(l)}? Tippe es auf der Karte an.`}},
   name(l){const o=shuffle([l,...others(l,2)]);return {l,ch:"name",kind:"mc",q:"Wie heißt das Land, das leuchtet?",say:"Wie heißt das Land, das leuchtet?",
     map:{cls:{[l.id]:"on"},ring:l.staat?[l.id]:[]},opts:o.map(x=>({h:x.n,ok:x===l}))}},
-  stadt(l){const o=shuffle([l,...others(l,2)]);return {l,ch:"stadt",kind:"mc",q:`Was ist die Hauptstadt von <em>${esc(nm(l))}</em>?`,say:`Was ist die Hauptstadt von ${nm(l)}?`,
+  stadt(l){const o=shuffle([l,...others(l,2)]);return {l,ch:"stadt",kind:"mc",q:`Was ist die Hauptstadt <em>${esc(vom(l))}</em>?`,say:`Was ist die Hauptstadt ${vom(l)}?`,
     map:{cls:{[l.id]:"on"},ring:l.staat?[l.id]:[],mh:"34vh"},opts:o.map(x=>({h:x.s,ok:x===l}))}},
+  stadtlage(l){return {l,ch:"stadtlage",kind:"map",city:true,q:`Wo liegt <em>${esc(l.s)}</em>?`,say:`Wo liegt die Stadt ${l.s}? Tippe ihr Bundesland auf der Karte an.`}},
   land(l){const o=shuffle([l,...others(l,2)]);return {l,ch:"land",kind:"mc",q:`Zu welchem Land gehört <em>${esc(l.s)}</em>?`,say:`Zu welchem Bundesland gehört die Stadt ${l.s}?`,
     map:{cities:[l.s],bigCity:true,base:()=>"dim",mh:"34vh"},opts:o.map(x=>({h:x.n,ok:x===l}))}}
 };
@@ -381,7 +422,7 @@ function startRound(id){hush();const c=chOf(id);
   const ls=choose(id,c.n);
   let tasks;
   if(id==="staat")tasks=shuffle(chooseFakt(7).map(faktTask).concat(chooseArt(3).map(artTask)));
-  else{tasks=ls.map(l=>T[id==="mix"?pick(["lage","name","stadt","land"]):id](l));
+  else{tasks=ls.map(l=>T[id==="mix"?pick(["lage","name","stadt","land","stadtlage"]):id](l));
     if(id==="mix"){tasks.splice(rand(tasks.length),1,faktTask(pick(FAKT)));tasks.splice(rand(tasks.length),1,artTask(pick(L)))}}
   R={id,i:0,ok:0,res:[],miss:[],tasks};R.n=R.tasks.length;showTask()}
 function track(){$("#track").innerHTML=Array.from({length:R.n},(_,i)=>`<i class="${i<R.res.length?(R.res[i]?"ok":"no"):(i===R.i?"now":"")}"></i>`).join("")}
@@ -391,9 +432,12 @@ function showTask(){hush();const t=R.tasks[R.i];R.locked=false;
     <section class="stage" id="cb"></section>`;
   $("#quit").onclick=home;track();
   const cb=$("#cb");
-  if(t.kind==="map"){cb.innerHTML=mapSVG({tap:true,mh:"60vh"});
+  if(t.kind==="map"){const dots=t.city?L.map(x=>x.s):[];
+    if(t.city)cb.insertAdjacentHTML("beforebegin",`<p class="small" style="margin-top:-6px">Tippe das Bundesland an, in dem die Stadt liegt. Die Punkte sind die Hauptstädte.</p>`);
+    cb.innerHTML=mapSVG({tap:true,mh:"60vh",cities:dots});
     cb.querySelectorAll("[data-l]").forEach(el=>el.addEventListener("click",()=>{if(R.locked)return;const ok=el.dataset.l===t.l.id;
-      cb.innerHTML=mapSVG({mh:"60vh",cls:ok?{[t.l.id]:"ok"}:{[t.l.id]:"ok",[el.dataset.l]:"bad"},label:ok?[t.l.id]:[t.l.id,el.dataset.l],ring:t.l.staat?[t.l.id]:[]});
+      cb.innerHTML=mapSVG({mh:"60vh",cls:ok?{[t.l.id]:"ok"}:{[t.l.id]:"ok",[el.dataset.l]:"bad"},ring:t.l.staat?[t.l.id]:[],
+        label:t.city?(ok?[]:[el.dataset.l]):ok?[t.l.id]:[t.l.id,el.dataset.l],cities:dots,ov:t.city?{n:true,c:true}:null,ovOnly:[t.l.id]});
       done(ok,ok?null:LAND(el.dataset.l))}))}
   else{cb.innerHTML=(t.map?mapSVG(t.map):"")+`<div class="opts">${t.opts.map((o,i)=>`<button class="opt" data-i="${i}">${esc(o.h)}</button>`).join("")}</div>`;
     cb.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{if(R.locked)return;const o=t.opts[+b.dataset.i];
@@ -412,9 +456,11 @@ function done(ok,wrong){if(R.locked)return;R.locked=true;const t=R.tasks[R.i],l=
   if(t.fakt){big=l.big;txt=l.txt}
   else if(t.ch==="art"){big=`${Nm(l)} ist ein ${l.staat?"Stadtstaat":"Flächenstaat"}.`;txt=l.staat?`${l.n} ist Stadt und Bundesland zugleich. Die drei Stadtstaaten sind Berlin, Hamburg und Bremen.`:`${Nm(l)} ist ein großes Land mit vielen Städten und Dörfern. Die Hauptstadt ist ${l.s}.`}
   else if(t.ch==="lage"){big=ok?`Das ist ${nm(l)}!`:`Das war ${nm(wrong)}.`;txt=ok?l.f:`${Nm(l)} ist grün markiert. ${l.f}`}
+  else if(t.ch==="stadtlage"){big=`${l.s} liegt in ${l.das?"im Saarland":l.n}.`.replace("in im","im");
+    txt=ok?`${l.s} ist die Hauptstadt ${vom(l)}.`:`Du hast ${nm(wrong)} angetippt. ${l.s} ist die Hauptstadt ${vom(l)}. ${Nm(l)} ist grün markiert.`}
   else if(t.ch==="name"){big=`Das ist ${nm(l)}.`;txt=l.f}
-  else if(t.ch==="stadt"){big=`Die Hauptstadt von ${nm(l)} ist ${l.s}.`;txt=l.staat?`${l.n} ist eine Stadt und ein Bundesland zugleich. Darum heißt die Hauptstadt genauso.`:l.f}
-  else{big=`${l.s} liegt in ${l.das?"im Saarland":l.n}.`.replace("in im","im");txt=`${l.s} ist die Hauptstadt von ${nm(l)}.`}
+  else if(t.ch==="stadt"){big=`Die Hauptstadt ${vom(l)} ist ${l.s}.`;txt=l.staat?`${l.n} ist eine Stadt und ein Bundesland zugleich. Darum heißt die Hauptstadt genauso.`:l.f}
+  else{big=`${l.s} liegt in ${l.das?"im Saarland":l.n}.`.replace("in im","im");txt=`${l.s} ist die Hauptstadt ${vom(l)}.`}
   const fb=document.createElement("div");fb.className="fb "+(ok?"ok":"bad");fb.setAttribute("role","status");
   fb.innerHTML=`<strong>${ok?pick(["Richtig!","Super!","Genau!","Klasse!","Toll!"]):"Nicht ganz"}</strong><div class="big">${esc(big)}</div><p>${esc(txt)}</p>`;
   const extra=[];
