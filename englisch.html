@@ -791,7 +791,7 @@ const SND=['[s] scharf wie eine Schlange','[z] summend wie eine Fliege','[ɪz] e
 const GRAW=[
 ['G2','c','I ___ eleven.','am'],['G2','c','Sherlock ___ a dog.','is'],['G2','c','Ruby and Ryan ___ twins.','are'],
 ['G2','c','We ___ from Greenwich.','are'],['G2','c','___ you ten?','Are'],['G2','c','My pencil case ___ purple.','is'],
-['G2','c','___ I late?','Am'],['G2','c','You and Karam ___ my best friends.','are'],['G2','c','It ___ Friday today.','is'],
+['G2','c','___ I late?','Am'],['G2','c','You and Karam ___ my best friends.','are'],['G2','c','It ___ my first day of school.','is'],
 ['G2','t','Schreibe die Kurzform: I am',"I'm"],['G2','t','Schreibe die Kurzform: she is',"she's"],
 ['G2','t','Schreibe die Kurzform: we are',"we're"],['G2','t','Schreibe die Kurzform: they are',"they're"],
 ['G2','t','Schreibe die Kurzform: it is',"it's"],
@@ -838,13 +838,13 @@ const GRAW=[
 ['G6','t','We are in class 5b. ___ tutor is Mrs Wilson.','Our'],
 ['G6','t','Lily is new. ___ sister is Sophie.','Her'],
 ['G6','t','Karam is my friend. ___ is eleven.','He'],
-['G1','c','___ dog','a'],['G1','c','___ orange T-shirt','an'],['G1','c','___ animal','an'],
+['G1','c','___ dog','a'],['G1','c','___ orange T-shirt','an'],['G1','c','___ armchair','an'],
 ['G1','c','___ uniform','a',null,'uniform spricht man „ju…“ – das ist ein Konsonant-Laut, also a uniform.'],
 ['G1','c','___ exercise book','an'],['G1','c','___ big house','a'],['G1','c','___ ugly photo','an'],
 ['G1','c','___ helmet','a'],['G1','c','___ art lesson','an'],['G1','c','___ ice cream','an'],
 ['G1','c','___ yellow flower','a'],['G1','c','___ English book','an'],['G1','c','___ old bike','an'],
 ['G1','c','a dog → ___ orange dog','an',['a','an','the'],'Das Adjektiv entscheidet mit: orange beginnt mit Vokal-Laut.'],
-['G1','c','an animal → ___ big animal','a',['a','an','the'],'Das Adjektiv entscheidet mit: big beginnt mit Konsonant-Laut.'],
+['G1','c','an orange → ___ big orange','a',['a','an','the'],'Das Adjektiv entscheidet mit: big beginnt mit Konsonant-Laut.'],
 ['G1','t','Plural: dog','dogs',null,PL_S],['G1','t','Plural: class','classes',null,PL_ES],['G1','t','Plural: hobby','hobbies',null,PL_IES],
 ['G1','t','Plural: man','men',null,PL_IRR],['G1','t','Plural: woman','women',null,PL_IRR],['G1','t','Plural: sandwich','sandwiches',null,PL_ES],
 ['G1','t','Plural: baby','babies',null,PL_IES],['G1','t','Plural: library','libraries',null,PL_IES],['G1','t','Plural: boy','boys',null,PL_YS],
@@ -857,15 +857,15 @@ const GRAW=[
 ['G1','c','Wie klingt das Plural-s? maps',SND[0],SND,'Nach p klingt es scharf.'],
 ['G1','c','Wie klingt das Plural-s? pencil cases',SND[2],SND,'Nach -ce bekommt das Plural eine eigene Silbe.'],
 ['G3','c','There ___ a clock on the wall.','is'],['G3','c','There ___ two chairs in my room.','are'],
-['G3','c','There ___ twenty desks in the classroom.','are'],['G3','c','There ___ a reading corner in the library.','is'],
-['G3','c','Sshhh! There ___ people in the library.','are',null,'people ist Mehrzahl → are.'],
-['G3','c','___ there a dog under the table?','Is'],['G3','c','___ there any students?','Are'],
+['G3','c','There ___ twelve desks in the classroom.','are'],['G3','c','There ___ a reading corner in the library.','is'],
+['G3','c','Look! There ___ people in the library.','are',null,'people ist Mehrzahl → are.'],
+['G3','c','___ there a dog under the table?','Is'],['G3','c','___ there students in the classroom?','Are'],
 ['G3','c','Is there a noticeboard? (✔)','Yes, there is.',['Yes, there is.',"Yes, there's.",'Yes, it is.'],'Bei Yes keine Kurzform.'],
 ['G3','c','Are there two dogs? (✘)',"No, there aren't.",["No, there aren't.","No, there isn't.","No, they aren't."]],
 ['G3','c','Is there a bed? (✘)',"No, there isn't.",["No, there isn't.","No, there aren't.","No, it isn't."]],
 ['G3','c','Kein Lehrer da: There ___ teacher in the classroom.','is no',['is no','are no',"isn't no"]],
 ['G3','c','Keine Bücher da: There ___ books on the desk.','are no',['are no','is no','not are']],
-['G3','c','How many chairs ___ there? – There are two.','are'],
+['G3','c','There ___ two chairs next to the door.','are'],
 ['G3','t','There ___ a cat on the chair.','is'],['G3','t','There ___ three pencils on the table.','are'],
 ['G3','t','Keine Katze: There ___ cat in my bedroom.','is no'],
 ['G3','t','Keine Schüler: There ___ students in the classroom.','are no'],
@@ -888,14 +888,14 @@ const G7RAW=[
  {k:1,t:'c',q:'___ hobbies are football and netball.',h:'Ruby',a:"Ruby's",o:["Ruby's","Rubys'","Rubys"],ex:'Ruby ist eine Person → '+P1},
  {k:2,t:'c',pic:'🧒🧒 🐕',pd:'Zwei Jungen mit einem Hund',q:'the ___ dog',h:'boys',a:"boys'",o:["boys'","boy's","boys's"],ex:'Zwei Jungen → '+P2},
  {k:2,t:'c',pic:'👧👧 🥪🥪',pd:'Zwei Mädchen mit ihren Sandwiches',q:'the ___ sandwiches',h:'girls',a:"girls'",o:["girls'","girl's","girls's"],ex:'Zwei Mädchen → '+P2},
- {k:2,t:'c',pic:'🐕🐕 ⚽⚽',pd:'Zwei Hunde mit ihren Bällen',q:'the ___ balls',h:'dogs',a:"dogs'",o:["dogs'","dog's","dogs"],ex:'Zwei Hunde → '+P2},
+ {k:2,t:'c',pic:'🐕🐕 🥣',pd:'Zwei Hunde und ihr Futter',q:'the ___ food',h:'dogs',a:"dogs'",o:["dogs'","dog's","dogs"],ex:'Zwei Hunde → '+P2},
  {k:2,t:'c',pic:'🐈🐈 🥣',pd:'Zwei Katzen und ihr Futter',q:'the ___ food',h:'cats',a:"cats'",o:["cats'","cat's","cats's"],ex:'Zwei Katzen → '+P2},
  {k:2,t:'c',pic:'🧑‍🎓🧑‍🎓 ✏️✏️',pd:'Zwei Schüler mit ihren Stiften',q:'the ___ pens',h:'students',a:"students'",o:["students'","student's","students"],ex:'Mehrere Schüler → '+P2},
  {k:2,t:'c',q:'Sherlock is the ___ dog.',h:'twins',a:"twins'",o:["twins'","twin's","twins's"],ex:'Die Zwillinge Ruby und Ryan sind zwei → '+P2},
  {k:2,t:'c',q:'Mrs Wilson is the ___ teacher.',h:'friends',a:"friends'",o:["friends'","friend's","friends's"],ex:'Mehrere Freunde → '+P2},
  {k:3,t:'c',q:'The ___ house is at 67 Kidbrooke Gardens.',h:'Eatons',a:"Eatons'",o:["Eatons'","Eaton's","Eatons's"],ex:'Die Eatons sind die ganze Familie, also mehrere → s’.'},
- {k:3,t:'c',q:'Sherlock wants to eat ___ sandwiches.',h:'Ryan and Ruby',a:"Ryan and Ruby's",o:["Ryan and Ruby's","Ryan's and Ruby's","Ryan and Rubys'"],ex:'Gehört etwas zwei Personen zusammen, bekommt nur der letzte Name ’s.'},
- {k:3,t:'c',pic:'🧒👧🧒 🧸',pd:'Kinder mit ihren Spielsachen',q:'the ___ toys',h:'children',a:"children's",o:["children's","childrens'","childrens"],ex:'children ist schon Mehrzahl, endet aber nicht auf s → ’s.'},
+ {k:3,t:'c',q:'___ house is in Greenwich.',h:'Ryan and Ruby',a:"Ryan and Ruby's",o:["Ryan and Ruby's","Ryan's and Ruby's","Ryan and Rubys'"],ex:'Gehört etwas zwei Personen zusammen, bekommt nur der letzte Name ’s.'},
+ {k:3,t:'c',pic:'👩👩 🚲🚲',pd:'Frauen mit ihren Fahrrädern',q:'the ___ bikes',h:'women',a:"women's",o:["women's","womens'","womens"],ex:'women ist schon Mehrzahl, endet aber nicht auf s → ’s.'},
  {k:3,t:'c',q:"He's my best friend. – Was bedeutet ’s hier?",a:'he is (Kurzform)',o:['he is (Kurzform)','Besitz: sein …'],ex:"he's = he is. Das ’s ist hier eine Kurzform, kein Besitz."},
  {k:3,t:'c',q:"Karam's football – Was bedeutet ’s hier?",a:'Besitz: der Fußball von Karam',o:['Besitz: der Fußball von Karam','Karam is (Kurzform)'],ex:'Hinter dem ’s steht ein Ding (football). Dann zeigt ’s, wem es gehört.'},
  {k:3,t:'c',q:"It's Lily's bike. – Welches ’s zeigt Besitz?",a:"Lily's",o:["It's","Lily's"],ex:"It's = it is (Kurzform). Lily's bike = das Fahrrad von Lily."},
@@ -906,15 +906,15 @@ const G7RAW=[
  {k:'t',t:'t',q:'Sherlock is the ___ dog.',h:'twins',a:"twins'",ex:'Die Zwillinge sind zwei → '+P2},
  {k:'t',t:'t',q:'The ___ house is at 67 Kidbrooke Gardens.',h:'Eatons',a:"Eatons'",ex:'Die Eatons = die ganze Familie, also mehrere → s’.'},
  {k:'t',t:'t',q:'Mrs Wilson is the ___ teacher.',h:'friends',a:"friends'",ex:'Mehrere Freunde → '+P2},
- {k:'t',t:'t',q:'Sherlock wants to eat ___ sandwiches.',h:'Ryan and Ruby',a:"Ryan and Ruby's",ex:'Zwei Personen, ein Ding: nur der letzte Name bekommt ’s.'},
+ {k:'t',t:'t',q:'___ house is in Greenwich.',h:'Ryan and Ruby',a:"Ryan and Ruby's",ex:'Zwei Personen, ein Ding: nur der letzte Name bekommt ’s.'},
  {k:'t',t:'t',pic:'🧑‍🎓🧑‍🎓 ✏️✏️',pd:'Zwei Schüler mit ihren Stiften',q:'the ___ pens',h:'students',a:"students'",ex:'Mehrere Schüler → '+P2},
  {k:'t',t:'t',pic:'🧑‍🎓 ✏️',pd:'Ein Schüler mit seinen Stiften',q:"the ___ pens",h:'student',a:"student's",ex:'Ein Schüler → '+P1},
  {k:'t',t:'t',pic:'👩‍🏫 📕📕',pd:'Eine Lehrerin mit ihren Büchern',q:'the ___ books',h:'teacher',a:"teacher's",ex:'Eine Lehrerin → '+P1},
- {k:'t',t:'t',pic:'🐕🐕 ⚽⚽',pd:'Zwei Hunde mit ihren Bällen',q:'the ___ balls',h:'dogs',a:"dogs'",ex:'Zwei Hunde → '+P2},
+ {k:'t',t:'t',pic:'🐕🐕 🥣',pd:'Zwei Hunde und ihr Futter',q:'the ___ food',h:'dogs',a:"dogs'",ex:'Zwei Hunde → '+P2},
  {k:'t',t:'t',pic:'🐈 🥣',pd:'Eine Katze und ihr Futter',q:'the ___ food',h:'cat',a:"cat's",ex:'Eine Katze → '+P1},
  {k:'t',t:'t',q:'My ___ bedroom is next to my room.',h:'brother',a:"brother's",ex:'Ein Bruder → '+P1},
  {k:'t',t:'t',q:'My ___ flat is in Greenwich.',h:'family',a:"family's",ex:'family ist ein Wort (Einzahl) → ’s: my family’s flat.'},
- {k:'t',t:'t',q:'The ___ toys are in the box.',h:'children',a:"children's",ex:'children ist Mehrzahl ohne s am Ende → ’s.'}];
+ {k:'t',t:'t',q:'The ___ bikes are in the garden.',h:'men',a:"men's",ex:'men ist Mehrzahl ohne s am Ende → ’s.'}];
 EXD.G7="Ein Besitzer: ’s (the boy’s dog, Ruby’s room). Mehrere Besitzer mit s am Ende: s’ (the boys’ dog). Achtung: he’s = he is ist eine Kurzform, kein Besitz.";
 G7RAW.forEach((x,i)=>G.push({id:'gp'+i,g:'G7',t:x.t,k:x.k,q:x.q,h:x.h,pic:x.pic,pd:x.pd,a:[x.a],opts:x.o,ex:x.ex}));
 /* Erklär-Karten, die im ersten Durchgang zwischen den Aufgaben kommen (auch im Kapitel unter „Erklärung ansehen“) */
@@ -932,8 +932,8 @@ const RULES={G7:[
   <p class="gnote">👂 <b>boy’s</b> und <b>boys’</b> klingen gleich! Den Unterschied siehst du nur beim Schreiben. Frag dich immer: <i>Ist es einer oder sind es mehrere?</i></p>`,say:"the boys' dog. the girls' sandwiches."},
  {k:3,h:'Besondere Fälle',b:`<div class="gex"><span class="gpic">👫</span><span><b>Ryan and Ruby’s sandwiches</b><small>zwei Namen, ein Ding: nur der letzte Name bekommt ’s</small></span></div>
   <div class="gex"><span class="gpic">🏠</span><span><b>the Eatons’ house</b><small>die Eatons = die ganze Familie, also mehrere → s’</small></span></div>
-  <div class="gex"><span class="gpic">🧸</span><span><b>the children’s toys</b><small>Mehrzahl ohne s (children, men, women) → ’s</small></span></div>
-  <p class="gnote">⚠️ <b>he’s, she’s, it’s</b> sind Kurzformen: he’s = he is. Das ist kein Besitz! Zeigt ’s Besitz, steht danach ein Ding: <i>Karam’s football</i>.</p>`,say:"Ryan and Ruby's sandwiches. the Eatons' house. the children's toys."},
+  <div class="gex"><span class="gpic">🚲</span><span><b>the women’s bikes</b><small>Mehrzahl ohne s (men, women) → ’s</small></span></div>
+  <p class="gnote">⚠️ <b>he’s, she’s, it’s</b> sind Kurzformen: he’s = he is. Das ist kein Besitz! Zeigt ’s Besitz, steht danach ein Ding: <i>Karam’s football</i>.</p>`,say:"Ryan and Ruby's sandwiches. the Eatons' house. the women's bikes."},
  {k:'t',h:'Jetzt tippst du selbst: das Apostroph ’',b:`<p>Gleich schreibst du die Wörter selbst, so wie im Buch: <i>Karam is (Ryan) best friend.</i> → <b>Ryan’s</b></p>
   <p class="lbl" style="margin:4px 0 0">So findest du ’ auf dem iPhone</p>
   <ol class="gsteps">
@@ -952,23 +952,23 @@ const G8RAW=[
  {k:1,t:'c',q:'Ryan ___ a dog. His name is Sherlock.',h:'have got',a:'has got',o:['have got','has got'],ex:'Ryan = he → '+HG3},
  {k:1,t:'c',q:'Ruby and Ryan ___ a big house in Greenwich.',h:'have got',a:'have got',o:['have got','has got'],ex:'Ruby and Ryan = they → '+HG1},
  {k:1,t:'c',q:'Lily ___ a cat. Her name is Lulu.',h:'have got',a:'has got',o:['have got','has got'],ex:'Lily = she → '+HG3},
- {k:1,t:'c',pic:'🐶',pd:'Sherlock mit braunen Ohren',q:'Sherlock ___ brown ears.',h:'have got',a:'has got',o:['have got','has got'],ex:'Sherlock = he (ein Tier) → has got. Auch fürs Aussehen sagst du have got.'},
+ {k:1,t:'c',pic:'🐶 🛏️',pd:'Sherlock und sein neues Bett',q:'Sherlock ___ a new bed.',h:'have got',a:'has got',o:['have got','has got'],ex:'Sherlock = he (ein Tier) → has got.'},
  {k:1,t:'c',q:'We ___ a great teacher.',h:'have got',a:'have got',o:['have got','has got'],ex:'we → have got.'},
- {k:1,t:'c',pic:'🤧',pd:'Jemand niest',q:"I've got a cold. – Was heißt das?",a:'Ich bin erkältet.',o:['Ich bin erkältet.','Ich bekomme eine Erkältung.','Ich hatte eine Erkältung.'],ex:'Bei Krankheiten sagst du have got: I’ve got a cold. = Ich habe eine Erkältung.'},
+ {k:1,t:'c',pic:'🐾',pd:'Pfotenabdrücke',q:"I've got a pet. – Was heißt das?",a:'Ich habe ein Haustier.',o:['Ich habe ein Haustier.','Ich bekomme ein Haustier.','Ich hatte ein Haustier.'],ex:'have got = haben. Das got übersetzt du nicht extra.'},
  {k:2,t:'c',q:'I have got → ___',a:"I've got",o:["I've got","I'm got","I's got"],ex:'have got → ’ve got. Das ha fällt weg, dafür kommt das Apostroph.'},
  {k:2,t:'c',q:'she has got → ___',a:"she's got",o:["she's got","she've got","she has'got"],ex:'has got → ’s got.'},
  {k:2,t:'c',q:'they have got → ___',a:"they've got",o:["they've got","they's got","their got"],ex:'they → have got → they’ve got.'},
  {k:2,t:'c',q:"She's got a brother. – Was bedeutet ’s hier?",a:'has (she has got)',o:['has (she has got)','is (she is)'],ex:'Steht got dahinter, ist ’s = has.'},
  {k:2,t:'c',q:"She's eleven. – Was bedeutet ’s hier?",a:'is (she is)',o:['has (she has got)','is (she is)'],ex:'Kein got dahinter → ’s = is: she is eleven.'},
- {k:2,t:'c',q:"He's got blue eyes. – Was bedeutet ’s hier?",a:'has (he has got)',o:['has (he has got)','is (he is)'],ex:'got steht dahinter → he has got blue eyes.'},
+ {k:2,t:'c',q:"He's got a blue bike. – Was bedeutet ’s hier?",a:'has (he has got)',o:['has (he has got)','is (he is)'],ex:'got steht dahinter → he has got a blue bike.'},
  {k:3,t:'c',q:'Lily ___ a dog. (✘)',a:"hasn't got",o:["hasn't got","haven't got","doesn't have got"],ex:"Lily = she → hasn't got. Kein doesn't bei have got!"},
  {k:3,t:'c',q:'I ___ a brother. (✘)',a:"haven't got",o:["haven't got","hasn't got","don't have got"],ex:"I → haven't got. Kein don't bei have got!"},
  {k:3,t:'c',q:'Ruby and Ryan ___ a cat. (✘)',a:"haven't got",o:["haven't got","hasn't got","aren't got"],ex:"they → haven't got."},
- {k:3,t:'c',pic:'🐶 😢',pd:'Sherlock ist traurig',q:'Sherlock ___ a ball. (✘)',a:"hasn't got",o:["hasn't got","haven't got","isn't got"],ex:"Sherlock = he → hasn't got."},
+ {k:3,t:'c',pic:'🐶 😢',pd:'Sherlock ist traurig',q:'Sherlock ___ a football. (✘)',a:"hasn't got",o:["hasn't got","haven't got","isn't got"],ex:"Sherlock = he → hasn't got."},
  {k:3,t:'c',q:'Kurzform: has not got → ___',a:"hasn't got",o:["hasn't got","hasnt' got","has'nt got"],ex:'Das Apostroph steht da, wo das o von not fehlt: has not → hasn’t.'},
  {k:4,t:'c',q:'___ you got a pet?',a:'Have',o:['Have','Has','Do'],ex:'Frage: Have/Has kommt nach vorne. Kein Do!'},
  {k:4,t:'c',q:'___ Karam got a sister?',a:'Has',o:['Has','Have','Does'],ex:'Karam = he → Has … got …? Kein Does!'},
- {k:4,t:'c',q:'What ___ you got in your bag? 🎒',a:'have',o:['have','has','do'],ex:'What have you got …? = Was hast du …?'},
+ {k:4,t:'c',q:'What ___ you got in your pencil case? ✏️',a:'have',o:['have','has','do'],ex:'What have you got …? = Was hast du …?'},
  {k:4,t:'c',q:'Have you got a bike? (✔)',a:'Yes, I have.',o:['Yes, I have.','Yes, I have got.',"Yes, I've."],ex:'In der Kurzantwort steht kein got. Und bei Yes keine Kurzform.'},
  {k:4,t:'c',q:'Has Lily got a brother? (✘)',a:"No, she hasn't.",o:["No, she hasn't.","No, she hasn't got.","No, she haven't."],ex:"Kurzantwort ohne got: No, she hasn't."},
  {k:4,t:'c',q:'Have Ruby and Ryan got a dog? (✔)',a:'Yes, they have.',o:['Yes, they have.','Yes, they has.',"Yes, they've."],ex:'Ruby and Ryan = they → Yes, they have.'},
@@ -976,18 +976,18 @@ const G8RAW=[
  {k:5,t:'c',q:'Welcher Satz ist richtig?',a:'Have you got a pen?',o:['Have you got a pen?','Do you have got a pen?','You have got a pen?'],ex:'Bei have got gibt es kein do. Die Frage beginnt mit Have oder Has.'},
  {k:5,t:'c',q:'Welcher Satz ist richtig?',a:"He hasn't got a bike.",o:["He hasn't got a bike.","He doesn't have got a bike.","He hasn't a bike."],ex:"Verneint: hasn't got. Kein doesn't und das got nicht vergessen."},
  {k:5,t:'c',q:'Ich habe einen Hund. 🐕',a:"I've got a dog.",o:["I've got a dog.","I got a dog.","I'm got a dog."],ex:'Ohne have heißt got „bekam“. Für „ich habe“ brauchst du have got: I’ve got.'},
- {k:5,t:'c',pic:'🤕',pd:'Jemand hält sich den Kopf',q:'Ich habe Kopfschmerzen.',a:"I've got a headache.",o:["I've got a headache.","I've got headache.","I am a headache."],ex:'Bei Krankheiten: have got + a: a headache, a cold, a temperature.'},
- {k:5,t:'c',pic:'🥣 ⏰',pd:'Frühstück am Morgen',q:'Every morning I ___ breakfast at 7.',a:'have',o:['have','have got','has got'],ex:'Für Tätigkeiten sagst du nur have, ohne got: have breakfast (frühstücken).'},
- {k:5,t:'c',pic:'🎉',pd:'Eine Party',q:"We always ___ fun at Ruby's parties.",a:'have',o:['have','have got','has got'],ex:'have fun = Spaß haben, das ist eine Tätigkeit → nur have.'},
+ {k:5,t:'c',q:'Ich habe eine Schwester.',a:"I've got a sister.",o:["I've got a sister.","I've got sister.","I am a sister."],ex:'have got + a: a sister, a dog, a bike.'},
+ {k:5,t:'c',q:'Welcher Satz ist richtig?',a:'Lily has got a cat.',o:['Lily has got a cat.','Lily have got a cat.','Lily is got a cat.'],ex:'Lily = she → has got. Nicht is got!'},
+ {k:5,t:'c',q:'Welcher Satz ist richtig?',a:'Have they got a dog?',o:['Have they got a dog?','Do they have got a dog?','Has they got a dog?'],ex:'they → Have … got …? Kein do!'},
  {k:'t',t:'t',q:'Karam ___ a sister.',h:'have got',a:['has got',"'s got"],ex:'Karam = he → has got.'},
  {k:'t',t:'t',q:'I ___ a new phone. 📱',h:'have got',a:['have got',"'ve got"],ex:'I → have got.'},
  {k:'t',t:'t',q:'Ruby and Ryan ___ a dog.',h:'have got',a:['have got',"'ve got"],ex:'they → have got.'},
- {k:'t',t:'t',pic:'👩‍🦰',pd:'Ein Mädchen mit langen roten Haaren',q:'She ___ long red hair.',h:'have got',a:['has got',"'s got"],ex:'she → has got. Fürs Aussehen sagst du have got.'},
+ {k:'t',t:'t',pic:'👩‍🦰',pd:'Ein Mädchen mit roten Haaren',q:'She ___ red hair.',h:'have got',a:['has got',"'s got"],ex:'she → has got. Fürs Aussehen sagst du auch have got.'},
  {k:'t',t:'t',q:'Lily ___ a brother. (✘)',h:'have got',a:["hasn't got","has not got"],ex:"Lily = she → hasn't got."},
  {k:'t',t:'t',q:'I ___ a bike. (✘)',h:'have got',a:["haven't got","have not got"],ex:"I → haven't got."},
  {k:'t',t:'t',q:'We ___ a garden. (✘) 🏢',h:'have got',a:["haven't got","have not got"],ex:"we → haven't got."},
  {k:'t',t:'t',q:'___ you got a pet?',a:['Have'],ex:'Frage: Have you got …? Kein Do!'},
- {k:'t',t:'t',q:'___ Sherlock got a ball?',a:['Has'],ex:'Sherlock = he → Has … got …?'},
+ {k:'t',t:'t',q:'___ Sherlock got a football?',a:['Has'],ex:'Sherlock = he → Has … got …?'},
  {k:'t',t:'t',q:'Has Karam got a sister? (✔) – Yes, he ___.',a:['has'],ex:'Kurzantwort ohne got: Yes, he has.'},
  {k:'t',t:'t',q:'Have the twins got a cat? (✘) – No, they ___.',a:["haven't","have not"],ex:"Kurzantwort ohne got: No, they haven't."},
  {k:'t',t:'t',q:'Schreibe die Kurzform: they have got',a:["they've got"],ex:'have got → ’ve got.'},
@@ -999,13 +999,12 @@ RULES.G8=[
  {k:null,h:'have got = haben, besitzen',b:`<p>Mit <b>have got</b> sagst du, was jemand <b>hat</b>. Das <i>got</i> übersetzt du nicht extra: <i>I’ve got a dog.</i> = Ich habe einen Hund.</p>
   <div class="gex"><span class="gpic">🚲</span><span><b>I’ve got a new bike.</b><small>Dinge, die dir gehören</small></span></div>
   <div class="gex"><span class="gpic">👨‍👩‍👧</span><span><b>Karam has got a sister.</b><small>Familie, Freunde und Haustiere</small></span></div>
-  <div class="gex"><span class="gpic">👀</span><span><b>Lily has got long hair.</b><small>Aussehen: Haare, Augen, Ohren</small></span></div>
-  <div class="gex"><span class="gpic">🤧</span><span><b>I’ve got a cold.</b><small>Krankheiten: a cold, a headache</small></span></div>`,say:"I've got a new bike. Karam has got a sister. Lily has got long hair. I've got a cold."},
+  <div class="gex"><span class="gpic">👩‍🦰</span><span><b>Lily has got red hair.</b><small>Aussehen: zum Beispiel die Haare</small></span></div>`,say:"I've got a new bike. Karam has got a sister. Lily has got red hair."},
  {k:1,h:'have got oder has got?',b:`<p>Wie bei <i>to be</i> kommt es auf die Person an:</p>
   <div class="gex"><span class="gpic">🙋</span><span><b>I / you / we / they have got</b><small>I have got a pen. They have got a dog.</small></span></div>
-  <div class="gex"><span class="gpic">🧍</span><span><b>he / she / it has got</b><small>Ryan has got a dog. Sherlock has got brown ears.</small></span></div>
+  <div class="gex"><span class="gpic">🧍</span><span><b>he / she / it has got</b><small>Ryan has got a dog. Sherlock has got a new bed.</small></span></div>
   <p class="grule">he, she, it → <b>has got</b>. Alle anderen → <b>have got</b>.</p>
-  <p class="gnote">💡 Ein Name, ein Tier oder ein Ding ist immer he, she oder it: <i>Lily</i> → she → <b>has got</b>. Zwei Namen sind they: <i>Ruby and Ryan</i> → <b>have got</b>.</p>`,say:'I have got a pen. They have got a dog. Ryan has got a dog. Sherlock has got brown ears.'},
+  <p class="gnote">💡 Ein Name, ein Tier oder ein Ding ist immer he, she oder it: <i>Lily</i> → she → <b>has got</b>. Zwei Namen sind they: <i>Ruby and Ryan</i> → <b>have got</b>.</p>`,say:'I have got a pen. They have got a dog. Ryan has got a dog. Sherlock has got a new bed.'},
  {k:2,h:'Kurzformen: ’ve got und ’s got',b:`<p>Beim Sprechen und in Nachrichten nimmst du fast immer die Kurzform:</p>
   <div class="gex"><span class="gpic">✂️</span><span><b>I’ve got · you’ve got · we’ve got · they’ve got</b><small>have → ’ve</small></span></div>
   <div class="gex"><span class="gpic">✂️</span><span><b>he’s got · she’s got · it’s got</b><small>has → ’s</small></span></div>
@@ -1018,12 +1017,12 @@ RULES.G8=[
  {k:4,h:'Fragen und Kurzantworten',b:`<p>In der Frage tauschen <b>Have/Has</b> und die Person den Platz. <b>got</b> bleibt hinter der Person.</p>
   <div class="gex"><span class="gpic">🐾</span><span><b>Have you got a pet?</b><small>Yes, I have. / No, I haven’t.</small></span></div>
   <div class="gex"><span class="gpic">👧</span><span><b>Has Karam got a sister?</b><small>Yes, he has. / No, he hasn’t.</small></span></div>
-  <div class="gex"><span class="gpic">🎒</span><span><b>What have you got in your bag?</b><small>Fragewort + have/has + Person + got</small></span></div>
+  <div class="gex"><span class="gpic">🎒</span><span><b>What have you got in your pencil case?</b><small>Fragewort + have/has + Person + got</small></span></div>
   <p class="gnote">⚠️ In der Kurzantwort steht <b>kein got</b>: <i>Yes, I have.</i> Nicht: <s>Yes, I have got.</s> Und bei Yes keine Kurzform: <s>Yes, I’ve.</s></p>`,say:"Have you got a pet? Yes, I have. No, I haven't. Has Karam got a sister? Yes, he has. No, he hasn't."},
  {k:5,h:'Achtung: so nicht!',b:`${NOB('Do you have got a pen?')}${OKB('Have you got a pen?','Bei have got gibt es kein do.')}
   ${NOB('I got a dog.')}${OKB('I’ve got a dog.','Ohne have heißt got „bekam“.')}
-  ${NOB('I’ve got breakfast at 7.')}${OKB('I have breakfast at 7.','Tätigkeiten nur mit have: have breakfast, have a shower, have fun.')}
-  <p class="grule">have got = <b>haben, besitzen</b>. Etwas <b>tun</b> → nur <b>have</b>.</p>`,say:"Have you got a pen? I've got a dog. I have breakfast at 7."},
+  ${NOB('Lily have got a cat.')}${OKB('Lily has got a cat.','Lily = she → has got.')}
+  <p class="grule">have got = <b>haben, besitzen</b>. Kein do, und das <b>got</b> nicht vergessen.</p>`,say:"Have you got a pen? I've got a dog. Lily has got a cat."},
  {k:'t',h:'Jetzt tippst du selbst',b:`<p>Gleich schreibst du die richtige Form selbst, so wie im Buch: <i>Karam (have got) a sister.</i> → <b>has got</b>. Steht <b>(✘)</b> dahinter, schreibst du die Verneinung.</p>
   <p class="lbl" style="margin:4px 0 0">Für haven’t und hasn’t brauchst du das Apostroph ’</p>
   <ol class="gsteps">
@@ -1044,13 +1043,13 @@ const VQ={G7:[
  [{pic:'👧👧 ⚽',q:'Zwei Mädchen haben zusammen einen Ball. Was passt?',o:['the girls’ ball','the girl’s ball'],a:'the girls’ ball',ex:'Mehrere Mädchen: girls hat schon ein s → nur noch ’ dahinter.'},
   {pic:'🐕',q:'the boys’ dog: Wie viele Jungen sind es?',o:['mehrere Jungen','ein Junge'],a:'mehrere Jungen',ex:'Das Apostroph steht hinter dem Plural-s (boys’) → mehrere Jungen.'}],
  [{q:'He’s my friend. Was bedeutet ’s hier?',o:['he is','Besitz: es gehört ihm'],a:'he is',ex:'he’s = he is. Danach kommt kein Ding, das ihm gehört.'},
-  {pic:'🧸',q:'Wie sagst du „das Spielzeug der Kinder“?',o:['the children’s toys','the childrens’ toys'],a:'the children’s toys',ex:'children hat kein s am Ende → einfach ’s anhängen.'}],
+  {pic:'👩👩 🚲',q:'Wie sagst du „die Fahrräder der Frauen“?',o:['the women’s bikes','the womens’ bikes'],a:'the women’s bikes',ex:'women hat kein s am Ende → einfach ’s anhängen.'}],
  [{pic:'🐈 🐈',q:'Ich habe zwei Katzen. Welcher Satz ist richtig?',o:['I’ve got two cats.','I’ve got two cat’s.'],a:'I’ve got two cats.',ex:'Hier gehört niemandem etwas, es ist nur Mehrzahl → kein Apostroph.'},
-  {pic:'🎒',q:'Welcher Satz ist richtig?',o:['This is Karam’s bag.','This is the bag of Karam.'],a:'This is Karam’s bag.',ex:'Bei Personen sagst du ’s: Karam’s bag.'}],
+  {pic:'🚲',q:'Welcher Satz ist richtig?',o:['This is Karam’s bike.','This is the bike of Karam.'],a:'This is Karam’s bike.',ex:'Bei Personen sagst du ’s: Karam’s bike.'}],
  []],
 G8:[
  [{pic:'🐕',q:'I’ve got a dog. Was heißt das?',o:['Ich habe einen Hund.','Ich bekam einen Hund.'],a:'Ich habe einen Hund.',ex:'have got = haben. Das got übersetzt du nicht extra.'},
-  {pic:'🤧',q:'I’ve got a cold. Was heißt das?',o:['Ich bin erkältet.','Mir ist kalt.'],a:'Ich bin erkältet.',ex:'Bei Krankheiten sagst du have got: a cold = eine Erkältung.'}],
+  {pic:'👧',q:'Karam has got a sister. Was heißt das?',o:['Karam hat eine Schwester.','Karam ist eine Schwester.'],a:'Karam hat eine Schwester.',ex:'has got = hat.'}],
  [{q:'Ryan ___ a dog.',o:['has got','have got'],a:'has got',ex:'Ryan = he → has got.'},
   {q:'We ___ a cat.',o:['have got','has got'],a:'have got',ex:'we → have got.'}],
  [{q:'Was ist die Kurzform von I have got?',o:['I’ve got','I’s got'],a:'I’ve got',ex:'have → ’ve.'},
@@ -1060,14 +1059,14 @@ G8:[
  [{q:'___ you got a pet?',o:['Have','Do'],a:'Have',ex:'Die Frage beginnt mit Have oder Has. Kein Do!'},
   {q:'Have you got a bike? (✔) – Yes, …',o:['I have.','I have got.'],a:'I have.',ex:'In der Kurzantwort steht kein got.'}],
  [{q:'Welcher Satz ist richtig?',o:['Have you got a pen?','Do you have got a pen?'],a:'Have you got a pen?',ex:'Bei have got gibt es kein do.'},
-  {pic:'🥣',q:'Jeden Morgen frühstücke ich. Was passt?',o:['I have breakfast.','I’ve got breakfast.'],a:'I have breakfast.',ex:'Frühstücken ist eine Tätigkeit → nur have, ohne got.'}],
+  {q:'Welcher Satz ist richtig?',o:['He hasn’t got a bike.','He doesn’t have got a bike.'],a:'He hasn’t got a bike.',ex:'Verneint: hasn’t got. Kein doesn’t!'}],
  []]};
 /* Spickzettel: die ganze Regel auf einer Karte (Ende von „Verstehen“, im Quiz und im Karteikasten) */
 const SPI=(l,w,d)=>`<div class="gex"><span class="gpic">${l}</span><span><b>${w}</b>${d?`<small>${d}</small>`:''}</span></div>`;
 const SPICK={
- G7:{say:"the boy's dog. the boys' dog. the children's toys. Ryan and Ruby's sandwiches.",b:`${SPI('1️⃣','Einer: Wort + ’s','the boy’s dog · Ruby’s room')}
+ G7:{say:"the boy's dog. the boys' dog. the women's bikes. Ryan and Ruby's sandwiches.",b:`${SPI('1️⃣','Einer: Wort + ’s','the boy’s dog · Ruby’s room')}
   ${SPI('👥','Mehrere mit s: nur ’ dahinter','the boys’ dog · the Eatons’ house')}
-  ${SPI('🧸','Mehrzahl ohne s: ’s','the children’s toys · the women’s bikes')}
+  ${SPI('🚲','Mehrzahl ohne s: ’s','the men’s bikes · the women’s bikes')}
   ${SPI('👫','Zwei Namen, ein Ding: nur der letzte','Ryan and Ruby’s sandwiches')}
   <p class="gnote">⚠️ <b>he’s / she’s / it’s</b> = he is. Kein Besitz! Und Mehrzahl ohne Besitz bekommt kein Apostroph: <i>two dogs</i>.</p>
   <p class="grule">Frag dich immer: <b>Einer oder mehrere?</b></p>`},
@@ -1075,23 +1074,23 @@ const SPICK={
   ${SPI('🧍','he / she / it has got','Kurz: he’s got, Lily’s got')}
   ${SPI('🙅','Verneint: haven’t got / hasn’t got','I haven’t got a brother.')}
   ${SPI('❓','Frage: Have / Has … got …?','Have you got a pet? – Yes, I have. / No, I haven’t.')}
-  <p class="gnote">⚠️ Kein <b>do / does</b> bei have got. In der Kurzantwort kein <b>got</b>. Etwas <b>tun</b> → nur have: <i>have breakfast</i>.</p>`}};
+  <p class="gnote">⚠️ Kein <b>do / does</b> bei have got. In der Kurzantwort kein <b>got</b>: <i>Yes, I have.</i></p>`}};
 /* ===== Chat-Aufgaben: Neas Nachrichten haben Lücken (lwChat aus lernwelt-chat.js) ===== */
 const PEOPLE={Ruby:'#E0567A',Ryan:'#2F80ED',Karam:'#E07B12',Lily:'#8B4FE0',Sophie:'#0E9AA7'};
 const BE=['am','is','are'],BE_C=['Am','Is','Are'];
 const CHATS=[
  {g:'G2',title:'Ruby',sub:'online',ava:'R',lines:[
   {w:'Ruby',t:'Hi! Where are you? 👀'},
-  {t:'I ___ in the park with Sherlock. 🐶',a:['am'],o:BE,ex:'Bei I steht immer am.'},
+  {t:'I ___ in the garden with Sherlock. 🐶',a:['am'],o:BE,ex:'Bei I steht immer am.'},
   {w:'Ruby',t:'Cool! Is Ryan with you?'},
   {t:"No, he ___. He's at home.",a:["isn't"],o:["isn't","aren't","am not"],ex:"he → is, verneint isn't."},
-  {w:'Ruby',t:'Hurry up! The film starts at 4. 🍿'},
-  {t:'OK! ___ Karam at the cinema too?',a:['Is'],o:BE_C,ex:'Karam = he → Is Karam …?'},
+  {w:'Ruby',t:"Come on! It's time for ice cream. 🍦"},
+  {t:'OK! ___ Karam with you too?',a:['Is'],o:BE_C,ex:'Karam = he → Is Karam …?'},
   {w:'Ruby',t:'Yes, he is. See you! 👋'}]},
  {g:'G2',title:'Class 5b 💬',sub:'Karam, Lily, Ruby, Ryan, du',ava:'5b',lines:[
-  {w:'Karam',t:"Hi everyone! This is Lily. She's new in our class. 👋"},
+  {w:'Karam',t:"Hi! This is Lily. She's new in our class. 👋"},
   {w:'Lily',t:"Hi! I'm from Leipzig."},
-  {t:'Hi Lily, welcome! How old ___ you?',a:['are'],o:BE,ex:'Bei you steht immer are.'},
+  {t:'Hi Lily, nice to meet you! How old ___ you?',a:['are'],o:BE,ex:'Bei you steht immer are.'},
   {w:'Lily',t:"I'm eleven. And you?"},
   {t:'I ___ eleven too! 🎉',a:['am'],o:BE},
   {w:'Ryan',t:'Ruby and I are eleven too 😄'},
@@ -1099,137 +1098,137 @@ const CHATS=[
  {g:'G2',title:'Ryan',sub:'online',ava:'R',lines:[
   {w:'Ryan',t:'Is Sherlock with you? 🐶'},
   {t:'Yes, ___.',a:['he is'],o:['he is',"he's",'he are'],ex:'Bei Yes keine Kurzform: Yes, he is.'},
-  {w:'Ryan',t:'Phew! Is he hungry?'},
-  {t:'No, ___. He has got a sandwich. 😂',a:["he isn't"],o:["he isn't","he not","he aren't"],ex:"Verneinte Kurzantwort: No, he isn't."},
-  {w:'Ryan',t:'Oh no! 🙈 Are you at the park?'},
+  {w:'Ryan',t:'Oh good! Is he sad?'},
+  {t:"No, ___. He's happy. 😂",a:["he isn't"],o:["he isn't","he not","he aren't"],ex:"Verneinte Kurzantwort: No, he isn't."},
+  {w:'Ryan',t:'Are you in the garden?'},
   {t:'___',a:['Yes, I am.'],o:['Yes, I am.',"Yes, I'm.",'Yes, I is.'],ex:"Bei Yes keine Kurzform: Yes, I am."},
-  {w:'Ryan',t:"OK, I'm on my way! 🏃"}]},
+  {w:'Ryan',t:'OK, see you! 🏃'}]},
  {g:'G2',title:'Lily',sub:'neu in der 5b',ava:'L',lines:[
   {w:'Lily',t:"Hi! It's Lily from your class. 😊"},
   {t:'Hi Lily! ___ are you from?',a:['Where'],o:['Where','What','Who','How'],ex:'Where = wo / woher'},
   {w:'Lily',t:"I'm from Leipzig in Germany."},
-  {t:'Cool! ___ is your favourite subject?',a:['What'],o:['What','Who','Where','Why'],ex:'What = was'},
-  {w:'Lily',t:"Art! 🎨 And who is our tutor?"},
-  {t:"Mrs Wilson. She ___ really nice.",a:['is'],o:BE,ex:'she → is'},
+  {t:'Cool! ___ is your favourite hobby?',a:['What'],o:['What','Who','Where','Why'],ex:'What = was'},
+  {w:'Lily',t:"I like to draw! 🎨 And who is our tutor?"},
+  {t:"Mrs Wilson. She ___ nice.",a:['is'],o:BE,ex:'she → is'},
   {w:'Lily',t:"Great. See you tomorrow!"}]},
  {g:'G6',title:'Karam',sub:'online',ava:'K',lines:[
   {w:'Karam',t:'Look at my new cat! 😻',photo:'Eine kleine graue Katze auf dem Sofa',pic:'🐱'},
-  {t:"Wow! What's ___ name?",a:['its','her'],o:['its',"it's",'their'],ex:"its = sein/ihr (von einem Tier). it's = it is."},
+  {t:"Cool! What's ___ name?",a:['its','her'],o:['its',"it's",'their'],ex:"its = sein/ihr (von einem Tier). it's = it is."},
   {w:'Karam',t:'Her name is Mimi.'},
-  {t:'Mimi is so cute! Is ___ friendly?',a:['she'],o:['she','her','its'],ex:'Mimi = she. her braucht ein Ding dahinter: her name.'},
-  {w:'Karam',t:'Yes, she is. My sister Noor loves her. 💜'},
+  {t:'Mimi is nice! Is ___ friendly?',a:['she'],o:['she','her','its'],ex:'Mimi = she. her braucht ein Ding dahinter: her name.'},
+  {w:'Karam',t:'Yes, she is. My sister Noor is her best friend. 💜'},
   {t:"Is Mimi ___ cat or Noor's cat?",a:['your'],o:['your',"you're",'yours'],ex:"your = dein. you're = you are."},
   {w:'Karam',t:"She's our cat! 😊"}]},
  {g:'G6',title:'Ruby',sub:'online',ava:'R',lines:[
-  {w:'Ruby',t:'Ryan and I have a party on Saturday! 🎂'},
-  {t:'Cool! Where is ___ party?',a:['your'],o:['your',"you're",'their'],ex:'Du schreibst Ruby: euer Fest → your party.'},
-  {w:'Ruby',t:'At our house in Greenwich. 🏠'},
-  {t:'Can I bring ___ little brother?',a:['my'],o:['my','me','I'],ex:'mein Bruder → my brother.'},
-  {w:'Ryan',t:"Sure! What's his name?"},
+  {w:'Ruby',t:'Ryan and I have a picnic tomorrow! 🧺'},
+  {t:'Cool! Where is ___ picnic?',a:['your'],o:['your',"you're",'their'],ex:'Du schreibst Ruby: euer Picknick → your picnic.'},
+  {w:'Ruby',t:'In our garden in Greenwich. 🏡'},
+  {t:'Can I bring ___ brother?',a:['my'],o:['my','me','I'],ex:'mein Bruder → my brother.'},
+  {w:'Ryan',t:"Yes! What's his name?"},
   {t:'___ name is Ben. He is eight.',a:['His'],o:['His','He','Her'],ex:'Ben ist ein Junge → his name.'},
-  {w:'Ruby',t:'Yay! See you on Saturday! 🎉'}]},
+  {w:'Ruby',t:'Great! See you tomorrow! 🎉'}]},
  {g:'G6',title:'Lily',sub:'online',ava:'L',lines:[
   {w:'Lily',t:'Help! Where are my pens? 😟'},
   {t:'___ on your desk!',a:["They're"],o:["They're",'Their','There'],ex:"They're = they are: Sie sind …"},
-  {w:'Lily',t:'Oh, thanks! And where is my maths book?'},
-  {t:'Karam has ___. 📘',a:['it'],o:['it','its','he'],ex:'das Buch = it.'},
-  {w:'Lily',t:"And where are Ruby and Ryan's bags?"},
-  {t:'___ bags are in the classroom.',a:['Their'],o:['Their','There',"They're"],ex:'their = ihr (von mehreren).'}]},
+  {w:'Lily',t:'Oh, thanks! And where is my exercise book?'},
+  {t:'___ is in your schoolbag. 📘',a:['It'],o:['It','Its','He'],ex:'das Buch = it.'},
+  {w:'Lily',t:"And where are Ruby and Ryan's schoolbags?"},
+  {t:'___ schoolbags are in the classroom.',a:['Their'],o:['Their','There',"They're"],ex:'their = ihr (von mehreren).'}]},
  {g:'G6',title:'Ryan',sub:'online',ava:'R',lines:[
   {w:'Ryan',t:'Who is the girl in your photo?',photo:'Ein Foto von dir mit einem Mädchen und einem Hund',pic:'🖼️'},
   {t:"That's ___ sister.",a:['my'],o:['my','me','I'],ex:'meine Schwester → my sister.'},
   {w:'Ryan',t:"What's her name?"},
   {t:'___ name is Emma.',a:['Her'],o:['Her','His','She'],ex:'Emma ist ein Mädchen → her name.'},
   {w:'Ryan',t:'And the dog? 🐕'},
-  {t:"That's ___ dog Rocky. We all love him!",a:['our'],o:['our','we','us'],ex:'unser Hund → our dog.'}]},
+  {t:"That's ___ dog Rocky. He's funny! 😄",a:['our'],o:['our','we','us'],ex:'unser Hund → our dog.'}]},
  {g:'G3',title:'Ruby',sub:'online',ava:'R',lines:[
   {w:'Ruby',t:"What's your new room like? 🏠"},
   {t:"It's great! There ___ a big bed.",a:['is'],o:['is','are'],ex:'Ein Ding → There is …'},
   {w:'Ruby',t:'Is there a desk?'},
   {t:'Yes, ___.',a:['there is'],o:['there is',"there's",'it is'],ex:'Bei Yes keine Kurzform: Yes, there is.'},
-  {w:'Ruby',t:'Are there posters on the walls?'},
-  {t:'No, ___. 😕',a:["there aren't"],o:["there aren't","there isn't","they aren't"],ex:"Mehrere Poster → No, there aren't."},
+  {w:'Ruby',t:'Are there pictures on the walls?'},
+  {t:'No, ___. 😕',a:["there aren't"],o:["there aren't","there isn't","they aren't"],ex:"Mehrere Bilder → No, there aren't."},
   {t:'But there ___ two big windows!',a:['are'],o:['is','are'],ex:'Zwei Fenster → There are …'}]},
  {g:'G3',title:'Karam',sub:'online',ava:'K',lines:[
   {w:'Karam',t:"I'm at the media centre. Where are you?"},
   {t:'In the library. There ___ a reading corner here. 📚',a:['is'],o:['is','are']},
   {w:'Karam',t:'Are there power sockets?'},
   {t:'Yes, there ___ three next to the door.',a:['are'],o:['is','are'],ex:'Drei Steckdosen → there are.'},
-  {w:'Karam',t:'Is there a free table for us?'},
-  {t:'No, there ___ free table. 😕',a:['is no'],o:['is no','are no',"isn't no"],ex:'Kein Tisch → There is no …'},
-  {w:'Karam',t:"OK, I'll come to you then! 🏃"}]},
+  {w:'Karam',t:'Is there a table for us?'},
+  {t:'No, there ___ table. 😕',a:['is no'],o:['is no','are no',"isn't no"],ex:'Kein Tisch → There is no …'},
+  {w:'Karam',t:'Oh no! OK, see you tomorrow! 👋'}]},
  {g:'G3',title:'Ryan',sub:'online',ava:'R',lines:[
   {w:'Ryan',t:'Where is Sherlock?! 😱'},
-  {t:'Wait! There ___ a dog under the bench. Is it Sherlock?',a:['is'],o:['is','are']},
-  {w:'Ryan',t:"Yes, that's him! 😅 Are there children with him?"},
+  {t:'Look! There ___ a dog under the bench. Is it Sherlock?',a:['is'],o:['is','are']},
+  {w:'Ryan',t:"Yes, that's him! 😅 Are there people with him?"},
   {t:'Yes, there ___ two girls. They give him a sandwich.',a:['are'],o:['is','are'],ex:'Zwei Mädchen → there are.'},
-  {w:'Ryan',t:'Typical Sherlock! 🥪🐶'}]},
+  {w:'Ryan',t:'Oh no, Sherlock! 🥪🐶'}]},
  {g:'G1',title:'Ruby',sub:'online',ava:'R',lines:[
   {w:'Ruby',t:'Picnic tomorrow! 🧺 What can you bring?'},
-  {t:'I can bring ___ apple pie. 🥧',a:['an'],o:['a','an'],ex:'apple beginnt mit Vokal-Laut → an.'},
-  {w:'Ruby',t:"Yum! I'll make sandwiches. How many?"},
-  {t:'Three ___, please! 🥪',a:['sandwiches'],o:['sandwiches','sandwichs','sandwich'],ex:'Nach ch hängst du -es an.'},
-  {w:'Ruby',t:'OK! And drinks?'},
-  {t:"I've got ___ big bottle of water.",a:['a'],o:['a','an'],ex:'big beginnt mit Konsonant-Laut → a.'}]},
+  {t:'I can bring ___ banana. 🍌',a:['a'],o:['a','an'],ex:'banana beginnt mit Konsonant-Laut → a.'},
+  {w:'Ruby',t:'Great! And I can bring sandwiches. 🥪'},
+  {t:'Cool! Three ___, please!',a:['sandwiches'],o:['sandwiches','sandwichs','sandwich'],ex:'Nach ch hängst du -es an.'},
+  {w:'Ruby',t:'OK! And a drink?'},
+  {t:'I can bring ___ orange drink. 🧃',a:['an'],o:['a','an'],ex:'orange beginnt mit Vokal-Laut → an.'}]},
  {g:'G1',title:'Lily',sub:'online',ava:'L',lines:[
-  {w:'Lily',t:'What do I need for school tomorrow? 📝'},
-  {t:'You need ___ exercise book.',a:['an'],o:['a','an'],ex:'exercise beginnt mit Vokal-Laut → an.'},
+  {w:'Lily',t:'School is tomorrow! What can I bring? 📝'},
+  {t:'You can bring ___ exercise book.',a:['an'],o:['a','an'],ex:'exercise beginnt mit Vokal-Laut → an.'},
   {w:'Lily',t:'OK! And?'},
   {t:'And two ___ for art. ✏️',a:['pencils'],o:['pencils','pencil','pencilles'],ex:'Meistens einfach +s.'},
-  {w:'Lily',t:'Do I need a uniform?'},
-  {t:'Yes, ___ uniform is important at our school!',a:['a'],o:['a','an'],ex:'uniform spricht man „ju…“ – ein Konsonant-Laut → a.'}]},
- {g:'G1',title:'Karam',sub:'im Zoo',ava:'K',lines:[
-  {w:'Karam',t:"I'm at the zoo! 🦁"},
-  {t:'Cool! Is there ___ elephant?',a:['an'],o:['a','an'],ex:'elephant beginnt mit Vokal-Laut → an.'},
-  {w:'Karam',t:'Yes! And look, three baby monkeys! 🐒',photo:'Drei kleine Affen auf einem Ast',pic:'🐒'},
-  {t:'Three ___? So cute!',a:['babies'],o:['babies','babys','baby'],ex:'Konsonant + y wird zu -ies.'},
-  {w:'Karam',t:'And there are two men with a big camera. 📷'},
-  {t:'Two ___? Maybe they are from TV!',a:['men'],o:['men','mans','mens'],ex:'man → men: unregelmäßig, auswendig lernen!'}]}
+  {w:'Lily',t:'And a uniform?'},
+  {t:"Yes, ___ uniform! It's a rule at our school.",a:['a'],o:['a','an'],ex:'uniform spricht man „ju…“ – ein Konsonant-Laut → a.'}]},
+ {g:'G1',title:'Karam',sub:'am Fluss',ava:'K',lines:[
+  {w:'Karam',t:"I'm at the river with my family! 🌊"},
+  {t:'Cool! Is there ___ boat?',a:['a'],o:['a','an'],ex:'boat beginnt mit Konsonant-Laut → a.'},
+  {w:'Karam',t:'Yes! And look, a bird with three baby birds! 🐦',photo:'Eine Vogelmutter mit drei Küken',pic:'🐣'},
+  {t:'Three ___? Cool!',a:['babies'],o:['babies','babys','baby'],ex:'Konsonant + y wird zu -ies.'},
+  {w:'Karam',t:'And there are two men on a big ship. 🚢'},
+  {t:'Two ___ on a ship? Cool!',a:['men'],o:['men','mans','mens'],ex:'man → men: unregelmäßig, auswendig lernen!'}]}
 ,
  {g:'G7',title:'Ruby',sub:'online',ava:'R',lines:[
   {w:'Ruby',t:'Help! Where is Sherlock? 🐶'},
   {t:"He's in ___ bedroom. 🛏️",a:["Ryan's"],o:["Ryan's","Ryans'","Ryans"],ex:'Ein Besitzer (Ryan) → ’s.'},
-  {w:'Ruby',t:'Oh no! What is he doing?'},
-  {t:"He's eating the ___ sandwiches! Yours AND Ryan's! 🥪",a:["twins'"],o:["twins'","twin's","twins"],ex:'Die Zwillinge sind zwei → s’.'},
+  {w:'Ruby',t:'Oh no! Is he on the bed?'},
+  {t:"Yes! And the ___ sandwiches are on the bed too! Yours AND Ryan's! 🥪",a:["twins'"],o:["twins'","twin's","twins"],ex:'Die Zwillinge sind zwei → s’.'},
   {w:'Ruby',t:'Not our sandwiches! 😱'},
-  {t:"Don't worry. I'm putting ___ food in his bowl. 🥣",a:["Sherlock's"],o:["Sherlock's","Sherlocks'","Sherlocks"],ex:'Sherlock ist einer → ’s.'},
+  {t:"Don't worry. ___ food is in the kitchen. 🥣",a:["Sherlock's"],o:["Sherlock's","Sherlocks'","Sherlocks"],ex:'Sherlock ist einer → ’s.'},
   {w:'Ruby',t:'Thanks! You are the best! 💛'}]},
  {g:'G7',title:'Lily',sub:'online',ava:'L',lines:[
-  {w:'Lily',t:'Nice photo! Is this your house? 🏠',photo:'Ein Haus mit Garten und einem Trampolin',pic:'🏡'},
-  {t:"No, it's my ___ house. She lives in Leipzig.",a:["grandma's"],o:["grandma's","grandmas'","grandmas"],ex:'Eine Oma → ’s.'},
-  {w:'Lily',t:'Who are the two boys on the trampoline?'},
-  {t:"My cousins! It's the ___ trampoline. 🤸",a:["boys'"],o:["boys'","boy's","boys"],ex:'Zwei Jungen → s’.'},
-  {w:'Lily',t:'Cool! And whose cat is that? 🐈'},
-  {t:"It's my ___ cat. She loves it!",a:["sister's"],o:["sister's","sisters'","sisters"],ex:'Eine Schwester (she) → ’s.'}]},
+  {w:'Lily',t:'Nice photo! Is this your house? 🏠',photo:'Ein Haus mit Garten und zwei Jungen mit einem Fußball',pic:'🏡'},
+  {t:"No, it's my ___ house. She is from Leipzig.",a:["friend's"],o:["friend's","friends'","friends"],ex:'Eine Freundin → ’s.'},
+  {w:'Lily',t:'Who are the two boys in the garden?'},
+  {t:"Her brothers! It's the ___ football. ⚽",a:["boys'"],o:["boys'","boy's","boys"],ex:'Zwei Jungen → s’.'},
+  {w:'Lily',t:'Cool! And the cat? 🐈'},
+  {t:"It's my ___ cat. 😻",a:["sister's"],o:["sister's","sisters'","sisters"],ex:'Eine Schwester (she) → ’s.'}]},
  {g:'G7',title:'Karam',sub:'online',ava:'K',lines:[
   {w:'Karam',t:'Is that Ryan’s bike? 🚲'},
   {t:"No, ___ Ruby's bike.",a:["it's"],o:["it's","its","it"],ex:"it's = it is (Kurzform)."},
   {w:'Karam',t:'And where is Ryan?'},
-  {t:"___ at the park with Sherlock.",a:["He's"],o:["He's","His","He"],ex:"He's = he is (Kurzform)."},
+  {t:"___ in the garden with Sherlock.",a:["He's"],o:["He's","His","He"],ex:"He's = he is (Kurzform)."},
   {w:'Karam',t:'Oh, is that my football or Ryan’s? ⚽'},
   {t:"It's ___ football. Yours is at home!",a:["Ryan's"],o:["Ryan's","Ryans","Ryans'"],ex:'Hinter dem ’s steht ein Ding → Besitz.'}]}
 ,
  {g:'G8',title:'Ruby',sub:'online',ava:'R',lines:[
   {w:'Ruby',t:'Have you got a pet? 🐾'},
-  {t:'Yes, I ___. A cat called Mia. 🐱',a:['have'],o:['have','have got',"'ve"],ex:'Kurzantwort ohne got: Yes, I have.'},
-  {w:'Ruby',t:'Cool! Has she got stripes?'},
-  {t:"No, she ___. She's all black. 🖤",a:["hasn't"],o:["hasn't","hasn't got","haven't"],ex:"Kurzantwort ohne got: No, she hasn't."},
-  {w:'Ruby',t:"Sherlock has got a new ball. He's so happy! ⚽"},
-  {t:'Ha! Mia ___ lots of toys too! 😄',a:['has got'],o:['has got','have got','is got'],ex:'Mia = she → has got.'}]},
+  {t:'Yes, I ___. A cat. Her name is Mia. 🐱',a:['have'],o:['have','have got',"'ve"],ex:'Kurzantwort ohne got: Yes, I have.'},
+  {w:'Ruby',t:'Cool! Has she got a friend?'},
+  {t:"No, she ___. But she's got me! 🖤",a:["hasn't"],o:["hasn't","hasn't got","haven't"],ex:"Kurzantwort ohne got: No, she hasn't."},
+  {w:'Ruby',t:"Sherlock has got a new football. He's happy! ⚽"},
+  {t:'Ha! Mia ___ a new bed too! 😄',a:['has got'],o:['has got','have got','is got'],ex:'Mia = she → has got.'}]},
  {g:'G8',title:'Lily',sub:'online',ava:'L',lines:[
-  {w:'Lily',t:"I'm not at school today. 🤒"},
-  {t:'Oh no! ___ you got a cold?',a:['Have'],o:['Have','Do','Has'],ex:'Frage mit have got: Have you got …? Kein do!'},
-  {w:'Lily',t:"Yes, and I've got a headache too. 😩"},
-  {t:'Poor you! I ___ your English homework. 📚',a:['have got'],o:['have got','has got','am got'],ex:'I → have got.'},
-  {w:'Lily',t:'Thanks! Has Mrs Wilson got my test?'},
-  {t:'Yes, she ___. Get well soon! 💐',a:['has'],o:['has','have','has got'],ex:'Kurzantwort ohne got: Yes, she has.'}]},
+  {w:'Lily',t:"Help! I'm at home and my schoolbag is at school! 😟"},
+  {t:'Oh no! ___ you got your homework?',a:['Have'],o:['Have','Do','Has'],ex:'Frage mit have got: Have you got …? Kein do!'},
+  {w:'Lily',t:"No, I haven't. And I haven't got my planner."},
+  {t:"Don't worry! I ___ your English homework. 📚",a:['have got'],o:['have got','has got','am got'],ex:'I → have got.'},
+  {w:'Lily',t:'Thanks! Has Mrs Wilson got my planner?'},
+  {t:'Yes, she ___. See you tomorrow! 👋',a:['has'],o:['has','have','has got'],ex:'Kurzantwort ohne got: Yes, she has.'}]},
  {g:'G8',title:'Karam',sub:'online',ava:'K',lines:[
-  {w:'Karam',t:'My cousin Amir is new at our school. Can you help him? 🎒'},
-  {t:'Sure! ___ he got dark hair?',a:['Has'],o:['Has','Have','Does'],ex:'Amir = he → Has he got …?'},
+  {w:'Karam',t:'My friend Amir is new at our school. Can you help him? 🎒'},
+  {t:'Yes! ___ he got black hair?',a:['Has'],o:['Has','Have','Does'],ex:'Amir = he → Has he got …?'},
   {w:'Karam',t:"Yes, he has. And he's got glasses. 👓"},
-  {t:'I can see him! He ___ a big red bag.',a:['has got'],o:['has got','have got','is got'],ex:'he → has got.'},
+  {t:'I can see him! He ___ a big red schoolbag.',a:['has got'],o:['has got','have got','is got'],ex:'he → has got.'},
   {w:'Karam',t:"That's him! 😄 Have you got time for lunch with us?"},
-  {t:"Sorry, I ___ time today. I've got a piano lesson. 🎹",a:["haven't got"],o:["haven't got","hasn't got","don't have got"],ex:"I → haven't got. Kein don't bei have got."},
+  {t:"Sorry, I ___ time today. I've got a netball lesson. 🏐",a:["haven't got"],o:["haven't got","hasn't got","don't have got"],ex:"I → haven't got. Kein don't bei have got."},
   {w:'Karam',t:'No problem. See you tomorrow! 👋'}]}
 ];
 CHATS.forEach((c,i)=>{const k=c.lines.find(l=>l.a);G.push({id:'gc'+i,g:c.g,t:'chat',q:k.t,a:k.a,opts:k.o||k.a,ex:EXD[c.g],chat:c})});
