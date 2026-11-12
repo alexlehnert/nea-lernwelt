@@ -219,6 +219,7 @@ h2.sh{font-size:1.25rem}
 .step.done .dot{background:var(--ok);box-shadow:0 5px 0 #17703D}
 .step.done .dot svg{width:30px;height:30px}
 .step.open .dot{background:var(--card);border:3px solid var(--line);box-shadow:0 5px 0 var(--line);color:var(--muted)}
+.dot.sub{font-size:1.15rem}
 .step.now .dot{outline:5px solid var(--sun);outline-offset:4px}
 .here{display:inline-block;background:var(--ink);color:var(--bg);font-size:.75rem;font-weight:700;border-radius:10px;padding:3px 10px;margin-bottom:4px}
 .hbar{display:flex;align-items:center;gap:10px;margin-top:14px;font-size:.9rem;font-weight:700}
@@ -404,6 +405,9 @@ function stand(h){
 }
 const started=h=>!!(h.key&&!h.teilt&&get(h.key))||stand(h).any;
 const sterne=p=>p>=.999?3:p>=2/3?2:p>=1/3?1:0;
+// Kapitelnummern für die Anzeige: hefte.js teile = {anker: 1|2} macht aus zwei Kapiteln 25.1 und 25.2
+function kapNr(h){const t=h.teile||{};let c=0;return (h.anker||h.kapitel||[]).map(a=>t[a]===1?++c+'.1':t[a]===2?c+'.2':''+ ++c)}
+const kapZahl=(h,i)=>kapNr(h)[i]||String(i+1),kapGesamt=h=>{const n=kapNr(h);return n.length?parseInt(n[n.length-1]):0};
 const kapLink=(h,i)=>{const a=(h.anker||[])[i];return `${h.id}.html${a?'#'+a:''}`};
 // Alles geschafft: weiter zum Großen Test, sonst zum ersten Kapitel (nie in die eigene Übersicht der App)
 const fertigLink=h=>h.test?`${h.id}.html#${h.test.a}`:h.frei?heftLink(h):kapLink(h,0);
@@ -653,7 +657,7 @@ const V={
       </section>
       ${last?`<section class="sec"><h2 class="sh">Weitermachen</h2>
         <a class="resume ${f.cls}" href="${ls.cur!=null?kapLink(last,ls.cur):fertigLink(last)}" data-heft="${last.id}"><span class="eyebrow">${esc(f.name)} · ${esc(last.name)}</span>
-          <b>${ls.cur!=null?esc(ls.k[ls.cur].t):'Alles geschafft!'}</b><p>${ls.cur!=null?`Kapitel ${ls.cur+1} von ${ls.n}`:esc(last.info)}</p>
+          <b>${ls.cur!=null?esc(ls.k[ls.cur].t):'Alles geschafft!'}</b><p>${ls.cur!=null?`Kapitel ${kapZahl(last,ls.cur)} von ${kapGesamt(last)||ls.n}`:esc(last.info)}</p>
           <span class="go"><span class="bar"><i style="width:${Math.round(100*ls.done/Math.max(1,ls.n))}%"></i></span><span>${I.play}Weiter</span></span></a></section>`:''}
       <section class="sec"><div class="sec-h"><h2 class="sh">Deine Fächer</h2><a href="#faecher">Alle</a></div>
         <div class="subjects">${faecherMit().map(subjCard).join('')}</div></section>
@@ -711,13 +715,13 @@ const V={
         </div><h2 class="rule" style="margin:4px 0 0">Lernpfad</h2>`:''}
         <section class="path" aria-label="Kapitel">
         ${k.map((x,i)=>{const st=x.p>=.999?'done':i===t.cur?'now':'open';
-          return `<a class="step ${st}" href="${kapLink(h,i)}" data-heft="${h.id}" aria-label="Kapitel ${i+1}: ${esc(x.t)}${st==='done'?', geschafft':st==='now'?', als Nächstes':''}">
-            <span class="dot">${st==='done'?I.check:i+1}</span>
+          return `<a class="step ${st}" href="${kapLink(h,i)}" data-heft="${h.id}" aria-label="Kapitel ${kapZahl(h,i)}: ${esc(x.t)}${st==='done'?', geschafft':st==='now'?', als Nächstes':''}">
+            <span class="dot${kapZahl(h,i).includes('.')?' sub':''}">${st==='done'?I.check:kapZahl(h,i)}</span>
             <span>${st==='now'?`<span class="here">${t.any?'Du bist hier':'Hier geht es los'}</span>`:''}<b>${esc(x.t)}</b><small>${sterneHtml(x.p)}</small></span></a>`}).join('')}
         ${h.abzeichen?(()=>{const got=verdient()['heft-'+h.id],f2=fach(h.fach);
           return `<button class="goal" type="button" data-abz="heft-${h.id}"><span class="dot ${got?'bi '+f2.cls:''}">${got?I[f2.cls]:I.trophy}</span><span><b>Abzeichen</b><span class="small muted">„${esc(h.abzeichen)}“ ${got?'gehört dir!':'wartet'}</span></span></button>`})():''}
         </section>
-        <div class="cta"><a class="btn br" href="${t.cur!=null?kapLink(h,t.cur):fertigLink(h)}" data-heft="${h.id}">${!started(h)?"Los geht's":t.cur!=null?`Weiter mit Kapitel ${t.cur+1}`:h.test?'Zum Großen Test':'Nochmal von vorn'} ${I.arrow}</a></div>
+        <div class="cta"><a class="btn br" href="${t.cur!=null?kapLink(h,t.cur):fertigLink(h)}" data-heft="${h.id}">${!started(h)?"Los geht's":t.cur!=null?`Weiter mit Kapitel ${kapZahl(h,t.cur)}`:h.test?'Zum Großen Test':'Nochmal von vorn'} ${I.arrow}</a></div>
       </div>`;
   },
   profil(){

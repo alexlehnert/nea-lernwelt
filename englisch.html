@@ -286,6 +286,10 @@ button.fach:not(:disabled):active .stack{background:rgba(0,0,0,.3)}
 .kap{display:flex;flex-direction:column;gap:12px}
 .kap .go,.kap .kbtn{width:100%}
 .klink{display:flex;align-items:center;justify-content:center;text-decoration:none;color:var(--lw-ink)}
+a.go.klink{color:var(--onnavy)}
+.vtip{display:flex;gap:12px;align-items:flex-start;background:var(--new-bg,#FFF6D6);border:2px dashed #F0B400;border-radius:14px;padding:12px 14px;text-decoration:none;color:var(--lw-ink)}
+.vtip>span:first-child{font-size:1.5rem;line-height:1}.vtip .vt{display:block;font-weight:700}.vtip small{display:block;color:var(--muted);line-height:1.35;margin-top:2px}
+.vrule{width:100%;margin-top:4px}
 a.klink.small{color:var(--lw-en);font-weight:700;padding:6px}
 .kstars{display:flex;gap:4px}
 .kstars i{width:30px;height:30px;display:block}
@@ -916,21 +920,21 @@ G7RAW.forEach((x,i)=>G.push({id:'gp'+i,g:'G7',t:x.t,k:x.k,q:x.q,h:x.h,pic:x.pic,
 /* Erklär-Karten, die im ersten Durchgang zwischen den Aufgaben kommen (auch im Kapitel unter „Erklärung ansehen“) */
 const KB=k=>`<span class="kkey">${k}</span>`;
 const RULES={G7:[
- {h:'Wem gehört das? → ’s',b:`<p>Mit <b>’s</b> zeigst du im Englischen, wem etwas gehört. Auf Deutsch sagst du: <i>der Hund des Jungen</i> oder <i>Rubys Zimmer</i>.</p>
+ {k:1,h:'Wem gehört das? → ’s',b:`<p>Mit <b>’s</b> zeigst du im Englischen, wem etwas gehört. Auf Deutsch sagst du: <i>der Hund des Jungen</i> oder <i>Rubys Zimmer</i>.</p>
   <div class="gex"><span class="gpic">🧒 🐕</span><span><b>the boy’s dog</b><small>ein Junge → der Hund des Jungen</small></span></div>
   <div class="gex"><span class="gpic">👧 🥪</span><span><b>the girl’s sandwiches</b><small>ein Mädchen → die Sandwiches des Mädchens</small></span></div>
   <div class="gex"><span class="gpic">🐶 🛏️</span><span><b>Sherlock is in Ruby’s bedroom.</b><small>Name + ’s</small></span></div>
   <p class="grule">Ein Besitzer: <b>Wort + ’s</b></p>`,say:"the boy's dog. the girl's sandwiches. Sherlock is in Ruby's bedroom."},
- {h:'Mehrere Besitzer → s’',b:`<p>Gehört etwas <b>mehreren</b>, hat das Wort schon ein Plural-s: <i>boys, girls</i>. Dann hängst du nur noch das Apostroph hinten an.</p>
+ {k:2,h:'Mehrere Besitzer → s’',b:`<p>Gehört etwas <b>mehreren</b>, hat das Wort schon ein Plural-s: <i>boys, girls</i>. Dann hängst du nur noch das Apostroph hinten an.</p>
   <div class="gex"><span class="gpic">🧒🧒 🐕</span><span><b>the boys’ dog</b><small>zwei Jungen → der Hund der Jungen</small></span></div>
   <div class="gex"><span class="gpic">👧👧 🥪</span><span><b>the girls’ sandwiches</b><small>zwei Mädchen → ihre Sandwiches</small></span></div>
   <p class="grule">Mehrere Besitzer: <b>boys → boys’</b></p>
   <p class="gnote">👂 <b>boy’s</b> und <b>boys’</b> klingen gleich! Den Unterschied siehst du nur beim Schreiben. Frag dich immer: <i>Ist es einer oder sind es mehrere?</i></p>`,say:"the boys' dog. the girls' sandwiches."},
- {h:'Besondere Fälle',b:`<div class="gex"><span class="gpic">👫</span><span><b>Ryan and Ruby’s sandwiches</b><small>zwei Namen, ein Ding: nur der letzte Name bekommt ’s</small></span></div>
+ {k:3,h:'Besondere Fälle',b:`<div class="gex"><span class="gpic">👫</span><span><b>Ryan and Ruby’s sandwiches</b><small>zwei Namen, ein Ding: nur der letzte Name bekommt ’s</small></span></div>
   <div class="gex"><span class="gpic">🏠</span><span><b>the Eatons’ house</b><small>die Eatons = die ganze Familie, also mehrere → s’</small></span></div>
   <div class="gex"><span class="gpic">🧸</span><span><b>the children’s toys</b><small>Mehrzahl ohne s (children, men, women) → ’s</small></span></div>
   <p class="gnote">⚠️ <b>he’s, she’s, it’s</b> sind Kurzformen: he’s = he is. Das ist kein Besitz! Zeigt ’s Besitz, steht danach ein Ding: <i>Karam’s football</i>.</p>`,say:"Ryan and Ruby's sandwiches. the Eatons' house. the children's toys."},
- {h:'Jetzt tippst du selbst: das Apostroph ’',b:`<p>Gleich schreibst du die Wörter selbst, so wie im Buch: <i>Karam is (Ryan) best friend.</i> → <b>Ryan’s</b></p>
+ {k:'t',h:'Jetzt tippst du selbst: das Apostroph ’',b:`<p>Gleich schreibst du die Wörter selbst, so wie im Buch: <i>Karam is (Ryan) best friend.</i> → <b>Ryan’s</b></p>
   <p class="lbl" style="margin:4px 0 0">So findest du ’ auf dem iPhone</p>
   <ol class="gsteps">
    <li>Tipp unten links auf ${KB('123')}</li>
@@ -1027,6 +1031,51 @@ RULES.G8=[
    <li>In der dritten Reihe tippst du auf <span class="kkey hot">'</span></li>
    <li>Mit ${KB('ABC')} kommst du zurück zu den Buchstaben.</li></ol>
   <p class="gnote">✨ <b>Profi-Trick:</b> Halt ${KB('123')} gedrückt, wisch zum <b>'</b> und lass los.</p>`}];
+/* G7: „So nicht!“-Karte vor dem Tippen */
+RULES.G7.splice(3,0,{k:null,h:'Achtung: so nicht!',b:`${NOB('I’ve got two dog’s.')}${OKB('I’ve got two dogs.','Nur Mehrzahl, niemandem gehört etwas → kein Apostroph.')}
+  ${NOB('This is Ryans dog.')}${OKB('This is Ryan’s dog.','Zeigt das s Besitz, braucht es immer das Apostroph.')}
+  ${NOB('the dog of Ryan')}${OKB('Ryan’s dog','Bei Personen und Tieren sagst du ’s, nicht of.')}
+  <p class="grule">Apostroph nur, wenn etwas <b>jemandem gehört</b>. Mehrzahl allein → nur <b>s</b>.</p>`,say:"I've got two dogs. This is Ryan's dog."});
+/* ===== Verstehen-Einheit (Kapitel 25.1 und 28.1): Erklär-Karte, dann 1–2 leichte Fragen mit zwei Antworten.
+   VQ[g][n] gehört zur Erklär-Karte RULES[g][n]. Die Fragen zählen nicht im Karteikasten. a = richtige Antwort. */
+const VQ={G7:[
+ [{pic:'👧 🚲',q:'Ein Mädchen hat ein Fahrrad. Wie sagst du „das Fahrrad des Mädchens“?',o:['the girl’s bike','the girls’ bike'],a:'the girl’s bike',ex:'Ein Mädchen = ein Besitzer → girl + ’s.'},
+  {pic:'👧 🛏️',q:'Wie schreibst du „Rubys Zimmer“?',o:['Ruby’s room','Rubys room'],a:'Ruby’s room',ex:'Name + ’s. Ohne Apostroph geht es im Englischen nicht.'}],
+ [{pic:'👧👧 ⚽',q:'Zwei Mädchen haben zusammen einen Ball. Was passt?',o:['the girls’ ball','the girl’s ball'],a:'the girls’ ball',ex:'Mehrere Mädchen: girls hat schon ein s → nur noch ’ dahinter.'},
+  {pic:'🐕',q:'the boys’ dog: Wie viele Jungen sind es?',o:['mehrere Jungen','ein Junge'],a:'mehrere Jungen',ex:'Das Apostroph steht hinter dem Plural-s (boys’) → mehrere Jungen.'}],
+ [{q:'He’s my friend. Was bedeutet ’s hier?',o:['he is','Besitz: es gehört ihm'],a:'he is',ex:'he’s = he is. Danach kommt kein Ding, das ihm gehört.'},
+  {pic:'🧸',q:'Wie sagst du „das Spielzeug der Kinder“?',o:['the children’s toys','the childrens’ toys'],a:'the children’s toys',ex:'children hat kein s am Ende → einfach ’s anhängen.'}],
+ [{pic:'🐈 🐈',q:'Ich habe zwei Katzen. Welcher Satz ist richtig?',o:['I’ve got two cats.','I’ve got two cat’s.'],a:'I’ve got two cats.',ex:'Hier gehört niemandem etwas, es ist nur Mehrzahl → kein Apostroph.'},
+  {pic:'🎒',q:'Welcher Satz ist richtig?',o:['This is Karam’s bag.','This is the bag of Karam.'],a:'This is Karam’s bag.',ex:'Bei Personen sagst du ’s: Karam’s bag.'}],
+ []],
+G8:[
+ [{pic:'🐕',q:'I’ve got a dog. Was heißt das?',o:['Ich habe einen Hund.','Ich bekam einen Hund.'],a:'Ich habe einen Hund.',ex:'have got = haben. Das got übersetzt du nicht extra.'},
+  {pic:'🤧',q:'I’ve got a cold. Was heißt das?',o:['Ich bin erkältet.','Mir ist kalt.'],a:'Ich bin erkältet.',ex:'Bei Krankheiten sagst du have got: a cold = eine Erkältung.'}],
+ [{q:'Ryan ___ a dog.',o:['has got','have got'],a:'has got',ex:'Ryan = he → has got.'},
+  {q:'We ___ a cat.',o:['have got','has got'],a:'have got',ex:'we → have got.'}],
+ [{q:'Was ist die Kurzform von I have got?',o:['I’ve got','I’s got'],a:'I’ve got',ex:'have → ’ve.'},
+  {q:'She’s got a cat. Was bedeutet ’s hier?',o:['has','is'],a:'has',ex:'got steht dahinter → ’s = has.'}],
+ [{q:'Lily ___ a dog. (✘ verneint)',o:['hasn’t got','doesn’t have got'],a:'hasn’t got',ex:'Lily = she → hasn’t got. Kein doesn’t bei have got!'},
+  {q:'I ___ a brother. (✘ verneint)',o:['haven’t got','hasn’t got'],a:'haven’t got',ex:'I → haven’t got.'}],
+ [{q:'___ you got a pet?',o:['Have','Do'],a:'Have',ex:'Die Frage beginnt mit Have oder Has. Kein Do!'},
+  {q:'Have you got a bike? (✔) – Yes, …',o:['I have.','I have got.'],a:'I have.',ex:'In der Kurzantwort steht kein got.'}],
+ [{q:'Welcher Satz ist richtig?',o:['Have you got a pen?','Do you have got a pen?'],a:'Have you got a pen?',ex:'Bei have got gibt es kein do.'},
+  {pic:'🥣',q:'Jeden Morgen frühstücke ich. Was passt?',o:['I have breakfast.','I’ve got breakfast.'],a:'I have breakfast.',ex:'Frühstücken ist eine Tätigkeit → nur have, ohne got.'}],
+ []]};
+/* Spickzettel: die ganze Regel auf einer Karte (Ende von „Verstehen“, im Quiz und im Karteikasten) */
+const SPI=(l,w,d)=>`<div class="gex"><span class="gpic">${l}</span><span><b>${w}</b>${d?`<small>${d}</small>`:''}</span></div>`;
+const SPICK={
+ G7:{say:"the boy's dog. the boys' dog. the children's toys. Ryan and Ruby's sandwiches.",b:`${SPI('1️⃣','Einer: Wort + ’s','the boy’s dog · Ruby’s room')}
+  ${SPI('👥','Mehrere mit s: nur ’ dahinter','the boys’ dog · the Eatons’ house')}
+  ${SPI('🧸','Mehrzahl ohne s: ’s','the children’s toys · the women’s bikes')}
+  ${SPI('👫','Zwei Namen, ein Ding: nur der letzte','Ryan and Ruby’s sandwiches')}
+  <p class="gnote">⚠️ <b>he’s / she’s / it’s</b> = he is. Kein Besitz! Und Mehrzahl ohne Besitz bekommt kein Apostroph: <i>two dogs</i>.</p>
+  <p class="grule">Frag dich immer: <b>Einer oder mehrere?</b></p>`},
+ G8:{say:"I have got. You have got. He has got. I haven't got. She hasn't got. Have you got a pet? Yes, I have.",b:`${SPI('🙋','I / you / we / they have got','Kurz: I’ve got, they’ve got')}
+  ${SPI('🧍','he / she / it has got','Kurz: he’s got, Lily’s got')}
+  ${SPI('🙅','Verneint: haven’t got / hasn’t got','I haven’t got a brother.')}
+  ${SPI('❓','Frage: Have / Has … got …?','Have you got a pet? – Yes, I have. / No, I haven’t.')}
+  <p class="gnote">⚠️ Kein <b>do / does</b> bei have got. In der Kurzantwort kein <b>got</b>. Etwas <b>tun</b> → nur have: <i>have breakfast</i>.</p>`}};
 /* ===== Chat-Aufgaben: Neas Nachrichten haben Lücken (lwChat aus lernwelt-chat.js) ===== */
 const PEOPLE={Ruby:'#E0567A',Ryan:'#2F80ED',Karam:'#E07B12',Lily:'#8B4FE0',Sophie:'#0E9AA7'};
 const BE=['am','is','are'],BE_C=['Am','Is','Are'];
@@ -1478,13 +1527,23 @@ function movesHTML(){
 }
 
 /* ===== Kapitel-Modus: ein Kapitel pro Buchseite, Grammatik eingeordnet (Reihenfolge wie hefte.js) ===== */
-const KAPS=[{a:'s0',s:0},{a:'g2',g:'G2'},{a:'s1',s:1},{a:'g1',g:'G1'},{a:'s2',s:2},{a:'g3',g:'G3'},{a:'s3',s:3},{a:'s4',s:4},{a:'g6',g:'G6'},{a:'s5',s:5},{a:'s6',s:6},{a:'s7',s:7},{a:'s8',s:8},{a:'s9',s:9},{a:'s10',s:10},{a:'s11',s:11},{a:'s12',s:12},{a:'s13',s:13},{a:'s14',s:14},{a:'s15',s:15},{a:'s16',s:16},{a:'s17',s:17},{a:'s18',s:18},{a:'s19',s:19},{a:'g7',g:'G7'},{a:'s20',s:20},{a:'s21',s:21},{a:'g8',g:'G8'}];
+const KAPS=[{a:'s0',s:0},{a:'g2',g:'G2'},{a:'s1',s:1},{a:'g1',g:'G1'},{a:'s2',s:2},{a:'g3',g:'G3'},{a:'s3',s:3},{a:'s4',s:4},{a:'g6',g:'G6'},{a:'s5',s:5},{a:'s6',s:6},{a:'s7',s:7},{a:'s8',s:8},{a:'s9',s:9},{a:'s10',s:10},{a:'s11',s:11},{a:'s12',s:12},{a:'s13',s:13},{a:'s14',s:14},{a:'s15',s:15},{a:'s16',s:16},{a:'s17',s:17},{a:'s18',s:18},{a:'s19',s:19},{a:'g7v',g:'G7',v:1},{a:'g7',g:'G7'},{a:'s20',s:20},{a:'s21',s:21},{a:'g8v',g:'G8',v:1},{a:'g8',g:'G8'}];
 const OLD_ANKER={v1:'s0',v2:'s4',v3:'s7'};
-let KAP=null;
-const kapTitle=K=>K.g?TOP[K.g]:`${SECS[K.s].p} · ${SECS[K.s].n}`;
-const kapIds=K=>K.g?G.filter(x=>x.g===K.g).map(x=>x.id):V.filter(v=>v.s===K.s).map(v=>v.id);
+let KAP=null,VR=null;
+/* Grammatik mit Verstehen-Einheit: Kapitel N.1 = Verstehen (v:1), N.2 = Quiz. Nummern für die Anzeige: */
+const KNR=(()=>{let c=0;return KAPS.map((K,i)=>{const pv=KAPS[i-1];if(K.v)return ++c+'.1';if(K.g&&pv&&pv.v&&pv.g===K.g)return c+'.2';return ''+ ++c})})();
+const KTOT=parseInt(KNR[KNR.length-1]);
+const KSHORT={G7:'’s und s’',G8:'have got'};
+const hasVer=g=>KAPS.some(K=>K.v&&K.g===g);
+const verIdx=g=>KAPS.findIndex(K=>K.v&&K.g===g),quizIdx=g=>KAPS.findIndex(K=>!K.v&&K.g===g);
+const kapTitle=K=>K.v?`${K.g} · Verstehen: ${KSHORT[K.g]}`:K.g&&hasVer(K.g)?`${K.g} · Quiz: ${KSHORT[K.g]}`:K.g?TOP[K.g]:`${SECS[K.s].p} · ${SECS[K.s].n}`;
+const kapIds=K=>K.v?[]:K.g?G.filter(x=>x.g===K.g).map(x=>x.id):V.filter(v=>v.s===K.s).map(v=>v.id);
 /* Sterne: ⭐ alle einmal gesehen · ⭐⭐ alle mindestens Fach 2 · ⭐⭐⭐ alle mindestens Fach 4 */
+/* Verstehen: ⭐ alles einmal durchgelesen · ⭐⭐ mindestens 80 % der Fragen auf Anhieb richtig · ⭐⭐⭐ alle auf Anhieb richtig */
+const verS=g=>(S.ver&&S.ver[g])||{};
+const verProg=g=>{const v=verS(g);return v.best>=1?1:v.best>=.8?2/3:v.read?1/3:0};
 function kapProg(K){
+  if(K.v)return verProg(K.g);
   const ids=kapIds(K),n=ids.length||1,sh=k=>ids.filter(id=>bx(id)>=k).length/n;
   const a=sh(1),b=sh(2),c=sh(4);
   return a<1?a/3:b<1?1/3+b/3:2/3+c/3;
@@ -1508,20 +1567,22 @@ function kapMeter(K){
 function kapBar(){
   const e=document.querySelector('#lw-bar .lw-eyebrow'),n=document.querySelector('#lw-bar .lw-name');if(!e||!n)return;
   if(KAP==null){e.textContent='Englisch';n.textContent='English trainer'}
-  else{e.textContent=`Englisch · Kapitel ${KAP+1} von ${KAPS.length}`;n.textContent=kapTitle(KAPS[KAP])}
+  else{e.textContent=`Englisch · Kapitel ${KNR[KAP]} von ${KTOT}`;n.textContent=kapTitle(KAPS[KAP])}
 }
-function home(){stopMic();KAP!=null?kapStart():start()}
+function home(){stopMic();VR=null;KAP!=null?kapStart():start()}
 function kapStart(){
-  R=null;closeDetail();renderBox();kapBar();
+  R=null;VR=null;closeDetail();renderBox();kapBar();
+  if(KAPS[KAP].v)return verStart();
   const K=KAPS[KAP],p=kapProg(K),isG=!!K.g,nx=KAPS[KAP+1],seen=kapIds(K).some(id=>bx(id)>0);
   $('#screen').innerHTML=`<section class="panel kap">
-    <div class="lbl">Kapitel ${KAP+1} von ${KAPS.length}${isG?' · Grammatik':' · Vokabeln'}</div>
+    <div class="lbl">Kapitel ${KNR[KAP]} von ${KTOT}${isG?hasVer(K.g)?' · Grammatik-Quiz':' · Grammatik':' · Vokabeln'}</div>
     <h2 style="font-size:1.5rem">${esc(kapTitle(K))}</h2>
     ${starsHTML(kapStars(p))}
     ${kapMeter(K)}
     <p style="margin:0">${kapNext(K)}</p>
+    ${isG&&hasVer(K.g)&&!verS(K.g).read?`<a class="vtip" href="#${KAPS[verIdx(K.g)].a}"><span aria-hidden="true">💡</span><span><span class="vt">Tipp: Erst verstehen, dann üben</span><small>In Kapitel ${KNR[verIdx(K.g)]} lernst du die Regel Schritt für Schritt. Dann klappt das Quiz viel besser.</small></span></a>`:''}
     <button class="go" type="button" id="kgo">${seen?'Weiter üben':"Los geht's"}</button>
-    ${isG&&RULES[K.g]?'<button class="ghost kbtn" type="button" id="kexpl">Erklärung ansehen</button>':''}
+    ${isG&&SPICK[K.g]?'<button class="ghost kbtn" type="button" id="kspick">Spickzettel ansehen</button>':isG&&RULES[K.g]?'<button class="ghost kbtn" type="button" id="kexpl">Erklärung ansehen</button>':''}
     <button class="ghost kbtn" type="button" id="kseek">${isG?'Aufgaben ansehen':'Wörter ansehen'}</button>
     <a class="ghost kbtn klink" href="index.html#heft-englisch">Zurück zum Heft</a>
     ${isG?'':spkToggle()}
@@ -1530,10 +1591,11 @@ function kapStart(){
   $('#kgo').onclick=kapRound;
   $('#kseek').onclick=()=>openWords('g:'+(K.g||'s'+K.s));
   if($('#kexpl'))$('#kexpl').onclick=()=>explainAll(K.g);
+  if($('#kspick'))$('#kspick').onclick=()=>ruleSheet(K.g,null);
   bindSpk();
   window.scrollTo(0,0);
 }
-function kapRound(){const K=KAPS[KAP];if(K.g&&RULES[K.g]&&!kapIds(K).some(id=>bx(id)>0))return guidedRound(K.g);startRound(kapIds(K),{maxNew:5})}
+function kapRound(){const K=KAPS[KAP];if(K.g&&RULES[K.g]&&!hasVer(K.g)&&!kapIds(K).some(id=>bx(id)>0))return guidedRound(K.g);startRound(kapIds(K),{maxNew:5})}
 /* Erster Durchgang eines Themas mit Erklär-Karten: erst klicken, zwischendurch erklären, am Ende selbst tippen und chatten */
 function guidedRound(g){
   closeDetail();
@@ -1548,7 +1610,7 @@ function guidedRound(g){
 function ruleHTML(g,n){const x=RULES[g][n];return `<p class="prompt" style="font-size:1.35rem">${esc(x.h)}</p><div class="grules">${x.b}</div>${x.say?`<p class="row" style="margin:0;gap:8px;align-items:center">${sayBtn(x.say)}<span class="small">Beispiele anhören</span></p>`:''}`}
 function explainCard(g,n,onNext,top,last){
   $('#screen').innerHTML=`<div class="topbar"><span>${top}</span><button class="ghost" type="button" id="quit" aria-label="Beenden">Beenden</button></div>
-  ${R?`<div class="progress" aria-hidden="true"><i style="width:${Math.round(R.i/R.q.length*100)}%"></i></div>`:''}
+  ${R||VR?`<div class="progress" aria-hidden="true"><i style="width:${Math.round(R?R.i/R.q.length*100:VR.i/VR.q.length*100)}%"></i></div>`:''}
   <article class="card"><div class="card-top"><span class="tag">Erklärung ${n+1} von ${RULES[g].length}</span><span class="fachtag">${esc(TOP[g].split(' · ')[0])}</span></div><div class="card-body" id="cb">${ruleHTML(g,n)}
   <button class="go" type="button" id="inext">${last}</button></div></article>`;
   $('#quit').onclick=home;bindSay($('#cb'));
@@ -1557,18 +1619,113 @@ function explainCard(g,n,onNext,top,last){
 /* Alle Erklärungen nochmal ansehen (Knopf im Kapitel) */
 function explainAll(g,n){n=n||0;const L=RULES[g].length;
   explainCard(g,n,()=>n+1<L?explainAll(g,n+1):kapStart(),`Erklärung · ${esc(TOP[g])}`,n+1<L?'Weiter':'Fertig');}
+const sayRow=t=>t&&canSay?`<p class="row" style="margin:0;gap:8px;align-items:center">${sayBtn(t)}<span class="small">Beispiele anhören</span></p>`:'';
+const spickHTML=g=>`<p class="prompt" style="font-size:1.35rem">Spickzettel · ${esc(KSHORT[g]||TOP[g])}</p><div class="grules">${SPICK[g].b}</div>${sayRow(SPICK[g].say)}`;
+/* Welche Erklär-Karte passt zu einer Aufgabe? n = Karte, null = Spickzettel (Chats und Tipp-Aufgaben), undefined = keine */
+function ruleFor(it){
+  if(!it||!RULES[it.g])return undefined;
+  const n=it.t==='chat'||it.k==='t'?-1:RULES[it.g].findIndex(r=>r.k===it.k);
+  return n>=0?n:SPICK[it.g]?null:undefined;
+}
+/* Erklär-Karte oder Spickzettel als Blatt von unten, ohne die Aufgabe zu verlassen */
+function ruleSheet(g,n){
+  closeDetail();
+  const dim=document.createElement('div');dim.className='kdim';dim.onclick=closeDetail;
+  const sh=document.createElement('div');sh.className='kdetail';sh.setAttribute('role','dialog');sh.setAttribute('aria-modal','true');sh.setAttribute('aria-label',n==null?'Spickzettel':'Erklärung');
+  sh.innerHTML=`<div class="kgrab"></div>${n==null?spickHTML(g):ruleHTML(g,n)}<button class="ghost kbtn" type="button" id="kclose">Schließen</button>`;
+  document.body.append(dim,sh);bindSay(sh);
+  $('#kclose').onclick=closeDetail;$('#kclose').focus({preventScroll:true});
+  document.addEventListener('keydown',detailKey);
+}
+/* ===== Verstehen-Einheit (Kapitel N.1): Erklär-Karten, dazwischen leichte Fragen, am Ende der Spickzettel ===== */
+function verStart(){
+  const K=KAPS[KAP],g=K.g,v=verS(g),st=kapStars(verProg(g)),qi=quizIdx(g),nq=VQ[g].flat().length;
+  const next=st===0?'Nächster Stern: alle Erklärungen einmal durchgehen.':st===1?'Nächster Stern: mindestens 8 von 10 Fragen auf Anhieb richtig.':st===2?'Letzter Stern: alle Fragen auf Anhieb richtig.':'Super, du hast die Regel verstanden! Jetzt ab ins Quiz.';
+  $('#screen').innerHTML=`<section class="panel kap">
+    <div class="lbl">Kapitel ${KNR[KAP]} von ${KTOT} · Grammatik verstehen</div>
+    <h2 style="font-size:1.5rem">${esc(kapTitle(K))}</h2>
+    ${starsHTML(st)}
+    <p style="margin:0">${RULES[g].length} Erklär-Karten, dazwischen ${nq} kurze Fragen zum Antippen. Hier geht es nur ums Verstehen: nichts davon kommt in den Karteikasten.</p>
+    <p class="small" style="margin:0">${next}${v.best!=null?` Bisher bestes Ergebnis: ${Math.round(v.best*nq)} von ${nq}.`:''}</p>
+    <button class="go" type="button" id="kgo">${v.read?'Nochmal durchgehen':"Los geht's"}</button>
+    ${v.read?'<button class="ghost kbtn" type="button" id="kspick">Spickzettel ansehen</button>':''}
+    ${qi>=0?`<a class="ghost kbtn klink" href="#${KAPS[qi].a}">Zum Quiz (Kapitel ${KNR[qi]}) ›</a>`:''}
+    <a class="ghost kbtn klink" href="index.html#heft-englisch">Zurück zum Heft</a>
+  </section>`;
+  $('#kgo').onclick=()=>verRound(g);
+  if($('#kspick'))$('#kspick').onclick=()=>ruleSheet(g,null);
+  window.scrollTo(0,0);
+}
+function verRound(g){
+  closeDetail();R=null;
+  const q=[];RULES[g].forEach((r,n)=>{q.push({ex:n});(VQ[g][n]||[]).forEach((x,j)=>q.push({n,j}))});q.push({spick:1});
+  VR={g,q,i:0,right:0,n:q.filter(x=>x.j!=null).length,retried:new Set()};
+  verStep();
+}
+function verStep(){
+  const g=VR.g,st=VR.q[VR.i];if(!st)return verEnd();
+  const go=()=>{VR.i++;verStep()},nx=VR.q[VR.i+1];
+  const top=`Kapitel ${KNR[KAP]} · Verstehen`;
+  if(st.ex!=null)return explainCard(g,st.ex,go,top,nx&&nx.j!=null?'Kurz testen':'Weiter');
+  if(st.spick){
+    $('#screen').innerHTML=`<div class="topbar"><span>${top}</span><button class="ghost" type="button" id="quit">Beenden</button></div>
+    <div class="progress" aria-hidden="true"><i style="width:${Math.round(VR.i/VR.q.length*100)}%"></i></div>
+    <article class="card"><div class="card-top"><span class="tag">Dein Spickzettel</span><span class="fachtag">${g}</span></div><div class="card-body" id="cb">
+    <p class="instr">Das Wichtigste auf einen Blick. Du findest den Spickzettel jederzeit im Kapitel wieder.</p>${spickHTML(g)}
+    <button class="go" type="button" id="inext">Fertig</button></div></article>`;
+    $('#quit').onclick=home;bindSay($('#cb'));$('#inext').onclick=go;window.scrollTo(0,0);return;
+  }
+  const x=VQ[g][st.n][st.j],o=shuffle(x.o);
+  $('#screen').innerHTML=`<div class="topbar"><span>${top}${st.again?' · Nochmal':''}</span><button class="ghost" type="button" id="quit">Beenden</button></div>
+  <div class="progress" aria-hidden="true"><i style="width:${Math.round(VR.i/VR.q.length*100)}%"></i></div>
+  <article class="card"><div class="card-top"><span class="tag">Kurz getestet</span><span class="fachtag">zählt nicht</span></div><div class="card-body" id="cb">
+  <p class="instr">Tipp die richtige Antwort an.</p>${x.pic?`<p class="gpicq"><span aria-hidden="true">${x.pic}</span></p>`:''}<p class="prompt">${showQ(x.q)}</p>
+  <div class="opts one">${o.map((t,i)=>`<button class="opt" type="button" data-i="${i}">${esc(t)}</button>`).join('')}</div></div></article>`;
+  $('#quit').onclick=home;window.scrollTo(0,0);
+  const cb=$('#cb');
+  cb.querySelectorAll('.opt').forEach(btn=>btn.onclick=()=>{
+    const ok=o[+btn.dataset.i]===x.a,key=st.n+':'+st.j;
+    cb.querySelectorAll('.opt').forEach(b=>{b.disabled=true;if(o[+b.dataset.i]===x.a)b.classList.add('ok')});
+    if(!ok)btn.classList.add('bad');
+    if(!st.again){if(ok)VR.right++;else if(!VR.retried.has(key)){VR.retried.add(key);VR.q.splice(VR.q.length-1,0,{n:st.n,j:st.j,again:1})}}
+    const fb=document.createElement('div');fb.className='fb '+(ok?'ok':'bad');fb.setAttribute('role','status');
+    fb.innerHTML=`<strong>${ok?praise():'Nicht ganz. Richtig ist:'}</strong>${ok?'':`<span><b>${esc(x.a)}</b></span>`}<span class="ex">${esc(x.ex)}</span>${ok?'':`<button class="ghost vrule" type="button" id="vagain">📖 Erklärung nochmal ansehen</button>${st.again?'':'<span class="ex">Die Frage kommt am Ende noch einmal.</span>'}`}`;
+    const b=document.createElement('button');b.className='next';b.type='button';b.textContent='Weiter';
+    b.onclick=()=>{VR.i++;verStep()};
+    lwSheet(cb,ok,[fb,b]);
+    const ag=fb.querySelector('#vagain');if(ag)ag.onclick=()=>ruleSheet(g,st.n);
+    b.focus({preventScroll:true});
+  });
+}
+function verEnd(){
+  const g=VR.g,r=VR.right,n=VR.n||1,v=verS(g);
+  if(!S.ver)S.ver={};S.ver[g]={read:true,best:Math.max(v.best||0,r/n),d:today()};save();
+  const st=kapStars(verProg(g)),qi=quizIdx(g);
+  const msg=r===n?'Alles auf Anhieb richtig. Du hast es verstanden!':r>=n*.8?'Sehr gut verstanden!':r>=n*.5?'Gut! Schau dir die kniffligen Karten ruhig nochmal an.':'Kein Problem, geh die Erklärungen einfach nochmal durch.';
+  VR=null;
+  $('#screen').innerHTML=`<section class="panel end">
+    <div class="lbl">Verstehen geschafft</div>
+    <div class="score">${r}<span style="font-size:1.4rem;color:var(--muted)"> / ${n}</span></div>
+    <h2>${msg}</h2>
+    <div class="kapend"><div class="lbl">Kapitel ${KNR[KAP]} · ${esc(kapTitle(KAPS[KAP]))}</div>${starsHTML(st)}<p class="small" style="margin:0">Gezählt wird, was beim ersten Versuch richtig war.</p></div>
+    <div class="row">${qi>=0?`<a class="go klink" href="#${KAPS[qi].a}">Weiter zum Quiz (Kapitel ${KNR[qi]})</a>`:''}<button class="ghost" type="button" id="again">Nochmal durchgehen</button><button class="ghost" type="button" id="menu">Zum Kapitel</button></div>
+  </section>`;
+  $('#again').onclick=()=>verRound(g);$('#menu').onclick=kapStart;window.scrollTo(0,0);
+}
 /* Kennenlernen: neue Wörter zuerst ansehen und anhören, neue Grammatik zuerst als Regel-Karte */
 function introCard(){
   const id=R.intro[R.ii],last=R.ii+1>=R.intro.length,x=ALL[id],isRule=id.startsWith('rule:');
-  const head=isRule?'Die Regel':`Neues Wort ${R.ii+1} von ${R.intro.length}`;
+  const head=isRule?(SPICK[id.slice(5)]?'Spickzettel':'Die Regel'):`Neues Wort ${R.ii+1} von ${R.intro.length}`;
   let body;
-  if(isRule){const g=id.slice(5),ex=G.find(y=>y.g===g&&y.q.includes('___'));
+  if(isRule&&SPICK[id.slice(5)]){const g=id.slice(5),vi=verIdx(g);
+    body=`<p class="instr">Lies dir die Regel kurz durch. Danach übst du sie.</p>${spickHTML(g)}${vi>=0&&!verS(g).read?`<p class="small" style="margin:0">Genau erklärt wird alles im Heft in <a href="#${KAPS[vi].a}">Kapitel ${KNR[vi]}</a>.</p>`:''}`}
+  else if(isRule){const g=id.slice(5),ex=G.find(y=>y.g===g&&y.q.includes('___'));
     body=`<p class="instr">Lies dir die Regel durch. Danach übst du sie.</p><p class="prompt" style="font-size:1.35rem">${esc(TOP[g])}</p>
       <p style="margin:0;font-size:1.1rem">${esc(EXD[g])}</p>${ex?`<p class="small" style="margin:0">Beispiel: ${fillQ(ex.q,ex.a[0])}</p>`:''}`}
   else body=`<p class="instr">Hör es dir an und sprich es laut nach.</p><p class="prompt">${esc(x.en)} ${sayBtn(x.en)}</p>${x.ipa?`<p class="vipa">${ipaHTML(x)}</p>`:''}<div class="flipback">${esc(x.de)}</div>${vMore(x)}`;
   const tryIt=!isRule&&speakOn()&&speakable(x);
   if(tryIt)body+='<div id="mw"></div>';
-  $('#screen').innerHTML=`<div class="topbar"><button class="ghost" type="button" id="quit" aria-label="Runde beenden">✕</button><span>Kennenlernen${KAP!=null?' · Kapitel '+(KAP+1):''}</span></div>
+  $('#screen').innerHTML=`<div class="topbar"><button class="ghost" type="button" id="quit" aria-label="Runde beenden">✕</button><span>Kennenlernen${KAP!=null?' · Kapitel '+KNR[KAP]:''}</span></div>
   <div class="progress" aria-hidden="true"><i style="width:${Math.round(R.ii/R.intro.length*100)}%"></i></div>
   <article class="card"><div class="card-top"><span class="tag">${head}</span><span class="fachtag">neu</span></div><div class="card-body" id="cb">${body}
   <button class="go" type="button" id="inext">${last?'Jetzt üben':'Weiter'}</button></div></article>`;
@@ -1631,7 +1788,7 @@ const dayDiff=d=>{if(!d)return 99;const a=new Date(d+'T12:00'),b=new Date(today(
 function freshPlan(){
   const groups=[];
   if(S.mode!=='g')groups.push({v:1,L:KAPS.filter(K=>!K.g&&S.secs.includes(K.s)).reverse()});
-  if(S.mode!=='v')groups.push({v:0,L:KAPS.filter(K=>K.g&&S.tops.includes(K.g)).reverse()});
+  if(S.mode!=='v')groups.push({v:0,L:KAPS.filter(K=>K.g&&!K.v&&S.tops.includes(K.g)).reverse()});
   const focus=[],older=[],fk=[];
   groups.forEach(({v,L})=>{
     let n=0,fest=true,i=0;
@@ -1695,6 +1852,8 @@ function startRound(only,opt){
   const was={};out.forEach(id=>was[id]=bx(id));
   let intro=[];
   if(KAP!=null){const nw=out.filter(id=>bx(id)===0);intro=nw.filter(id=>id[0]==='v');const gs=[...new Set(nw.filter(id=>id[0]==='g').map(id=>ALL[id].g))];intro=gs.map(g=>'rule:'+g).concat(intro)}
+  /* Karteikasten: kommt ein Thema mit Spickzettel zum ersten Mal dran, steht der Spickzettel davor */
+  else intro=[...new Set(out.filter(id=>id[0]==='g'&&bx(id)===0&&SPICK[ALL[id].g]).map(id=>ALL[id].g))].map(g=>'rule:'+g);
   R={q:out,i:0,right:0,first:out.length,missed:[],retried:new Set(),was,intro,ii:0};
   window.scrollTo(0,0);
   task();
@@ -1712,14 +1871,14 @@ function task(){
   if(R.intro&&R.ii<R.intro.length)return introCard();
   if(R.i>=R.q.length)return end();
   const id=R.q[R.i];
-  if(id.startsWith('ex:')){const [,g,n]=id.split(':'),nxt=R.q[R.i+1];return explainCard(g,+n,()=>{R.i++;task()},`${KAP!=null?`Kapitel ${KAP+1} · `:''}Erklärung`,nxt&&nxt.startsWith('ex:')?'Weiter':nxt&&ALL[nxt]&&ALL[nxt].t==='t'?'Selbst schreiben':'Jetzt üben')}
+  if(id.startsWith('ex:')){const [,g,n]=id.split(':'),nxt=R.q[R.i+1];return explainCard(g,+n,()=>{R.i++;task()},`${KAP!=null?`Kapitel ${KNR[KAP]} · `:''}Erklärung`,nxt&&nxt.startsWith('ex:')?'Weiter':nxt&&ALL[nxt]&&ALL[nxt].t==='t'?'Selbst schreiben':'Jetzt üben')}
   const it=ALL[id],b=bx(id),isV=id[0]==='v';
   let kind=isV?vocabType(it,b):it.t;
   if(!isV&&it.t==='c'&&b>=3&&it.q.includes('___')&&/^[A-Za-z']+$/.test(it.a[0])&&!it.opts.includes(SND[0]))kind='t';
   const tag=isV?`Vokabel · ${SECS[it.s].p}`:TOP[it.g];
   const fach=b?`Fach ${b}`:'neu';
   const pct=Math.round(R.i/R.q.length*100);
-  $('#screen').innerHTML=`<div class="topbar"><span>${KAP!=null?`Kapitel ${KAP+1} · `:''}Karte ${R.i+1} von ${R.q.length}${R.i>=R.first?' · Wiederholung':''}</span><button class="ghost" type="button" id="quit" aria-label="Runde beenden">Beenden</button></div>
+  $('#screen').innerHTML=`<div class="topbar"><span>${KAP!=null?`Kapitel ${KNR[KAP]} · `:''}Karte ${R.i+1} von ${R.q.length}${R.i>=R.first?' · Wiederholung':''}</span><button class="ghost" type="button" id="quit" aria-label="Runde beenden">Beenden</button></div>
   <div class="progress" aria-hidden="true"><i style="width:${pct}%"></i></div>
   <article class="card"><div class="card-top"><span class="tag">${esc(tag)}</span><span class="fachtag">${fach}</span></div>
   <div class="card-body" id="cb"></div></article>`;
@@ -1740,7 +1899,9 @@ function grade(id,ok,html){
   else{if(!R.missed.includes(id))R.missed.push(id);if(!R.retried.has(id)){R.retried.add(id);R.q.push(id)}}
   const fb=document.createElement('div');
   fb.className='fb '+(ok?'ok':'bad');fb.setAttribute('role','status');
-  fb.innerHTML=html+(id[0]==='v'?vMore(ALL[id],true):'')+(!ok&&R.retried.has(id)&&R.q.lastIndexOf(id)>R.i?'<span class="ex">Diese Karte kommt am Ende der Runde noch einmal.</span>':'');
+  const rn=!ok&&id[0]==='g'?ruleFor(ALL[id]):undefined;
+  fb.innerHTML=html+(id[0]==='v'?vMore(ALL[id],true):'')+(rn!==undefined?`<button class="ghost vrule" type="button" data-rule="${rn==null?'':rn}">📖 Regel nochmal ansehen</button>`:'')+(!ok&&R.retried.has(id)&&R.q.lastIndexOf(id)>R.i?'<span class="ex">Diese Karte kommt am Ende der Runde noch einmal.</span>':'');
+  const rb=fb.querySelector('[data-rule]');if(rb)rb.onclick=()=>ruleSheet(ALL[id].g,rb.dataset.rule===''?null:+rb.dataset.rule);
   const cb=$('#cb');
   const nx=document.createElement('button');nx.className='next';nx.type='button';nx.textContent=R.i+1>=R.q.length?'Ergebnis':'Weiter';
   nx.onclick=()=>{R.i++;task();if(document.activeElement&&document.activeElement.blur)document.activeElement.blur()};bindSay(lwSheet(cb,ok,[fb,nx])||fb);nx.focus({preventScroll:true});
@@ -1880,7 +2041,7 @@ function end(){
     <div class="lbl">Runde geschafft</div>
     <div class="score">${r}<span style="font-size:1.4rem;color:var(--muted)"> / ${n}</span></div>
     <h2>${msg}</h2>
-    ${KAP!=null?`<div class="kapend"><div class="lbl">Kapitel ${KAP+1} · ${esc(kapTitle(KAPS[KAP]))}</div>${starsHTML(kapStars(kapProg(KAPS[KAP])))}${kapMeter(KAPS[KAP])}<p style="margin:0">${kapNext(KAPS[KAP])}</p></div>`
+    ${KAP!=null?`<div class="kapend"><div class="lbl">Kapitel ${KNR[KAP]} · ${esc(kapTitle(KAPS[KAP]))}</div>${starsHTML(kapStars(kapProg(KAPS[KAP])))}${kapMeter(KAPS[KAP])}<p style="margin:0">${kapNext(KAPS[KAP])}</p></div>`
       :`<p class="small" style="margin:0">${sure} von ${ids.length} Karten sind schon in Fach 5.</p>`}
     ${movesHTML()}
     ${R.missed.length?`<div><div class="lbl" style="margin-bottom:6px">Diese Karten übst du am besten noch einmal</div><ul class="list">${R.missed.map(id=>{const x=ALL[id];return `<li>${id[0]==='v'?`<b>${esc(x.en)}</b> – ${esc(x.de)}`:(x.q.includes('___')?fillQ(x.q,x.a[0]):`${esc(x.q)} → <b>${esc(x.a[0])}</b>`)}</li>`}).join('')}</ul></div>`:''}
