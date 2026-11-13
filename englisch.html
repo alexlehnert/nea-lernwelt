@@ -84,7 +84,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--navy);outline-o
 .opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .opts.one{grid-template-columns:1fr}
 .opt{border:2px solid var(--line);background:var(--paper);border-radius:12px;padding:12px 14px;text-align:left;font-size:1.02rem;min-height:52px}
-@media (hover:hover) and (pointer:fine){.opt:hover:not(:disabled){border-color:var(--navy)}}
+@media (hover:hover) and (pointer:fine){@media (hover:hover){.opt:hover:not(:disabled){border-color:var(--navy)}}}
 .opt.ok{border-color:var(--ok);background:var(--ok-bg)}
 .opt.bad{border-color:var(--bad);background:var(--bad-bg)}
 .opt:disabled{cursor:default}
@@ -321,6 +321,7 @@ a.klink.small{color:var(--lw-en);font-weight:700;padding:6px}
 .spk-note{font-size:13px;color:var(--lw-muted);margin:0}
 mark.dkw{background:#FFE27A;color:#1d1d1d;border-radius:6px;padding:0 4px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
 .dk{display:flex;flex-direction:column;gap:10px}
+.gap.gh.dkw{background:#FFE27A;color:#1d1d1d;border-radius:6px;padding:0 4px}
 .dktrail{margin:0;padding:10px 12px;border-radius:12px;font-weight:700;line-height:1.35}
 .dktrail.ok{background:var(--ok-bg);color:var(--ok)}.dktrail.bad{background:#FFF3CC;color:#7A5A00}
 .mic.sm{width:68px;height:68px}.mic.sm svg{width:32px;height:32px}
@@ -1081,6 +1082,47 @@ const DENK={
   '3.1':{w:'I',a:2,t:'I ist nicht he, she oder it → have'},
   '4.0':{w:'you',a:2,t:'you ist nicht he, she oder it → Have'}}};
 const denkOn=()=>S.denk!==false;
+/* Denkfrage im Quiz (25.2/28.2): aus der Aufgabe selbst abgeleitet. a = 1 (Einzahl / he-she-it), 2 (Mehrzahl / alle anderen). */
+const DK_PRON={ryan:'he',karam:'he',sherlock:'he',amir:'he',lily:'she',ruby:'she',mia:'she',he:'he',she:'she',it:'it'};
+function denkFor(it){
+  const ap=x=>String(x).replace(/[’‘]/g,"'");
+  if(it.g==='G7'){
+    const h=it.h,a0=ap(it.a[0]);if(!h||/\band\b/.test(h))return null;
+    if(a0.endsWith("s'"))return {w:h,gap:1,a:2,t:`${h} = Mehrzahl → ${h} + ’`};
+    if(a0.endsWith("'s"))return /^(children|men|women|people)$/i.test(h)?{w:h,gap:1,a:2,t:`${h} = Mehrzahl, aber ohne s am Ende → ${h} + ’s`}:{w:h,gap:1,a:1,t:`${h} = Einzahl → ${h} + ’s`};
+    return null;
+  }
+  if(it.g==='G8'){
+    const q=it.q,a0=ap(it.a[0]);if(!q.includes('___')||!/^(has|have)/i.test(a0))return null;
+    if(/[:→]/.test(q))return null;
+    let [l,r]=q.split('___');l=l.split(/[–.?!]/).pop().split(',').pop().trim();if(/^(what|where|who|why|how)$/i.test(l))l='';
+    const subj=l||((r.trim().match(/^(the \w+|\w+)/)||[])[1]||'');if(!subj)return null;
+    const pl=/\band\b/.test(subj)||/^(i|you|we|they)$/i.test(subj)||/^the \w+s$/i.test(subj),hv=/^has/i.test(a0)?'has':'have';
+    const pr=DK_PRON[subj.toLowerCase()];
+    return pl?{w:subj,a:2,t:`${subj} ist nicht he, she oder it → have`}:{w:subj,a:1,t:pr===subj.toLowerCase()?`${subj} → ${hv}`:`${subj} = ${pr||'he, she oder it'} → ${hv}`};
+  }
+  return null;
+}
+function denkQuiz(cb,it){
+  const K=KAP!=null?KAPS[KAP]:null;if(!K||!K.g||K.v||!hasVer(K.g)||!denkOn()||!DENK[K.g])return;
+  const d=denkFor(it);if(!d)return;
+  const ans=cb.querySelector('.opts')||cb.querySelector('#f');if(!ans)return;
+  const extra=[...cb.querySelectorAll('details.apos')],pr=cb.querySelector('.prompt');
+  if(d.gap){const gh=pr&&pr.querySelector('.gh');if(gh)gh.classList.add('dkw')}
+  else if(pr){const h=pr.innerHTML,gi=h.indexOf('<span class="gap'),w=esc(d.w),L=gi<0?h:h.slice(0,gi),R2=gi<0?'':h.slice(gi);
+    const li=L.lastIndexOf(w),mk=`<mark class="dkw">${w}</mark>`;
+    if(li>=0)pr.innerHTML=L.slice(0,li)+mk+L.slice(li+w.length)+R2;
+    else{const ri=R2.indexOf(' '+w+' ');if(ri>=0)pr.innerHTML=L+R2.slice(0,ri+1)+mk+R2.slice(ri+1+w.length)}}
+  const box=document.createElement('div');box.className='dk';
+  box.innerHTML=`<p class="instr">🤔 <b>Erst überlegen:</b> ${DENK[K.g].q(d.w)}</p><div class="opts one">${DENK[K.g].o.map((t,i)=>`<button class="dkopt opt" type="button" data-k="${i+1}">${esc(t)}</button>`).join('')}</div>`;
+  ans.before(box);ans.hidden=true;extra.forEach(e=>e.hidden=true);
+  box.querySelectorAll('.dkopt').forEach(b=>b.onclick=()=>{
+    const ok=+b.dataset.k===d.a;
+    box.innerHTML=`<p class="dktrail ${ok?'ok':'bad'}">${ok?'✔ Richtig gedacht:':'💡 Fast! So ist es:'} ${esc(d.t)}</p>`;
+    ans.hidden=false;extra.forEach(e=>e.hidden=false);
+    const inp=cb.querySelector('#ans');if(inp)inp.focus({preventScroll:true});
+  });
+}
 function denkToggle(){const on=denkOn();
   return `<div class="spk-toggle"><span class="lbl">Denkfrage zuerst</span><div class="chips"><button type="button" class="chip" data-denk="1" aria-pressed="${on}">An</button><button type="button" class="chip" data-denk="0" aria-pressed="${!on}">Aus</button></div></div>
   <p class="spk-note">${on?'Vor den Antworten kommt eine kleine Frage, die beim Überlegen hilft. Wenn du sicher bist, kannst du sie ausschalten.':'Die Antworten kommen sofort, ohne Denkfrage.'}</p>`}
@@ -1607,7 +1649,7 @@ function kapStart(){
     ${isG&&SPICK[K.g]?'<button class="ghost kbtn" type="button" id="kspick">Spickzettel ansehen</button>':isG&&RULES[K.g]?'<button class="ghost kbtn" type="button" id="kexpl">Erklärung ansehen</button>':''}
     <button class="ghost kbtn" type="button" id="kseek">${isG?'Aufgaben ansehen':'Wörter ansehen'}</button>
     <a class="ghost kbtn klink" href="index.html#heft-englisch">Zurück zum Heft</a>
-    ${isG?'':spkToggle()}
+    ${isG?hasVer(K.g)&&DENK[K.g]?denkToggle():'':spkToggle()}
     ${nx&&kapStars(p)>=1?`<a class="klink small" href="#${nx.a}">Nächstes Kapitel: ${esc(kapTitle(nx))} ›</a>`:''}
   </section>`;
   $('#kgo').onclick=kapRound;
@@ -1615,6 +1657,7 @@ function kapStart(){
   if($('#kexpl'))$('#kexpl').onclick=()=>explainAll(K.g);
   if($('#kspick'))$('#kspick').onclick=()=>ruleSheet(K.g,null);
   bindSpk();
+  document.querySelectorAll('[data-denk]').forEach(b=>b.onclick=()=>{S.denk=b.dataset.denk==='1';save();kapStart()});
   window.scrollTo(0,0);
 }
 function kapRound(){const K=KAPS[KAP];if(K.g&&RULES[K.g]&&!hasVer(K.g)&&!kapIds(K).some(id=>bx(id)>0))return guidedRound(K.g);startRound(kapIds(K),{maxNew:5})}
@@ -1916,7 +1959,7 @@ function task(){
   <div class="card-body" id="cb"></div></article>`;
   $('#quit').onclick=home;
   const cb=$('#cb');
-  if(isV)VT[kind](cb,it);else GT[kind](cb,it);
+  if(isV)VT[kind](cb,it);else{GT[kind](cb,it);if(kind==='c'||kind==='t')denkQuiz(cb,it)}
 }
 function bindSay(root){root.querySelectorAll('[data-say]').forEach(b=>b.onclick=()=>say(b.dataset.say))}
 
