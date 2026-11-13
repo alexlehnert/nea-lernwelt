@@ -319,6 +319,10 @@ a.klink.small{color:var(--lw-en);font-weight:700;padding:6px}
 .linkbtn{background:none;border:none;color:var(--lw-muted);text-decoration:underline;font:inherit;font-size:.92rem;padding:8px;min-height:44px;cursor:pointer}
 .spk-toggle{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .spk-note{font-size:13px;color:var(--lw-muted);margin:0}
+mark.dkw{background:#FFE27A;color:#1d1d1d;border-radius:6px;padding:0 4px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.dk{display:flex;flex-direction:column;gap:10px}
+.dktrail{margin:0;padding:10px 12px;border-radius:12px;font-weight:700;line-height:1.35}
+.dktrail.ok{background:var(--ok-bg);color:var(--ok)}.dktrail.bad{background:#FFF3CC;color:#7A5A00}
 .mic.sm{width:68px;height:68px}.mic.sm svg{width:32px;height:32px}
 .lw-sheet.neutral{background:var(--lw-en-s)}
 .lw-sheet.neutral .next{background:var(--lw-en);box-shadow:0 5px 0 var(--lw-en-d)}
@@ -1061,6 +1065,25 @@ G8:[
  [{q:'Welcher Satz ist richtig?',o:['Have you got a pen?','Do you have got a pen?'],a:'Have you got a pen?',ex:'Bei have got gibt es kein do.'},
   {q:'Welcher Satz ist richtig?',o:['He hasn’t got a bike.','He doesn’t have got a bike.'],a:'He hasn’t got a bike.',ex:'Verneint: hasn’t got. Kein doesn’t!'}],
  []]};
+/* Denkfrage vor den Antworten (Verstehen, abschaltbar): erst überlegen, dann antworten.
+   Schlüssel 'n.j' = VQ[g][n][j]. w = Schlüsselwort im Satz (wird markiert), a = 1 (Einzahl / he-she-it) oder 2 (Mehrzahl / alle anderen), t = Denk-Spur. */
+const DENK={
+ G7:{q:w=>`Ist <b>${esc(w)}</b> Einzahl oder Mehrzahl?`,o:['Einzahl: einer','Mehrzahl: mehrere'],
+  '0.0':{w:'Ein Mädchen',a:1,t:'Ein Mädchen = Einzahl → girl + ’s'},
+  '0.1':{w:'Rubys',a:1,t:'Ruby ist eine Person = Einzahl → Ruby + ’s'},
+  '1.0':{w:'Zwei Mädchen',a:2,t:'Zwei Mädchen = Mehrzahl → girls + ’'},
+  '2.1':{w:'Frauen',a:2,t:'Frauen = Mehrzahl. women hat aber kein s am Ende → women + ’s'},
+  '3.1':{w:'Karam',a:1,t:'Karam ist eine Person = Einzahl → Karam + ’s'}},
+ G8:{q:w=>`Kannst du <b>${esc(w)}</b> durch he, she oder it ersetzen?`,o:['Ja: he, she, it → has','Nein → have'],
+  '1.0':{w:'Ryan',a:1,t:'Ryan = he → has'},
+  '1.1':{w:'We',a:2,t:'we ist nicht he, she oder it → have'},
+  '3.0':{w:'Lily',a:1,t:'Lily = she → has'},
+  '3.1':{w:'I',a:2,t:'I ist nicht he, she oder it → have'},
+  '4.0':{w:'you',a:2,t:'you ist nicht he, she oder it → Have'}}};
+const denkOn=()=>S.denk!==false;
+function denkToggle(){const on=denkOn();
+  return `<div class="spk-toggle"><span class="lbl">Denkfrage zuerst</span><div class="chips"><button type="button" class="chip" data-denk="1" aria-pressed="${on}">An</button><button type="button" class="chip" data-denk="0" aria-pressed="${!on}">Aus</button></div></div>
+  <p class="spk-note">${on?'Vor den Antworten kommt eine kleine Frage, die beim Überlegen hilft. Wenn du sicher bist, kannst du sie ausschalten.':'Die Antworten kommen sofort, ohne Denkfrage.'}</p>`}
 /* Spickzettel: die ganze Regel auf einer Karte (Ende von „Verstehen“, im Quiz und im Karteikasten) */
 const SPI=(l,w,d)=>`<div class="gex"><span class="gpic">${l}</span><span><b>${w}</b>${d?`<small>${d}</small>`:''}</span></div>`;
 const SPICK={
@@ -1650,15 +1673,17 @@ function verStart(){
     ${v.read?'<button class="ghost kbtn" type="button" id="kspick">Spickzettel ansehen</button>':''}
     ${qi>=0?`<a class="ghost kbtn klink" href="#${KAPS[qi].a}">Zum Quiz (Kapitel ${KNR[qi]}) ›</a>`:''}
     <a class="ghost kbtn klink" href="index.html#heft-englisch">Zurück zum Heft</a>
+    ${DENK[g]?denkToggle():''}
   </section>`;
   $('#kgo').onclick=()=>verRound(g);
+  document.querySelectorAll('[data-denk]').forEach(b=>b.onclick=()=>{S.denk=b.dataset.denk==='1';save();verStart()});
   if($('#kspick'))$('#kspick').onclick=()=>ruleSheet(g,null);
   window.scrollTo(0,0);
 }
 function verRound(g){
   closeDetail();R=null;
   const q=[];RULES[g].forEach((r,n)=>{q.push({ex:n});(VQ[g][n]||[]).forEach((x,j)=>q.push({n,j}))});q.push({spick:1});
-  VR={g,q,i:0,right:0,n:q.filter(x=>x.j!=null).length,retried:new Set()};
+  VR={g,q,i:0,right:0,n:q.filter(x=>x.j!=null).length,retried:new Set(),dk:0,dkr:0};
   verStep();
 }
 function verStep(){
@@ -1674,17 +1699,25 @@ function verStep(){
     <button class="go" type="button" id="inext">Fertig</button></div></article>`;
     $('#quit').onclick=home;bindSay($('#cb'));$('#inext').onclick=go;window.scrollTo(0,0);return;
   }
-  const x=VQ[g][st.n][st.j],o=shuffle(x.o);
+  const x=VQ[g][st.n][st.j],o=shuffle(x.o),D=DENK[g],d=denkOn()&&D?D[st.n+'.'+st.j]:null;
+  const qh=d?showQ(x.q).replace(esc(d.w),`<mark class="dkw">${esc(d.w)}</mark>`):showQ(x.q);
   $('#screen').innerHTML=`<div class="topbar"><span>${top}${st.again?' · Nochmal':''}</span><button class="ghost" type="button" id="quit">Beenden</button></div>
   <div class="progress" aria-hidden="true"><i style="width:${Math.round(VR.i/VR.q.length*100)}%"></i></div>
   <article class="card"><div class="card-top"><span class="tag">Kurz getestet</span><span class="fachtag">zählt nicht</span></div><div class="card-body" id="cb">
-  <p class="instr">Tipp die richtige Antwort an.</p>${x.pic?`<p class="gpicq"><span aria-hidden="true">${x.pic}</span></p>`:''}<p class="prompt">${showQ(x.q)}</p>
-  <div class="opts one">${o.map((t,i)=>`<button class="opt" type="button" data-i="${i}">${esc(t)}</button>`).join('')}</div></div></article>`;
+  ${x.pic?`<p class="gpicq"><span aria-hidden="true">${x.pic}</span></p>`:''}<p class="prompt">${qh}</p>
+  ${d?`<div id="dk" class="dk"><p class="instr">🤔 <b>Erst überlegen:</b> ${D.q(d.w)}</p><div class="opts one">${D.o.map((t,i)=>`<button class="dkopt opt" type="button" data-k="${i+1}">${esc(t)}</button>`).join('')}</div></div>`:''}
+  <div id="vans"${d?' hidden':''}><p class="instr">${d?'Und jetzt die Antwort:':'Tipp die richtige Antwort an.'}</p>
+  <div class="opts one">${o.map((t,i)=>`<button class="opt" type="button" data-i="${i}">${esc(t)}</button>`).join('')}</div></div></div></article>`;
   $('#quit').onclick=home;window.scrollTo(0,0);
   const cb=$('#cb');
-  cb.querySelectorAll('.opt').forEach(btn=>btn.onclick=()=>{
+  if(d)cb.querySelectorAll('.dkopt').forEach(btn=>btn.onclick=()=>{
+    const ok=+btn.dataset.k===d.a;if(!st.again){VR.dk++;if(ok)VR.dkr++}
+    $('#dk').innerHTML=`<p class="dktrail ${ok?'ok':'bad'}">${ok?'✔ Richtig gedacht:':'💡 Fast! So ist es:'} ${esc(d.t)}</p>`;
+    $('#vans').hidden=false;
+  });
+  cb.querySelectorAll('#vans .opt').forEach(btn=>btn.onclick=()=>{
     const ok=o[+btn.dataset.i]===x.a,key=st.n+':'+st.j;
-    cb.querySelectorAll('.opt').forEach(b=>{b.disabled=true;if(o[+b.dataset.i]===x.a)b.classList.add('ok')});
+    cb.querySelectorAll('#vans .opt').forEach(b=>{b.disabled=true;if(o[+b.dataset.i]===x.a)b.classList.add('ok')});
     if(!ok)btn.classList.add('bad');
     if(!st.again){if(ok)VR.right++;else if(!VR.retried.has(key)){VR.retried.add(key);VR.q.splice(VR.q.length-1,0,{n:st.n,j:st.j,again:1})}}
     const fb=document.createElement('div');fb.className='fb '+(ok?'ok':'bad');fb.setAttribute('role','status');
@@ -1697,7 +1730,7 @@ function verStep(){
   });
 }
 function verEnd(){
-  const g=VR.g,r=VR.right,n=VR.n||1,v=verS(g);
+  const g=VR.g,r=VR.right,n=VR.n||1,v=verS(g),dk=VR.dk,dkr=VR.dkr;
   if(!S.ver)S.ver={};S.ver[g]={read:true,best:Math.max(v.best||0,r/n),d:today()};save();
   const st=kapStars(verProg(g)),qi=quizIdx(g);
   const msg=r===n?'Alles auf Anhieb richtig. Du hast es verstanden!':r>=n*.8?'Sehr gut verstanden!':r>=n*.5?'Gut! Schau dir die kniffligen Karten ruhig nochmal an.':'Kein Problem, geh die Erklärungen einfach nochmal durch.';
@@ -1706,7 +1739,7 @@ function verEnd(){
     <div class="lbl">Verstehen geschafft</div>
     <div class="score">${r}<span style="font-size:1.4rem;color:var(--muted)"> / ${n}</span></div>
     <h2>${msg}</h2>
-    <div class="kapend"><div class="lbl">Kapitel ${KNR[KAP]} · ${esc(kapTitle(KAPS[KAP]))}</div>${starsHTML(st)}<p class="small" style="margin:0">Gezählt wird, was beim ersten Versuch richtig war.</p></div>
+    <div class="kapend"><div class="lbl">Kapitel ${KNR[KAP]} · ${esc(kapTitle(KAPS[KAP]))}</div>${starsHTML(st)}<p class="small" style="margin:0">Gezählt wird, was beim ersten Versuch richtig war.</p>${dk?`<p class="small" style="margin:0">🤔 Denkfragen: ${dkr} von ${dk} richtig überlegt.${dkr===dk&&dk>=3?' Wenn das öfter klappt, kannst du die Denkfrage auf der Kapitelseite ausschalten.':''}</p>`:''}</div>
     <div class="row">${qi>=0?`<a class="go klink" href="#${KAPS[qi].a}">Weiter zum Quiz (Kapitel ${KNR[qi]})</a>`:''}<button class="ghost" type="button" id="again">Nochmal durchgehen</button><button class="ghost" type="button" id="menu">Zum Kapitel</button></div>
   </section>`;
   $('#again').onclick=()=>verRound(g);$('#menu').onclick=kapStart;window.scrollTo(0,0);
