@@ -348,7 +348,7 @@ function choose(pool,n){const out=[];let rest=pool.slice();
     out.push(rest[k]);rest.splice(k,1)}
   return out}
 function startRound(id){hush();const c=chOf(id);
-  const fs=choose(c.pool,c.n);
+  const fs=choose(c.pool,lwFragen(c.n));
   R={id,i:0,ok:0,res:[],miss:[],tasks:fs.map(f=>T[pick(typesFor(f,id))](f))};R.n=R.tasks.length;showTask()}
 function track(){$("#track").innerHTML=Array.from({length:R.n},(_,i)=>`<i class="${i<R.res.length?(R.res[i]?"ok":"no"):(i===R.i?"now":"")}"></i>`).join("")}
 function showTask(){hush();const t=R.tasks[R.i];R.locked=false;R.typed="";const d=dots(t.f);

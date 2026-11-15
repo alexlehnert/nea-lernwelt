@@ -419,9 +419,10 @@ function choose(ch,n){const out=[];let rest=L.slice();
 /* ================= Runde ================= */
 let R=null;
 function startRound(id){hush();const c=chOf(id);
-  const ls=choose(id,c.n);
+  const n=lwFragen(c.n),ls=choose(id,n);
   let tasks;
-  if(id==="staat")tasks=shuffle(chooseFakt(7).map(faktTask).concat(chooseArt(3).map(artTask)));
+  /* Bundesstaat: 7 von 10 Fakten + 3 Mal Flächen- oder Stadtstaat; bei mehr Fragen kommen mehr Länder dazu */
+  if(id==="staat"){const nf=Math.min(FAKT.length,Math.round(n*.7));tasks=shuffle(chooseFakt(nf).map(faktTask).concat(chooseArt(Math.min(L.length,n-nf)).map(artTask)))}
   else{tasks=ls.map(l=>T[id==="mix"?pick(["lage","name","stadt","land","stadtlage"]):id](l));
     if(id==="mix"){tasks.splice(rand(tasks.length),1,faktTask(pick(FAKT)));tasks.splice(rand(tasks.length),1,artTask(pick(L)))}}
   R={id,i:0,ok:0,res:[],miss:[],tasks};R.n=R.tasks.length;showTask()}

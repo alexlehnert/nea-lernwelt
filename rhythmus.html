@@ -626,9 +626,11 @@ const POOL={baum:["g2n","n2g","flags","beats","longer","look","g2n","n2g"],rechn
   takt:["fill","gap","full","fill","gap","fill","full","fill"]};
 function makeTasks(id){
   if(id==="klatschen")return [0,1,2,3,4].map(l=>G.clap(l));
-  if(id==="mix"){const ks=shuffle(["g2n","n2g","beats","howmany","eq","pizza","r2n","match","len","which","gap","full","fill","flags","sumb"]).slice(0,9);
-    const t=ks.map(k=>G[k]());t.splice(4+rand(5),0,G.clap(1+rand(3)));return t}
-  return shuffle(POOL[id]).map(k=>G[k]())}
+  /* Länge: gewählte Fragen pro Runde (lwFragen), sonst wie im Kapitel; längere Runden wiederholen die Aufgabenarten */
+  const fill=(ks,n)=>{let out=[];while(out.length<n)out=out.concat(shuffle(ks));return out.slice(0,n)};
+  if(id==="mix"){const n=lwFragen(10),ks=fill(["g2n","n2g","beats","howmany","eq","pizza","r2n","match","len","which","gap","full","fill","flags","sumb"],n-1);
+    const t=ks.map(k=>G[k]());t.splice(Math.min(t.length,4+rand(5)),0,G.clap(1+rand(3)));return t}
+  return fill(POOL[id],lwFragen(POOL[id].length)).map(k=>G[k]())}
 
 /* ================= Runde ================= */
 let R=null;

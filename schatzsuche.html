@@ -608,7 +608,7 @@ function buildTasks(st,n){const ks=shuffle(st.kinds);const out=[];for(let i=0;i<
 function startRound(id){
   const st=ST.find(s=>s.id===id);
   G={st,queue:[],idx:0,firstOk:0,firstTotal:0,combo:0,base:0,bonus:0,results:[],missed:[],usedKeys:[],blitz:!!st.blitz};
-  G.queue=buildTasks(st,G.blitz?12:10);
+  G.queue=buildTasks(st,G.blitz?12:lwFragen(10));
   if(G.blitz){G.endAt=Date.now()+60000;}
   show("game");renderTrack();nextTask();
   if(G.blitz)tickTimer();

@@ -590,7 +590,7 @@ function hoerStart(){hush();stopMusic();R=null;
 /* ================= Runde ================= */
 let R=null;
 function startRound(id,lvl){hush();stopMusic();const c=chOf(id);
-  const ps=choose(id,c.n);
+  const ps=choose(id,lwFragen(c.n));
   const tasks=ps.map((p,k)=>{if(id!=="mix")return T[id](p,lvl||1);
     const kind=["hoeren","namen","klang","hoeren","leben"][k%5];return T[kind](p,kind==="hoeren"&&k>4?2:1)});
   R={id,lvl:lvl||1,i:0,ok:0,res:[],miss:[],tasks:id==="mix"?shuffle(tasks):tasks};R.n=R.tasks.length;showTask()}

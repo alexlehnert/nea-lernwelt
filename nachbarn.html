@@ -403,7 +403,7 @@ function choose(ch,n){const out=[];let rest=L.slice();
 /* ================= Runde ================= */
 let R=null;
 function startRound(id){hush();const c=chOf(id);
-  const tasks=choose(id,c.n).map(l=>T[id==="mix"?pick(["lage","lage","name","richtung","stadt","nachbar"]):id](l));
+  const tasks=choose(id,lwFragen(c.n)).map(l=>T[id==="mix"?pick(["lage","lage","name","richtung","stadt","nachbar"]):id](l));
   R={id,i:0,ok:0,res:[],miss:[],tasks};R.n=tasks.length;showTask()}
 function track(){$("#track").innerHTML=Array.from({length:R.n},(_,i)=>`<i class="${i<R.res.length?(R.res[i]?"ok":"no"):(i===R.i?"now":"")}"></i>`).join("")}
 function showTask(){hush();const t=R.tasks[R.i];R.locked=false;
