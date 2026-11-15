@@ -529,6 +529,8 @@ function startRound(){
   const W=[6,16,8,4,2,1];let cand=pool().map(id=>({id,w:W[bx(id)]}));const out=[],maxNew=Math.ceil(S.len*.6);let nNew=0;
   while(out.length<S.len&&cand.length){const tot=cand.reduce((s,c)=>s+c.w,0);let r=Math.random()*tot,k=0;while(r>cand[k].w){r-=cand[k].w;k++}
     const c=cand.splice(k,1)[0];if(bx(c.id)===0){if(nNew>=maxNew)continue;nNew++}out.push(c.id)}
+  /* Gewählte Rundenlänge einhalten: reichen bekannte Karten nicht, kommen weitere neue dazu */
+  if(out.length<S.len){const have=new Set(out);for(const id of shuffle(pool())){if(out.length>=S.len)break;if(!have.has(id)){have.add(id);out.push(id)}}}
   Rd={q:out,i:0,right:0,first:out.length,missed:[],retried:new Set()};task();
 }
 function task(){

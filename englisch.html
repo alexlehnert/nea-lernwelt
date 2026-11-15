@@ -1964,8 +1964,8 @@ function freshPlan(){
   const festN=focus.filter(id=>bx(id)>=FR.fest).length,festQ=focus.length?festN/focus.length:1;
   const rev=older.filter(o=>bx(o.id)>0);
   const nRev=rev.length?Math.min(rev.length,Math.max(1,Math.round(S.len*(.1+.4*festQ)))):0;
-  const fAv=focus.filter(id=>bx(id)>0).length+Math.min(focus.filter(id=>bx(id)===0).length,Math.ceil(S.len*.6)),nRevShow=Math.min(rev.length,Math.max(nRev,S.len-fAv));
-  return {focus,rev,fk,festQ,nRev,nRevShow,older:older.length};
+  const fAv=focus.length,nRevShow=Math.min(rev.length,Math.max(nRev,S.len-fAv));
+  return {focus,rev,fk,festQ,nRev,nRevShow,older:older.length,olderNew:older.filter(o=>bx(o.id)===0)};
 }
 const freshOn=()=>S.fresh!==false;
 function drawW(cand,n,out,cnt){
@@ -1991,7 +1991,7 @@ function freshHTML(){
 function startRound(only,opt){
   closeDetail();opt=opt||{};
   let ids=only&&only.length?only:pool();
-  const out=[],cnt={n:0,max:opt.maxNew||Math.ceil(S.len*.6)};
+  const out=[],cnt={n:0,max:opt.maxNew||Math.ceil(S.len*.6)};let extra;
   if(!(only&&only.length)&&KAP==null&&freshOn()){
     const P=freshPlan(),Wf=[12,16,8,4,2,1],Wr=[0,16,8,4,2,1];
     /* Wiederholung: tiefe Fächer, nähere Kapitel und lange nicht gesehene Karten bevorzugt */
@@ -2000,11 +2000,16 @@ function startRound(only,opt){
     drawW(P.focus.map(id=>({id,w:Wf[bx(id)]})),S.len,out,cnt);
     if(out.length<S.len)drawW(rc,S.len,out,cnt);
     const fc=P.focus.filter(id=>ALL[id].t==='chat');ids=fc.length?fc:P.rev.map(o=>o.id);
-    out.splice(0,out.length,...shuffle(out));
+    extra=shuffle(P.focus.slice()).concat(P.olderNew.map(o=>o.id));
   }else{
     const Wt=[opt.maxNew?12:6,16,8,4,2,1];
     drawW(ids.map(id=>({id,w:Wt[bx(id)]})),S.len,out,cnt);
+    extra=shuffle(ids.slice());
   }
+  /* Gewählte Rundenlänge einhalten: Die Neu-Grenze (60 %) gilt nur, solange genug bekannte Karten da sind.
+     Sonst (z. B. erste Runde mit neuen Seiten) wird mit weiteren neuen Karten aufgefüllt. Kapitel-Runden behalten ihre 5 neuen. */
+  if(!opt.maxNew&&out.length<S.len){const have=new Set(out);for(const id of extra){if(out.length>=S.len)break;if(!have.has(id)){have.add(id);out.push(id)}}}
+  out.splice(0,out.length,...shuffle(out));
   /* Mindestens ein Chat pro Runde, wenn die Auswahl einen hat (Nea mag die Chats) */
   const chats=ids.filter(id=>ALL[id].t==='chat');
   if(chats.length&&out.length>=4&&!out.some(id=>ALL[id].t==='chat')){
