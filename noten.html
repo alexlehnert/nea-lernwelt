@@ -495,8 +495,14 @@ function openStation(id){S.seen[id]=1;save();ac();
 
 /* ================= Runden ================= */
 let R=null;
-function startRound(id){const st=STATIONS.find(s=>s.id===id);R={id,n:st.n,i:0,ok:0,xp:0,combo:0,res:[],miss:[],lastP:-1,used:[],pool:null,it:null,locked:false};
-  if(id==="quiz"){R.pool=shuffle([...shuffle(MCQ).slice(0,4).map(q=>({type:"mc",...q})),...shuffle(TAPS).slice(0,2).map(t=>({type:"tap",...t})),{type:"stem",p:rand(10)},{type:"song",s:rand(3)}])}
+function startRound(id){const st=STATIONS.find(s=>s.id===id);R={id,n:lwFragen(st.n),i:0,ok:0,xp:0,combo:0,res:[],miss:[],lastP:-1,used:[],pool:null,it:null,locked:false};
+  if(id==="quiz"){const mq=shuffle(MCQ),tp=shuffle(TAPS);
+    let pool=[...mq.slice(0,4).map(q=>({type:"mc",...q})),...tp.slice(0,2).map(t=>({type:"tap",...t})),{type:"stem",p:rand(10)},{type:"song",s:rand(3)}];
+    /* Andere Fragenanzahl (lwFragen): weniger = Auswahl daraus, mehr = weitere Fragen, dann Notenhals und Lieder */
+    if(R.n<pool.length)pool=shuffle(pool).slice(0,R.n);
+    else{const more=shuffle([...mq.slice(4).map(q=>({type:"mc",...q})),...tp.slice(2).map(t=>({type:"tap",...t}))]);
+      while(pool.length<R.n)pool.push(more.length?more.shift():rand(2)?{type:"stem",p:rand(10)}:{type:"song",s:rand(3)})}
+    R.pool=shuffle(pool)}
   next()}
 function makeItem(){let k=R.id;
   if(k==="mix"){const ks=["name","name","place","place","key","key","wordRead","wordWrite","stem","song","tap","mc"];k=ks[rand(ks.length)]}

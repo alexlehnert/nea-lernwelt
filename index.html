@@ -254,6 +254,10 @@ h2.sh{font-size:1.25rem}
 .seg{display:inline-flex;background:var(--soft);border-radius:14px;padding:4px;gap:4px;align-self:flex-start}
 .seg button{border:none;background:none;border-radius:10px;padding:8px 16px;font-weight:700;cursor:pointer;min-height:44px}
 .seg button[aria-pressed="true"]{background:var(--card);color:var(--brand);box-shadow:0 2px 0 var(--line)}
+.fragen{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 12px;margin-top:6px}
+.fragen b{font-family:var(--f-display);font-weight:600;font-size:1.05rem}
+.fragen small{display:block;color:var(--muted);font-size:.85rem}
+.fragen .seg button{padding:8px 12px;min-width:44px}
 .opts{display:flex;flex-wrap:wrap;gap:10px}
 .opt{width:64px;height:64px;border-radius:16px;border:2px solid var(--line);border-bottom-width:4px;background:var(--card);cursor:pointer;display:grid;place-items:center;padding:4px}
 .opt svg{width:52px;height:52px}
@@ -378,6 +382,12 @@ const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const get=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
 const put=(k,v)=>{try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v);return true}catch(e){return false}};
+/* Fragen pro Runde je Heft (lernwelt-fragen = {heft: Anzahl}, 0/fehlt = Normal); die Apps lesen es mit lwFragen() */
+const FRAGEN='lernwelt-fragen';
+const fragenMap=()=>{try{return JSON.parse(get(FRAGEN)||'{}')||{}}catch(e){return {}}};
+const fragenHtml=h=>{const v=+fragenMap()[h.id]||0;
+  return `<section class="fragen" aria-label="Fragen pro Runde"><span><b>Fragen pro Runde</b><small>${v?`Jede Runde hat ${v} Fragen.`:'Wie im Kapitel vorgesehen.'}</small></span>
+    <div class="seg" role="group" aria-label="Fragen pro Runde">${[[0,'Normal'],[10,'10'],[15,'15'],[20,'20']].map(([n,l])=>`<button type="button" data-fragen="${h.id}" data-n="${n}" aria-pressed="${v===n}">${l}</button>`).join('')}</div></section>`};
 const fach=id=>FAECHER.find(f=>f.id===id);
 const heft=id=>HEFTE.find(h=>h.id===id);
 const plural=(n,a,b)=>`${n} ${n===1?a:b}`;
@@ -721,6 +731,7 @@ const V={
         ${h.abzeichen?(()=>{const got=verdient()['heft-'+h.id],f2=fach(h.fach);
           return `<button class="goal" type="button" data-abz="heft-${h.id}"><span class="dot ${got?'bi '+f2.cls:''}">${got?I[f2.cls]:I.trophy}</span><span><b>Abzeichen</b><span class="small muted">„${esc(h.abzeichen)}“ ${got?'gehört dir!':'wartet'}</span></span></button>`})():''}
         </section>
+        ${h.fragen?fragenHtml(h):''}
         <div class="cta"><a class="btn br" href="${t.cur!=null?kapLink(h,t.cur):fertigLink(h)}" data-heft="${h.id}">${!started(h)?"Los geht's":t.cur!=null?`Weiter mit Kapitel ${kapZahl(h,t.cur)}`:h.test?'Zum Großen Test':'Nochmal von vorn'} ${I.arrow}</a></div>
       </div>`;
   },
@@ -868,6 +879,8 @@ document.addEventListener('click',e=>{
   if(hl){put(LAST,hl.dataset.heft);return}
   const c=e.target.closest('.chip[data-f]');
   if(c){S.filt=c.dataset.f;route(true);refocus(`.chip[data-f="${S.filt}"]`);return}
+  const fq=e.target.closest('[data-fragen]');
+  if(fq){const m=fragenMap(),n=+fq.dataset.n;if(n)m[fq.dataset.fragen]=n;else delete m[fq.dataset.fragen];put(FRAGEN,JSON.stringify(m));route(true);refocus(`[data-fragen="${fq.dataset.fragen}"][data-n="${n}"]`);return}
   const ar=e.target.closest('[data-art]');
   if(ar){ME.art=ar.dataset.art;saveMe();route(true);refocus(`[data-art="${ME.art}"]`);return}
   const a=e.target.closest('[data-av]');

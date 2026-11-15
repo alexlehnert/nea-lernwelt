@@ -479,8 +479,8 @@ let R=null;
 function startRound(id){const c=chOf(id);
   const pool=c.types||ALL;let list=[];
   /* jede Aufgabenart mindestens einmal (wenn Platz), Rest zufällig, nie zweimal dieselbe Art hintereinander */
-  const base=shuffle(c.types?Array.from(new Set(c.types)):pool).slice(0,c.n);
-  while(base.length<c.n)base.push(pick(pool));
+  const n=lwFragen(c.n),base=shuffle(c.types?Array.from(new Set(c.types)):pool).slice(0,n);
+  while(base.length<n)base.push(pick(pool));
   list=shuffle(base);for(let i=1;i<list.length;i++)if(list[i]===list[i-1]){const j=list.findIndex((x,k)=>k>i&&x!==list[i]&&x!==list[i-1]);if(j>0)[list[i],list[j]]=[list[j],list[i]]}
   R={id,i:0,ok:0,res:[],miss:[],tasks:list.map(k=>T[k]())};R.n=R.tasks.length;showTask()}
 function track(){$("#track").innerHTML=Array.from({length:R.n},(_,i)=>`<i class="${i<R.res.length?(R.res[i]?"ok":"no"):(i===R.i?"now":"")}"></i>`).join("")}

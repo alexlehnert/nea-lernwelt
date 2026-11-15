@@ -19,6 +19,7 @@
  *   entdecken  optional {a, t, s}: Kachel „Entdecken“ auf der Heft-Seite (Anker a in der App, Titel, eine Zeile), ohne Sterne
  *   test   optional {a, kap, s}: Kachel „Großer Test“ (Anker a; kap = Name, unter dem die App den Test meldet; zählt nicht als Kapitel)
  *   von    optional: Heft war früher Teil von Heft <von>; dessen Kapitel-Fortschritt wird einmal (per Kapitelname) übernommen
+ *   fragen optional true: Heft-Seite zeigt „Fragen pro Runde“ (Normal/10/15/20); die App liest die Wahl mit lwFragen(n)
  */
 // Klassenstufen. Jedes Kind sieht nur die Hefte seiner Stufe (einstellbar im Eltern-Bereich).
 window.LW_STUFEN = [
@@ -49,13 +50,13 @@ window.LW_HEFTE = [
     info: 'Terme und Potenzen üben, Schritt für Schritt', key: 'mathe-rechenheft-5-v1',
     kapitel: ['Terme üben', 'Potenzen üben', 'Auswendig-Quiz: 2er- und 10er-Potenzen'],
     anker: ['terme', 'potenzen', 'quiz'] },
-  { id: 'potenzen', abzeichen: 'Hochzahl-Heldin', fach: 'mathe', thema: 'Potenzen', name: 'Potenz-Quiz',
+  { id: 'potenzen', fragen: true, abzeichen: 'Hochzahl-Heldin', fach: 'mathe', thema: 'Potenzen', name: 'Potenz-Quiz',
     info: '2er- und 10er-Potenzen bis Hochzahl 20 auswendig, mit Zahlennamen zum Anhören', key: 'potenz-quiz-v1',
     kapitel: ['2er-Potenzen bis 2¹⁰', '2er-Potenzen bis 2²⁰', '10er-Potenzen bis 10²⁰', 'Namen der großen Zahlen', 'Hör-Quiz'],
     anker: ['zwei1', 'zwei2', 'zehn', 'namen', 'hoeren'],
     entdecken: { a: 'tafel', t: 'Hörtafel', s: 'Alle Potenzen in einer Liste zum Anhören' },
     test: { a: 'mix', kap: 'Großer Mix', s: 'Alle Potenzen und Namen gemischt' } },
-  { id: 'rechengesetze', abzeichen: 'Gesetzes-Hüterin', fach: 'mathe', thema: 'Rechengesetze', name: 'Rechengesetze der Addition',
+  { id: 'rechengesetze', fragen: true, abzeichen: 'Gesetzes-Hüterin', fach: 'mathe', thema: 'Rechengesetze', name: 'Rechengesetze der Addition',
     info: 'Tauschen, Klammern umsetzen, plus 0: die drei Gesetze aus dem Regelheft zum Ziehen und Ausprobieren', key: 'rechengesetze-v1',
     kapitel: ['Mein Regelheft', 'Tauschen erlaubt? (K⁺)', 'Klammer-Karussell (A⁺)', 'Die neutrale Null (N⁺)', 'Geschickt rechnen', 'Gesetz-Detektivin', 'Hilf im Klassenchat'],
     anker: ['regeln', 'tauschen', 'klammern', 'null', 'geschickt', 'detektiv', 'chat'],
@@ -104,12 +105,12 @@ window.LW_HEFTE = [
     info: 'Kontinente, Ozeane, Himmelsrichtungen und der Globus', key: 'atlas-detektiv-v1',
     kapitel: ['Kontinente & Ozeane', 'Himmelsrichtungen', 'Der Globus'],
     anker: ['welt', 'kompass', 'globus'] },
-  { id: 'noten', abzeichen: 'Notenleserin', fach: 'musik', thema: 'Noten', name: 'Notenwerkstatt',
+  { id: 'noten', fragen: true, abzeichen: 'Notenleserin', fach: 'musik', thema: 'Noten', name: 'Notenwerkstatt',
     info: 'Noten lesen und Töne sicher erkennen', key: 'notenwerkstatt-v1',
     kapitel: ['Schlüssel-Werkstatt', 'Noten lesen', 'Noten setzen', 'Klavier-Detektiv', 'Notenrätsel', 'Wissen & Regeln', 'Notenregen'],
     anker: ['clef', 'name', 'place', 'key', 'word', 'quiz', 'rain'],
     test: { a: 'mix', kap: 'Großer Mix', s: 'Alles aus der Notenwerkstatt gemischt' } },
-  { id: 'rhythmus', abzeichen: 'Rhythmus-Meisterin', fach: 'musik', thema: 'Rhythmus', name: 'Rhythmuswerkstatt',
+  { id: 'rhythmus', fragen: true, abzeichen: 'Rhythmus-Meisterin', fach: 'musik', thema: 'Rhythmus', name: 'Rhythmuswerkstatt',
     info: 'Notenlängen von der Ganzen bis zur Zweiunddreißigstel: hören, rechnen, klatschen', key: 'rhythmuswerkstatt-v1',
     kapitel: ['Der Notenbaum', 'Noten-Mathe', 'Pausen', 'Hör-Detektivin', 'Takt-Baumeisterin', 'Klatsch mit!'],
     anker: ['baum', 'rechnen', 'pausen', 'hoeren', 'takt', 'klatschen'],
@@ -122,23 +123,23 @@ window.LW_HEFTE = [
     test: { a: 'mix', kap: 'Großer Mix', s: 'Alle Themen gemischt' } },
 
   // ---------- Grundschule, Klasse 3 (Rubie) ----------
-  { id: 'schatzsuche', stufe: 'gs3', abzeichen: 'Rubin-Königin', fach: 'deutsch', thema: 'Rechtschreibung und Wortarten', name: 'Rubies Schatzsuche',
+  { id: 'schatzsuche', fragen: true, stufe: 'gs3', abzeichen: 'Rubin-Königin', fach: 'deutsch', thema: 'Rechtschreibung und Wortarten', name: 'Rubies Schatzsuche',
     info: 'Wortarten, groß und klein, doppelte Mitlaute und ie: Rubine sammeln und die Krone schmücken', key: 'rubie-schatzsuche-v1',
     // Stationen der App (ST in schatzsuche.html)
     kapitel: ['Wortarten-Wald', 'Groß-klein-Burg', 'Doppel-Höhle', 'ie-Insel', 'Blitzrunde'],
     anker: ['wa', 'gk', 'dk', 'ie', 'blitz'],
     test: { a: 'mix', kap: 'Große Schatzsuche', s: 'Alle Stationen gemischt' } },
-  { id: 'bundeslaender', stufe: 'gs3', abzeichen: 'Deutschland-Kennerin', fach: 'sachunterricht', thema: 'Deutschland', name: 'Länder-Reise',
+  { id: 'bundeslaender', fragen: true, stufe: 'gs3', abzeichen: 'Deutschland-Kennerin', fach: 'sachunterricht', thema: 'Deutschland', name: 'Länder-Reise',
     info: 'Die Bundesrepublik, ihre 16 Bundesländer und Hauptstädte, mit Deutschlandkarte zum Antippen, Selbst-Abfragen und Vorlesen', key: 'bundeslaender-v1',
     kapitel: ['Deutschland ist ein Bundesstaat', 'Deutschland entdecken', 'Wo liegt das Land?', 'Wie heißt das Land?', 'Hauptstädte', 'Zu welchem Land gehört die Stadt?', 'Wo liegt die Hauptstadt?'],
     anker: ['staat', 'entdecken', 'lage', 'name', 'stadt', 'land', 'stadtlage'],
     test: { a: 'mix', kap: 'Große Deutschland-Reise', s: 'Alle Länder und Städte gemischt' } },
-  { id: 'nachbarn', stufe: 'gs3', abzeichen: 'Nachbar-Kennerin', fach: 'sachunterricht', thema: 'Deutschland', name: 'Deutschlands Nachbarn',
+  { id: 'nachbarn', fragen: true, stufe: 'gs3', abzeichen: 'Nachbar-Kennerin', fach: 'sachunterricht', thema: 'Deutschland', name: 'Deutschlands Nachbarn',
     info: 'Die 9 Nachbarländer und ihre Hauptstädte: Übersichtskarte zum Antippen, Himmelsrichtungen und Tipp-Quiz mit Vorlesen', key: 'nachbarn-v1',
     kapitel: ['Deutschland und seine Nachbarn', 'Wo liegt das Land?', 'Wie heißt das Land?', 'Norden, Osten, Süden, Westen', 'Hauptstädte der Nachbarn', 'Nachbar oder nicht?'],
     anker: ['karte', 'lage', 'name', 'richtung', 'stadt', 'nachbar'],
     test: { a: 'mix', kap: 'Große Nachbar-Reise', s: 'Alle Nachbarländer gemischt' } },
-  { id: 'planeten', stufe: 'gs3', abzeichen: 'Planeten-Lauscherin', fach: 'musik', thema: 'Komponisten', name: 'Holsts Planeten',
+  { id: 'planeten', fragen: true, stufe: 'gs3', abzeichen: 'Planeten-Lauscherin', fach: 'musik', thema: 'Komponisten', name: 'Holsts Planeten',
     info: 'Gustav Holst und „Die Planeten“: sein Leben, Holsts Namen für die Planeten und ein Hör-Quiz mit echter Musik', key: 'holst-planeten-v1',
     kapitel: ['Wer war Gustav Holst?', 'Planeten-Übersicht', 'Holsts Namen für die Planeten', 'Wie klingt der Planet?', 'Lückentext: Holsts Leben', 'Hör-Quiz'],
     anker: ['leben', 'planeten', 'namen', 'klang', 'luecke', 'hoeren'],

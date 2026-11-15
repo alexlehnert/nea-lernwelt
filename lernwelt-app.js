@@ -86,6 +86,15 @@
     return { refresh: render };
   };
 
+  /* Fragen pro Runde: auf der Heft-Seite der Lernwelt wählbar (Normal, 10, 15, 20), pro Heft und pro Kind
+   * gespeichert unter lernwelt-fragen als {heft: Anzahl}. lwFragen(n) gibt die gewählte Anzahl zurück,
+   * bei „Normal“ (nichts gewählt) die eigene Länge n des Kapitels. */
+  window.lwFragen = function (n) {
+    var id = location.pathname.replace(/^.*\//, '').replace(/\.html$/, ''), m = 0;
+    try { m = +(JSON.parse(localStorage.getItem('lernwelt-fragen') || '{}') || {})[id] || 0; } catch (e) {}
+    return m > 0 ? m : n;
+  };
+
   var moved = false;
   window.addEventListener('hashchange', function () { moved = true; });
   document.addEventListener('click', function (e) {
