@@ -1,0 +1,884 @@
+<!doctype html><html lang="de"><head><meta charset=utf8><script src="/api/config"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="/sync.js"></script><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"><link rel="manifest" href="/manifest.webmanifest"><meta name="apple-mobile-web-app-title" content="Lernwelt"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="theme-color" content="#5B3FE6"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover">
+
+<title>Bildergeschichte</title>
+<style>
+/* Bildergeschichte (Deutsch, Klasse 5): zu Bildern erzählen. Lernpfad mit 10 Kapiteln, jedes beginnt mit Erklär-Karten,
+   danach eine Runde mit gemischten Aufgaben (Duell gut/schwach, Fehler-Detektiv, Dann-Monster, Redezeichen, Zeitlupe …).
+   Entdecken = Geschichten-Bibliothek mit Röntgenblick und Schreibwerkstatt, Großer Test = Probe-GLN.
+   Comic-Bilder: bilder/bg/*.svg (gezeichnet von tools/bildergeschichte_comics.py). Farben aus lernwelt-app.css. */
+:root{color-scheme:light dark;
+  --m-a:#FDE68A; --m-r:#BFDBFE; --m-j:#BBF7D0; --m-g:#FBCFE8; --m-f:#DDD6FE; --m-x:#FCA5A5}
+@media (prefers-color-scheme:dark){:root{--m-a:#6B5410; --m-r:#1E4A80; --m-j:#1C5A36; --m-g:#6E2350; --m-f:#3D3270; --m-x:#7F1D1D}}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{margin:0;background:var(--lw-bg);color:var(--lw-ink);font-family:var(--lw-f-b);font-size:17px;line-height:1.45;-webkit-tap-highlight-color:transparent;padding-top:env(safe-area-inset-top,0px)}
+.wrap{max-width:640px;margin:0 auto;padding:14px max(16px,env(safe-area-inset-right,0px)) 130px max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px}
+h1,h2,h3{font-family:var(--lw-f-d);font-weight:700;margin:0;line-height:1.15;text-wrap:balance}
+h2{font-size:1.55rem}
+h3{font-size:1.15rem}
+p{margin:0}
+b{font-weight:700}
+button{font:inherit;color:inherit;cursor:pointer;touch-action:manipulation}
+button:focus-visible,a:focus-visible,textarea:focus-visible{outline:3px solid var(--lw-brand);outline-offset:2px}
+svg{display:block}
+.small{font-size:.88rem;color:var(--lw-muted)}
+.lead{font-size:1.05rem}
+.panel{background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--lw-de)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.grow{flex:1;min-width:0}
+.ghost{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:8px 14px}
+.ghost svg,.go svg{width:18px;height:18px;flex:none}
+.go{display:inline-flex;align-items:center;justify-content:center;gap:8px}
+
+/* Startseite */
+.hero{display:flex;flex-direction:column;gap:8px}
+.strip{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.strip img,.pics img{width:100%;height:auto;display:block;border-radius:10px}
+.stations{display:flex;flex-direction:column;gap:12px}
+.st{display:flex;align-items:center;gap:14px;text-align:left;width:100%;padding:14px;border-radius:22px;background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:5px}
+.st:active{transform:translateY(3px);border-bottom-width:2px}
+.st .ico{width:56px;height:56px;flex:none;border-radius:16px;background:var(--lw-de-s);color:var(--lw-de);display:grid;place-items:center;font:700 1.2rem/1 var(--lw-f-d)}
+.st .ico svg{width:30px;height:30px}
+.st h3{font-size:1.1rem}
+.st p{font-size:.9rem;color:var(--lw-muted);line-height:1.3;margin-top:2px}
+.st .n{font:700 12px var(--lw-f-b);letter-spacing:.1em;text-transform:uppercase;color:var(--lw-de)}
+.st.extra .ico{background:var(--lw-sun);color:#5B3A00}
+.stars{display:flex;gap:2px;margin-top:6px}
+.stars svg{width:20px;height:20px}
+.toggle{display:flex;align-items:center;gap:12px;text-align:left;width:100%;padding:12px 14px;border-radius:18px;background:var(--lw-card);border:2px solid var(--lw-line)}
+.toggle .sw{flex:none;width:48px;height:28px;border-radius:99px;background:var(--lw-line);position:relative;transition:background .2s}
+.toggle .sw::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:transform .2s}
+.toggle[aria-pressed="true"] .sw{background:var(--lw-de)}
+.toggle[aria-pressed="true"] .sw::after{transform:translateX(20px)}
+
+/* Erklär-Karten */
+.chead{display:flex;align-items:center;gap:12px}
+.backb{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:6px 14px 6px 10px;border-radius:14px;border:2px solid var(--lw-line);border-bottom-width:4px;background:var(--lw-card);font-weight:700;color:var(--lw-muted)}
+.backb svg{width:18px;height:18px}
+.card-x{background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:22px;padding:18px 16px;display:flex;flex-direction:column;gap:12px;min-height:240px}
+.card-x h3{font-size:1.3rem;color:var(--lw-de)}
+.card-x ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+.dotsnav{display:flex;gap:6px;justify-content:center}
+.dotsnav i{width:9px;height:9px;border-radius:50%;background:var(--lw-line)}
+.dotsnav i.on{background:var(--lw-de);width:22px;border-radius:99px}
+.bsp{border-left:5px solid var(--lw-de);background:var(--lw-de-s);border-radius:0 14px 14px 0;padding:10px 12px;line-height:1.5}
+.bsp.bad{border-color:var(--lw-bad);background:var(--lw-bad-bg)}
+.bsp small{display:block;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--lw-muted);margin-bottom:2px}
+.kurve{width:100%;height:auto}
+.spick{background:var(--lw-de-s);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:6px;text-align:left}
+.spick ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px}
+
+/* Runde */
+.topbar{display:flex;align-items:center;gap:12px}
+.track{flex:1;display:flex;gap:4px}
+.track i{flex:1;height:12px;border-radius:99px;background:var(--lw-line)}
+.track i.ok{background:var(--lw-ok)}
+.track i.no{background:var(--lw-bad)}
+.track i.now{background:var(--lw-de)}
+.q b{display:block;font:700 1.25rem/1.25 var(--lw-f-d)}
+.q .lk{display:inline-block;margin-bottom:6px;padding:3px 10px;border-radius:99px;background:var(--lw-de-s);color:var(--lw-de);font:700 .8rem/1.2 var(--lw-f-b);letter-spacing:.04em}
+.stage{display:flex;flex-direction:column;gap:14px}
+.pic{width:100%;max-width:440px;align-self:center;border-radius:12px;display:block}
+.pics{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.txt{background:var(--lw-card);border:2px solid var(--lw-line);border-radius:18px;padding:14px;font-size:1.05rem;line-height:1.65}
+.txt p+p{margin-top:8px}
+.txt .lbl{display:block;font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--lw-muted)}
+.opts{display:grid;grid-template-columns:1fr;gap:10px}
+.opt{width:100%;padding:12px 14px;display:flex;align-items:center;justify-content:flex-start;text-align:left;line-height:1.35}
+.opt.c{justify-content:center;text-align:center}
+.opt:disabled{cursor:default}
+.opt .lt{flex:none;width:30px;height:30px;border-radius:50%;background:var(--lw-de-s);color:var(--lw-de);display:grid;place-items:center;font:700 .95rem/1 var(--lw-f-d);margin-right:10px}
+.duel{display:flex;flex-direction:column;gap:10px}
+.duel .opt{flex-direction:column;align-items:stretch;gap:6px;font-family:var(--lw-f-b);font-weight:400;font-size:1rem;line-height:1.55}
+.duel .opt b{font-family:var(--lw-f-d);font-size:.95rem;color:var(--lw-de)}
+.why{display:flex;flex-direction:column;gap:8px}
+.why p{font:700 1.05rem/1.3 var(--lw-f-d)}
+.denk{background:var(--lw-sun);color:#3A2600;border-radius:18px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.denk p{font:700 1rem/1.3 var(--lw-f-d)}
+.denk .chips{display:flex;flex-wrap:wrap;gap:8px}
+.denk .chip{background:#fff;color:#3A2600;border-color:#E8B400}
+.denk .chip.ok{background:var(--lw-ok-bg);border-color:var(--lw-ok);color:var(--lw-ok-ink)}
+.denk .chip.no{background:var(--lw-bad-bg);border-color:var(--lw-bad);color:var(--lw-bad-ink)}
+.denk .tip{font-size:.92rem}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips .chip{font-size:1.02rem}
+.chip.big{min-width:52px;min-height:52px;font:700 1.5rem/1 var(--lw-f-d);justify-content:center}
+.chip:disabled{opacity:.4}
+.chip.sel{background:var(--lw-de);border-color:var(--lw-de);color:#fff}
+/* Lücken */
+.gap{display:inline-block;min-width:2.2em;padding:0 .3em;border-radius:8px;border:2px dashed var(--lw-line);color:var(--lw-muted);text-align:center;line-height:1.3}
+.gap.now{border-color:var(--lw-de);background:var(--lw-de-s);color:var(--lw-de);animation:blink 1.2s infinite}
+.gap.ok{border-style:solid;border-color:var(--lw-ok);background:var(--lw-ok-bg);color:var(--lw-ok-ink);animation:none}
+.gap.bad{border-style:solid;border-color:var(--lw-bad);background:var(--lw-bad-bg);color:var(--lw-bad-ink);animation:none}
+.gap s{opacity:.7;margin-right:4px}
+.gap.punct{min-width:1.4em;font-weight:700}
+@keyframes blink{50%{opacity:.55}}
+/* Bilder sortieren */
+.ordergrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ob{position:relative;padding:0;border:3px solid var(--lw-line);border-radius:14px;background:var(--lw-card);overflow:hidden}
+.ob img{width:100%;display:block}
+.ob .badge{position:absolute;top:6px;right:6px;width:34px;height:34px;border-radius:50%;background:var(--lw-de);color:#fff;display:grid;place-items:center;font:700 1.1rem/1 var(--lw-f-d);box-shadow:0 2px 0 var(--lw-de-d)}
+.ob.on{border-color:var(--lw-de)}
+.ob.ok{border-color:var(--lw-ok)}
+.ob.bad{border-color:var(--lw-bad)}
+.ob .hidenum{position:absolute;top:4px;left:4px;width:34px;height:34px;border-radius:50%;background:var(--lw-card)}
+/* Fehler-Detektiv */
+.find{line-height:2}
+.w{display:inline;border-radius:6px;padding:2px 1px;cursor:pointer;-webkit-user-select:none;user-select:none}
+.w:active{background:var(--lw-soft)}
+.w.miss{background:var(--lw-bad-bg);text-decoration:line-through;text-decoration-color:var(--lw-bad)}
+.w.hit{background:var(--lw-ok-bg);color:var(--lw-ok-ink);font-weight:700}
+.w.left{background:var(--lw-bad-bg);color:var(--lw-bad-ink);font-weight:700;outline:2px dashed var(--lw-bad)}
+.fix{display:inline-block;font-size:.85rem;font-weight:700;color:var(--lw-ok-ink);background:var(--lw-card);border:2px solid var(--lw-ok);border-radius:8px;padding:0 6px;margin:0 3px;line-height:1.5}
+.counter{display:flex;gap:6px;align-items:center;font-weight:700;color:var(--lw-muted);font-size:.95rem}
+.counter i{width:16px;height:16px;border-radius:50%;border:2px solid var(--lw-de)}
+.counter i.on{background:var(--lw-de)}
+.found{display:flex;flex-direction:column;gap:6px;font-size:.95rem}
+.found div{background:var(--lw-ok-bg);border-radius:12px;padding:8px 10px}
+/* Zeitlupe */
+.blocks{display:flex;flex-direction:column;gap:8px}
+.blk{width:100%;text-align:left;padding:10px 12px;border-radius:14px;border:2px solid var(--lw-line);border-bottom-width:4px;background:var(--lw-card);line-height:1.4;font-size:1rem}
+.blk.sel{border-color:var(--lw-de);background:var(--lw-de-s)}
+.blk.ok{border-color:var(--lw-ok);background:var(--lw-ok-bg)}
+.blk.bad{border-color:var(--lw-bad);background:var(--lw-bad-bg)}
+.blk small{display:block;font-size:.78rem;font-weight:700;color:var(--lw-muted);margin-top:2px}
+.meter{display:flex;align-items:center;gap:10px;font-weight:700;font-size:.95rem}
+.meter .bar{flex:1;height:12px;border-radius:99px;background:var(--lw-line);overflow:hidden}
+.meter .bar i{display:block;height:100%;background:var(--lw-bad);transition:width .25s,background .25s}
+.meter .bar i.good{background:var(--lw-ok)}
+/* Jury */
+.jury{display:flex;flex-direction:column;gap:10px}
+.jr{display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px}
+.jr .nm{font-weight:700}
+.jr .nm small{display:block;font-weight:400;color:var(--lw-muted);font-size:.8rem}
+.jst{display:flex;gap:2px}
+.jst button{width:40px;height:40px;padding:0;border:none;background:none;display:grid;place-items:center}
+.jst svg{width:30px;height:30px}
+.cmp{font-size:.88rem;font-weight:700}
+.cmp.ok{color:var(--lw-ok-ink)}.cmp.no{color:var(--lw-bad-ink)}
+/* Röntgenblick */
+.m-a,.m-r,.m-j,.m-g,.m-f,.m-x{border-radius:4px;padding:1px 2px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.xr .m-a{background:var(--m-a)}.xr .m-r{background:var(--m-r)}.xr .m-j{background:var(--m-j)}.xr .m-g{background:var(--m-g)}.xr .m-f{background:var(--m-f)}
+.xr .m-x{background:var(--m-x);text-decoration:underline wavy var(--lw-bad);text-underline-offset:3px}
+.xnote{display:none}
+.xr .xnote{display:inline;font-size:.78rem;font-weight:700;color:var(--lw-bad-ink);margin-left:4px}
+.legend{display:flex;flex-wrap:wrap;gap:6px;font-size:.8rem}
+.legend span{border-radius:6px;padding:2px 8px;background:var(--lw-soft)}
+.legend .m-a{background:var(--m-a)}.legend .m-r{background:var(--m-r)}.legend .m-j{background:var(--m-j)}.legend .m-g{background:var(--m-g)}.legend .m-f{background:var(--m-f)}.legend .m-x{background:var(--m-x)}
+.libitem{display:flex;gap:12px;align-items:center;text-align:left;width:100%;padding:10px;border-radius:18px;background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:4px}
+.libitem img{width:84px;flex:none;border-radius:8px}
+.libitem h3{font-size:1.02rem}
+.note{display:inline-block;margin-top:4px;font-size:.78rem;font-weight:700;padding:2px 8px;border-radius:99px}
+.note.n1{background:var(--lw-ok-bg);color:var(--lw-ok-ink)}.note.n3{background:var(--lw-soft);color:var(--lw-brand)}.note.n5{background:var(--lw-bad-bg);color:var(--lw-bad-ink)}
+.reader{display:flex;flex-direction:column;gap:12px}
+.reader .para{display:flex;flex-direction:column;gap:6px}
+.reader .para img{width:100%;max-width:360px;border-radius:10px}
+.reader .para p{font-size:1.08rem;line-height:1.7}
+.reader h2{font-size:1.4rem}
+.spk{flex:none;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:6px 14px;border-radius:14px;border:2px solid var(--lw-line);border-bottom-width:4px;background:var(--lw-card);font-weight:700;color:var(--lw-de)}
+.spk svg{width:20px;height:20px}
+.spk.on{background:var(--lw-de);color:#fff;border-color:var(--lw-de-d)}
+.kommentar{background:var(--lw-soft);border-radius:16px;padding:12px 14px;font-size:.95rem;display:flex;flex-direction:column;gap:4px}
+/* Schreibwerkstatt */
+textarea{width:100%;min-height:260px;border-radius:16px;border:2px solid var(--lw-line);background:var(--lw-card);color:var(--lw-ink);font:1.05rem/1.6 var(--lw-f-b);padding:12px}
+.check{display:flex;flex-direction:column;gap:6px}
+.check label{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:12px;background:var(--lw-card);border:2px solid var(--lw-line);font-size:.98rem;line-height:1.35}
+.check input{width:22px;height:22px;flex:none;accent-color:var(--lw-de);margin:0}
+.wc{font-size:.9rem;color:var(--lw-muted);font-weight:700}
+/* Ergebnis */
+.result{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;padding-top:20px}
+.bigstars{display:flex;gap:8px}
+.bigstars svg{width:64px;height:64px}
+.bigstars .s1{animation:pop .5s .1s both}.bigstars .s2{animation:pop .5s .35s both}.bigstars .s3{animation:pop .5s .6s both}
+@keyframes pop{0%{transform:scale(.4)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+.result .go,.result .ghost{width:100%}
+.chatbox{min-width:0}
+.fb p{margin-top:4px}
+.fb .better{margin-top:8px;padding:8px 10px;border-radius:12px;background:var(--lw-card);font-size:.95rem;line-height:1.5}
+.lw-sheet .ghost{width:100%;min-height:50px}
+@media (max-width:380px){.strip{grid-template-columns:1fr 1fr}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style><!--lw-look--><link rel="stylesheet" href="/lernwelt-app.css"><script src="/lernwelt-app.js"></script><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap"><style id="lw-look">
+/* Übungs-Bausteine im Lernwelt-Look (wie im Konzept: Antwortkacheln, grüne Rückmeldung, dicke Knöpfe) */
+.go,.next,.check{background:var(--lw-c);color:#fff;border:none;border-radius:16px;min-height:54px;padding:12px 22px;
+  font-family:var(--lw-f-d);font-weight:700;font-size:1.05rem;letter-spacing:.04em;text-transform:uppercase;box-shadow:0 5px 0 var(--lw-cd)}
+.go:active,.next:active,.check:active{transform:translateY(3px);box-shadow:0 2px 0 var(--lw-cd)}
+.ghost{background:var(--lw-card);color:var(--lw-ink);border:2px solid var(--lw-line);border-bottom-width:4px;border-radius:14px;min-height:44px;font-weight:700}
+.chip{background:var(--lw-card);color:var(--lw-ink);border:2px solid var(--lw-line);border-radius:99px;min-height:40px;padding:6px 14px;font-weight:700}
+.chip[aria-pressed="true"]{background:var(--lw-c);border-color:var(--lw-c);color:#fff}
+.progress{height:14px;background:var(--lw-line);border-radius:99px}
+.progress i{background:var(--lw-ok);border-radius:99px}
+.card{background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:22px;box-shadow:none}
+.card-top{background:none;color:var(--lw-c);padding:16px 18px 0;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase}
+.card-top .tag{font-size:.8rem}
+.card-body{background-image:none}
+.prompt{font-family:var(--lw-f-d);font-weight:700}
+.opts{gap:12px}
+.opt{background:var(--lw-card);color:var(--lw-ink);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:18px;min-height:60px;
+  font-family:var(--lw-f-d);font-weight:600;font-size:1.12rem}
+.opt:not(:disabled):active{transform:translateY(3px);border-bottom-width:2px}
+.opt.ok{border:3px solid var(--lw-ok);border-bottom-width:6px;background:var(--lw-ok-bg);color:var(--lw-ok-ink)}
+.opt.bad{border-color:var(--lw-bad);background:var(--lw-bad-bg);color:var(--lw-bad-ink)}
+.tile{background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:4px;border-radius:12px;font-family:var(--lw-f-d);font-weight:700}
+.slots{border-radius:16px}
+.slots .tile{background:var(--lw-cs);border-color:var(--lw-c)}
+.inp input,.field{border-radius:16px}
+.fb{border-radius:22px;padding:16px 16px 18px;gap:8px}
+.fb.ok{background:var(--lw-ok-bg);border:none;color:var(--lw-ink)}
+.fb.bad{background:var(--lw-bad-bg);border:none;color:var(--lw-ink)}
+.fb strong{font-family:var(--lw-f-d);font-weight:700;font-size:1.3rem;display:flex;align-items:center;gap:10px}
+.fb.ok strong{color:var(--lw-ok-ink)}
+.fb.bad strong{color:var(--lw-bad-ink)}
+.fb.ok strong::before,.fb.bad strong::before{content:"";flex:none;width:36px;height:36px;border-radius:50%;background:var(--lw-ok) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/20px no-repeat}
+.fb.bad strong::before{background:var(--lw-bad) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3.4' stroke-linecap='round'%3E%3Cpath d='M7 7l10 10M17 7L7 17'/%3E%3C/svg%3E") center/18px no-repeat}
+.card-top .tag{color:var(--lw-c);font-family:var(--lw-f-b);font-weight:700;letter-spacing:.12em}
+.card-top .fachtag{background:var(--lw-cs);color:var(--lw-c);font-family:var(--lw-f-b);font-weight:700}
+/* @kit */
+/* Bildergeschichte ist von Anfang an im Lernwelt-Look gebaut: nur die Fach-Farbe setzen. */
+:root:root:root{--lw-c:var(--lw-de); --lw-cd:var(--lw-de-d); --lw-cs:var(--lw-de-s)}
+.go{width:auto}
+.go:disabled{opacity:.5}
+</style><!--/lw-look-->
+<script src="/lernwelt-chat.js"></script></head><body><nav id="lw-bar" class="lw-bar lw-de" aria-label="Lernwelt"><a class="lw-back" href="index.html#heft-bildergeschichte" aria-label="Zurück zum Heft"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a><span class="lw-t"><span class="lw-eyebrow">Deutsch</span><span class="lw-name">Bildergeschichte</span></span></nav>
+<main class="wrap" id="app"></main>
+<script>
+"use strict";
+/* ================= Grundlagen ================= */
+const $=s=>document.querySelector(s);
+const app=$("#app");
+const rand=n=>Math.floor(Math.random()*n);
+const pick=a=>a[rand(a.length)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=rand(i+1);[a[i],a[j]]=[a[j],a[i]]}return a};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const IMG=id=>`bilder/bg/${id}.svg`;
+const imgTag=(id,cls)=>`<img class="${cls||"pic"}" src="${IMG(id)}" alt="Bild ${id.split("-")[1]}" loading="lazy">`;
+const STRIP=s=>`<div class="strip">${[1,2,3,4].map(n=>imgTag(s+"-"+n,"")).join("")}</div>`;
+/* Spannungskurve für die Erklär-Karte */
+const KURVE=`<svg class="kurve" viewBox="0 0 320 130" role="img" aria-label="Spannungskurve: Einleitung flach, Hauptteil steigt, Höhepunkt oben, Schluss fällt ab">
+ <path d="M10 110 L70 104 Q150 92 200 22 Q228 60 300 104" fill="none" stroke="var(--lw-de)" stroke-width="5" stroke-linecap="round"/>
+ <circle cx="200" cy="22" r="8" fill="var(--lw-sun)" stroke="var(--lw-ink)" stroke-width="2"/>
+ <g font-family="Atkinson Hyperlegible,system-ui,sans-serif" font-size="12" font-weight="700" fill="var(--lw-ink)">
+ <text x="12" y="126">Einleitung</text><text x="104" y="126">Hauptteil</text><text x="168" y="12">Höhepunkt</text><text x="256" y="126">Schluss</text></g></svg>`;
+
+/* ================= Zustand ================= */
+const KEY="bildergeschichte-v1";
+const DEF={best:{},seen:{},denk:true,texte:[]};
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&typeof s==="object")return Object.assign(JSON.parse(JSON.stringify(DEF)),s)}catch(e){}return JSON.parse(JSON.stringify(DEF))}
+let S=load();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+
+/* kurze Töne */
+let AC=null;
+function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){AC=null}}if(AC&&AC.state==="suspended")AC.resume();return AC}
+function beep(fs,len,type,vol){const a=ac();if(!a)return;let t=a.currentTime+.02;fs.forEach(f=>{const o=a.createOscillator(),g=a.createGain();o.type=type||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol||.18,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+len);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+len+.02);t+=len*.75})}
+const sfxOk=()=>beep([1046.5,1318.5],.14);
+const sfxBad=()=>beep([233,175],.18,"triangle",.12);
+const sfxPop=()=>beep([784],.08,"sine",.12);
+
+/* ================= Vorlesen (wie in Ethik: Sätze einzeln, nur Stimmen auf dem Gerät) ================= */
+const TTS={ok:"speechSynthesis" in window&&"SpeechSynthesisUtterance" in window,v:null,run:0,keep:null,awake:false};
+function pickVoices(){if(!TTS.ok)return;const all=speechSynthesis.getVoices()||[];
+  let vs=all.filter(v=>/^de([-_]|$)/i.test(v.lang));const dd=vs.filter(v=>/de[-_]DE/i.test(v.lang));if(dd.length)vs=dd;
+  const loc=vs.filter(v=>v.localService);if(loc.length)vs=loc;
+  TTS.v=vs.find(v=>/anna|petra|helena|katja|marlene|vicki/i.test(v.name))||vs.find(v=>v.default)||vs[0]||null}
+if(TTS.ok){pickVoices();if(speechSynthesis.addEventListener)speechSynthesis.addEventListener("voiceschanged",pickVoices);else speechSynthesis.onvoiceschanged=pickVoices}
+function wake(){if(!TTS.ok||TTS.awake)return;TTS.awake=true;
+  try{const u=new SpeechSynthesisUtterance(" ");u.volume=0;u.lang="de-DE";TTS.keep=u;speechSynthesis.speak(u)}catch(e){}
+  pickVoices()}
+["touchend","click","keydown"].forEach(ev=>document.addEventListener(ev,wake,{capture:true,passive:true}));
+document.addEventListener("visibilitychange",()=>{if(document.hidden)hush()});
+const talking=()=>TTS.ok&&(speechSynthesis.speaking||speechSynthesis.pending);
+function stopNow(){if(talking()){speechSynthesis.cancel();TTS.cut=Date.now()}}
+function hush(){TTS.run++;stopNow();document.querySelectorAll(".spk.on").forEach(b=>{b.classList.remove("on");b.lastChild.textContent=" Vorlesen"})}
+function chunks(t){const out=[];(t.match(/[^.!?…]+[.!?…]*["“”»«„]?\s*/g)||[t]).forEach(s=>{s=s.trim();if(!s)return;
+  while(s.length>180){let k=s.lastIndexOf(", ",180);if(k<60)k=s.lastIndexOf(" ",180);if(k<1)k=180;out.push(s.slice(0,k+1));s=s.slice(k+1).trim()}
+  if(s)out.push(s)});
+  return out.reduce((a,s)=>{if(a.length&&(a[a.length-1].length+s.length<120))a[a.length-1]+=" "+s;else a.push(s);return a},[])}
+function speak(text,onend){if(!TTS.ok){if(onend)setTimeout(onend,0);return false}
+  const id=++TTS.run,parts=chunks(text);let k=0;
+  const one=()=>{if(id!==TTS.run)return;if(k>=parts.length){if(onend)onend();return}
+    const u=new SpeechSynthesisUtterance(parts[k++]);u.lang="de-DE";if(TTS.v)u.voice=TTS.v;u.rate=.95;TTS.keep=u;
+    let fired=false;const fin=()=>{if(fired)return;fired=true;clearTimeout(wd);one()};
+    u.onend=fin;u.onerror=fin;const wd=setTimeout(fin,2500+u.text.length*110);
+    if(speechSynthesis.paused)speechSynthesis.resume();speechSynthesis.speak(u)};
+  stopNow();const wait=90-(Date.now()-(TTS.cut||0));wait>0?setTimeout(one,wait):one();return true}
+
+/* ================= Symbole ================= */
+const I={
+  back:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>`,
+  spk:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>`,
+  book:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/></svg>`,
+  pen:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg>`,
+  star:on=>`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z" fill="${on?"#FFC93C":"var(--lw-line)"}" stroke="${on?"#D99A00":"none"}" stroke-width="1.2" stroke-linejoin="round"/></svg>`
+};
+/* ================= Geschichten =================
+   Markierungen im Text (Röntgenblick): {a|…} Satzanfang  {r|…} wörtliche Rede  {j|…} Adjektiv/treffendes Verb
+   {g|…} Gefühle und Gedanken  {f|…} roter Faden  {x|…|Hinweis} Schwäche/Fehler
+   Regel für alle starken Fassungen: zu jedem Bild mindestens eine wörtliche Rede. */
+const STORIES={
+  drachen:{t:"Der Drachen",figs:"Ich (ein Junge) und Hund Fips"},
+  brot:{t:"Das Pausenbrot",figs:"Lena und Paul"},
+  schnee:{t:"Der Schneemann",figs:"Mia und Tom, ihre Mutter"},
+  katze:{t:"Die Katze und der Goldfisch",figs:"Emma, Katze Minka, Goldfisch Flossi"}
+};
+const TEXTS=[
+ {id:"drachen-1",story:"drachen",title:"Ein Drachen in der Eiche",note:1,form:"Ich-Form",parts:[
+  ["Einleitung","An einem {j|stürmischen} Samstag im Oktober gingen mein Hund Fips und ich auf die große Wiese hinter unserem Haus. Ich wollte endlich meinen neuen Drachen ausprobieren, den ich mit Opa gebaut hatte. {f|Fips hatte ein Lieblingsspiel: Wenn ich „Zieh!“ rief, packte er jedes Seil und zerrte daran, bis er gewann.}"],
+  ["Bild 1","{a|Dort angekommen} ließ ich die Schnur langsam los. Der {j|rote} Drachen {j|stieg} sofort hoch in den {j|grauen} Himmel. {r|„Schau mal, Fips, er fliegt!“, jubelte ich.} Fips {j|sprang} bellend um mich herum."],
+  ["Bild 2","{a|Plötzlich} {j|packte} eine {j|heftige} Böe den Drachen. Er {j|schoss} zur Seite und {j|krachte} mitten in die Krone der alten Eiche. {r|„Oh nein!“, rief ich.} {g|Mein Magen zog sich zusammen. Was würde Opa sagen?}"],
+  ["Bild 3","Ich zog an der Drachenschnur, aber der Drachen bewegte sich keinen Zentimeter. {j|Die Äste knarrten im Wind, und irgendwo riss Papier.} {g|Mein Herz klopfte bis zum Hals. Wenn ich weiter zog, würde der Drachen zerreißen. Wenn ich losließ, wäre er für immer weg.} {r|„Bitte, bitte, komm runter!“, flehte ich.} Ich suchte einen Ast zum Klettern, doch der unterste hing weit über meinem Kopf. {g|Tränen stiegen mir in die Augen.}"],
+  ["Bild 4","{a|Da} hatte ich eine Idee. {r|„Fips, zieh!“, rief ich.} {a|Sofort} {j|packte} er die Schnur mit den Zähnen, {j|stemmte} die Pfoten in den Boden und {j|zerrte}. Mit einem Ruck löste sich der Drachen und {j|segelte} ins Gras. {g|Ich traute meinen Augen nicht.} {r|„Braver Hund!“, jubelte ich} und drückte ihn ganz fest."],
+  ["Schluss","{f|Am Abend erzählte ich Opa alles. Er lachte: „Gebaut haben wir ihn zusammen, aber gerettet hat ihn Fips.“}"]],
+  komm:"Alles drin: Die Einleitung bereitet das Ende vor (Zieh-Spiel), der Höhepunkt in Bild 3 ist der längste Absatz, jedes Bild hat wörtliche Rede, und der Schluss greift Opa aus der Einleitung wieder auf.",
+  jury:[5,5,5,5,5]},
+ {id:"drachen-2",story:"drachen",title:"Ein windiger Nachmittag",note:3,form:"Ich-Form",parts:[
+  ["Einleitung","An einem stürmischen Samstag im Oktober gingen mein Hund Fips und ich {x|bei|Präposition: auf die Wiese} die große Wiese hinter unserem Haus. Ich wollte endlich meinen neuen Drachen ausprobieren, den ich mit Opa gebaut hatte."],
+  ["Bild 1","{a|Dort angekommen} ließ ich die Schnur langsam los. Der rote Drachen stieg sofort hoch in den grauen Himmel. Fips sprang bellend um mich herum."],
+  ["Bild 2","{a|Plötzlich} kam eine starke Böe. Der Drachen {j|schoss} zur Seite und blieb in der alten Eiche hängen. {r|„Oh nein!“, rief ich.}"],
+  ["Bild 3","{x|Ich zog an der Drachen Schnur, aber er bewegte nicht. Der Baum war zu hoch zum Klettern.|Höhepunkt zu knapp, keine Gefühle; „Drachenschnur“ und „bewegte sich“}"],
+  ["Bild 4","{x|Auf einmal packte Fips die Schnur mit den Zähnen und zog.|Warum zieht Fips? Das Zieh-Spiel wurde nie erwähnt.} Mit einem Ruck fiel der Drachen ins Gras. {x|Wir gingen nach Hause.|Schluss zu abrupt: keine Reaktion, kein Gefühl}"]],
+  komm:"Ordentlich gegliedert, Präteritum stimmt, gute Satzanfänge. Aber: Der Grund für das Ende fehlt, der Höhepunkt hat nur zwei Sätze, Gefühle fehlen fast ganz, und der Schluss kommt zu plötzlich. Eher Note 2– bis 3+.",
+  jury:[4,4,2,2,3]},
+ {id:"brot-1",story:"brot",title:"Wer hat mein Pausenbrot?",note:1,form:"Er/Sie-Form",parts:[
+  ["Einleitung","Es war ein {j|sonniger} Montag im Mai. In der großen Pause saß Lena mit ihrem Freund Paul auf dem Schulhof."],
+  ["Bild 1","{a|Voller Vorfreude} packte Lena ihre {j|blaue} Brotdose aus. Darin lag ihr Lieblingsbrot mit Käse und Gurke. Sie legte es neben sich auf die Bank. {r|„Stell dir vor, wir waren am Wochenende im Freizeitpark!“, erzählte sie.} {f|Dass oben im Baum eine Krähe saß und neugierig herunterschaute, bemerkte keiner von beiden.}"],
+  ["Bild 2","{a|Plötzlich} {r|„Tor!“, brüllte} jemand am anderen Ende des Hofes. Lena und Paul drehten sich um und schauten dem Fußballspiel zu. {a|In diesem Moment} {j|segelte} die Krähe {j|lautlos} auf die Bank, {j|schnappte} sich das Brot und flog davon."],
+  ["Bild 3","{a|Als} Lena wieder nach ihrem Brot griff, {j|fasste} sie ins Leere. {g|Ihr Magen knurrte laut.} Da fiel ihr Blick auf Paul. Er biss gerade in ein Käsebrot! {g|Lena spürte, wie ihr das Blut in den Kopf stieg.} {r|„Gib sofort mein Brot zurück!“, fauchte sie} und zeigte auf ihn. Paul {j|riss} die Augen auf. {r|„Das ist meins!“, stotterte er. „Ehrlich, Mama hat es mir eingepackt!“} {g|Lena glaubte ihm kein Wort.}"],
+  ["Bild 4","{a|Genau in diesem Augenblick} {j|krächzte} es über ihnen. Auf einem Ast saß die Krähe, Lenas Käsebrot im Schnabel. {g|Lena wurde knallrot. Wie hatte sie Paul nur verdächtigen können?} {r|„Entschuldigung“, murmelte sie.} Paul grinste und {j|brach} sein Brot in zwei Hälften. {r|„Hier, teilen wir eben“, sagte er.}"],
+  ["Schluss","{f|Seitdem legt Lena ihr Pausenbrot nie mehr auf die Bank. Und wenn sie die Krähe sieht, winkt sie ihr zu.}"]],
+  komm:"Spannend und logisch: Die Krähe wird schon in Bild 1 erwähnt (roter Faden), der Verdacht in Bild 3 ist ausführlich mit Gefühlen erzählt, und vor dem Schluss reagieren beide Figuren.",
+  jury:[5,5,5,5,5]},
+ {id:"brot-3",story:"brot",title:"Wer hat mein Pausenbrot?",note:3,form:"Er/Sie-Form",parts:[
+  ["Einleitung","In der großen Pause saß Lena mit Paul auf dem Schulhof. Sie legte ihr Brot neben sich auf die Bank."],
+  ["Bild 2","{x|Auf einmal schauten beide zum Fußballplatz.|Warum? Der Grund fehlt (z. B. jemand ruft „Tor!“).} Eine Krähe kam und nahm das Brot mit."],
+  ["Bild 3","{a|Als} Lena ihr Brot essen wollte, war es weg. Paul aß gerade ein Brot. {r|„Du hast mein Brot!“, rief Lena} {x|wütend.|Gefühl nur genannt, nicht gezeigt} {r|„Nein, das ist meins!“, sagte Paul.}"],
+  ["Bild 4","{x|Dann|Satzanfang „Dann“} sahen sie die Krähe auf dem Baum. Sie hatte das Brot im Schnabel. Lena entschuldigte sich, und Paul teilte sein Brot mit ihr."],
+  ["Schluss","{x|Am Ende lachten beide.|Schluss sehr knapp}"]],
+  komm:"Die Handlung stimmt, die wörtliche Rede ist richtig gesetzt. Aber der Höhepunkt ist kurz, Gefühle werden nur genannt, Bild 1 fehlt fast ganz, und es gibt keine Überleitung zum Schluss. Eher Note 3.",
+  jury:[3,3,4,2,4]},
+ {id:"brot-5",story:"brot",title:"Das Brot",note:5,form:"Er/Sie-Form",parts:[
+  ["Text","Lena war auf dem Schulhof. Sie hatte ein Brot. {x|Dann legt|Präsens statt Präteritum: legte} sie es auf die Bank. {x|Dann|schon wieder Dann} kam eine Krähe und {x|hat das Brot genommen.|Perfekt statt Präteritum: nahm das Brot} {x|Dann|Dann-Monster} war das Brot weg. Lena dachte Paul hat es. {x|Sie sagte gib mein Brot zurück.|wörtliche Rede ohne Redezeichen} {x|Dann|Dann-Monster} sah sie die Krähe auf dem Baum. {x|Dann haben sie gelacht. Ende.|Perfekt; Schluss ohne Inhalt}"]],
+  komm:"Viele „Dann“, Zeitform springt, keine Absätze, keine Gefühle, keine Spannung, wörtliche Rede ohne Zeichen. Eher Note 5.",
+  jury:[1,1,1,1,1]},
+ {id:"schnee-1",story:"schnee",title:"Ein Gast für den Winter",note:1,form:"Er/Sie-Form",parts:[
+  ["Einleitung","An einem kalten Samstagmorgen im Januar schauten die Geschwister Mia und Tom aus dem Fenster. Über Nacht war der ganze Garten weiß geworden."],
+  ["Bild 1","{a|Sofort} zogen sie Mützen und Handschuhe an und {j|stürmten} hinaus. Mit {j|roten} Wangen rollten sie {j|riesige} Schneekugeln über den Rasen. {r|„Unser Schneemann wird der größte der ganzen Straße!“, rief Tom.}"],
+  ["Bild 2","{a|Eine Stunde später} stand er fertig da. Mia setzte ihm Papas {j|alten} Hut auf, Tom wickelte ihm einen roten Schal um den Hals. {r|„Jetzt fehlt nur noch die Nase“, sagte Mia} und steckte eine Karotte in den Kopf. {g|Die beiden platzten fast vor Stolz.}"],
+  ["Bild 3","{a|Doch am nächsten Morgen} {j|strahlte} die Sonne vom Himmel, und {f|über Nacht war es plötzlich warm geworden}. {a|Als} Mia und Tom in den Garten liefen, {j|erstarrten} sie. Von ihrem Schneemann war nur noch ein {j|matschiger} Haufen übrig. Der Hut lag in einer Pfütze, die Karotte daneben. {r|„Er ist weg“, flüsterte Mia.} {g|Ihr Hals wurde eng. Tom kickte wütend gegen einen Stein. So viel Arbeit, und jetzt war alles umsonst!}"],
+  ["Bild 4","{a|Da} hatte Tom eine Idee. Aus dem letzten Schnee im Schatten formten sie einen kleinen Schneemann und brachten ihn in die Küche. {a|Vorsichtig} stellten sie ihn in den Gefrierschrank und klebten einen Zettel daran: „Bis zum nächsten Winter!“ {a|Als} Mama am Abend Eis holen wollte, {j|schrie} sie überrascht auf. {r|„Was ist DAS denn?“, rief sie.} Mia und Tom kicherten."],
+  ["Schluss","{f|Seitdem wohnt im Gefrierschrank ein kleiner Untermieter, und Mia und Tom zählen die Tage bis zum nächsten Schnee.}"]],
+  komm:"Der Grund für das Schmelzen (warm über Nacht) steht im Text, der traurige Moment in Bild 3 ist ausführlich, jedes Bild hat wörtliche Rede, und der Schluss hat eine Pointe.",
+  jury:[5,5,5,5,5]},
+ {id:"katze-1",story:"katze",title:"Ein Anruf zur falschen Zeit",note:1,form:"Er/Sie-Form",test:true,parts:[
+  ["Einleitung","Es war ein {j|verregneter} Sonntagnachmittag. Emma saß im Wohnzimmer bei ihrem Goldfisch Flossi."],
+  ["Bild 1","{r|„Hier, Flossi, dein Abendessen“, sagte Emma} und streute Futter ins Glas. Ihre Katze Minka lag auf dem Sofa und tat so, als würde sie schlafen. {f|Doch ihre Augen waren nur einen Spalt breit geschlossen, und sie beobachtete das Glas ganz genau.}"],
+  ["Bild 2","{a|Plötzlich} klingelte im Flur das Telefon. {r|„Ich komme gleich wieder!“, rief Emma} und lief hinaus. Es war Oma, und die hatte wie immer viel zu erzählen. {a|Kaum} war Emma verschwunden, {j|sprang} Minka {j|lautlos} auf den Tisch und {j|schlich} sich an das Glas heran."],
+  ["Bild 3","{a|Langsam} hob sie die Pfote und tauchte sie ins Wasser. Flossi {j|flitzte} {j|panisch} im Kreis. Minka beugte sich weiter vor, das Glas kippte und … PLATSCH! Das Wasser {j|schwappte} über den Tisch, und Flossi {j|zappelte} auf der nassen Tischplatte. Im Flur hörte Emma den Knall. {g|Ihr Herz setzte einen Schlag aus.} {r|„Bitte nicht Flossi!“, dachte sie.} {r|„Oma, ich muss auflegen!“, rief sie} und {j|rannte} zurück."],
+  ["Bild 4","{a|Blitzschnell} füllte Emma ein Wasserglas und setzte Flossi vorsichtig hinein. {g|Erleichtert atmete sie aus.} Der Fisch schwamm munter seine Runden, als wäre nichts gewesen. Minka dagegen saß {j|klitschnass} in der Pfütze und {j|maunzte} beleidigt. Emma musste lachen. {r|„Das hast du jetzt davon“, sagte sie.}"],
+  ["Schluss","{f|Seitdem steht Flossis Glas ganz oben im Regal. Und Minka schaut nur noch von unten zu.}"]],
+  komm:"So könnte eine Note-1-Geschichte zur Probe-GLN aussehen: Minkas Lauern in Bild 1 bereitet alles vor, der Höhepunkt hat Geräusche, Gefühle und Gedanken, und jedes Bild hat wörtliche Rede.",
+  jury:[5,5,5,5,5]}
+];
+const JURY=["Aufbau","Satzanfänge","Wörtliche Rede","Gefühle und Spannung","Zeitform und Sprache"];
+const JURYS=["Einleitung, Hauptteil, Schluss, Absätze","abwechslungsreich, kein Dann-Dann","vorhanden, richtig gesetzt","innere Handlung, Höhepunkt","Präteritum, Fehler"];
+/* ================= Kapitel =================
+   cards: Erklär-Karten vor der Runde; spick: Spickzettel am Ende; tasks: Aufgaben-Pool (Runde = lwFragen(n) davon)
+   Aufgabenarten:
+     mc     {q, img?, s? (Text), o:[richtig, …], ex, keep?}         Auswahl
+     img    {q, story, a:Bildnummer, ex}                             Bild antippen
+     order  {story}                                                   Bilder in Reihenfolge bringen
+     duel   {q, img?, A, B, best:"A"|"B", why:[richtig, …], ex}      zwei Fassungen vergleichen
+     gaps   {q, img?, s:"… [[richtig|falsch|falsch]] …", ex}           Lücken nacheinander füllen
+     dann   {q, s:"… [[*]] …", pool:[gute…], bad:[schlechte…], ex}     Dann-Monster
+     find   {q, s:"… {x|Fehler|Verbesserung} …", ex}                   Fehler antippen
+     stretch{q, img, base, blocks:[{t, ok, k}], ex}                   Höhepunkt ausbauen (mind. 3 passende)
+     jury   {text:id}                                                 Text mit Sternen bewerten
+     chat   {title, lines}                                            Chat (lernwelt-chat.js)
+   denk: {q, o:[richtig, …], tip} = Denkfrage vor den Antworten (Schalter auf der Startseite) */
+const PARTS=["Einleitung","Hauptteil","Höhepunkt","Schluss"];
+const CH=[
+{id:"bilder",t:"Bilder lesen wie eine Detektivin",d:"Reihenfolge, Gefühle und was zwischen den Bildern passiert",ico:"🔍",n:8,
+ cards:[
+  {h:"Erst schauen, dann schreiben",b:`<p>Bevor du schreibst, schaust du jedes Bild genau an:</p><ul><li><b>Wer</b> ist zu sehen?</li><li><b>Wo</b> und <b>wann</b> spielt es?</li><li><b>Was</b> passiert?</li><li><b>Wie fühlen</b> sich die Figuren? Schau auf Gesichter und Hände.</li></ul>`},
+  {h:"Die Lücke zwischen den Bildern",b:`<p>Zwischen zwei Bildern passiert oft etwas, das man nicht sieht. Das musst du erzählen, sonst springt deine Geschichte.</p><div class="bsp"><small>Zwischen Bild 2 und 3 beim Pausenbrot</small>Lena dreht sich wieder um, greift nach ihrem Brot und fasst ins Leere.</div>`},
+  {h:"Der Warum-Check",b:`<p>Der Leser muss verstehen, <b>warum</b> etwas passiert. Frag dich bei jedem Bild: Weiß der Leser alles, was er braucht?</p><div class="bsp bad"><small>Fehlt</small>Auf einmal packte Fips die Schnur und zog.</div><div class="bsp"><small>Besser, schon in der Einleitung</small>Fips hatte ein Lieblingsspiel: Wenn ich „Zieh!“ rief, zerrte er an jedem Seil.</div>`}],
+ spick:["Wer, wo, wann, was, wie fühlen sie sich?","Lücken zwischen den Bildern füllen","Warum-Check: Der Leser muss den Grund kennen"],
+ tasks:[
+  {k:"order",story:"drachen"},{k:"order",story:"brot"},{k:"order",story:"schnee"},{k:"order",story:"katze"},
+  {k:"mc",q:"Wie fühlt sich der Junge auf Bild 2?",img:"drachen-2",o:["erschrocken","gelangweilt","fröhlich","müde"],ex:"Weit aufgerissene Augen, offener Mund, Hände an den Wangen: Er ist erschrocken."},
+  {k:"mc",q:"Wie fühlt sich Lena auf Bild 3?",img:"brot-3",o:["wütend","verliebt","ängstlich","stolz"],ex:"Zusammengezogene Augenbrauen und ein ausgestreckter Finger: Lena ist wütend."},
+  {k:"mc",q:"Wie fühlen sich Mia und Tom auf Bild 3?",img:"schnee-3",o:["traurig und enttäuscht","erleichtert","neugierig","stolz"],ex:"Hängende Mundwinkel und eine Träne: Ihr Schneemann ist geschmolzen."},
+  {k:"mc",q:"Was hat die Katze auf Bild 1 vor?",img:"katze-1",o:["Sie lauert auf den Goldfisch.","Sie schläft tief und fest.","Sie will gestreichelt werden.","Sie hat Angst vor Emma."],ex:"Die Augen sind nur schmale Schlitze und auf das Glas gerichtet. Das ist wichtig für den Leser: So versteht er Bild 3."},
+  {k:"mc",q:"Was passiert zwischen Bild 2 und Bild 3?",imgs:["brot-2","brot-3"],o:["Lena greift nach ihrem Brot und merkt, dass es weg ist.","Lena kauft sich ein neues Brot.","Paul füttert die Krähe.","Die Pause ist zu Ende."],ex:"Das sieht man nicht, aber ohne diesen Satz versteht man Lenas Wut nicht."},
+  {k:"mc",q:"Welcher Satz muss in die Geschichte, damit der Leser Bild 4 versteht?",img:"drachen-4",o:["Fips liebte ein Spiel: Auf „Zieh!“ zerrte er an jedem Seil.","Fips war ein brauner Hund.","Der Drachen war rot und gelb.","Die Eiche war sehr alt."],ex:"Sonst wirkt es wie Zufall, dass Fips an der Schnur zieht. Diese Info gehört schon in die Einleitung."},
+  {k:"mc",q:"Warum verdächtigt Lena ausgerechnet Paul?",img:"brot-3",o:["Weil Paul gerade selbst ein Brot isst.","Weil Paul eine Krähe hat.","Weil Paul gelacht hat.","Weil Paul immer Brote klaut."],ex:"Genau das muss im Text stehen, sonst versteht man den Streit nicht."},
+  {k:"mc",q:"Was muss der Leser in Bild 3 erfahren, damit er das Bild versteht?",img:"schnee-3",o:["Über Nacht ist es warm geworden.","Mia trägt eine gelbe Mütze.","Tom ist älter als Mia.","Der Hut gehört Papa."],ex:"Warum ist der Schneemann weg? Weil es warm wurde. Ohne Grund springt die Geschichte."},
+  {k:"mc",q:"Warum ist die Katze plötzlich allein mit dem Goldfisch?",img:"katze-2",o:["Emma geht ans Telefon.","Emma schläft ein.","Emma geht zur Schule.","Emma holt Katzenfutter."],ex:"Das Telefon ist der Auslöser. Es gehört in den Text, am besten mit wörtlicher Rede."},
+  {k:"img",q:"Auf welchem Bild verdächtigt Lena ihren Freund?",story:"brot",a:3,ex:"Auf Bild 3 zeigt Lena wütend auf Paul."},
+  {k:"img",q:"Auf welchem Bild steckt der Drachen fest und der Junge weiß nicht weiter?",story:"drachen",a:3,ex:"Bild 3: Der Junge zieht vergeblich, Fips schaut ratlos."}
+ ]},
+{id:"bauplan",t:"Der Bauplan",d:"Einleitung, Hauptteil, Höhepunkt, Schluss",ico:"🏗️",n:8,
+ cards:[
+  {h:"Vier Teile",b:`<ul><li><b>Einleitung:</b> kurz. Wer, wo, wann? Noch keine Spannung verraten.</li><li><b>Hauptteil:</b> Bild für Bild, die Spannung steigt.</li><li><b>Höhepunkt:</b> der spannendste Moment. Hier erzählst du am ausführlichsten.</li><li><b>Schluss:</b> kurz, rundet ab.</li></ul>${KURVE}`},
+  {h:"Die Faustregel",b:`<p>Jedes Bild bekommt <b>mindestens einen eigenen Absatz</b>.</p><p>Das <b>spannendste Bild</b> bekommt den <b>längsten Absatz</b>.</p><div class="bsp"><small>Merke</small>Ein Höhepunkt mit nur einem Satz verschenkt Punkte, auch wenn der Rest gut ist.</div>`}],
+ spick:["Einleitung kurz: wer, wo, wann","Hauptteil Bild für Bild, Spannung steigt","Höhepunkt am längsten","Schluss kurz, rundet ab","Jedes Bild ein Absatz"],
+ tasks:[
+  {k:"mc",keep:1,q:"Wohin gehört dieser Satz?",s:"An einem kalten Samstagmorgen im Januar schauten Mia und Tom aus dem Fenster.",o:PARTS,a:0,ex:"Wann, wer, wo: ein typischer Einleitungssatz."},
+  {k:"mc",keep:1,q:"Wohin gehört dieser Satz?",s:"Das Glas kippte, und PLATSCH! Das Wasser schwappte über den Tisch.",o:PARTS,a:2,ex:"Der spannendste Moment der Katzen-Geschichte: der Höhepunkt."},
+  {k:"mc",keep:1,q:"Wohin gehört dieser Satz?",s:"Seitdem legt Lena ihr Pausenbrot nie mehr auf die Bank.",o:PARTS,a:3,ex:"„Seitdem …“ blickt nach vorn und rundet ab: Schluss."},
+  {k:"mc",keep:1,q:"Wohin gehört dieser Satz?",s:"Eine Stunde später stand der Schneemann fertig da.",o:PARTS,a:1,ex:"Die Handlung geht weiter, aber es ist noch nicht der spannendste Moment: Hauptteil."},
+  {k:"mc",keep:1,q:"Wohin gehört dieser Satz?",s:"Mein Herz klopfte bis zum Hals. Wenn ich weiter zog, würde der Drachen zerreißen.",o:PARTS,a:2,ex:"Herzklopfen, Gedanken, Angst: So klingt ein Höhepunkt."},
+  {k:"mc",keep:1,q:"Wohin gehört dieser Satz?",s:"Es war ein verregneter Sonntagnachmittag, und Emma saß im Wohnzimmer.",o:PARTS,a:0,ex:"Wann und wo: Einleitung."},
+  {k:"img",q:"Welches Bild ist der Höhepunkt?",story:"katze",a:3,ex:"Bild 3: Das Glas kippt. Hier ist die Spannung am größten."},
+  {k:"img",q:"Welches Bild bekommt den längsten Absatz?",story:"drachen",a:3,ex:"Bild 3 ist der Höhepunkt: Der Drachen steckt fest, der Junge ist verzweifelt."},
+  {k:"img",q:"Welches Bild ist der Höhepunkt?",story:"brot",a:3,ex:"Bild 3: der Streit um das Brot. Hier gehören Gefühle und wörtliche Rede hin."},
+  {k:"mc",q:"Was gehört NICHT in die Einleitung?",o:["Wie die Geschichte ausgeht","Wer mitspielt","Wo es passiert","Wann es passiert"],ex:"Das Ende verrät man nie am Anfang, sonst ist die Spannung weg."},
+  {k:"mc",q:"Wie viele Absätze sollte eine Geschichte zu 4 Bildern mindestens haben?",o:["6: Einleitung, 4 Bilder, Schluss","1","2","3"],ex:"Einleitung, für jedes Bild einen Absatz und den Schluss."},
+  {k:"mc",q:"Welcher Teil ist am kürzesten?",o:["Einleitung und Schluss","Höhepunkt","Bild 2","Alle gleich lang"],ex:"Einleitung und Schluss sind kurz. Die Kraft steckt im Hauptteil und im Höhepunkt."}
+ ]},
+{id:"einleitung",t:"Die Einleitung",d:"W-Fragen beantworten, neugierig machen",ico:"🚪",n:7,
+ cards:[
+  {h:"Die W-Fragen",b:`<p>Die Einleitung beantwortet in zwei bis drei Sätzen:</p><ul><li><b>Wer?</b> Figuren mit Namen</li><li><b>Wo?</b> Ort</li><li><b>Wann?</b> Tag, Jahreszeit, Tageszeit</li></ul><div class="bsp"><small>Beispiel</small>An einem stürmischen Samstag im Oktober gingen mein Hund Fips und ich auf die große Wiese hinter unserem Haus.</div>`},
+  {h:"Nicht zu viel verraten",b:`<div class="bsp bad"><small>Verrät das Ende</small>Das ist die Geschichte, wie eine Krähe Lenas Brot klaute.</div><div class="bsp"><small>Macht neugierig</small>In der großen Pause saß Lena mit Paul auf dem Schulhof. Oben im Baum saß eine Krähe und schaute neugierig herunter.</div>`}],
+ spick:["Wer, wo, wann in 2–3 Sätzen","Figuren mit Namen","Kein „Es war einmal“","Das Ende nicht verraten"],
+ tasks:[
+  {k:"duel",q:"Welche Einleitung ist besser?",img:"drachen-1",A:"Es war einmal ein Junge. Er hatte einen Drachen.",B:"An einem stürmischen Samstag im Oktober ging ich mit meinem Hund Fips auf die große Wiese hinter unserem Haus.",best:"B",why:["Sie beantwortet wer, wo und wann.","Sie ist kürzer.","Sie beginnt mit „Es war einmal“."],ex:"„Es war einmal“ passt zu Märchen. B nennt Zeit, Ort und Figuren.",denk:{q:"Worauf achtest du bei einer Einleitung?",o:["Wer, wo, wann","Möglichst viel Spannung","Das Ende"],tip:"Genau: Die W-Fragen."}},
+  {k:"duel",q:"Welche Einleitung ist besser?",img:"brot-1",A:"Das ist die Geschichte, wie eine Krähe Lenas Brot geklaut hat.",B:"Es war ein sonniger Montag im Mai. In der großen Pause saß Lena mit ihrem Freund Paul auf dem Schulhof.",best:"B",why:["A verrät schon das Ende.","B ist lustiger.","A ist zu lang."],ex:"Wer das Ende vorher kennt, liest nicht mehr gespannt weiter."},
+  {k:"duel",q:"Welche Einleitung ist besser?",img:"schnee-1",A:"An einem kalten Samstagmorgen im Januar schauten die Geschwister Mia und Tom aus dem Fenster. Über Nacht war der ganze Garten weiß geworden.",B:"Mia und Tom haben einen Schneemann gebaut, und dann ist er geschmolzen, und dann war Mama überrascht.",best:"A",why:["A beantwortet die W-Fragen und verrät nichts.","A hat mehr Namen.","B ist im Präteritum."],ex:"B erzählt die ganze Geschichte auf einmal und benutzt Perfekt und „und dann“."},
+  {k:"mc",q:"Welche W-Frage beantwortet diese Einleitung nicht?",s:"Emma saß im Wohnzimmer und fütterte ihren Goldfisch Flossi.",o:["Wann?","Wer?","Wo?","Was?"],ex:"Es fehlt die Zeit, zum Beispiel: An einem verregneten Sonntagnachmittag …"},
+  {k:"mc",q:"Welche W-Frage beantwortet diese Einleitung nicht?",s:"An einem sonnigen Montag im Mai saßen zwei Kinder auf dem Schulhof.",o:["Wer genau? Namen fehlen.","Wann?","Wo?","Was?"],ex:"„Zwei Kinder“ ist zu ungenau. Gib den Figuren Namen: Lena und Paul."},
+  {k:"mc",q:"Welche W-Frage beantwortet diese Einleitung nicht?",s:"An einem stürmischen Samstag im Oktober wollten Ben und sein Hund Fips einen Drachen steigen lassen.",o:["Wo?","Wer?","Wann?","Was?"],ex:"Es fehlt der Ort, zum Beispiel: auf der großen Wiese hinter dem Haus."},
+  {k:"mc",q:"Welcher Satz macht am meisten neugierig?",o:["Oben im Baum saß eine Krähe und schaute neugierig auf die Bank.","Am Ende teilten Lena und Paul ein Brot.","Die Krähe klaute das Brot.","Es war eine ganz normale Pause."],ex:"Er deutet etwas an, ohne es zu verraten. So wird der Leser neugierig."},
+  {k:"mc",q:"Welche Einleitung passt zu Bild 1?",img:"katze-1",o:["Es war ein verregneter Sonntag. Emma saß im Wohnzimmer bei ihrem Goldfisch Flossi.","Es war ein heißer Sommertag am Strand.","Emma ging mit ihrem Hund spazieren.","Minka warf das Glas um."],ex:"Wohnzimmer, Goldfisch, Emma: passt. Das Umwerfen kommt erst später."}
+ ]},
+{id:"satzanfaenge",t:"Das Dann-Monster",d:"Abwechslungsreiche Satzanfänge und Satzverknüpfungen",ico:"👾",n:7,
+ cards:[
+  {h:"Füttere das Dann-Monster nicht!",b:`<p>Wenn jeder Satz mit „Dann“ beginnt, wird die Geschichte langweilig. Das Dann-Monster frisst deine Punkte.</p><div class="bsp bad"><small>Dann-Monster</small>Dann kam eine Krähe. Dann war das Brot weg. Dann sah sie Paul.</div><div class="bsp"><small>Besser</small>Plötzlich kam eine Krähe. Kurz darauf war das Brot weg. Als Lena sich umdrehte, sah sie Paul.</div>`},
+  {h:"Deine Satzanfang-Kiste",b:`<p><b>Zeit:</b> Plötzlich · Kurz darauf · Nach einer Weile · Im selben Moment · Am nächsten Morgen · Eine Stunde später · Kaum …</p><p><b>Überraschung:</b> Auf einmal · Da · Zum Glück · Doch</p><p><b>Sätze verbinden:</b> Als … · Nachdem … · Weil … · Obwohl …</p>`}],
+ spick:["Kein Satz beginnt mit „Dann“","Plötzlich, Kurz darauf, Im selben Moment, Doch, Zum Glück …","Sätze verbinden mit als, nachdem, weil, obwohl"],
+ tasks:[
+  {k:"dann",q:"Ersetze jedes „Dann“. Jeder Satzanfang nur einmal!",img:"brot-2",s:"Lena und Paul schauten zum Fußballspiel. [[*]] flog eine Krähe auf die Bank. [[*]] schnappte sie sich das Brot. [[*]] war sie schon wieder in der Luft.",pool:["Plötzlich","Blitzschnell","Im nächsten Moment","Kurz darauf"],bad:["Dann","Und dann"],ex:"Jeder Satz beginnt anders. So bleibt der Leser wach."},
+  {k:"dann",q:"Ersetze jedes „Dann“. Jeder Satzanfang nur einmal!",img:"schnee-3",s:"Mia und Tom waren stolz auf ihren Schneemann. [[*]] schien die Sonne. [[*]] lag nur noch ein Haufen Matsch im Garten. [[*]] hatte Tom eine Idee.",pool:["Am nächsten Morgen","Nach ein paar Stunden","Da","Doch"],bad:["Dann","Danach dann"],ex:"Zeitangaben wie „Am nächsten Morgen“ zeigen dem Leser, wie viel Zeit vergangen ist."},
+  {k:"dann",q:"Ersetze jedes „Dann“. Jeder Satzanfang nur einmal!",img:"katze-2",s:"Das Telefon klingelte. [[*]] lief Emma in den Flur. [[*]] sprang Minka auf den Tisch. [[*]] schlich sie zum Goldfischglas.",pool:["Sofort","Kaum war sie weg,","Lautlos","Kurz darauf"],bad:["Dann","Und dann"],ex:"Gut: Satzanfänge wie „Lautlos“ machen den Text spannend und genau."},
+  {k:"gaps",q:"Verbinde die Sätze mit dem passenden Wort.",s:"[[Als|Weil|Obwohl]] Lena nach ihrem Brot griff, fasste sie ins Leere.",ex:"„Als“ sagt, wann etwas passiert."},
+  {k:"gaps",q:"Verbinde die Sätze mit dem passenden Wort.",s:"Ich zog fest an der Schnur, [[aber|weil|als]] der Drachen bewegte sich nicht.",ex:"„aber“ zeigt einen Gegensatz."},
+  {k:"gaps",q:"Verbinde die Sätze mit dem passenden Wort.",s:"Mia war traurig, [[weil|obwohl|als]] der Schneemann geschmolzen war.",ex:"„weil“ nennt den Grund."},
+  {k:"gaps",q:"Verbinde die Sätze mit dem passenden Wort.",s:"[[Nachdem|Obwohl|Weil]] Emma aufgelegt hatte, rannte sie ins Wohnzimmer.",ex:"„Nachdem“: Erst das eine, dann das andere."},
+  {k:"gaps",q:"Verbinde die Sätze mit dem passenden Wort.",s:"Minka sprang auf den Tisch, [[obwohl|weil|nachdem]] sie das nicht durfte.",ex:"„obwohl“: Sie macht es trotzdem."},
+  {k:"mc",q:"Welcher Text hat die besten Satzanfänge?",o:["Plötzlich klingelte das Telefon. Sofort lief Emma hinaus. Kaum war sie weg, sprang Minka auf den Tisch.","Dann klingelte das Telefon. Dann lief Emma hinaus. Dann sprang Minka auf den Tisch.","Das Telefon klingelte. Emma lief hinaus. Minka sprang auf den Tisch.","Und dann klingelte das Telefon und dann lief Emma hinaus."],ex:"Abwechslung bei den Satzanfängen und eine Verbindung mit „Kaum …“."}
+ ]},
+{id:"rede",t:"Wörtliche Rede",d:"Redezeichen setzen, Wortfeld „sagen“, Gedanken als Rede",ico:"💬",n:8,
+ cards:[
+  {h:"Drei Stellungen",b:`<div class="bsp"><small>Begleitsatz vorne</small>Lena rief<b>: „</b>Mein Brot ist weg<b>!“</b></div><div class="bsp"><small>Begleitsatz hinten</small><b>„</b>Mein Brot ist weg<b>!“,</b> rief Lena.</div><div class="bsp"><small>Begleitsatz in der Mitte</small><b>„</b>Fips<b>“,</b> rief ich<b>, „</b>zieh<b>!“</b></div><p class="small">Achtung: Steht der Begleitsatz hinten und der Satz endet mit Punkt, fällt der Punkt weg: „Komm mit“, sagte Paul.</p>`},
+  {h:"Nicht immer nur „sagte“",b:`<p><b>laut:</b> rief, schrie, brüllte, jubelte</p><p><b>leise:</b> flüsterte, murmelte, hauchte</p><p><b>Gefühl:</b> stotterte, schluchzte, fauchte, flehte, kicherte</p><div class="bsp"><small>Gedanken als Rede</small>„Bitte nicht Flossi!“, dachte Emma.</div><p>Tipp: Gib jedem Bild mindestens eine wörtliche Rede. Auch Gedanken zählen!</p>`}],
+ spick:["Vorne: Lena rief: „…!“","Hinten: „…“, sagte Paul. (Punkt fällt weg)","Mitte: „…“, rief ich, „…!“","Statt sagte: flüsterte, rief, stotterte …","Jedes Bild eine wörtliche Rede, auch Gedanken"],
+ tasks:[
+  {k:"gaps",punct:1,q:"Setze die Redezeichen.",img:"brot-3",s:"Lena rief[[:|,|.]] [[„|“|:]]Mein Brot ist weg[[!|,|.]][[“|„|,]]",ex:"Begleitsatz vorne: Doppelpunkt, dann „ … !“"},
+  {k:"gaps",punct:1,q:"Setze die Redezeichen.",img:"drachen-4",s:"[[„|“|:]]Fips, zieh![[“|„|.]][[,|.|:]] rief ich.",ex:"Begleitsatz hinten: „ … !“, dann ein Komma."},
+  {k:"gaps",punct:1,q:"Setze die Redezeichen.",img:"katze-4",s:"[[„|“|:]]Das hast du jetzt davon[[“|.|!]][[,|.|:]] sagte Emma.",ex:"Hinten: Der Punkt der Rede fällt weg, nach dem Schlusszeichen kommt ein Komma."},
+  {k:"gaps",punct:1,q:"Setze die Redezeichen.",img:"brot-4",s:"[[„|“|:]]Hier[[“|,|!]][[,|.|:]] sagte Paul[[,|.|:]] [[„|“|:]]teilen wir eben.[[“|„|!]]",ex:"Begleitsatz in der Mitte: „Hier“, sagte Paul, „teilen wir eben.“"},
+  {k:"mc",q:"Welcher Satz ist richtig gesetzt?",o:["„Er ist weg“, flüsterte Mia.","„Er ist weg.“, flüsterte Mia.","„Er ist weg“ flüsterte Mia.","Er ist weg, flüsterte Mia."],ex:"Hinten: kein Punkt in der Rede, aber ein Komma nach dem Schlusszeichen."},
+  {k:"mc",q:"Welcher Satz ist richtig gesetzt?",o:["Tom rief: „Unser Schneemann wird der größte!“","Tom rief „Unser Schneemann wird der größte!“","Tom rief: Unser Schneemann wird der größte!","Tom rief, „Unser Schneemann wird der größte!“"],ex:"Vorne: Doppelpunkt vor der Rede."},
+  {k:"gaps",q:"Welches Verb passt am besten?",img:"katze-2",s:"„Psst, nicht so laut!“, [[flüsterte|brüllte|jubelte]] Emma ins Telefon.",ex:"„Psst“ ist leise: flüsterte."},
+  {k:"gaps",q:"Welches Verb passt am besten?",img:"brot-3",s:"„Das ist meins! E-ehrlich!“, [[stotterte|jubelte|flüsterte]] Paul.",ex:"Paul ist erschrocken und stockt: stotterte."},
+  {k:"gaps",q:"Welches Verb passt am besten?",img:"schnee-2",s:"„Er ist fertig! Er ist fertig!“, [[jubelten|murmelten|seufzten]] Mia und Tom.",ex:"Sie freuen sich riesig: jubelten."},
+  {k:"gaps",q:"Welches Verb passt am besten?",img:"drachen-3",s:"„Bitte, bitte, komm runter!“, [[flehte|lachte|befahl]] ich.",ex:"Er bittet verzweifelt: flehte."},
+  {k:"mc",q:"Bild 3 hat nur eine Figur. Wie bekommt es trotzdem eine wörtliche Rede?",img:"drachen-3",o:["Der Junge spricht mit dem Hund oder denkt laut: „Was sage ich bloß Opa?“, dachte ich.","Gar nicht, dafür braucht man zwei Personen.","Man lässt den Drachen sprechen.","Man schreibt die Rede ohne Anführungszeichen."],ex:"Gedanken dürfen als wörtliche Rede stehen. Das zeigt gleichzeitig Gefühle!"},
+  {k:"chat",title:"Paul",sub:"online",ava:"P",lines:[
+   {w:"Paul",t:"Hey, kannst du mir kurz bei der Bildergeschichte helfen? 🙈"},
+   {w:"Paul",t:"Ich hab geschrieben: Lena rief „Mein Brot!“"},
+   {t:"Da fehlt der ___ nach „rief“.",a:["Doppelpunkt"],o:["Doppelpunkt","Punkt","Strich"],ex:"Begleitsatz vorne: Lena rief: „Mein Brot!“"},
+   {w:"Paul",t:"Ah ok. Und hinten? „Gib das zurück.“, sagte Lena."},
+   {t:"Der ___ in der Rede fällt weg.",a:["Punkt"],o:["Punkt","Doppelpunkt","Anführungsstrich"],ex:"„Gib das zurück“, sagte Lena. Nur das Komma bleibt."},
+   {w:"Paul",t:"Meine Lehrerin will in jedem Bild Rede. In Bild 3 ist aber nur Lena 😩"},
+   {t:"Schreib ihre ___ als Rede: „Wo ist mein Brot?“, dachte sie.",a:["Gedanken"],o:["Gedanken","Hausaufgaben","Namen"],ex:"Gedanken als wörtliche Rede zählen auch."},
+   {w:"Paul",t:"Genial, danke! 🙌"}]}
+ ]},
+{id:"farbe",t:"Farbe ins Bild",d:"Treffende Verben, Adjektive und Sinne",ico:"🎨",n:7,
+ cards:[
+  {h:"Treffende Verben",b:`<p>„gehen“, „sagen“, „machen“ sind blass. Zeig genau, <b>wie</b> etwas passiert.</p><p><b>gehen:</b> schleichen, rennen, stapfen, flitzen, schlendern, stürmen</p><p><b>sehen:</b> starren, entdecken, beobachten, blinzeln</p><div class="bsp bad"><small>blass</small>Die Katze ging zum Glas.</div><div class="bsp"><small>treffend</small>Die Katze schlich lautlos zum Glas.</div>`},
+  {h:"Adjektive und Sinne",b:`<p>Adjektive malen Bilder im Kopf: der <b>rote</b> Drachen, die <b>knorrige</b> Eiche.</p><p>Was <b>hört</b>, <b>riecht</b>, <b>fühlt</b> die Figur? Die Äste knarrten. Der Schnee knirschte unter den Stiefeln.</p><div class="bsp bad"><small>Zu viel des Guten</small>Der große, rote, schöne, tolle, bunte Drachen.</div><p>Ein bis zwei passende Adjektive reichen.</p>`}],
+ spick:["Treffende Verben statt ging, sagte, machte","1–2 passende Adjektive","Sinne: hören, riechen, fühlen"],
+ tasks:[
+  {k:"gaps",q:"Welches Verb passt am besten?",img:"katze-2",s:"Minka [[schlich|ging|rannte]] lautlos zum Goldfischglas.",ex:"Lautlos und vorsichtig: schleichen."},
+  {k:"gaps",q:"Welches Verb passt am besten?",img:"schnee-1",s:"Sofort zogen Mia und Tom ihre Mützen an und [[stürmten|gingen|schlichen]] hinaus.",ex:"Sie können es kaum erwarten: stürmen."},
+  {k:"gaps",q:"Welches Verb passt am besten?",img:"brot-2",s:"Die Krähe [[schnappte|nahm|machte]] sich das Brot.",ex:"Schnell und frech: schnappen."},
+  {k:"gaps",q:"Welches Verb passt am besten?",img:"drachen-2",s:"Der Drachen [[krachte|kam|ging]] mitten in die Krone der Eiche.",ex:"„krachte“ lässt dich den Aufprall hören."},
+  {k:"gaps",q:"Welches Adjektiv passt?",img:"schnee-3",s:"Von ihrem Schneemann war nur noch ein [[matschiger|fröhlicher|knuspriger]] Haufen übrig.",ex:"Geschmolzener Schnee ist matschig."},
+  {k:"gaps",q:"Welches Adjektiv passt?",img:"katze-4",s:"Minka saß [[klitschnass|stolz|hungrig]] in der Pfütze.",ex:"Sie ist ins Wasser geraten: klitschnass."},
+  {k:"duel",q:"Welcher Satz ist lebendiger?",img:"brot-2",A:"Lautlos segelte die Krähe auf die Bank und schnappte sich das Brot.",B:"Die Krähe kam und nahm das Brot.",best:"A",why:["Treffende Verben und ein Satzanfang mit Adjektiv","Er ist kürzer.","Er hat wörtliche Rede."],ex:"„segelte“ und „schnappte“ statt „kam“ und „nahm“."},
+  {k:"duel",q:"Welcher Satz ist besser?",img:"drachen-1",A:"Der große, rote, schöne, bunte, tolle Drachen flog hoch.",B:"Der rote Drachen stieg hoch in den grauen Himmel.",best:"B",why:["A hat zu viele Adjektive.","B ist länger.","A hat zu wenige Adjektive."],ex:"Ein bis zwei passende Adjektive wirken besser als fünf."},
+  {k:"mc",q:"Welcher Satz spricht das Hören an?",o:["Die Äste knarrten im Wind.","Der Baum war grün.","Der Drachen war rot.","Fips war braun."],ex:"knarren = ein Geräusch. Sinne machen eine Szene lebendig."},
+  {k:"mc",q:"Welches Wort ersetzt „ging“ am besten? „Enttäuscht ___ Tom zurück ins Haus.“",o:["schlurfte","flitzte","hüpfte","raste"],ex:"Wer enttäuscht ist, geht langsam und schwer: schlurfen."}
+ ]},
+{id:"gefuehle",t:"Gefühle und Gedanken",d:"Innere Handlung zeigen statt nur nennen, Präteritum",ico:"💓",n:8,
+ cards:[
+  {h:"Zeigen statt nennen",b:`<p>Schreib nicht nur, <b>dass</b> eine Figur Angst hat. Zeig, <b>wie</b> man es merkt.</p><div class="bsp bad"><small>nur genannt</small>Lena war wütend.</div><div class="bsp"><small>gezeigt</small>Lena spürte, wie ihr das Blut in den Kopf stieg.</div><p><b>Angst:</b> Herz klopft, Knie zittern · <b>Schreck:</b> erstarren, Atem stockt · <b>Trauer:</b> Hals wird eng, Tränen · <b>Freude:</b> jubeln, strahlen · <b>Schlechtes Gewissen:</b> knallrot werden</p>`},
+  {h:"Gedanken",b:`<p>Was denkt die Figur gerade? Das ist die <b>innere Handlung</b>. Daraus entsteht Spannung.</p><div class="bsp">Was würde Opa sagen? · Wie hatte sie Paul nur verdächtigen können? · „Bitte nicht Flossi!“, dachte Emma.</div>`},
+  {h:"Präteritum",b:`<p>Geschichten stehen im <b>Präteritum</b>:</p><p>gehen → ging · rennen → rannte · rufen → rief · sehen → sah · fallen → fiel · springen → sprang · ziehen → zog</p><div class="bsp bad"><small>Falsch</small>Dann hat sie das Brot genommen. (Perfekt) · Sie rennt los. (Präsens)</div>`}],
+ spick:["Gefühle zeigen: Herz klopft, Knie zittern, Hals wird eng","Gedanken der Figur einbauen","Präteritum: ging, rannte, rief, sah"],
+ tasks:[
+  {k:"mc",q:"Welcher Satz zeigt das Gefühl, statt es nur zu nennen?",o:["Mias Hals wurde eng, und Tränen stiegen ihr in die Augen.","Mia war traurig.","Mia fühlte sich sehr traurig.","Mia hatte Trauer."],ex:"Man spürt die Trauer, ohne dass das Wort „traurig“ fällt."},
+  {k:"mc",q:"Welcher Satz zeigt das Gefühl, statt es nur zu nennen?",o:["Emmas Herz setzte einen Schlag aus.","Emma hatte große Angst.","Emma war erschrocken.","Emma bekam einen Schreck."],ex:"Ein Körpergefühl zeigt den Schreck."},
+  {k:"mc",q:"Welches Gefühl zeigt der Satz? „Lena wurde knallrot und schaute auf ihre Schuhe.“",o:["schlechtes Gewissen","Freude","Langeweile","Hunger"],ex:"Sie schämt sich, weil sie Paul zu Unrecht verdächtigt hat."},
+  {k:"mc",q:"Welches Gefühl zeigt der Satz? „Seine Knie zitterten, und er bekam kaum Luft.“",o:["Angst","Stolz","Müdigkeit","Wut"],ex:"Zittern und Atemnot zeigen Angst."},
+  {k:"mc",q:"Was denkt Lena auf Bild 4?",img:"brot-4",o:["Wie konnte ich Paul nur verdächtigen?","Paul ist ein Dieb!","Ich habe gar keinen Hunger.","Krähen sind langweilig."],ex:"Jetzt weiß sie, dass die Krähe es war. Ihr Gedanke zeigt ihr schlechtes Gewissen."},
+  {k:"mc",q:"Was denkt der Junge auf Bild 2?",img:"drachen-2",o:["Was würde Opa sagen? Wir haben ihn doch zusammen gebaut!","Endlich ist der Drachen weg.","Ich habe Hunger.","Fips ist ein schöner Hund."],ex:"Der Gedanke an Opa macht klar, warum ihm der Drachen so wichtig ist."},
+  {k:"mc",q:"Was denkt Emma auf Bild 3, als sie den Knall hört?",img:"katze-3",o:["„Bitte nicht Flossi!“","„Oma redet zu viel.“","„Was gibt es zum Abendessen?“","„Ich mag Regen.“"],ex:"Sie ahnt sofort, was passiert ist."},
+  {k:"gaps",q:"Setze ins Präteritum.",s:"Plötzlich [[rannte|rennt|ist gerannt]] Minka über den Tisch.",ex:"rennen → rannte"},
+  {k:"gaps",q:"Setze ins Präteritum.",s:"Der Drachen [[fiel|fällt|ist gefallen]] mit einem Ruck ins Gras.",ex:"fallen → fiel"},
+  {k:"gaps",q:"Setze ins Präteritum.",s:"Paul [[biss|beißt|hat gebissen]] in sein Brot.",ex:"beißen → biss"},
+  {k:"gaps",q:"Setze ins Präteritum.",s:"Die Kinder [[zogen|ziehen|haben gezogen]] ihre Mützen an.",ex:"ziehen → zogen"},
+  {k:"find",q:"Finde die 3 Stellen, die nicht im Präteritum stehen.",s:"Emma lief in den Flur. Am Telefon {x|ist|war} Oma. Minka sprang auf den Tisch und {x|schleicht|schlich} zum Glas. Plötzlich {x|hat es geplatscht|platschte es}.",ex:"Eine Geschichte bleibt im Präteritum, vom ersten bis zum letzten Satz."}
+ ]},
+{id:"hoehepunkt",t:"Der Höhepunkt in Zeitlupe",d:"Den spannendsten Moment auf 3–5 Sätze ausbauen",ico:"⏱️",n:7,
+ cards:[
+  {h:"Zeitlupe",b:`<p>Im Höhepunkt läuft die Zeit langsam, wie in Zeitlupe im Film. Du erzählst den spannendsten Moment <b>Schritt für Schritt</b>.</p><div class="bsp bad"><small>zu knapp</small>Ich zog an der Schnur, aber er bewegte sich nicht.</div>`},
+  {h:"Die Höhepunkt-Formel",b:`<ul><li>👂 <b>Sinne:</b> Was sehe, höre, rieche ich? Die Äste knarrten.</li><li>💓 <b>Gefühl:</b> Mein Herz klopfte bis zum Hals.</li><li>💭 <b>Gedanke:</b> Wenn ich losließ, wäre er für immer weg.</li><li>💬 <b>Rede:</b> „Bitte, komm runter!“, flehte ich.</li><li>✋ <b>Handlung:</b> Ich suchte einen Ast zum Klettern.</li></ul><p><b>3 bis 5 Sätze</b> mehr als sonst. Der Höhepunkt ist der längste Absatz!</p>`}],
+ spick:["Zeitlupe: Schritt für Schritt erzählen","Sinne, Gefühl, Gedanke, Rede, Handlung","3–5 Sätze mehr, längster Absatz","Nicht ins Ende springen"],
+ tasks:[
+  {k:"stretch",q:"Mach den Höhepunkt länger. Wähle alle Bausteine, die passen (mindestens 3).",img:"drachen-3",base:"Ich zog an der Drachenschnur, aber der Drachen bewegte sich keinen Zentimeter.",blocks:[
+   {t:"Die Äste knarrten im Wind, und irgendwo riss Papier.",ok:1,k:"Sinne"},{t:"Mein Herz klopfte bis zum Hals.",ok:1,k:"Gefühl"},{t:"Wenn ich losließ, wäre er für immer weg.",ok:1,k:"Gedanke"},{t:"„Bitte, bitte, komm runter!“, flehte ich.",ok:1,k:"Rede"},
+   {t:"Dann gingen wir nach Hause und aßen Pizza.",ok:0,k:"springt ans Ende"},{t:"Ich ziehe noch fester.",ok:0,k:"Präsens statt Präteritum"},{t:"Eichen können 1000 Jahre alt werden.",ok:0,k:"gehört nicht zur Handlung"}],ex:"Sinne, Gefühl, Gedanke und Rede machen aus einem Satz einen echten Höhepunkt."},
+  {k:"stretch",q:"Mach den Höhepunkt länger. Wähle alle Bausteine, die passen (mindestens 3).",img:"katze-3",base:"Minka tauchte die Pfote ins Wasser, und das Glas kippte um.",blocks:[
+   {t:"PLATSCH! Das Wasser schwappte über den ganzen Tisch.",ok:1,k:"Sinne"},{t:"Flossi zappelte verzweifelt auf der nassen Tischplatte.",ok:1,k:"Handlung"},{t:"Im Flur setzte Emmas Herz einen Schlag aus.",ok:1,k:"Gefühl"},{t:"„Bitte nicht Flossi!“, dachte sie.",ok:1,k:"Gedanke als Rede"},
+   {t:"Am Ende war alles wieder gut.",ok:0,k:"springt ans Ende"},{t:"Minka hat das Glas umgeworfen.",ok:0,k:"Perfekt statt Präteritum"},{t:"Goldfische gibt es in vielen Farben.",ok:0,k:"gehört nicht zur Handlung"}],ex:"So wird aus dem Umkippen der spannendste Moment der Geschichte."},
+  {k:"stretch",q:"Mach den Höhepunkt länger. Wähle alle Bausteine, die passen (mindestens 3).",img:"brot-3",base:"Lena griff nach ihrem Brot, doch die Bank war leer.",blocks:[
+   {t:"Ihr Magen knurrte laut.",ok:1,k:"Sinne"},{t:"Da fiel ihr Blick auf Paul, der gerade in ein Käsebrot biss.",ok:1,k:"Handlung"},{t:"Lena spürte, wie ihr das Blut in den Kopf stieg.",ok:1,k:"Gefühl"},{t:"„Gib sofort mein Brot zurück!“, fauchte sie.",ok:1,k:"Rede"},
+   {t:"Dann war die Pause zu Ende.",ok:0,k:"springt weiter"},{t:"Lena ist sehr wütend.",ok:0,k:"Präsens und nur genannt"},{t:"Käse wird aus Milch gemacht.",ok:0,k:"gehört nicht zur Handlung"}],ex:"Jetzt versteht der Leser, warum Lena Paul verdächtigt, und spürt ihre Wut."},
+  {k:"stretch",q:"Mach den Höhepunkt länger. Wähle alle Bausteine, die passen (mindestens 3).",img:"schnee-3",base:"Am nächsten Morgen war von dem Schneemann nur noch ein Haufen Matsch übrig.",blocks:[
+   {t:"Der Hut lag in einer Pfütze, und es tropfte von allen Seiten.",ok:1,k:"Sinne"},{t:"„Er ist weg“, flüsterte Mia.",ok:1,k:"Rede"},{t:"Ihr Hals wurde eng.",ok:1,k:"Gefühl"},{t:"So viel Arbeit, und jetzt war alles umsonst!",ok:1,k:"Gedanke"},
+   {t:"Schneemänner baut man im Winter.",ok:0,k:"gehört nicht zur Handlung"},{t:"Mia und Tom sind traurig.",ok:0,k:"Präsens und nur genannt"},{t:"Und dann war es Sommer.",ok:0,k:"springt weg"}],ex:"Mit Gefühl, Gedanke und Rede wird der traurige Moment zum Höhepunkt."},
+  {k:"duel",q:"Welcher Höhepunkt ist besser?",img:"katze-3",A:"Minka warf das Glas um. Emma kam zurück.",B:"Langsam tauchte Minka die Pfote ins Wasser. Flossi flitzte panisch im Kreis. Das Glas kippte und … PLATSCH! Im Flur hörte Emma den Knall. Ihr Herz setzte einen Schlag aus.",best:"B",why:["B erzählt Schritt für Schritt mit Geräusch und Gefühl.","B hat mehr Namen.","A ist zu spannend."],ex:"A springt einfach weiter. B ist die Zeitlupe.",denk:{q:"Woran erkennst du einen guten Höhepunkt?",o:["Er ist ausführlich, mit Gefühlen","Er ist so kurz wie möglich","Er verrät das Ende"],tip:"Genau: Zeitlupe mit Gefühlen und Sinnen."}},
+  {k:"mc",q:"Was fehlt in diesem Höhepunkt? „Die Krähe schnappte sich das Brot. Lena schaute zu Paul. Er aß ein Brot.“",o:["Lenas Gefühle und Gedanken","Ein Satzanfang","Das Präteritum","Ein Name"],ex:"Was denkt und fühlt Lena, als sie Paul mit dem Brot sieht? Genau das macht die Spannung."},
+  {k:"mc",q:"Wie viele Sätze sollte der Höhepunkt ungefähr haben?",o:["5 bis 8","1","2","20"],ex:"Mindestens 3 bis 5 Sätze mehr als ein normaler Absatz. Er ist der längste Teil."}
+ ]},
+{id:"schluss",t:"Schluss und Überschrift",d:"Reaktionen vor dem Ende, runder Schluss, gute Überschrift",ico:"🏁",n:7,
+ cards:[
+  {h:"Erst reagieren, dann enden",b:`<p>Bevor die Geschichte gut ausgeht, zeigst du, wie die Figuren <b>reagieren</b>: erschrocken, erleichtert, beleidigt? Am besten mit wörtlicher Rede.</p><div class="bsp bad"><small>zu abrupt</small>Mit einem Ruck fiel der Drachen ins Gras. Wir gingen nach Hause.</div><div class="bsp"><small>mit Reaktion</small>Ich traute meinen Augen nicht. „Braver Hund!“, jubelte ich und drückte ihn ganz fest.</div>`},
+  {h:"Ein guter Schluss",b:`<ul><li>ist <b>kurz</b> (1–3 Sätze)</li><li>rundet ab, zum Beispiel mit „Seitdem …“</li><li>greift gern den <b>Anfang</b> oder die Überschrift wieder auf</li><li><b>nicht:</b> „Dann bin ich aufgewacht.“ oder „Ende.“</li></ul>`},
+  {h:"Die Überschrift",b:`<p>Sie macht neugierig, <b>verrät aber nicht das Ende</b>.</p><div class="bsp bad"><small>verrät alles</small>Die Krähe hat das Brot geklaut</div><div class="bsp"><small>macht neugierig</small>Wer hat mein Pausenbrot?</div>`}],
+ spick:["Reaktion der Figuren vor dem Ende","Schluss kurz, rundet ab","Gern den Anfang aufgreifen","Kein „Ende“, kein Traum","Überschrift neugierig, ohne das Ende"],
+ tasks:[
+  {k:"mc",q:"Welche Überschrift ist am besten?",img:"katze-1",o:["Ein Anruf zur falschen Zeit","Die Katze wirft das Glas um","Meine Geschichte","Katze"],ex:"Sie macht neugierig, verrät aber nicht, was passiert."},
+  {k:"mc",q:"Welche Überschrift ist am besten?",img:"brot-1",o:["Wer hat mein Pausenbrot?","Die Krähe klaut das Brot","Bildergeschichte","Schule"],ex:"Eine Frage macht neugierig, ohne die Lösung zu verraten."},
+  {k:"mc",q:"Welche Überschrift ist am besten?",img:"schnee-1",o:["Ein Gast für den Winter","Der Schneemann schmilzt","Der Gefrierschrank-Schneemann","Winter"],ex:"Die anderen verraten das Ende oder sind zu langweilig."},
+  {k:"mc",q:"Welche Reaktion passt zwischen Bild 3 und dem Schluss?",img:"katze-4",o:["Erleichtert atmete Emma aus. „Das hast du jetzt davon“, sagte sie zu Minka.","Dann war alles wieder gut.","Emma ging ins Bett.","Ende."],ex:"Emmas Erleichterung und ihre Worte verbinden den Schreck mit dem guten Ende."},
+  {k:"mc",q:"Wie reagiert Mama auf Bild 4 am besten im Text?",img:"schnee-4",o:["„Was ist DAS denn?“, rief Mama und riss die Augen auf.","Mama war da.","Mama kochte Nudeln.","Mama sagte nichts."],ex:"Überraschung mit wörtlicher Rede: So wirkt das Ende lebendig."},
+  {k:"duel",q:"Welcher Schluss ist besser?",img:"drachen-4",A:"Am Abend erzählte ich Opa alles. Er lachte: „Gebaut haben wir ihn zusammen, aber gerettet hat ihn Fips.“",B:"Dann bin ich aufgewacht, und alles war nur ein Traum.",best:"A",why:["A greift Opa aus der Einleitung wieder auf.","B ist überraschender.","A ist länger."],ex:"Traum-Schlüsse machen die ganze Geschichte unwichtig. A rundet ab."},
+  {k:"duel",q:"Welcher Schluss ist besser?",img:"brot-4",A:"Am Ende war es gut. Ende.",B:"Seitdem legt Lena ihr Pausenbrot nie mehr auf die Bank. Und wenn sie die Krähe sieht, winkt sie ihr zu.",best:"B",why:["B rundet mit „Seitdem“ ab und hat eine kleine Pointe.","A ist kürzer.","B hat keine Figuren."],ex:"„Ende.“ schreibt man nicht. Ein Schluss zeigt, was sich verändert hat."},
+  {k:"mc",q:"Was gehört NICHT in einen guten Schluss?",o:["Eine ganz neue spannende Handlung","Ein Rückgriff auf den Anfang","Ein kurzer Satz mit „Seitdem“","Eine lustige Pointe"],ex:"Im Schluss beginnt nichts Neues mehr."}
+ ]},
+{id:"lektorin",t:"Jury und Lektorin",d:"Ganze Geschichten bewerten und Fehler finden",ico:"⭐",n:6,
+ cards:[
+  {h:"Deine Checkliste",b:`<ul><li>Einleitung: wer, wo, wann</li><li>Jedes Bild ein Absatz, Lücken gefüllt, roter Faden</li><li>Abwechslungsreiche Satzanfänge</li><li>Wörtliche Rede in jedem Bild, richtig gesetzt</li><li>Treffende Verben und Adjektive</li><li>Gefühle und Gedanken</li><li>Höhepunkt am längsten</li><li>Reaktionen, kurzer Schluss</li><li>Präteritum, Überschrift ohne das Ende</li></ul>`},
+  {h:"Typische kleine Fehler",b:`<ul><li><b>Präposition:</b> bei unserer Familie → in unserer Familie</li><li><b>„sich“:</b> er bewegte nicht → er bewegte sich nicht</li><li><b>Zusammensetzung:</b> Drachen Schnur → Drachenschnur</li><li><b>Redewendung:</b> von einer Sekunde auf die andere (nicht: von der einen auf die andere)</li><li><b>Satz unvollständig:</b> Ich erblickte. → Ich erblickte dunklen Rauch.</li><li><b>Uhrzeit:</b> Um 17.15 Uhr → Am späten Nachmittag</li></ul>`}],
+ spick:["Checkliste vor der Abgabe durchgehen","Präpositionen, sich, Zusammensetzungen prüfen","Am Ende den ganzen Text noch einmal lesen"],
+ tasks:[
+  {k:"jury",text:"drachen-2"},{k:"jury",text:"brot-3"},{k:"jury",text:"brot-5"},
+  {k:"find",q:"Finde die 4 Fehler.",img:"drachen-3",s:"Ich zog an der {x|Drachen Schnur|Drachenschnur}, aber der Drachen {x|bewegte|bewegte sich} nicht. {x|Von der einen auf die andere Sekunde|Blitzschnell} sprang Fips auf. {x|Dann|Da} hatte ich eine Idee.",ex:"Zusammensetzung, fehlendes „sich“, schiefe Redewendung und ein Dann am Satzanfang."},
+  {k:"find",q:"Finde die 4 Fehler.",img:"schnee-1",s:"{x|Bei|In} unserer Familie bauen wir jeden Winter einen Schneemann. {x|Um 9.32 Uhr|Am frühen Morgen} rannten Mia und Tom in den Garten. Sie rollten eine große {x|Schnee Kugel|Schneekugel}. Mia {x|freute|freute sich} riesig.",ex:"Präposition, zu genaue Uhrzeit, Zusammensetzung und fehlendes „sich“."},
+  {k:"find",q:"Finde die 4 Fehler.",img:"katze-3",s:"Minka {x|schleicht|schlich} zum Glas. Sie tauchte die Pfote ins Wasser, und {x|es hat geplatscht|es platschte}. Emma {x|erblickte.|erblickte die Pfütze.} {x|„Oh nein“ rief Emma.|„Oh nein!“, rief Emma.}",ex:"Zeitform zweimal, ein unvollständiger Satz und fehlende Redezeichen."},
+  {k:"find",q:"Finde die 4 Fehler.",img:"brot-3",s:"{x|Dann|Plötzlich} merkte Lena, dass ihr Brot weg war. Sie {x|ärgerte|ärgerte sich} sehr. {x|Lena sagte gib mein Brot zurück.|Lena rief: „Gib mein Brot zurück!“} Paul {x|ist erschrocken|erschrak}.",ex:"Dann-Anfang, fehlendes „sich“, wörtliche Rede ohne Zeichen und Perfekt."},
+  {k:"mc",q:"Diese Geschichte bekommt Note 2– bis 3+. Was fehlt am meisten?",s:"Auf einmal packte Fips die Schnur mit den Zähnen und zog. Mit einem Ruck fiel der Drachen ins Gras. Wir gingen nach Hause.",img:"drachen-4",o:["Der Grund, warum Fips zieht, und eine Reaktion vor dem Ende","Ein Satzanfang mit „Dann“","Mehr Adjektive für den Hund","Eine längere Einleitung"],ex:"Ohne Zieh-Spiel wirkt es wie Zufall, und „Wir gingen nach Hause“ endet zu abrupt."}
+ ]},
+{id:"probe",t:"Probe-GLN",d:"Neue Bilderfolge, alles gemischt, dann selbst schreiben",ico:"📝",n:10,test:true,
+ cards:[
+  {h:"Probe-GLN: Die Katze und der Goldfisch",b:`<p>Diese Bilderfolge kennst du noch nicht so gut. Erst kommen Aufgaben aus allen Kapiteln, danach schreibst du selbst eine Geschichte dazu.</p>${STRIP("katze")}<p class="small">Tipp: Lies dir vorher die Spickzettel durch, die du gesammelt hast.</p>`}],
+ spick:["Bilder genau ansehen, Warum-Check","Einleitung: wer, wo, wann","Jedes Bild: Absatz und wörtliche Rede","Höhepunkt in Zeitlupe","Reaktion, kurzer Schluss, Präteritum"],
+ tasks:[
+  {k:"order",story:"katze"},
+  {k:"mc",q:"Was muss der Leser schon auf Bild 1 erfahren?",img:"katze-1",o:["Dass Minka das Glas heimlich beobachtet.","Dass das Sofa blau ist.","Wie alt Emma ist.","Dass es Spaghetti gibt."],ex:"So versteht der Leser später, warum Minka auf den Tisch springt."},
+  {k:"duel",q:"Welche Einleitung ist besser?",img:"katze-1",A:"Es war ein verregneter Sonntagnachmittag. Emma saß im Wohnzimmer bei ihrem Goldfisch Flossi.",B:"Das ist die Geschichte von der Katze, die den Goldfisch fast gefressen hätte.",best:"A",why:["A beantwortet die W-Fragen und verrät nichts.","B ist spannender.","A ist kürzer."],ex:"B verrät das Ende."},
+  {k:"dann",q:"Ersetze jedes „Dann“.",img:"katze-2",s:"Das Telefon klingelte. [[*]] lief Emma hinaus. [[*]] sprang Minka auf den Tisch. [[*]] schlich sie zum Glas.",pool:["Sofort","Kaum war sie weg,","Lautlos"],bad:["Dann","Und dann"],ex:"Drei verschiedene Satzanfänge."},
+  {k:"gaps",punct:1,q:"Setze die Redezeichen.",img:"katze-2",s:"[[„|“|:]]Ich komme gleich wieder[[!|.|,]][[“|„|:]][[,|.|:]] rief Emma.",ex:"„Ich komme gleich wieder!“, rief Emma."},
+  {k:"stretch",q:"Mach den Höhepunkt länger (mindestens 3 passende Bausteine).",img:"katze-3",base:"Das Glas kippte um.",blocks:[
+   {t:"PLATSCH! Wasser schwappte über den Tisch.",ok:1,k:"Sinne"},{t:"Flossi zappelte auf der nassen Tischplatte.",ok:1,k:"Handlung"},{t:"„Bitte nicht Flossi!“, dachte Emma im Flur.",ok:1,k:"Gedanke"},{t:"Emmas Herz setzte einen Schlag aus.",ok:1,k:"Gefühl"},
+   {t:"Danach aß Emma ein Eis.",ok:0,k:"springt weg"},{t:"Minka wirft das Glas um.",ok:0,k:"Präsens"}],ex:"Zeitlupe mit Sinnen, Handlung, Gedanke und Gefühl."},
+  {k:"mc",q:"Welcher Satz zeigt Emmas Gefühl auf Bild 4 am besten?",img:"katze-4",o:["Erleichtert atmete Emma aus, und ihre Hände hörten auf zu zittern.","Emma war froh.","Emma hat sich gefreut.","Emma war da."],ex:"Gezeigt, nicht nur genannt."},
+  {k:"find",q:"Finde die 3 Fehler.",img:"katze-4",s:"Emma {x|füllt|füllte} schnell ein Glas mit Wasser. Sie setzte Flossi {x|bei das|in das} Glas. Minka {x|schüttelte|schüttelte sich} beleidigt.",ex:"Zeitform, Präposition und fehlendes „sich“."},
+  {k:"mc",q:"Welche Überschrift passt am besten?",o:["Ein Anruf zur falschen Zeit","Minka wirft das Glas um","Die Katze","Meine Geschichte"],ex:"Neugierig, ohne das Ende zu verraten."},
+  {k:"duel",q:"Welcher Schluss ist besser?",img:"katze-4",A:"Seitdem steht Flossis Glas ganz oben im Regal. Und Minka schaut nur noch von unten zu.",B:"Dann war es Abend. Ende.",best:"A",why:["A rundet ab und zeigt, was sich verändert hat.","B ist kürzer.","A hat mehr Adjektive."],ex:"„Seitdem …“ ist ein typischer runder Schluss."}
+ ]}
+];
+
+/* ================= Röntgenblick: Markierungen in Texten ================= */
+const MK=/\{([arjgfx])\|([^{}|]*)(?:\|([^{}]*))?\}/g;
+const mark=s=>esc(s).replace(/\{([arjgfx])\|([^{}|]*)(?:\|([^{}]*))?\}/g,(m,k,t,n)=>`<span class="m-${k}">${t}</span>${k==="x"&&n?`<span class="xnote">(${n})</span>`:""}`);
+const plain=s=>s.replace(MK,(m,k,t)=>t);
+const LEGEND=`<div class="legend"><span class="m-a">Satzanfang</span><span class="m-r">wörtliche Rede</span><span class="m-j">Adjektiv / treffendes Verb</span><span class="m-g">Gefühle und Gedanken</span><span class="m-f">roter Faden</span><span class="m-x">Schwäche</span></div>`;
+const textOf=id=>TEXTS.find(t=>t.id===id);
+function paraHTML(t,withImg){return t.parts.map(([l,s])=>{const n=(l.match(/^Bild (\d)/)||[])[1];
+  return `<div class="para">${withImg&&n?imgTag(t.story+"-"+n,""):""}<span class="eyebrow">${esc(l)}</span><p>${mark(s)}</p></div>`}).join("")}
+
+/* ================= Kapitel und Sterne ================= */
+const chOf=id=>CH.find(c=>c.id===id);
+const stars=c=>S.best[c.id]||0;
+const KAP=CH.filter(c=>!c.test);
+
+/* ================= Startseite ================= */
+function home(){R=null;hush();
+  app.innerHTML=`
+  <section class="panel hero"><span class="eyebrow">Deutsch · Erzählen</span>
+    <h2 style="font-size:1.4rem">Bildergeschichten, die man gern liest</h2>
+    ${STRIP("drachen")}
+    <p class="small">Lies viele gute und schwache Geschichten, finde Fehler und bau deinen Höhepunkt aus. Faustregel: Jedes Bild ein Absatz, das spannendste Bild der längste.</p></section>
+  <button class="toggle" id="denk" aria-pressed="${S.denk?"true":"false"}"><span class="grow"><b>Denkfrage vor den Antworten</b><br><span class="small">Erst überlegen, worauf es ankommt</span></span><span class="sw" aria-hidden="true"></span></button>
+  <div class="stations">${CH.map((c,k)=>{const b=stars(c);
+    return `<button class="st ${c.test?"extra":""}" data-ch="${c.id}"><span class="ico" aria-hidden="true">${c.ico}</span><span class="grow"><span class="n">${c.test?"Großer Test":"Kapitel "+(k+1)}</span><h3>${esc(c.t)}</h3><p>${esc(c.d)}</p><span class="stars" aria-label="${b} von 3 Sternen">${[0,1,2].map(i=>I.star(i<b)).join("")}</span></span></button>`}).join("")}
+    <button class="st extra" data-ch="bibliothek"><span class="ico" aria-hidden="true">📚</span><span class="grow"><span class="n">Entdecken</span><h3>Geschichten-Bibliothek</h3><p>Mustergeschichten lesen, Röntgenblick, selbst schreiben</p></span></button></div>`;
+  $("#denk").onclick=e=>{S.denk=!S.denk;save();e.currentTarget.setAttribute("aria-pressed",S.denk?"true":"false")};
+  app.querySelectorAll(".st[data-ch]").forEach(b=>b.onclick=()=>openCh(b.dataset.ch));
+  scrollTo(0,0)}
+function openCh(id){if(id==="bibliothek")return library();if(id==="schreiben")return writePick();const c=chOf(id);if(!c)return;intro(c)}
+
+/* ================= Erklär-Karten ================= */
+function intro(c,i){R=null;hush();i=i||0;const n=c.cards.length,last=i>=n-1,seen=S.seen[c.id];
+  const k=CH.indexOf(c);
+  app.innerHTML=`<div class="chead"><button class="backb" id="cbk">${I.back}Alle Kapitel</button></div>
+    <div><span class="eyebrow">${c.test?"Großer Test":"Kapitel "+(k+1)}</span><h2>${esc(c.t)}</h2></div>
+    <section class="card-x"><h3>${c.cards[i].h}</h3>${c.cards[i].b}</section>
+    ${n>1?`<div class="dotsnav" aria-label="Karte ${i+1} von ${n}">${c.cards.map((_,j)=>`<i class="${j===i?"on":""}"></i>`).join("")}</div>`:""}
+    <div class="row">${i>0?`<button class="ghost grow" id="prv">Zurück</button>`:""}<button class="go grow" id="nxt">${last?"Los geht's":"Weiter"}</button></div>
+    ${!last&&seen?`<button class="ghost" id="skip">Erklärung überspringen</button>`:""}`;
+  $("#cbk").onclick=home;
+  $("#nxt").onclick=()=>{if(last){S.seen[c.id]=1;save();startRound(c.id)}else intro(c,i+1)};
+  if($("#prv"))$("#prv").onclick=()=>intro(c,i-1);
+  if($("#skip"))$("#skip").onclick=()=>startRound(c.id);
+  scrollTo(0,0)}
+
+/* ================= Runde ================= */
+let R=null;
+function startRound(id){const c=chOf(id);hush();
+  /* jede Aufgabenart möglichst einmal, Rest zufällig */
+  const n=Math.min(c.tasks.length,lwFragen(c.n));const byK={};c.tasks.forEach(t=>(byK[t.k]=byK[t.k]||[]).push(t));
+  let list=Object.values(byK).map(a=>pick(a));list=shuffle(list).slice(0,n);
+  const rest=shuffle(c.tasks.filter(t=>!list.includes(t)));while(list.length<n&&rest.length)list.push(rest.pop());
+  if(c.test){const o=c.tasks.filter(t=>list.includes(t));list=o}else list=shuffle(list);
+  /* Reihenfolge-Aufgabe zuerst, wenn vorhanden (Bilder kennenlernen) */
+  list.sort((a,b)=>(b.k==="order")-(a.k==="order"));
+  R={id,i:0,ok:0,res:[],tasks:list,n:list.length};showTask()}
+function track(){$("#track").innerHTML=Array.from({length:R.n},(_,i)=>`<i class="${i<R.res.length?(R.res[i]?"ok":"no"):(i===R.i?"now":"")}"></i>`).join("")}
+const LK={mc:"Auswählen",img:"Bild antippen",order:"Bild-Puzzle",duel:"Duell",gaps:"Lücken",dann:"Dann-Monster",find:"Fehler-Detektiv",stretch:"Zeitlupe",jury:"Jury",chat:"Chat"};
+function showTask(){const t=R.tasks[R.i];R.locked=false;hush();
+  const lk=t.punct?"Redezeichen":LK[t.k];
+  app.innerHTML=`<div class="topbar"><button id="quit" aria-label="Runde beenden"></button><div class="track" id="track"></div></div>
+    <div class="q"><span class="lk">${lk}</span><b>${esc(t.q||Q[t.k]||"")}</b></div>
+    <section class="stage" id="cb"></section>`;
+  $("#quit").onclick=home;track();
+  const cb=$("#cb");
+  if(t.img)cb.insertAdjacentHTML("beforeend",imgTag(t.img));
+  if(t.imgs)cb.insertAdjacentHTML("beforeend",`<div class="pics">${t.imgs.map(x=>imgTag(x,"")).join("")}</div>`);
+  if(t.s&&!["gaps","dann","find","stretch"].includes(t.k))cb.insertAdjacentHTML("beforeend",`<div class="txt">${esc(t.s)}</div>`);
+  const go=()=>T[t.k](t,cb);
+  if(t.denk&&S.denk)denkStep(t.denk,cb,go);else go();
+  scrollTo(0,0)}
+const Q={order:"Bring die Bilder in die richtige Reihenfolge. Tippe sie nacheinander an.",jury:"Lies die Geschichte und vergib Sterne. Wie streng ist die Lehrerin?"};
+
+/* Denkfrage: erst überlegen, worauf es ankommt (zählt nicht als Fehler) */
+function denkStep(d,cb,go){const box=document.createElement("div");box.className="denk";
+  box.innerHTML=`<p>💡 ${esc(d.q)}</p><div class="chips">${shuffle(d.o.map((x,i)=>({x,i}))).map(o=>`<button class="chip" data-i="${o.i}">${esc(o.x)}</button>`).join("")}</div>`;
+  cb.appendChild(box);
+  box.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{const ok=b.dataset.i==="0";
+    box.querySelectorAll(".chip").forEach(x=>{x.disabled=true;if(x.dataset.i==="0")x.classList.add("ok")});if(!ok)b.classList.add("no");
+    box.insertAdjacentHTML("beforeend",`<span class="tip">${ok?esc(d.tip||"Genau!"):"Achte auf: <b>"+esc(d.o[0])+"</b>"}</span>`);
+    ok?sfxPop():0;go()})}
+
+function done(ok,ex,extra){if(R.locked)return;R.locked=true;
+  R.res.push(ok);if(ok)R.ok++;ok?sfxOk():sfxBad();track();
+  const fb=document.createElement("div");fb.className="fb "+(ok?"ok":"bad");fb.setAttribute("role","status");
+  fb.innerHTML=`<strong>${ok?pick(["Richtig!","Super!","Genau!","Klasse!","Stark!"]):"Nicht ganz"}</strong>${ex?`<p>${ex}</p>`:""}${extra||""}`;
+  const nx=document.createElement("button");nx.className="next";nx.type="button";nx.textContent=R.i+1>=R.n?"Ergebnis":"Weiter";
+  nx.onclick=()=>{R.i++;R.i>=R.n?endRound():showTask()};
+  lwSheet($("#cb"),ok,[fb,nx])}
+
+/* ================= Aufgabenarten ================= */
+const T={};
+/* Auswahl */
+T.mc=(t,cb)=>{const right=t.a!=null?t.a:0;let opts=t.o.map((x,i)=>({x,i}));if(!t.keep)opts=shuffle(opts);
+  const box=document.createElement("div");box.className="opts";
+  box.innerHTML=opts.map(o=>`<button class="opt" data-i="${o.i}">${esc(o.x)}</button>`).join("");cb.appendChild(box);
+  box.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{if(R.locked)return;const ok=+b.dataset.i===right;
+    box.querySelectorAll(".opt").forEach(x=>{x.disabled=true;if(+x.dataset.i===right)x.classList.add("ok")});if(!ok)b.classList.add("bad");
+    done(ok,esc(t.ex))})};
+/* Bild antippen */
+T.img=(t,cb)=>{const box=document.createElement("div");box.className="ordergrid";
+  box.innerHTML=[1,2,3,4].map(n=>`<button class="ob" data-n="${n}" aria-label="Bild ${n}">${imgTag(t.story+"-"+n,"")}</button>`).join("");cb.appendChild(box);
+  box.querySelectorAll(".ob").forEach(b=>b.onclick=()=>{if(R.locked)return;const ok=+b.dataset.n===t.a;
+    box.querySelectorAll(".ob").forEach(x=>{x.disabled=true;if(+x.dataset.n===t.a)x.classList.add("ok")});if(!ok)b.classList.add("bad");done(ok,esc(t.ex))})};
+/* Bilder sortieren: Nummern im Bild sind abgedeckt */
+T.order=(t,cb)=>{const seq=shuffle([1,2,3,4]);let tap=[];
+  const box=document.createElement("div");box.className="ordergrid";
+  box.innerHTML=seq.map(n=>`<button class="ob" data-n="${n}" aria-label="Bild">${imgTag(t.story+"-"+n,"")}<span class="hidenum"></span></button>`).join("");cb.appendChild(box);
+  cb.insertAdjacentHTML("beforeend",`<button class="ghost" id="undo" disabled>Zurücksetzen</button>`);
+  const undo=$("#undo");
+  undo.onclick=()=>{tap=[];box.querySelectorAll(".ob").forEach(b=>{b.classList.remove("on");const g=b.querySelector(".badge");if(g)g.remove()});undo.disabled=true};
+  box.querySelectorAll(".ob").forEach(b=>b.onclick=()=>{if(R.locked||b.classList.contains("on"))return;tap.push(+b.dataset.n);sfxPop();
+    b.classList.add("on");b.insertAdjacentHTML("beforeend",`<span class="badge">${tap.length}</span>`);undo.disabled=false;
+    if(tap.length===4){const ok=tap.every((n,i)=>n===i+1);undo.disabled=true;
+      box.querySelectorAll(".ob").forEach(x=>{const n=+x.dataset.n;x.classList.add(tap.indexOf(n)===n-1?"ok":"bad");x.querySelector(".hidenum").remove()});
+      done(ok,ok?`Genau so: ${STORIES[t.story].t}.`:`Die Zahlen oben links zeigen die richtige Reihenfolge. Achte auf Ursache und Folge: Was muss zuerst passieren?`)}})};
+/* Duell: welche Fassung ist besser, dann warum */
+T.duel=(t,cb)=>{const box=document.createElement("div");box.className="duel";
+  box.innerHTML=["A","B"].map(k=>`<button class="opt" data-k="${k}"><b>Fassung ${k}</b>${esc(t[k])}</button>`).join("");cb.appendChild(box);
+  box.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{if(R.locked||box.dataset.done)return;box.dataset.done=1;const ok1=b.dataset.k===t.best;
+    box.querySelectorAll(".opt").forEach(x=>{x.disabled=true;if(x.dataset.k===t.best)x.classList.add("ok")});if(!ok1)b.classList.add("bad");
+    ok1?sfxPop():sfxBad();
+    const w=document.createElement("div");w.className="why";
+    w.innerHTML=`<p>Warum ist Fassung ${t.best} besser?</p><div class="opts">${shuffle(t.why.map((x,i)=>({x,i}))).map(o=>`<button class="opt" data-i="${o.i}">${esc(o.x)}</button>`).join("")}</div>`;
+    cb.appendChild(w);w.scrollIntoView({behavior:"smooth",block:"center"});
+    w.querySelectorAll(".opt").forEach(x=>x.onclick=()=>{if(R.locked)return;const ok2=x.dataset.i==="0";
+      w.querySelectorAll(".opt").forEach(y=>{y.disabled=true;if(y.dataset.i==="0")y.classList.add("ok")});if(!ok2)x.classList.add("bad");
+      done(ok1&&ok2,esc(t.ex))})})};
+/* Lücken nacheinander füllen */
+function gapParse(s){const parts=[];let last=0;s.replace(/\[\[(.*?)\]\]/g,(m,inner,pos)=>{parts.push({txt:s.slice(last,pos)});parts.push({gap:inner.split("|")});last=pos+m.length;return m});parts.push({txt:s.slice(last)});return parts}
+T.gaps=(t,cb)=>{const parts=gapParse(t.s),gaps=parts.filter(p=>p.gap);let gi=0,err=0;
+  const txt=document.createElement("div");txt.className="txt";cb.appendChild(txt);
+  const ch=document.createElement("div");ch.className="chips";cb.appendChild(ch);
+  const draw=()=>{let k=0;txt.innerHTML=parts.map(p=>{if(!p.gap)return esc(p.txt);const j=k++;const g=gaps[j];
+      const cls="gap"+(t.punct?" punct":"")+(j===gi?" now":g.v!=null?(g.v===g.gap[0]?" ok":" bad"):"");
+      const inner=g.v!=null?(g.v===g.gap[0]?esc(g.v):`<s>${esc(g.v)}</s>${esc(g.gap[0])}`):(j===gi?"?":"&nbsp;");
+      return `<span class="${cls}">${inner}</span>`}).join("");
+    if(gi>=gaps.length){ch.innerHTML="";return}
+    ch.innerHTML=shuffle(gaps[gi].gap).map(o=>`<button class="chip${t.punct?" big":""}">${esc(o)}</button>`).join("");
+    ch.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{if(R.locked)return;const g=gaps[gi];g.v=b.textContent;if(g.v!==g.gap[0]){err++;sfxBad()}else sfxPop();gi++;draw();
+      if(gi>=gaps.length)done(err===0,(err?`Richtig heißt es: <b>${esc(parts.map(p=>p.gap?p.gap[0]:p.txt).join(""))}</b><br>`:"")+esc(t.ex))})};
+  draw()};
+/* Dann-Monster: jede Lücke mit einem anderen Satzanfang */
+T.dann=(t,cb)=>{const parts=gapParse(t.s),gaps=parts.filter(p=>p.gap);let gi=0,err=0;const used=new Set();
+  const txt=document.createElement("div");txt.className="txt";cb.appendChild(txt);
+  cb.insertAdjacentHTML("beforeend",`<p class="small">👾 „Dann“ füttert das Monster. Jeder Satzanfang darf nur einmal vorkommen.</p>`);
+  const ch=document.createElement("div");ch.className="chips";cb.appendChild(ch);
+  const opts=shuffle(t.pool.concat(t.bad));
+  const draw=()=>{let k=0;txt.innerHTML=parts.map(p=>{if(!p.gap)return esc(p.txt);const j=k++,g=gaps[j];
+      if(g.v!=null)return `<span class="gap ${g.bad?"bad":"ok"}">${g.bad?`<s>${esc(g.v)}</s>`:esc(g.v)}</span>`;
+      return `<span class="gap${j===gi?" now":""}">${j===gi?"Dann?":"Dann"}</span>`}).join("");
+    if(gi>=gaps.length){ch.innerHTML="";return}
+    ch.innerHTML=opts.map(o=>`<button class="chip" ${used.has(o)&&!t.bad.includes(o)?"disabled":""}>${esc(o)}</button>`).join("");
+    ch.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{if(R.locked)return;const v=b.textContent,g=gaps[gi];g.v=v;g.bad=t.bad.includes(v);
+      if(g.bad){err++;sfxBad()}else{used.add(v);sfxPop()}gi++;draw();
+      if(gi>=gaps.length)done(err===0,(err?"Das Monster hat ein „Dann“ gefressen. ":"Kein einziges Dann!")+" "+esc(t.ex))})};
+  draw()};
+/* Fehler-Detektiv: Wörter antippen */
+T.find=(t,cb)=>{const toks=[];let last=0;
+  t.s.replace(/\{x\|([^{}|]*)\|([^{}]*)\}/g,(m,w,fix,pos)=>{t.s.slice(last,pos).split(/(\s+)/).forEach(x=>x&&toks.push(/^\s+$/.test(x)?{sp:x}:{w:x}));toks.push({w,fix,err:1});last=pos+m.length;return m});
+  t.s.slice(last).split(/(\s+)/).forEach(x=>x&&toks.push(/^\s+$/.test(x)?{sp:x}:{w:x}));
+  const total=toks.filter(x=>x.err).length;let found=0,miss=0;
+  cb.insertAdjacentHTML("beforeend",`<div class="counter" id="ctr"></div>`);
+  const txt=document.createElement("div");txt.className="txt find";txt.innerHTML=toks.map((x,i)=>x.sp?x.sp:`<span class="w" data-i="${i}" role="button" tabindex="0">${esc(x.w)}</span>`).join("");cb.appendChild(txt);
+  const ctr=()=>{$("#ctr").innerHTML=`Gefunden: ${Array.from({length:total},(_,i)=>`<i class="${i<found?"on":""}"></i>`).join("")} · Fehlversuche: ${miss}/3`};ctr();
+  const finish=()=>{txt.querySelectorAll(".w").forEach(s=>{const x=toks[+s.dataset.i];if(x.err&&!x.hit){s.classList.add("left");s.insertAdjacentHTML("afterend",`<span class="fix">${esc(x.fix)}</span>`)}});
+    done(found===total&&miss<=1,(found<total?"Die rot umrandeten Stellen hast du übersehen. ":"")+esc(t.ex))};
+  txt.querySelectorAll(".w").forEach(s=>{const hit=()=>{if(R.locked)return;const x=toks[+s.dataset.i];if(x.hit||s.classList.contains("miss"))return;
+    if(x.err){x.hit=1;found++;sfxPop();s.classList.add("hit");s.insertAdjacentHTML("afterend",`<span class="fix">${esc(x.fix)}</span>`)}else{miss++;sfxBad();s.classList.add("miss")}
+    ctr();if(found===total||miss>=3)finish()};
+    s.onclick=hit;s.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();hit()}}})};
+/* Zeitlupe: passende Bausteine auswählen */
+T.stretch=(t,cb)=>{const sel=new Set();const blocks=shuffle(t.blocks.map((b,i)=>Object.assign({i},b)));
+  cb.insertAdjacentHTML("beforeend",`<div class="txt"><span class="lbl">Höhepunkt</span><span id="para">${esc(t.base)}</span></div>
+    <div class="meter"><span>Länge</span><span class="bar"><i id="mbar" style="width:20%"></i></span><span id="mn">1 Satz</span></div>
+    <div class="blocks">${blocks.map(b=>`<button class="blk" data-i="${b.i}" aria-pressed="false">${esc(b.t)}</button>`).join("")}</div>
+    <button class="go" id="chk" disabled>Prüfen</button>`);
+  const upd=()=>{const ch=t.blocks.filter((b,i)=>sel.has(i));$("#para").textContent=[t.base].concat(ch.map(b=>b.t)).join(" ");
+    const n=1+ch.length;$("#mn").textContent=n+(n===1?" Satz":" Sätze");const m=$("#mbar");m.style.width=Math.min(100,n*20)+"%";m.classList.toggle("good",n>=4);$("#chk").disabled=ch.length<1};
+  cb.querySelectorAll(".blk").forEach(b=>b.onclick=()=>{if(R.locked)return;const i=+b.dataset.i;sel.has(i)?sel.delete(i):sel.add(i);b.classList.toggle("sel",sel.has(i));b.setAttribute("aria-pressed",sel.has(i));sfxPop();upd()});
+  $("#chk").onclick=()=>{if(R.locked)return;let bad=0,good=0;
+    cb.querySelectorAll(".blk").forEach(b=>{const x=t.blocks[+b.dataset.i],on=sel.has(+b.dataset.i);b.disabled=true;
+      if(x.ok){if(on){good++;b.classList.add("ok")}}else if(on){bad++;b.classList.add("bad")}
+      b.insertAdjacentHTML("beforeend",`<small>${x.ok?"passt: "+esc(x.k):"passt nicht: "+esc(x.k)}</small>`)});
+    $("#chk").remove();
+    done(bad===0&&good>=3,(bad?"Einige Bausteine passen nicht. ":good<3?"Nimm mindestens drei passende Bausteine. ":"")+esc(t.ex))}};
+/* Jury: Sterne pro Bereich, Vergleich mit der Lehrerin */
+T.jury=(t,cb)=>{const tx=textOf(t.text);const v=JURY.map(()=>0);
+  cb.insertAdjacentHTML("beforeend",`<div class="txt reader xr"><h3>${esc(tx.title)}</h3>${tx.parts.map(([l,s])=>`<p>${esc(plain(s))}</p>`).join("")}</div>
+    <div class="panel jury" id="jury">${JURY.map((n,i)=>`<div class="jr"><span class="nm">${n}<small>${JURYS[i]}</small></span><span class="jst" data-r="${i}">${[1,2,3,4,5].map(k=>`<button data-k="${k}" aria-label="${k} Sterne">${I.star(false)}</button>`).join("")}</span></div>`).join("")}
+    <button class="go" id="chk" disabled>Mit der Lehrerin vergleichen</button></div>`);
+  cb.querySelectorAll(".jst").forEach(r=>r.querySelectorAll("button").forEach(b=>b.onclick=()=>{if(R.locked)return;const i=+r.dataset.r,k=+b.dataset.k;v[i]=k;sfxPop();
+    r.querySelectorAll("button").forEach(x=>x.innerHTML=I.star(+x.dataset.k<=k));$("#chk").disabled=v.some(x=>!x)}));
+  $("#chk").onclick=()=>{if(R.locked)return;let near=0;
+    cb.querySelectorAll(".jr").forEach((row,i)=>{const d=Math.abs(v[i]-tx.jury[i]);if(d<=1)near++;
+      row.querySelector(".jst").insertAdjacentHTML("afterend",`<span class="cmp ${d<=1?"ok":"no"}" style="grid-column:1/-1">Lehrerin: ${tx.jury[i]} ★${d<=1?" ✓":""}</span>`)});
+    $("#chk").remove();
+    done(near>=JURY.length-1,`${near} von ${JURY.length} Bereichen wie die Lehrerin. ${esc(tx.komm)}`,`<div class="better">In der Bibliothek kannst du diesen Text mit Röntgenblick lesen.</div>`)}};
+/* Chat */
+T.chat=(t,cb)=>{if(!window.lwChat){done(true,"Der Chat lädt gerade nicht.");return}
+  const box=document.createElement("div");box.className="chatbox";cb.appendChild(box);
+  lwChat(box,{title:t.title,sub:t.sub,ava:t.ava,fach:"de",people:{Paul:"#4CAF6E"},lines:t.lines,
+    onEnd:res=>done(res.every(r=>r.ok),"Wörtliche Rede: vorne Doppelpunkt, hinten Komma, Gedanken zählen auch.")})};
+
+/* ================= Ergebnis ================= */
+function endRound(){const c=chOf(R.id),n=R.n,ok=R.ok,q=ok/n;const st=q>=.9?3:q>=.7?2:q>=.5?1:0;
+  S.best[c.id]=Math.max(S.best[c.id]||0,st);save();
+  const k=CH.indexOf(c),nxt=CH[k+1];
+  const cheer=["Dranbleiben, das wird!","Gut gemacht!","Stark!","Super, du bist eine echte Erzählerin!"][st];
+  app.innerHTML=`<section class="result"><h2>${cheer}</h2><div class="bigstars">${[0,1,2].map(i=>I.star(i<st).replace("<svg",`<svg class="s${i+1}"`)).join("")}</div>
+    <p class="lead"><b>${ok} von ${n}</b> richtig</p>
+    <div class="spick"><b>📌 Spickzettel: ${esc(c.t)}</b><ul>${c.spick.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+    ${c.test?`<button class="go" id="wr">${I.pen}Jetzt selbst schreiben</button><button class="ghost" id="again">Test nochmal</button>`:`<button class="go" id="again">Nochmal üben</button>`}
+    ${nxt&&st>=2&&!c.test?`<button class="ghost" id="nx">Weiter: ${esc(nxt.t)}</button>`:""}
+    <button class="ghost" id="hm">Alle Kapitel</button></section>`;
+  if(st>=2)beep([523.25,659.25,783.99,1046.5],.2);
+  const id=c.id;R=null;
+  $("#again").onclick=()=>startRound(id);$("#hm").onclick=home;if($("#nx"))$("#nx").onclick=()=>openCh(nxt.id);if($("#wr"))$("#wr").onclick=()=>write("katze");
+  scrollTo(0,0)}
+
+/* ================= Entdecken: Bibliothek, Leser, Schreibwerkstatt ================= */
+function library(){R=null;hush();
+  const nl=n=>`<span class="note n${n}">${n===1?"Note 1":n===3?"Note 3":"Note 5"}</span>`;
+  const probeDone=(S.best.probe||0)>0||S.texte.some(x=>x.story==="katze");
+  app.innerHTML=`<div class="chead"><button class="backb" id="cbk">${I.back}Alle Kapitel</button></div>
+    <div><span class="eyebrow">Entdecken</span><h2>Geschichten-Bibliothek</h2><p class="small" style="margin-top:4px">Lies gute und schwache Geschichten. Mit dem Röntgenblick siehst du, was einen guten Text ausmacht.</p></div>
+    <div class="stations">${TEXTS.filter(t=>!t.test||probeDone).map(t=>`<button class="libitem" data-t="${t.id}">${imgTag(t.story+"-1","")}<span class="grow"><h3>${esc(t.title)}</h3><span class="small">${esc(STORIES[t.story].t)} · ${t.form}</span><br>${nl(t.note)}</span></button>`).join("")}
+    ${probeDone?"":`<p class="small">🔒 Die Mustergeschichte zur Probe-GLN erscheint, wenn du den Großen Test gemacht hast.</p>`}</div>
+    <div><span class="eyebrow">Schreibwerkstatt</span><h2 style="font-size:1.3rem">Selbst schreiben</h2></div>
+    <div class="stations">${Object.keys(STORIES).map(s=>`<button class="libitem" data-w="${s}">${imgTag(s+"-1","")}<span class="grow"><h3>${esc(STORIES[s].t)}</h3><span class="small">${esc(STORIES[s].figs)}</span></span></button>`).join("")}</div>
+    ${S.texte.length?`<div><span class="eyebrow">Meine Geschichten</span></div><div class="stations">${S.texte.map((x,i)=>`<button class="libitem" data-m="${i}">${imgTag(x.story+"-1","")}<span class="grow"><h3>${esc(x.title||STORIES[x.story].t)}</h3><span class="small">${esc(x.d)} · ${wc(x.txt)} Wörter</span></span></button>`).reverse().join("")}</div>`:""}`;
+  $("#cbk").onclick=home;
+  app.querySelectorAll("[data-t]").forEach(b=>b.onclick=()=>reader(b.dataset.t));
+  app.querySelectorAll("[data-w]").forEach(b=>b.onclick=()=>write(b.dataset.w));
+  app.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>write(S.texte[+b.dataset.m].story,+b.dataset.m));
+  scrollTo(0,0)}
+function reader(id){hush();const t=textOf(id);let xr=true;
+  const draw=()=>{app.innerHTML=`<div class="chead"><button class="backb" id="cbk">${I.back}Bibliothek</button></div>
+    <div class="reader"><div><span class="eyebrow">${esc(STORIES[t.story].t)} · ${t.form}</span><h2>${esc(t.title)}</h2></div>
+      <div class="row"><button class="toggle grow" id="xr" aria-pressed="${xr}"><span class="grow"><b>Röntgenblick</b></span><span class="sw" aria-hidden="true"></span></button><button class="spk" id="spk">${I.spk}<span> Vorlesen</span></button></div>
+      ${xr?LEGEND:""}
+      <div class="${xr?"xr":""}" style="display:flex;flex-direction:column;gap:14px">${paraHTML(t,true)}</div>
+      <div class="kommentar"><b>Was die Lehrerin sagen würde (${t.note===1?"Note 1":t.note===3?"Note 3":"Note 5"})</b><span>${esc(t.komm)}</span></div></div>`;
+    $("#cbk").onclick=library;$("#xr").onclick=()=>{xr=!xr;draw()};
+    const sp=$("#spk");sp.onclick=()=>{if(sp.classList.contains("on")){hush();return}hush();wake();sp.classList.add("on");sp.lastChild.textContent=" Stopp";
+      speak(t.title+". "+t.parts.map(p=>plain(p[1])).join(" "),()=>{sp.classList.remove("on");sp.lastChild.textContent=" Vorlesen"})}};
+  draw();scrollTo(0,0)}
+const wc=s=>(s.trim().match(/\S+/g)||[]).length;
+const CHECK=["Überschrift macht neugierig und verrät nicht das Ende","Einleitung: wer, wo, wann","Jedes Bild hat einen eigenen Absatz","Der Leser versteht, warum alles passiert","Kein Satz beginnt mit „Dann“","In jedem Bild steht wörtliche Rede, richtig gesetzt","Gefühle und Gedanken sind gezeigt","Der Höhepunkt ist der längste Absatz","Die Figuren reagieren vor dem Schluss","Alles im Präteritum"];
+function write(story,idx){hush();const old=idx!=null?S.texte[idx]:null;const draftKey="draft-"+story;
+  let draft=old?old.txt:(S[draftKey]||"");let title=old?old.title:"";
+  app.innerHTML=`<div class="chead"><button class="backb" id="cbk">${I.back}Bibliothek</button></div>
+    <div><span class="eyebrow">Schreibwerkstatt</span><h2>${esc(STORIES[story].t)}</h2><p class="small" style="margin-top:4px">Figuren: ${esc(STORIES[story].figs)}. Schreib im Präteritum, jedes Bild ein Absatz.</p></div>
+    <div class="pics">${[1,2,3,4].map(n=>imgTag(story+"-"+n,"")).join("")}</div>
+    <input id="ti" class="field" style="width:100%;min-height:48px;border:2px solid var(--lw-line);background:var(--lw-card);color:var(--lw-ink);font:700 1.1rem var(--lw-f-d);padding:8px 12px" placeholder="Überschrift" value="${esc(title)}">
+    <textarea id="ta" placeholder="Einleitung …&#10;&#10;Bild 1 …">${esc(draft)}</textarea>
+    <div class="row"><span class="wc grow" id="wc"></span></div>
+    <div class="panel"><b>Checkliste: Hake ab, was du geschafft hast</b><div class="check">${CHECK.map((c,i)=>`<label><input type="checkbox" id="c${i}">${esc(c)}</label>`).join("")}</div></div>
+    <button class="go" id="sv">Geschichte speichern</button>
+    ${TEXTS.some(t=>t.story===story&&t.note===1)?`<button class="ghost" id="ml">${I.book}Mustergeschichte lesen</button>`:""}`;
+  const ta=$("#ta"),upd=()=>{const n=wc(ta.value),p=ta.value.split(/\n\s*\n/).filter(x=>x.trim()).length;$("#wc").textContent=`${n} Wörter · ${p} Absätze${n<150?" · Ziel: etwa 250 Wörter":""}`};upd();
+  ta.oninput=()=>{upd();if(!old){S[draftKey]=ta.value;save()}};
+  $("#cbk").onclick=library;
+  $("#sv").onclick=()=>{const txt=ta.value.trim();if(!txt)return;const e={story,title:$("#ti").value.trim(),txt,d:new Date().toLocaleDateString("de-DE")};
+    if(old)S.texte[idx]=e;else{S.texte.push(e);delete S[draftKey]}save();beep([523.25,659.25,783.99],.16);
+    $("#sv").textContent="Gespeichert ✓";setTimeout(()=>{const b=$("#sv");if(b)b.textContent="Geschichte speichern"},1600)};
+  if($("#ml"))$("#ml").onclick=()=>{const t=TEXTS.find(t=>t.story===story&&t.note===1);if(story==="katze"&&!(S.best.probe||0)&&!S.texte.some(x=>x.story==="katze")){$("#ml").textContent="Erst speichern oder den Großen Test machen";return}reader(t.id)};
+  scrollTo(0,0)}
+function writePick(){library()}
+
+/* ================= Start ================= */
+/* Lernwelt: direkt ins Kapitel (bildergeschichte.html#rede …), Anker stehen in hefte.js */
+function kapitelSprung(){const id=location.hash.slice(1);if(id==="bibliothek"){library();return true}if(!chOf(id))return false;openCh(id);return true}
+window.lwStart?lwStart('home',kapitelSprung):(kapitelSprung()||home());
+</script>
+<script>/* Lernwelt: Kapitel-Fortschritt für die Startseite (siehe sync.js) */
+if(window.LW&&LW.kapitel){LW.kapitel(function(){return CH.map(function(c){return {t:c.t,p:stars(c)/3}})})}</script>
+</body></html>

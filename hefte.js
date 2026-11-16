@@ -123,6 +123,12 @@ window.LW_HEFTE = [
     test: { a: 'mix', kap: 'Großer Mix', s: 'Alle Themen gemischt' } },
 
   // ---------- Grundschule, Klasse 3 (Rubie) ----------
+  { id: 'bildergeschichte', fragen: true, abzeichen: 'Geschichten-Erzählerin', fach: 'deutsch', thema: 'Erzählen', name: 'Bildergeschichte',
+    info: 'Zu Bildern spannend erzählen: gute und schwache Geschichten lesen und bewerten, Fehler finden, den Höhepunkt in Zeitlupe ausbauen', key: 'bildergeschichte-v1',
+    kapitel: ['Bilder lesen wie eine Detektivin', 'Der Bauplan', 'Die Einleitung', 'Das Dann-Monster', 'Wörtliche Rede', 'Farbe ins Bild', 'Gefühle und Gedanken', 'Der Höhepunkt in Zeitlupe', 'Schluss und Überschrift', 'Jury und Lektorin'],
+    anker: ['bilder', 'bauplan', 'einleitung', 'satzanfaenge', 'rede', 'farbe', 'gefuehle', 'hoehepunkt', 'schluss', 'lektorin'],
+    entdecken: { a: 'bibliothek', t: 'Geschichten-Bibliothek', s: 'Mustergeschichten mit Röntgenblick lesen und selbst schreiben' },
+    test: { a: 'probe', kap: 'Probe-GLN', s: 'Neue Bilderfolge, alles gemischt, dann selbst schreiben' } },
   { id: 'schatzsuche', fragen: true, stufe: 'gs3', abzeichen: 'Rubin-Königin', fach: 'deutsch', thema: 'Rechtschreibung und Wortarten', name: 'Rubies Schatzsuche',
     info: 'Wortarten, groß und klein, doppelte Mitlaute und ie: Rubine sammeln und die Krone schmücken', key: 'rubie-schatzsuche-v1',
     // Stationen der App (ST in schatzsuche.html)

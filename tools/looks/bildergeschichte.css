@@ -1,0 +1,5 @@
+/* @kit */
+/* Bildergeschichte ist von Anfang an im Lernwelt-Look gebaut: nur die Fach-Farbe setzen. */
+:root:root:root{--lw-c:var(--lw-de); --lw-cd:var(--lw-de-d); --lw-cs:var(--lw-de-s)}
+.go{width:auto}
+.go:disabled{opacity:.5}

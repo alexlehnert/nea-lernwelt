@@ -28,6 +28,7 @@ Fächer und Hefte stehen in [`hefte.js`](hefte.js).
 | Musik | Notenwerkstatt | `noten.html` |
 | Musik | Rhythmuswerkstatt (Notenlängen) | `rhythmus.html` |
 | Ethik | Gemeinsam stark (Thema Gewalt: erkennen, fair streiten, Hilfe holen) | `gewalt.html` |
+| Deutsch | Bildergeschichte (Lernpfad zum Erzählen nach Bildern, Comics in `bilder/bg/`, gezeichnet mit `tools/bildergeschichte_comics.py`) | `bildergeschichte.html` |
 
 **Grundschule, Klasse 3 (Rubie)**
 
