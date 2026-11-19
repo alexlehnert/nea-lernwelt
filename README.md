@@ -35,6 +35,7 @@ Fächer und Hefte stehen in [`hefte.js`](hefte.js).
 | Fach | App | Datei |
 |---|---|---|
 | Deutsch | Rubies Schatzsuche (Wortarten, groß/klein, doppelte Mitlaute, ie) | `schatzsuche.html` |
+| Deutsch | Lese- und Hör-Detektivin (Lese- und Hörverstehen für die GLN: 7 Lese-Kapitel, 2 Hör-Kapitel mit Vorlesen, Lese-Ecke, Probe-GLN) | `lesenhoeren.html` |
 | Sachunterricht | Länder-Reise (16 Bundesländer und Hauptstädte, Karte) | `bundeslaender.html` |
 | Musik | Holsts Planeten (Gustav Holst, „Die Planeten“, Hör-Quiz mit freien Aufnahmen von Wikimedia Commons) | `planeten.html` |
 

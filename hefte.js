@@ -135,6 +135,13 @@ window.LW_HEFTE = [
     kapitel: ['Wortarten-Wald', 'Groß-klein-Burg', 'Doppel-Höhle', 'ie-Insel', 'Blitzrunde'],
     anker: ['wa', 'gk', 'dk', 'ie', 'blitz'],
     test: { a: 'mix', kap: 'Große Schatzsuche', s: 'Alle Stationen gemischt' } },
+  { id: 'lesenhoeren', stufe: 'gs3', abzeichen: 'Text-Detektivin', fach: 'deutsch', thema: 'Lesen und Zuhören', name: 'Lese- und Hör-Detektivin',
+    info: 'Geschichten und Sachtexte lesen, Texte anhören und Fragen beantworten wie in der GLN: richtig/falsch, Textstellen finden, Reihenfolge', key: 'lesen-hoeren-v1',
+    // Kapitel der App (CH in lesenhoeren.html); Kapitel 1 bis 7 Lesen, 8 und 9 Hören (Vorlesen mit den Stimmen des Geräts)
+    kapitel: ['Lese-Detektivin', 'Stimmt das?', 'Beweis im Text', 'Was passiert zuerst?', 'Wörter verstehen', 'Zwischen den Zeilen', 'Sachtexte knacken', 'Ohren auf!', 'Hörgeschichten'],
+    anker: ['detektiv', 'stimmt', 'beweis', 'reihe', 'woerter', 'zeilen', 'sach', 'ohren', 'hoeren'],
+    entdecken: { a: 'lesecke', t: 'Lese-Ecke', s: 'Alle Texte in Ruhe lesen oder anhören und mitlesen' },
+    test: { a: 'probe', kap: 'Probe-GLN', s: 'Teil 1 Lesen, Teil 2 Hören, mit Punkten wie in der Klassenarbeit' } },
   { id: 'bundeslaender', fragen: true, stufe: 'gs3', abzeichen: 'Deutschland-Kennerin', fach: 'sachunterricht', thema: 'Deutschland', name: 'Länder-Reise',
     info: 'Die Bundesrepublik, ihre 16 Bundesländer und Hauptstädte, mit Deutschlandkarte zum Antippen, Selbst-Abfragen und Vorlesen', key: 'bundeslaender-v1',
     kapitel: ['Deutschland ist ein Bundesstaat', 'Deutschland entdecken', 'Wo liegt das Land?', 'Wie heißt das Land?', 'Hauptstädte', 'Zu welchem Land gehört die Stadt?', 'Wo liegt die Hauptstadt?'],
