@@ -1,0 +1,1170 @@
+<!doctype html><html lang="de"><head><meta charset=utf8><script src="/api/config"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="/sync.js"></script><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"><link rel="manifest" href="/manifest.webmanifest"><meta name="apple-mobile-web-app-title" content="Lernwelt"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="theme-color" content="#5B3FE6"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover">
+
+<title>Simple Present</title>
+<style>
+/* Simple Present (Englisch, Gymnasium Klasse 5): Vorbereitung auf die Klassenarbeit.
+   Lernpfad mit 8 Kapiteln (Erklär-Karten, dann eine Runde mit Denkfrage „he/she/it?“), großer Übungsteil mit 6 Aufgabenarten
+   wie auf den Arbeitsblättern G9a/G11a/Bingo (Text markieren, Lückentext, Fragen aus Stichworten, Kurzantworten, Fragewörter, Bingo-Sätze),
+   Probe-Arbeit mit 6 Teilen und Punkten (Auswertung am Schluss), Entdecken = Regelheft. Nur Vokabeln, die Nea schon hatte. */
+:root{color-scheme:light dark}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{margin:0;background:var(--lw-bg);color:var(--lw-ink);font-family:var(--lw-f-b);font-size:18px;line-height:1.45;-webkit-tap-highlight-color:transparent;padding-top:env(safe-area-inset-top,0px)}
+.wrap{max-width:640px;margin:0 auto;padding:14px max(16px,env(safe-area-inset-right,0px)) 130px max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px}
+h1,h2,h3{font-family:var(--lw-f-d);font-weight:700;margin:0;line-height:1.15;text-wrap:balance}
+h2{font-size:1.55rem}
+h3{font-size:1.15rem}
+p{margin:0}
+b{font-weight:700}
+button{font:inherit;color:inherit;cursor:pointer;touch-action:manipulation}
+button:focus-visible,a:focus-visible,summary:focus-visible,.u:focus-visible{outline:3px solid var(--lw-brand);outline-offset:2px}
+svg{display:block}
+.small{font-size:.9rem;color:var(--lw-muted)}
+.lead{font-size:1.05rem}
+.panel{background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--lw-en)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.grow{flex:1;min-width:0}
+.ghost{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:8px 14px}
+.ghost svg,.go svg{width:20px;height:20px;flex:none}
+.go{display:inline-flex;align-items:center;justify-content:center;gap:8px}
+
+/* Startseite */
+.hero{display:flex;flex-direction:column;gap:8px}
+.hero .emo{font-size:2.4rem;line-height:1;letter-spacing:.1em}
+.stations{display:flex;flex-direction:column;gap:12px}
+.st{display:flex;align-items:center;gap:14px;text-align:left;width:100%;padding:14px;border-radius:22px;background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:5px}
+.st:active{transform:translateY(3px);border-bottom-width:2px}
+.st .ico{width:56px;height:56px;flex:none;border-radius:16px;background:var(--lw-en-s);color:var(--lw-en);display:grid;place-items:center;font-size:1.7rem;line-height:1}
+.st h3{font-size:1.12rem}
+.st p{font-size:.92rem;color:var(--lw-muted);line-height:1.3;margin-top:2px}
+.st .n{font:700 12px var(--lw-f-b);letter-spacing:.1em;text-transform:uppercase;color:var(--lw-en)}
+.st.extra .ico{background:var(--lw-sun);color:#5B3A00}
+.sect{margin-top:6px}
+.stars{display:flex;gap:2px;margin-top:6px}
+.stars svg{width:20px;height:20px}
+.toggle{display:flex;align-items:center;gap:12px;text-align:left;width:100%;padding:12px 14px;border-radius:18px;background:var(--lw-card);border:2px solid var(--lw-line)}
+.toggle .sw{flex:none;width:48px;height:28px;border-radius:99px;background:var(--lw-line);position:relative;transition:background .2s}
+.toggle .sw::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:transform .2s}
+.toggle[aria-pressed="true"] .sw{background:var(--lw-en)}
+.toggle[aria-pressed="true"] .sw::after{transform:translateX(20px)}
+
+/* Erklär-Karten */
+.chead{display:flex;align-items:center;gap:12px}
+.backb{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:6px 14px 6px 10px;border-radius:14px;border:2px solid var(--lw-line);border-bottom-width:4px;background:var(--lw-card);font-weight:700;color:var(--lw-muted)}
+.backb svg{width:18px;height:18px}
+.card-x{background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:22px;padding:18px 16px;display:flex;flex-direction:column;gap:12px;min-height:240px}
+.card-x h3{font-size:1.3rem;color:var(--lw-en)}
+.card-x ul,.card-x ol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:6px}
+.dotsnav{display:flex;gap:6px;justify-content:center}
+.dotsnav i{width:9px;height:9px;border-radius:50%;background:var(--lw-line)}
+.dotsnav i.on{background:var(--lw-en);width:22px;border-radius:99px}
+.bsp{border-left:5px solid var(--lw-en);background:var(--lw-en-s);border-radius:0 14px 14px 0;padding:10px 12px;line-height:1.5}
+.bsp.bad{border-color:var(--lw-bad);background:var(--lw-bad-bg)}
+.bsp small{display:block;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--lw-muted);margin-bottom:2px}
+.spick{background:var(--lw-en-s);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:6px;text-align:left}
+.spick ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px}
+.rfleg{display:flex;flex-direction:column;gap:6px}
+.rfleg span{display:flex;gap:10px;align-items:baseline}
+.rfleg i{font-style:normal;flex:none;min-width:30px;text-align:center;font-weight:700;border-radius:8px;padding:0 6px}
+
+/* Text */
+.txt{background:var(--lw-card);border:2px solid var(--lw-line);border-radius:18px;padding:14px 16px;font-size:1.12rem;line-height:1.75}
+.txt p+p{margin-top:10px}
+.txh{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.txh .tico{font-size:2.2rem;line-height:1;flex:none}
+.txh h3{font-size:1.25rem}
+.lbl{display:block;font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--lw-muted);line-height:1.3}
+.txt p.mk{background:var(--lw-sun);color:#3A2600;border-radius:10px;margin-inline:-8px;padding:2px 8px}
+.u{border-radius:6px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.u.now{background:var(--lw-sun);color:#3A2600}
+.tap .u{cursor:pointer;padding:1px 2px;background:var(--lw-soft)}
+.tap .u:active{background:var(--lw-en-s)}
+.tap .u.hit{background:var(--lw-ok-bg);color:var(--lw-ok-ink);outline:2px solid var(--lw-ok)}
+.tap .u.miss{background:var(--lw-bad-bg);color:var(--lw-bad-ink);text-decoration:line-through}
+.tap .u.left{background:var(--lw-ok-bg);color:var(--lw-ok-ink);outline:2px dashed var(--lw-ok)}
+details.ref{background:var(--lw-card);border:2px solid var(--lw-line);border-radius:18px}
+details.ref>summary{list-style:none;display:flex;align-items:center;gap:10px;min-height:52px;padding:8px 14px;font-weight:700;color:var(--lw-en);cursor:pointer}
+details.ref>summary::-webkit-details-marker{display:none}
+details.ref>summary::after{content:"";margin-left:auto;width:10px;height:10px;border-right:3px solid currentColor;border-bottom:3px solid currentColor;transform:rotate(45deg);transition:transform .2s}
+details.ref[open]>summary::after{transform:rotate(-135deg)}
+details.ref .txt{border:none;border-top:2px solid var(--lw-line);border-radius:0 0 16px 16px}
+.beleg{margin-top:8px;padding:8px 10px;border-radius:12px;background:var(--lw-card);font-size:.98rem;line-height:1.5}
+
+/* Hören */
+.hear{display:flex;flex-direction:column;align-items:center;gap:12px;padding:22px 16px;background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:22px;text-align:center}
+.hear .tico{font-size:3rem;line-height:1}
+.play{width:112px;height:112px;border-radius:50%;border:none;background:var(--lw-en);color:#fff;display:grid;place-items:center;box-shadow:0 6px 0 var(--lw-en-d)}
+.play:active{transform:translateY(4px);box-shadow:0 2px 0 var(--lw-en-d)}
+.play svg{width:52px;height:52px}
+.play:disabled{opacity:.4;box-shadow:none}
+.play.on{animation:pulse 1.4s infinite}
+@keyframes pulse{50%{box-shadow:0 6px 0 var(--lw-en-d),0 0 0 14px var(--lw-en-s)}}
+.ears{display:flex;gap:6px;justify-content:center;font-weight:700;color:var(--lw-muted)}
+.ears i{font-style:normal;width:30px;height:30px;border-radius:50%;border:2px solid var(--lw-en);display:grid;place-items:center;font-size:.95rem}
+.ears i.on{background:var(--lw-en);color:#fff}
+.replay{display:flex;align-items:center;gap:10px;min-height:52px;padding:8px 14px;border-radius:18px;border:2px solid var(--lw-line);border-bottom-width:4px;background:var(--lw-card);font-weight:700;color:var(--lw-en);width:100%;justify-content:center}
+.replay.on{background:var(--lw-en);color:#fff;border-color:var(--lw-en-d)}
+.replay svg{width:22px;height:22px}
+.vorher{text-align:left;align-self:stretch}
+.vorher ol{margin:6px 0 0;padding-left:22px;display:flex;flex-direction:column;gap:4px}
+.spk{flex:none;display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:6px 14px;border-radius:14px;border:2px solid var(--lw-line);border-bottom-width:4px;background:var(--lw-card);font-weight:700;color:var(--lw-en)}
+.spk svg{width:20px;height:20px}
+.spk.on{background:var(--lw-en);color:#fff;border-color:var(--lw-en-d)}
+
+/* Runde */
+.topbar{display:flex;align-items:center;gap:12px}
+.track{flex:1;display:flex;gap:4px}
+.track i{flex:1;height:12px;border-radius:99px;background:var(--lw-line)}
+.track i.ok{background:var(--lw-ok)}
+.track i.no{background:var(--lw-bad)}
+.track i.half{background:linear-gradient(90deg,var(--lw-ok) 50%,var(--lw-bad) 50%)}
+.track i.now{background:var(--lw-en)}
+.q b{display:block;font:700 1.3rem/1.25 var(--lw-f-d)}
+.q .lk{display:inline-block;margin-bottom:6px;padding:3px 10px;border-radius:99px;background:var(--lw-en-s);color:var(--lw-en);font:700 .82rem/1.2 var(--lw-f-b);letter-spacing:.04em}
+.stage{display:flex;flex-direction:column;gap:14px}
+.opts{display:grid;grid-template-columns:1fr;gap:10px}
+.opt{width:100%;padding:12px 14px;display:flex;align-items:center;justify-content:flex-start;text-align:left;line-height:1.35}
+.opt:disabled{cursor:default}
+.picgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.picgrid .opt{flex-direction:column;justify-content:center;text-align:center;gap:6px;min-height:118px;font-size:1rem}
+.picgrid .opt .e{font-size:2.8rem;line-height:1}
+.tipp{align-self:flex-start}
+.denk{background:var(--lw-sun);color:#3A2600;border-radius:18px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.denk p{font:700 1.02rem/1.3 var(--lw-f-d)}
+.denk .chips{display:flex;flex-wrap:wrap;gap:8px}
+.denk .chip{background:#fff;color:#3A2600;border-color:#E8B400}
+.denk .chip.ok{background:var(--lw-ok-bg);border-color:var(--lw-ok);color:var(--lw-ok-ink)}
+.denk .chip.no{background:var(--lw-bad-bg);border-color:var(--lw-bad);color:var(--lw-bad-ink)}
+.denk .tip{font-size:.95rem}
+.denk .chip:disabled{opacity:.55}
+.denk .chip.ok,.denk .chip.no{opacity:1}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips .chip{font-size:1.05rem;min-height:46px}
+.chip:disabled{opacity:.4}
+/* richtig / falsch / steht nicht im Text */
+.rf{display:flex;flex-direction:column;gap:12px}
+.rfi{background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:4px;border-radius:18px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.rfi.ok{border-color:var(--lw-ok);background:var(--lw-ok-bg)}
+.rfi.bad{border-color:var(--lw-bad);background:var(--lw-bad-bg)}
+.rfi p{font-weight:700;line-height:1.35}
+.rfb{display:grid;grid-template-columns:1fr 1fr 1.3fr;gap:6px}
+.rfb button{min-height:50px;padding:4px 6px;border-radius:14px;border:2px solid var(--lw-line);border-bottom-width:4px;background:var(--lw-card);font:700 .92rem/1.15 var(--lw-f-b);color:var(--lw-ink)}
+.rfb button:disabled{cursor:default}
+.rfb button.sel{background:var(--lw-en);border-color:var(--lw-en-d);color:#fff}
+.rfb button.right{background:var(--lw-ok);border-color:var(--lw-ok);color:#fff}
+.rfb button.wrong{background:var(--lw-bad);border-color:var(--lw-bad);color:#fff}
+.rfi small{font-size:.88rem;font-weight:700}
+/* Reihenfolge */
+.ord{display:flex;flex-direction:column;gap:10px}
+.oc{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:12px 14px;min-height:58px;border-radius:18px;border:2px solid var(--lw-line);border-bottom-width:5px;background:var(--lw-card);line-height:1.35}
+.oc .num{flex:none;width:34px;height:34px;border-radius:50%;border:2px dashed var(--lw-line);display:grid;place-items:center;font:700 1.1rem/1 var(--lw-f-d);color:var(--lw-muted)}
+.oc.on{border-color:var(--lw-en)}
+.oc.on .num{border:none;background:var(--lw-en);color:#fff}
+.oc.ok{border-color:var(--lw-ok);background:var(--lw-ok-bg)}
+.oc.ok .num{background:var(--lw-ok)}
+.oc.bad{border-color:var(--lw-bad);background:var(--lw-bad-bg)}
+.oc.bad .num{background:var(--lw-bad)}
+.oc small{display:block;font-size:.85rem;font-weight:700;color:var(--lw-ok-ink)}
+/* Lücken */
+.gap{display:inline-block;min-width:2.4em;padding:0 .3em;border-radius:8px;border:2px dashed var(--lw-line);color:var(--lw-muted);text-align:center;line-height:1.35}
+.gap.now{border-color:var(--lw-en);background:var(--lw-en-s);color:var(--lw-en);animation:blink 1.2s infinite}
+.gap.ok{border-style:solid;border-color:var(--lw-ok);background:var(--lw-ok-bg);color:var(--lw-ok-ink);animation:none}
+.gap.bad{border-style:solid;border-color:var(--lw-bad);background:var(--lw-bad-bg);color:var(--lw-bad-ink);animation:none}
+.gap s{opacity:.7;margin-right:4px}
+@keyframes blink{50%{opacity:.55}}
+/* Teil-Karte im Test */
+.part{display:flex;flex-direction:column;gap:12px;align-items:flex-start}
+.part .big{font-size:3rem;line-height:1}
+/* Ergebnis */
+.result{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;padding-top:20px}
+.bigstars{display:flex;gap:8px}
+.bigstars svg{width:64px;height:64px}
+.bigstars .s1{animation:pop .5s .1s both}.bigstars .s2{animation:pop .5s .35s both}.bigstars .s3{animation:pop .5s .6s both}
+@keyframes pop{0%{transform:scale(.4)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+.result .go,.result .ghost{width:100%}
+.teile{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
+.teile div{background:var(--lw-card);border:2px solid var(--lw-line);border-radius:16px;padding:10px}
+.teile b{display:block;font:700 1.4rem/1.2 var(--lw-f-d)}
+.libitem{display:flex;gap:12px;align-items:center;text-align:left;width:100%;padding:12px;border-radius:18px;background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:4px}
+.libitem .tico{font-size:2rem;line-height:1;flex:none;width:44px;text-align:center}
+.libitem h3{font-size:1.05rem}
+.fb p{margin-top:4px}
+.lw-sheet .ghost{width:100%;min-height:50px}
+@media (max-width:360px){.rfb{grid-template-columns:1fr}.picgrid .opt{min-height:100px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+/* ---- Simple Present: eigene Bausteine ---- */
+.kw{background:var(--lw-sun);color:#3A2600;border-radius:6px;padding:0 4px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.sent{font:600 1.22rem/1.5 var(--lw-f-d);background:var(--lw-card);border:2px solid var(--lw-line);border-radius:18px;padding:14px 16px}
+.sent .hint{font:700 .95rem/1.2 var(--lw-f-b);color:var(--lw-muted);white-space:nowrap}
+.sw-line{display:flex;gap:6px;flex-wrap:wrap;font:600 1.12rem/1.4 var(--lw-f-d)}
+.sw-line span{background:var(--lw-soft);border-radius:10px;padding:2px 10px}
+.inp{display:flex;flex-direction:column;gap:8px}
+.field{width:100%;min-height:56px;font:600 1.18rem/1.3 var(--lw-f-d);padding:10px 14px;border:2px solid var(--lw-line);border-bottom-width:4px;border-radius:16px;background:var(--lw-card);color:var(--lw-ink)}
+.field:focus{outline:none;border-color:var(--lw-en)}
+.field.ok{border-color:var(--lw-ok);background:var(--lw-ok-bg);color:var(--lw-ok-ink)}
+.field.bad{border-color:var(--lw-bad);background:var(--lw-bad-bg);color:var(--lw-bad-ink)}
+.keys{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.keys .chip{min-width:48px;min-height:44px;font-size:1.2rem}
+.keys .small{flex:1;min-width:140px}
+.pre{font:700 1.15rem/1.3 var(--lw-f-d);color:var(--lw-muted)}
+.line{min-height:62px;border:2px dashed var(--lw-line);border-radius:16px;padding:8px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--lw-card)}
+.line.ok{border-style:solid;border-color:var(--lw-ok);background:var(--lw-ok-bg)}
+.line.bad{border-style:solid;border-color:var(--lw-bad);background:var(--lw-bad-bg)}
+.line .end{font:700 1.3rem/1 var(--lw-f-d);color:var(--lw-muted)}
+.line .ph{color:var(--lw-muted);font-size:.95rem;padding:0 6px}
+.bank{display:flex;flex-wrap:wrap;gap:8px}
+.tile{min-height:48px;padding:6px 14px;font-size:1.12rem;color:var(--lw-ink)}
+.tile:disabled{opacity:.25}
+.tap .u.sel{background:var(--lw-en-s);outline:2px solid var(--lw-en);color:var(--lw-ink)}
+.txt.tap{line-height:2.1}
+.yn{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:99px;font:700 1rem/1.2 var(--lw-f-b)}
+.yn.y{background:var(--lw-ok-bg);color:var(--lw-ok-ink)}
+.yn.n{background:var(--lw-bad-bg);color:var(--lw-bad-ink)}
+.bcell{display:flex;align-items:center;gap:14px;background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:18px;padding:12px 14px}
+.bcell .bico{font-size:2.2rem;line-height:1;flex:none}
+.bcell b{font:700 1.2rem/1.2 var(--lw-f-d);display:block}
+.bcell .who{font-family:"Segoe Print","Bradley Hand","Comic Sans MS",cursive;font-size:1.25rem;color:#2D3F9E}
+.tbl{width:100%;border-collapse:separate;border-spacing:0 4px;font-size:1.05rem}
+.tbl td{padding:6px 10px;background:var(--lw-soft)}
+.tbl td:first-child{border-radius:10px 0 0 10px;font-weight:700;width:42%}
+.tbl td:last-child{border-radius:0 10px 10px 0}
+.tbl tr.hi td{background:var(--lw-sun);color:#3A2600}
+.tbl em{font-style:normal;color:var(--lw-en);font-weight:700;text-decoration:underline;text-decoration-thickness:3px}
+.tbl tr.hi em{color:#9A3412}
+.gex{display:flex;gap:10px;align-items:flex-start;border-radius:12px;padding:8px 10px;background:var(--lw-soft);line-height:1.4}
+.gex .gpic{flex:none;font-weight:700;width:22px;text-align:center}
+.gex small{display:block;font-size:.88rem;color:var(--lw-muted)}
+.gex.gok{background:var(--lw-ok-bg)}.gex.gok .gpic{color:var(--lw-ok)}
+.gex.gno{background:var(--lw-bad-bg)}.gex.gno .gpic{color:var(--lw-bad)}.gex.gno b{text-decoration:line-through;text-decoration-thickness:2px}
+.card-x .gex b em,.gex b em{font-style:normal;color:var(--lw-en);text-decoration:underline;text-decoration-thickness:3px}
+.merk{background:var(--lw-sun);color:#3A2600;border-radius:14px;padding:10px 12px;font:700 1.05rem/1.35 var(--lw-f-d)}
+.rsheet-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:60}
+.rsheet{position:fixed;left:0;right:0;bottom:0;z-index:61;max-height:82vh;overflow:auto;background:var(--lw-bg);border-radius:24px 24px 0 0;padding:18px max(16px,env(safe-area-inset-left,0px)) calc(18px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:12px;max-width:640px;margin:0 auto}
+.rev{display:flex;flex-direction:column;gap:8px;width:100%;text-align:left}
+.rev .ri{background:var(--lw-card);border:2px solid var(--lw-line);border-radius:14px;padding:10px 12px;display:flex;flex-direction:column;gap:3px}
+.rev .ri s{color:var(--lw-bad-ink)}
+.rev .ri .c{color:var(--lw-ok-ink);font-weight:700}
+.teile3{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
+.teile3 div{background:var(--lw-card);border:2px solid var(--lw-line);border-radius:14px;padding:8px 10px;text-align:left}
+.teile3 b{display:block;font:700 1.2rem/1.2 var(--lw-f-d)}
+.note{font-size:.95rem;margin-top:4px}
+.sayb{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:4px 12px;border-radius:12px;border:2px solid var(--lw-line);background:var(--lw-card);font-weight:700;color:var(--lw-en);font-size:.95rem}
+.sayb svg{width:18px;height:18px}
+.regel-ch{display:flex;flex-direction:column;gap:10px}
+.regel-ch .card-x{min-height:0}
+</style><!--lw-look--><link rel="stylesheet" href="/lernwelt-app.css"><script src="/lernwelt-app.js"></script><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap"><style id="lw-look">
+/* Übungs-Bausteine im Lernwelt-Look (wie im Konzept: Antwortkacheln, grüne Rückmeldung, dicke Knöpfe) */
+.go,.next,.check{background:var(--lw-c);color:#fff;border:none;border-radius:16px;min-height:54px;padding:12px 22px;
+  font-family:var(--lw-f-d);font-weight:700;font-size:1.05rem;letter-spacing:.04em;text-transform:uppercase;box-shadow:0 5px 0 var(--lw-cd)}
+.go:active,.next:active,.check:active{transform:translateY(3px);box-shadow:0 2px 0 var(--lw-cd)}
+.ghost{background:var(--lw-card);color:var(--lw-ink);border:2px solid var(--lw-line);border-bottom-width:4px;border-radius:14px;min-height:44px;font-weight:700}
+.chip{background:var(--lw-card);color:var(--lw-ink);border:2px solid var(--lw-line);border-radius:99px;min-height:40px;padding:6px 14px;font-weight:700}
+.chip[aria-pressed="true"]{background:var(--lw-c);border-color:var(--lw-c);color:#fff}
+.progress{height:14px;background:var(--lw-line);border-radius:99px}
+.progress i{background:var(--lw-ok);border-radius:99px}
+.card{background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:22px;box-shadow:none}
+.card-top{background:none;color:var(--lw-c);padding:16px 18px 0;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase}
+.card-top .tag{font-size:.8rem}
+.card-body{background-image:none}
+.prompt{font-family:var(--lw-f-d);font-weight:700}
+.opts{gap:12px}
+.opt{background:var(--lw-card);color:var(--lw-ink);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:18px;min-height:60px;
+  font-family:var(--lw-f-d);font-weight:600;font-size:1.12rem}
+.opt:not(:disabled):active{transform:translateY(3px);border-bottom-width:2px}
+.opt.ok{border:3px solid var(--lw-ok);border-bottom-width:6px;background:var(--lw-ok-bg);color:var(--lw-ok-ink)}
+.opt.bad{border-color:var(--lw-bad);background:var(--lw-bad-bg);color:var(--lw-bad-ink)}
+.tile{background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:4px;border-radius:12px;font-family:var(--lw-f-d);font-weight:700}
+.slots{border-radius:16px}
+.slots .tile{background:var(--lw-cs);border-color:var(--lw-c)}
+.inp input,.field{border-radius:16px}
+.fb{border-radius:22px;padding:16px 16px 18px;gap:8px}
+.fb.ok{background:var(--lw-ok-bg);border:none;color:var(--lw-ink)}
+.fb.bad{background:var(--lw-bad-bg);border:none;color:var(--lw-ink)}
+.fb strong{font-family:var(--lw-f-d);font-weight:700;font-size:1.3rem;display:flex;align-items:center;gap:10px}
+.fb.ok strong{color:var(--lw-ok-ink)}
+.fb.bad strong{color:var(--lw-bad-ink)}
+.fb.ok strong::before,.fb.bad strong::before{content:"";flex:none;width:36px;height:36px;border-radius:50%;background:var(--lw-ok) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/20px no-repeat}
+.fb.bad strong::before{background:var(--lw-bad) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3.4' stroke-linecap='round'%3E%3Cpath d='M7 7l10 10M17 7L7 17'/%3E%3C/svg%3E") center/18px no-repeat}
+.card-top .tag{color:var(--lw-c);font-family:var(--lw-f-b);font-weight:700;letter-spacing:.12em}
+.card-top .fachtag{background:var(--lw-cs);color:var(--lw-c);font-family:var(--lw-f-b);font-weight:700}
+/* @kit */
+/* Simple Present ist von Anfang an im Lernwelt-Look gebaut: nur die Fach-Farbe setzen. */
+:root:root:root{--lw-c:var(--lw-en); --lw-cd:var(--lw-en-d); --lw-cs:var(--lw-en-s)}
+.go{width:auto}
+.go:disabled{opacity:.5}
+</style><!--/lw-look-->
+</head><body><nav id="lw-bar" class="lw-bar lw-en" aria-label="Lernwelt"><a class="lw-back" href="index.html#heft-simplepresent" aria-label="Zurück zum Heft"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a><span class="lw-t"><span class="lw-eyebrow">Englisch</span><span class="lw-name">Simple Present</span></span></nav>
+<main class="wrap" id="app"></main>
+<script>
+"use strict";
+/* ================= Grundlagen ================= */
+const $=s=>document.querySelector(s);
+const app=$("#app");
+const rand=n=>Math.floor(Math.random()*n);
+const pick=a=>a[rand(a.length)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=rand(i+1);[a[i],a[j]]=[a[j],a[i]]}return a};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* ================= Zustand ================= */
+const KEY="simple-present-v1";
+const DEF={best:{},seen:{},denk:true,probe:null};
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&typeof s==="object")return Object.assign(JSON.parse(JSON.stringify(DEF)),s)}catch(e){}return JSON.parse(JSON.stringify(DEF))}
+let S=load();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+
+/* kurze Töne */
+let AC=null;
+function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){AC=null}}if(AC&&AC.state==="suspended")AC.resume();return AC}
+function beep(fs,len,type,vol){const a=ac();if(!a)return;let t=a.currentTime+.02;fs.forEach(f=>{const o=a.createOscillator(),g=a.createGain();o.type=type||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol||.18,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+len);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+len+.02);t+=len*.75})}
+const sfxOk=()=>beep([1046.5,1318.5],.14);
+const sfxBad=()=>beep([233,175],.18,"triangle",.12);
+const sfxPop=()=>beep([784],.08,"sine",.12);
+
+/* ================= Symbole ================= */
+const I={
+  back:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>`,
+  spk:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>`,
+  play:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg>`,
+  stop:`<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6.5" y="6.5" width="11" height="11" rx="2" fill="currentColor"/></svg>`,
+  star:on=>`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z" fill="${on?"#FFC93C":"var(--lw-line)"}" stroke="${on?"#D99A00":"none"}" stroke-width="1.2" stroke-linejoin="round"/></svg>`
+};
+
+/* ================= Inhalte =================
+   Nur Wörter, die Nea schon hatte (englisch.html, Vokabeln S. 170–189) und Wörter aus ihren Arbeitsblättern
+   (G9a, G11a, Bingo). Geprüft per Skript (siehe PR).
+   Aufgaben (k):
+     gap   s = Satz mit [[richtig|falsch|…]] → Antwort antippen
+     mc    q = Auftrag (deutsch), e = englischer Satz (optional), o = Antworten (erste richtig), de:1 = Antworten deutsch
+     type  s = Satz mit ___ , h = Hinweis in Klammern, a = richtige Lösungen → eintippen
+     build w = Stichworte, a = Zielsatz, x = falsche Bausteine → Bausteine antippen
+     write w = Stichworte, a = richtige Sätze → ganzen Satz eintippen (pre = Text davor, z. B. Antwort bei Fragewort-Fragen)
+     short e = Frage, y = Ja/Nein, a = Kurzantwort, o = falsche Kurzantworten (dann zum Antippen, sonst eintippen)
+     mark  tx = Text, {Wort} = gehört markiert
+     fix   s = Satz, {Wort} = der Fehler, c = richtiger Satz
+     bingo n = Name, it = Kästchen, y = ja/nein, v = Verb, a = Lösungen, ask = Frage an das Kind statt Satz über es
+   sub/p = Subjekt und sein Personalpronomen → Denkfrage „Kann ich es durch he, she, it ersetzen?“ */
+
+const OK=(w,d)=>`<div class="gex gok"><span class="gpic">✔</span><span><b>${w}</b>${d?`<small>${d}</small>`:""}</span></div>`;
+const NO=(w,d)=>`<div class="gex gno"><span class="gpic">✘</span><span><b>${w}</b>${d?`<small>${d}</small>`:""}</span></div>`;
+const EX=(w,d)=>`<div class="gex"><span class="gpic">•</span><span><b>${w}</b>${d?`<small>${d}</small>`:""}</span></div>`;
+
+const CH=[
+/* ---------------- Lernpfad ---------------- */
+{id:"wann",sec:"pfad",ico:"🔁",t:"Wann nehme ich das Simple Present?",d:"Gewohnheiten, Vorlieben, Signalwörter",
+ cards:[
+  {h:"Das Simple Present",b:`<p>Mit dem <b>Simple Present</b> (einfache Gegenwart) erzählst du von Dingen, die <b>immer wieder</b> passieren oder einfach <b>so sind</b>:</p>
+   ${EX("I play football every Monday.","Gewohnheit: passiert jede Woche wieder")}
+   ${EX("Ruby likes cats.","Was jemand mag oder nicht mag")}
+   ${EX("Ryan and Ruby live in Greenwich.","Etwas, das einfach so ist")}
+   <p class="merk">Im Heft: „Use: talk about things you do again and again, and things you like.“</p>`,say:"I play football every Monday. Ruby likes cats. Ryan and Ruby live in Greenwich."},
+  {h:"Signalwörter",b:`<p>Diese Wörter zeigen dir: Hier brauchst du das Simple Present.</p>
+   <table class="tbl"><tr><td>always</td><td>immer</td></tr><tr><td>usually</td><td>normalerweise</td></tr><tr><td>often</td><td>oft</td></tr><tr><td>sometimes</td><td>manchmal</td></tr><tr><td>never</td><td>nie</td></tr><tr><td>every day</td><td>jeden Tag</td></tr><tr><td>at weekends</td><td>am Wochenende</td></tr><tr><td>on Sundays</td><td>sonntags</td></tr></table>`,say:"always, usually, often, sometimes, never, every day, at weekends, on Sundays"},
+  {h:"Wo steht always, often, never?",b:`<p><b>always, usually, often, sometimes, never</b> stehen <b>vor dem Verb</b>:</p>
+   ${OK("She <em>never</em> does her homework.")}${NO("She does never her homework.")}
+   ${OK("Sherlock <em>often</em> sleeps on the sofa.")}
+   <p><b>every day, at weekends, on Sundays</b> stehen meistens <b>am Ende</b>:</p>
+   ${OK("He goes to school <em>every day</em>.")}`,say:"She never does her homework. Sherlock often sleeps on the sofa. He goes to school every day."}
+ ],
+ spick:["Simple Present = Dinge, die immer wieder passieren, und was man mag.","Signalwörter: always, usually, often, sometimes, never, every day, at weekends.","always/often/never stehen vor dem Verb: She never does her homework."],
+ tasks:[
+  {k:"mc",q:"Was erzählt dieser Satz?",e:"I play football every Monday.",de:1,o:["Etwas, das immer wieder passiert","Etwas, das gestern passiert ist","Etwas, das morgen passiert"],ex:"„every Monday“ = jeden Montag. Das passiert immer wieder, also Simple Present."},
+  {k:"mc",q:"Was erzählt dieser Satz?",e:"Ruby likes cats.",de:1,o:["Was Ruby mag","Was Ruby gestern gemacht hat","Was Ruby morgen macht"],ex:"Was jemand mag oder nicht mag, steht im Simple Present."},
+  {k:"mark",one:1,q:"Tippe das Signalwort an.",tx:"We {often} play games on Sundays.",ex:"often = oft. (on Sundays ist auch ein Signalwort.)"},
+  {k:"mark",one:1,q:"Tippe das Signalwort an.",tx:"Sherlock {always} hides behind the sofa.",ex:"always = immer."},
+  {k:"mark",one:1,q:"Tippe das Signalwort an.",tx:"My dad {never} cooks.",ex:"never = nie."},
+  {k:"mark",one:1,q:"Tippe das Signalwort an.",tx:"Lily {usually} has a sandwich for lunch.",ex:"usually = normalerweise."},
+  {k:"mark",one:1,q:"Tippe das Signalwort an.",tx:"I {sometimes} read comics in bed.",ex:"sometimes = manchmal."},
+  {k:"gap",s:"Sherlock [[often sleeps|sleeps often]] on the sofa.",ex:"often steht vor dem Verb: often sleeps."},
+  {k:"gap",s:"She [[never does|does never]] her homework.",ex:"never steht vor dem Verb: never does."},
+  {k:"gap",s:"We [[always play|play always]] football at weekends.",ex:"always steht vor dem Verb: always play."},
+  {k:"mc",q:"Welcher Satz ist richtig?",o:["Karam usually listens to music.","Karam listens usually to music.","Usually Karam to music listens."],ex:"usually steht vor dem Verb."},
+  {k:"mark",q:"Markiere alle Verben im Simple Present. Auch am, is, are zählen.",tx:"Hi! {I'm} Ryan. I {live} in Greenwich with my parents. My mum and dad {work} at home. My mum {paints} pictures. She {sells} them at Greenwich Market.",ex:"I’m, live, work, paints, sells: alles Simple Present."},
+  {k:"mc",q:"Was bedeutet „at weekends“?",de:1,o:["am Wochenende","jeden Tag","nie"],ex:"at weekends = am Wochenende."}
+ ]},
+
+{id:"s",sec:"pfad",ico:"🐍",t:"He, she, it: das s muss mit!",d:"I like, aber he likes. Und: have wird zu has",
+ cards:[
+  {h:"I like, aber he likes",b:`<table class="tbl"><tr><td>I</td><td>like milk</td></tr><tr><td>you</td><td>like milk</td></tr><tr class="hi"><td>he / she / it</td><td>like<em>s</em> milk</td></tr><tr><td>we</td><td>like milk</td></tr><tr><td>you</td><td>like milk</td></tr><tr><td>they</td><td>like milk</td></tr></table>
+   <p class="merk">He, she, it: das s muss mit!</p><p>Bei allen anderen nimmst du einfach die <b>Grundform</b> (Infinitiv ohne to): to like → like.</p>`,say:"I like milk. He likes milk. She likes milk. They like milk."},
+  {h:"Die Ersetz-Probe",b:`<p>Oft steht da kein „he“ oder „she“, sondern ein Name. Frag dich: <b>Kann ich es durch he, she oder it ersetzen?</b></p>
+   ${EX("Mila → she → Mila like<em>s</em> cats.")}${EX("My dad → he → My dad work<em>s</em> at home.")}${EX("School → it → School start<em>s</em> at eight o'clock.")}
+   ${EX("Ryan and Ruby → they → Ryan and Ruby live in Greenwich.","they: kein s!")}${EX("My parents → they → My parents work together.","they: kein s!")}`,say:"Mila likes cats. My dad works at home. School starts at eight o'clock. Ryan and Ruby live in Greenwich."},
+  {h:"Achtung: have wird zu has",b:`<p><b>to have</b> ist besonders: bei he, she, it heißt es <b>has</b>.</p>
+   ${NO("Mila have a brother.")}${OK("Mila <em>has</em> a brother.")}${NO("Julia haves a sister.")}${OK("Julia <em>has</em> a sister.")}${OK("I have a cousin. We have a dog.","I, you, we, they: have")}`,say:"Mila has a brother. Julia has a sister. I have a cousin."},
+  {h:"Kein does im normalen Satz",b:`<p>In einem ganz normalen (positiven) Satz brauchst du <b>kein do / does</b>. Das Verb bekommt einfach sein s.</p>
+   ${NO("My sister does like strawberries.")}${OK("My sister <em>likes</em> strawberries.")}${NO("My mum does like tea.")}${OK("My mum <em>likes</em> tea.")}
+   <p class="small">does brauchst du nur für die Verneinung (doesn't) und für Fragen (Does …?).</p>`,say:"My sister likes strawberries. My mum likes tea."}
+ ],
+ spick:["he, she, it: das s muss mit! He likes, she plays, it sleeps.","I, you, we, they: Grundform ohne s.","Ersetz-Probe: Mila → she → Mila likes. Ryan and Ruby → they → live.","have → has: Mila has a brother.","Kein does im normalen Satz: My sister likes strawberries."],
+ tasks:[
+  {k:"gap",s:"Mila [[has|have]] a brother.",sub:"Mila",p:"she",ex:"Mila → she → has."},
+  {k:"gap",s:"Julia [[has|have|haves]] a sister.",sub:"Julia",p:"she",ex:"Julia → she → has."},
+  {k:"gap",s:"Ryan [[likes|like]] football.",sub:"Ryan",p:"he",ex:"Ryan → he → likes."},
+  {k:"gap",s:"Ryan and Ruby [[live|lives]] in Greenwich.",sub:"Ryan and Ruby",p:"they",ex:"Ryan and Ruby → they → live, ohne s."},
+  {k:"gap",s:"My parents [[work|works]] together at home.",sub:"My parents",p:"they",ex:"My parents → they → work."},
+  {k:"gap",s:"Sherlock [[hides|hide]] behind the sofa.",sub:"Sherlock",p:"he",ex:"Sherlock → he → hides."},
+  {k:"gap",s:"I [[read|reads]] comics in my free time.",sub:"I",p:"I",ex:"I → kein s: read."},
+  {k:"gap",s:"My mum [[paints|paint]] pictures.",sub:"My mum",p:"she",ex:"My mum → she → paints."},
+  {k:"gap",s:"School [[starts|start]] at eight o'clock.",sub:"School",p:"it",ex:"School → it → starts."},
+  {k:"gap",s:"My sister [[likes|does like|like]] strawberries.",sub:"My sister",p:"she",ex:"Kein does im normalen Satz: My sister likes strawberries."},
+  {k:"gap",s:"Karam [[loves|love]] music.",sub:"Karam",p:"he",ex:"Karam → he → loves."},
+  {k:"gap",s:"You [[play|plays]] the guitar.",sub:"You",p:"you",ex:"you → kein s: play."},
+  {k:"gap",s:"Lily and I [[ride|rides]] our bikes to school.",sub:"Lily and I",p:"we",ex:"Lily and I → we → ride."},
+  {k:"gap",s:"My cousin [[has|have]] a cat.",sub:"My cousin",p:"she",ex:"My cousin → he/she → has."},
+  {k:"gap",s:"We [[have|has]] a dog.",sub:"We",p:"we",ex:"we → have."},
+  {k:"mc",q:"Welcher Satz ist richtig?",o:["Mila has a brother.","Mila have a brother.","Mila haves a brother."],sub:"Mila",p:"she",ex:"have wird bei he/she/it zu has."},
+  {k:"mc",q:"Welcher Satz ist richtig?",o:["My mum likes tea.","My mum does like tea.","My mum like tea."],sub:"My mum",p:"she",ex:"Im normalen Satz kein does. Einfach likes."},
+  {k:"type",s:"Lily ___ apples.",h:"like",a:["likes"],sub:"Lily",p:"she",ex:"Lily → she → likes."},
+  {k:"type",s:"Ryan and Karam ___ football at weekends.",h:"play",a:["play"],sub:"Ryan and Karam",p:"they",ex:"Ryan and Karam → they → play."},
+  {k:"type",s:"My brother ___ a new bike.",h:"have",a:["has"],sub:"My brother",p:"he",ex:"My brother → he → has."}
+ ]},
+
+{id:"spell",sec:"pfad",ico:"✏️",t:"-s, -es oder -ies?",d:"goes, watches, hurries: so schreibst du es richtig",
+ cards:[
+  {h:"Meistens: einfach +s",b:`${EX("like → like<em>s</em>")}${EX("play → play<em>s</em>")}${EX("read → read<em>s</em>")}${EX("work → work<em>s</em>")}`,say:"likes, plays, reads, works"},
+  {h:"+es nach o",b:`<p>Endet das Verb auf <b>o</b>, hängst du <b>-es</b> an:</p>${EX("go → go<em>es</em>","He goes to school every day.")}${EX("do → do<em>es</em>","She never does her homework.")}
+   ${NO("He gos to school.")}${NO("She dos her homework.")}`,say:"goes, does. He goes to school every day. She never does her homework."},
+  {h:"+es nach Zischlaut",b:`<p>Nach einem <b>Zischlaut</b> (s, ss, sh, ch, x) hängst du auch <b>-es</b> an. Man hört dann eine eigene Silbe [ɪz].</p>
+   ${EX("watch → watch<em>es</em>")}${EX("wash → wash<em>es</em>")}${EX("miss → miss<em>es</em>")}${NO("He watchs TV.")}`,say:"watches, washes, misses"},
+  {h:"Konsonant + y → ies",b:`<p>Steht vor dem <b>y</b> ein Konsonant (kein a, e, i, o, u), wird aus y → <b>ies</b>:</p>
+   ${EX("hurry → hurr<em>ies</em>")}${EX("fly → fl<em>ies</em>")}${EX("copy → cop<em>ies</em>")}${EX("worry → worr<em>ies</em>")}
+   <p>Steht ein <b>Vokal</b> vor dem y (ay, ey, oy, uy), kommt nur <b>s</b> dazu:</p>${EX("play → play<em>s</em>")}${EX("say → say<em>s</em>")}${EX("buy → buy<em>s</em>")}${EX("stay → stay<em>s</em>")}
+   <p class="small">Aus Neas Heft: „The birds fly in the sky.“ Mehrere Vögel = they → kein s. Aber: A bird flies.</p>`,say:"hurries, flies, copies, worries. But: plays, says, buys, stays."},
+  {h:"Der Sonderfall",b:`${EX("have → <em>has</em>","nicht haves!")}<p class="merk">-s · -es nach o und Zischlaut · Konsonant + y → ies · have → has</p>`,say:"has"}
+ ],
+ spick:["Meistens +s: likes, plays.","+es nach o: goes, does.","+es nach s, ss, sh, ch, x: watches, washes, misses.","Konsonant + y → ies: hurries, flies, copies, worries.","Vokal + y → nur s: plays, says, buys, stays.","have → has."],
+ tasks:[
+  {k:"type",s:"Ryan ___ TV after school.",h:"watch",a:["watches"],ex:"Zischlaut ch → watches."},
+  {k:"type",s:"She ___ to school every day.",h:"go",a:["goes"],ex:"o → goes."},
+  {k:"type",s:"He never ___ his homework.",h:"do",a:["does"],ex:"o → does."},
+  {k:"type",s:"Sherlock ___ to the park.",h:"hurry",a:["hurries"],ex:"Konsonant r + y → hurries."},
+  {k:"type",s:"My brother ___ my homework.",h:"copy",a:["copies"],ex:"Konsonant p + y → copies."},
+  {k:"type",s:"Mum ___ about everything.",h:"worry",a:["worries"],ex:"Konsonant r + y → worries."},
+  {k:"type",s:"Ruby ___ at home on Sundays.",h:"stay",a:["stays"],ex:"Vokal a + y → nur s: stays."},
+  {k:"type",s:"Karam ___ hello to his teacher.",h:"say",a:["says"],ex:"Vokal a + y → nur s: says."},
+  {k:"type",s:"Dad ___ the dishes.",h:"wash",a:["washes"],ex:"Zischlaut sh → washes."},
+  {k:"type",s:"Lily ___ her friends.",h:"miss",a:["misses"],ex:"Zischlaut ss → misses."},
+  {k:"type",s:"A bird ___ over the river.",h:"fly",a:["flies"],ex:"Konsonant l + y → flies."},
+  {k:"type",s:"The birds ___ in the sky.",h:"fly",a:["fly"],sub:"The birds",p:"they",ex:"Achtung, Falle! The birds → they → kein s: fly."},
+  {k:"type",s:"He ___ a new bike.",h:"buy",a:["buys"],ex:"Vokal u + y → nur s: buys."},
+  {k:"type",s:"She ___ a sister.",h:"have",a:["has"],ex:"have → has."},
+  {k:"type",s:"Our teacher ___ lots of questions.",h:"ask",a:["asks"],ex:"Einfach +s: asks."},
+  {k:"mc",q:"Wie heißt es bei he / she / it?",e:"to watch",o:["watches","watchs","watchies"],ex:"Zischlaut ch → -es."},
+  {k:"mc",q:"Wie heißt es bei he / she / it?",e:"to go",o:["goes","gos","goies"],ex:"o → -es."},
+  {k:"mc",q:"Wie heißt es bei he / she / it?",e:"to play",o:["plays","plaies","playes"],ex:"Vokal a + y → nur s."},
+  {k:"mc",q:"Wie heißt es bei he / she / it?",e:"to hurry",o:["hurries","hurrys","hurryes"],ex:"Konsonant + y → ies."},
+  {k:"mc",q:"Welche Form ist falsch geschrieben?",o:["washs","goes","flies"],ex:"Zischlaut sh → washes."},
+  {k:"mc",q:"Welche Form ist falsch geschrieben?",o:["staies","watches","does"],ex:"Vokal a + y → nur s: stays."}
+ ]},
+
+{id:"not",sec:"pfad",ico:"🚫",t:"Verneinung mit don't und doesn't",d:"Das s wandert ins doesn't, das Verb bleibt in der Grundform",
+ cards:[
+  {h:"don't und doesn't",b:`<table class="tbl"><tr><td>I / you</td><td><em>don't</em> like cheese</td></tr><tr class="hi"><td>he / she / it</td><td><em>doesn't</em> like apples</td></tr><tr><td>we / you / they</td><td><em>don't</em> like bananas</td></tr></table>
+   <p>don't = do not · doesn't = does not</p><p class="merk">don't / doesn't + Grundform</p>`,say:"I don't like cheese. He doesn't like apples. They don't like bananas."},
+  {h:"Das s wandert!",b:`<p>Im verneinten Satz steckt das <b>s</b> schon in <b>does</b>n't. Das Verb bleibt deshalb <b>ohne s</b>.</p>
+   ${EX("He like<em>s</em> cats. → He <em>doesn't</em> like cats.")}${NO("He doesn't likes cats.","zweimal s geht nicht")}${NO("He don't like cats.","he → doesn't")}${OK("He doesn't like cats.")}`,say:"He likes cats. He doesn't like cats."},
+  {h:"Das Verb nicht vergessen!",b:`<p>Nach don't / doesn't muss immer noch das <b>Verb</b> kommen.</p>
+   ${NO("He doesn't a sister.")}${OK("He doesn't <em>have</em> a sister.")}${NO("Mila doesn't has a brother.")}${OK("Mila doesn't <em>have</em> a brother.","has wird wieder zu have")}${OK("Ruby doesn't <em>do</em> her homework.","doesn't do ist richtig!")}`,say:"He doesn't have a sister. Mila doesn't have a brother. Ruby doesn't do her homework."},
+  {h:"Nicht bei to be und can",b:`<p>Bei <b>am, is, are</b> und bei <b>can</b> brauchst du kein don't / doesn't:</p>
+   ${OK("Ruby <em>isn't</em> crazy.")}${OK("They <em>aren't</em> at home.")}${OK("I <em>can't</em> sing.")}${NO("Ruby doesn't be crazy.")}${NO("I don't can sing.")}`,say:"Ruby isn't crazy. They aren't at home. I can't sing."}
+ ],
+ spick:["I, you, we, they + don't + Grundform: I don't like cheese.","he, she, it + doesn't + Grundform: He doesn't like cats.","Nicht: He doesn't likes. Das s steckt schon in doesn't.","Verb nicht vergessen: He doesn't have a sister.","to be und can: isn't, aren't, can't."],
+ tasks:[
+  {k:"gap",s:"Ryan [[doesn't like|don't like|doesn't likes]] cats.",sub:"Ryan",p:"he",ex:"Ryan → he → doesn't + Grundform."},
+  {k:"gap",s:"They [[don't live|doesn't live|don't lives]] in Germany.",sub:"They",p:"they",ex:"they → don't + Grundform."},
+  {k:"gap",s:"Lily [[doesn't have|doesn't has|don't have]] a cat.",sub:"Lily",p:"she",ex:"doesn't + have (nicht has)."},
+  {k:"gap",s:"I [[don't eat|doesn't eat|don't eats]] cheese.",sub:"I",p:"I",ex:"I → don't eat."},
+  {k:"gap",s:"Ruby [[isn't|doesn't be|don't be]] crazy.",ex:"Bei to be: isn't."},
+  {k:"gap",s:"I [[can't sing|don't can sing|can't sings]].",ex:"Bei can: can't + Grundform."},
+  {k:"gap",s:"Ruby [[doesn't do|doesn't|don't do]] her homework.",sub:"Ruby",p:"she",ex:"Das Verb (do) muss dabei sein: doesn't do."},
+  {k:"type",s:"My parents ___ in an office.",h:"not | work",a:["don't work","do not work"],sub:"My parents",p:"they",ex:"My parents → they → don't work."},
+  {k:"type",s:"Ella ___ to my school.",h:"not | go",a:["doesn't go","does not go"],sub:"Ella",p:"she",ex:"Ella → she → doesn't go."},
+  {k:"type",s:"I ___ cheese.",h:"not | like",a:["don't like","do not like"],sub:"I",p:"I",ex:"I → don't like."},
+  {k:"type",s:"Sherlock ___ Lily's cat.",h:"not | like",a:["doesn't like","does not like"],sub:"Sherlock",p:"he",ex:"Sherlock → he → doesn't like."},
+  {k:"type",s:"She ___ crazy.",h:"not | be",a:["isn't","is not"],ex:"to be: isn't."},
+  {k:"type",s:"We ___ her at school.",h:"not | can | see",a:["can't see","cannot see","can not see"],ex:"can't see."},
+  {k:"type",s:"My dad ___ a bike.",h:"not | have",a:["doesn't have","does not have"],sub:"My dad",p:"he",ex:"doesn't have."},
+  {k:"mc",q:"Mach daraus einen verneinten Satz.",e:"Mila has a brother.",o:["Mila doesn't have a brother.","Mila doesn't has a brother.","Mila doesn't a brother.","Mila don't have a brother."],sub:"Mila",p:"she",ex:"doesn't + have. has wird wieder zu have."},
+  {k:"mc",q:"Mach daraus einen verneinten Satz.",e:"Karam plays football.",o:["Karam doesn't play football.","Karam doesn't plays football.","Karam don't play football."],sub:"Karam",p:"he",ex:"doesn't + Grundform play."},
+  {k:"build",w:"Karam · not · play · football",a:"Karam doesn't play football.",x:["plays","don't"],sub:"Karam",p:"he",ex:"Karam → he → doesn't play."},
+  {k:"build",w:"the twins · not · watch · TV",a:"The twins don't watch TV.",x:["doesn't","watches"],sub:"The twins",p:"they",ex:"The twins → they → don't watch."}
+ ]},
+
+{id:"frage",sec:"pfad",ico:"❓",t:"Fragen mit Do und Does",d:"Do/Does + Subjekt + Grundform",
+ cards:[
+  {h:"Der Bauplan",b:`<p class="merk">Do / Does + Subjekt + Grundform … ?</p>
+   <table class="tbl"><tr><td><em>Do</em></td><td>you like chocolate?</td></tr><tr class="hi"><td><em>Does</em></td><td>Ryan like cats?</td></tr><tr><td><em>Do</em></td><td>your parents watch TV?</td></tr></table>
+   <p>Do oder Does steht ganz <b>vorne</b>.</p>`,say:"Do you like chocolate? Does Ryan like cats? Do your parents watch TV?"},
+  {h:"Do oder Does?",b:`${EX("<em>Do</em> I / you / we / they …?")}${EX("<em>Does</em> he / she / it …?","Ersetz-Probe: Lisa → she → Does")}
+   <p>Das s steckt in <b>Does</b>. Das Verb bleibt ohne s:</p>${NO("Does she likes cats?")}${OK("Does she <em>like</em> cats?")}${NO("Does Lisa gets up at 6.30?")}${OK("Does Lisa <em>get up</em> at 6.30?")}`,say:"Does she like cats? Does Lisa get up at six thirty?"},
+  {h:"Nimm das Verb aus der Aufgabe!",b:`<p>Bei „Bilde Fragen“ stehen die Stichworte da. Nimm <b>genau dieses Verb</b> und alle Wörter in der richtigen Reihenfolge.</p>
+   <div class="sw-line"><span>Ben</span><span>to say</span><span>"yes" or "no"?</span></div>
+   ${NO("Does Ben play \"yes\" or \"no\"?","falsches Verb")}${OK("Does Ben <em>say</em> \"yes\" or \"no\"?")}
+   <div class="sw-line"><span>your parents</span><span>to watch</span><span>TV</span></div>
+   ${NO("Do you parents watch TV?","your = deine, you = du")}${OK("Do <em>your</em> parents watch TV?")}`,say:"Does Ben say yes or no? Do your parents watch TV?"},
+  {h:"Bei to be und can: ohne do",b:`${OK("<em>Is</em> Ruby crazy?")}${OK("<em>Are</em> they at home?")}${OK("<em>Can</em> you sing?")}${NO("Does Ruby is crazy?")}`,say:"Is Ruby crazy? Are they at home? Can you sing?"}
+ ],
+ spick:["Do / Does + Subjekt + Grundform?","Do: I, you, we, they. Does: he, she, it.","Does she like cats? (nicht: likes)","Verb aus den Stichworten nehmen, alle Wörter verwenden.","to be / can: Is Ruby crazy? Can you sing?"],
+ tasks:[
+  {k:"gap",s:"[[Do|Does]] you like chocolate?",sub:"you",p:"you",ex:"you → Do."},
+  {k:"gap",s:"[[Does|Do]] Ryan play football?",sub:"Ryan",p:"he",ex:"Ryan → he → Does."},
+  {k:"gap",s:"[[Do|Does]] Ryan and Ruby live in Greenwich?",sub:"Ryan and Ruby",p:"they",ex:"Ryan and Ruby → they → Do."},
+  {k:"gap",s:"Does Lily [[like|likes]] Sherlock?",ex:"Nach Does: Grundform like."},
+  {k:"gap",s:"[[Does|Do]] your sister have a cat?",sub:"your sister",p:"she",ex:"your sister → she → Does."},
+  {k:"gap",s:"[[Do|Does]] your parents watch TV in the evenings?",sub:"your parents",p:"they",ex:"your parents → they → Do."},
+  {k:"gap",s:"Does school [[start|starts]] at nine o'clock?",ex:"Nach Does: Grundform start."},
+  {k:"gap",s:"[[Is|Does]] Ruby crazy?",ex:"to be: Is Ruby crazy? Kein does."},
+  {k:"gap",s:"[[Can|Do]] you sing?",ex:"can: Can you sing?"},
+  {k:"build",w:"Ben · to say · \"yes\" or \"no\"",a:"Does Ben say yes or no?",x:["play","Do","says"],sub:"Ben",p:"he",ex:"Ben → he → Does. Und das Verb aus der Aufgabe: say."},
+  {k:"build",w:"the boys · to play · football · in the playground",a:"Do the boys play football in the playground?",x:["Does","plays"],sub:"the boys",p:"they",ex:"the boys → they → Do."},
+  {k:"build",w:"your parents · to watch · TV",a:"Do your parents watch TV?",x:["you","Does"],sub:"your parents",p:"they",ex:"your parents (nicht you parents) → they → Do."},
+  {k:"build",w:"Lisa · to get up · at 6.30",a:"Does Lisa get up at 6.30?",x:["gets","Do"],sub:"Lisa",p:"she",ex:"Lisa → she → Does + get up."},
+  {k:"build",w:"her father · to ask · lots of questions",a:"Does her father ask lots of questions?",x:["asks","Do"],sub:"her father",p:"he",ex:"her father → he → Does + ask."},
+  {k:"build",w:"you · to wear · jeans · to school",a:"Do you wear jeans to school?",x:["Does","wears"],sub:"you",p:"you",ex:"you → Do."},
+  {k:"build",w:"Karam · to like · pizza",a:"Does Karam like pizza?",x:["likes","Do"],sub:"Karam",p:"he",ex:"Karam → he → Does + like."},
+  {k:"build",w:"your sister · to have · a cat",a:"Does your sister have a cat?",x:["has","Do"],sub:"your sister",p:"she",ex:"Does + have (nicht has)."},
+  {k:"mc",q:"Welche Frage ist richtig?",o:["Does she like cats?","Does she likes cats?","Do she like cats?"],sub:"she",p:"she",ex:"Does + Grundform."}
+ ]},
+
+{id:"kurz",sec:"pfad",ico:"💬",t:"Kurzantworten",d:"Yes, they do. No, he doesn't.",
+ cards:[
+  {h:"So geht die Kurzantwort",b:`<p class="merk">Yes / No + Personalpronomen + do / does (don't / doesn't)</p>
+   ${EX("Do you like carrots? – Yes, I <em>do</em>.")}${EX("Do you like cheese? – No, I <em>don't</em>.")}${EX("Does Ryan like cats? – No, he <em>doesn't</em>.")}${EX("Does Sherlock like Ryan? – Yes, he <em>does</em>.")}`,say:"Do you like carrots? Yes, I do. Do you like cheese? No, I don't. Does Ryan like cats? No, he doesn't."},
+  {h:"Personalpronomen statt Namen!",b:`<p>In der Kurzantwort steht <b>kein Name</b>, sondern I, you, he, she, it, we oder they.</p>
+   ${EX("Do Ben and Sarah go to the same school?")}${NO("Yes, Ben and Sarah do.")}${OK("Yes, <em>they</em> do.")}
+   ${EX("Does your father work on Sundays?")}${OK("No, <em>he</em> doesn't.")}`,say:"Do Ben and Sarah go to the same school? Yes, they do. Does your father work on Sundays? No, he doesn't."},
+  {h:"Kein Verb in der Kurzantwort",b:`${NO("Yes, I like.")}${NO("Yes, I do like.")}${OK("Yes, I <em>do</em>.")}
+   <p>Wer ist gefragt? Frage mit <b>you</b> → Antwort mit <b>I</b>. Frage mit <b>you and your friend</b> → <b>we</b>.</p>
+   ${EX("Do you and your friend listen to the same music? – Yes, <em>we</em> do.")}`,say:"Yes, I do. Do you and your friend listen to the same music? Yes, we do."},
+  {h:"Bei to be und can",b:`${EX("Is Ruby crazy? – No, she <em>isn't</em>.")}${EX("Are you busy? – Yes, I <em>am</em>.")}${EX("Can Karam sing? – Yes, he <em>can</em>.")}`,say:"Is Ruby crazy? No, she isn't. Can Karam sing? Yes, he can."}
+ ],
+ spick:["Yes, + Pronomen + do/does. No, + Pronomen + don't/doesn't.","Kein Name: Yes, they do. (nicht: Yes, Ben and Sarah do.)","Kein Verb: Yes, I do. (nicht: Yes, I like.)","you → I, you and your friend → we.","to be / can: No, she isn't. Yes, he can."],
+ tasks:[
+  {k:"short",e:"Do you like chocolate?",y:1,a:"Yes, I do.",o:["Yes, you do.","Yes, I like."],sub:"you",p:"I",ex:"Frage mit you → Antwort mit I."},
+  {k:"short",e:"Does your father work on Sundays?",y:0,a:"No, he doesn't.",o:["No, he don't.","No, your father doesn't."],sub:"your father",p:"he",ex:"your father → he → doesn't."},
+  {k:"short",e:"Do German children play hockey at school?",y:0,a:"No, they don't.",o:["No, they doesn't.","No, German children don't."],sub:"German children",p:"they",ex:"German children → they → don't."},
+  {k:"short",e:"Do you and your friend listen to the same music?",y:1,a:"Yes, we do.",o:["Yes, you do.","Yes, I do."],sub:"you and your friend",p:"we",ex:"you and your friend → we."},
+  {k:"short",e:"Do you do your homework after school?",y:1,a:"Yes, I do.",o:["Yes, I do my homework.","Yes, I does."],sub:"you",p:"I",ex:"Kurz: Yes, I do."},
+  {k:"short",e:"Does your neighbour copy from you?",y:0,a:"No, he doesn't.",o:["No, they don't.","No, he don't."],sub:"your neighbour",p:"he",ex:"your neighbour = ein Nachbar → he (oder she) → doesn't."},
+  {k:"short",e:"Does Sherlock like Lily's cat?",y:0,a:"No, he doesn't.",o:["No, Sherlock doesn't.","No, he don't."],sub:"Sherlock",p:"he",ex:"Sherlock → he → doesn't."},
+  {k:"short",e:"Does Ruby do silly things?",y:1,a:"Yes, she does.",o:["Yes, she do.","Yes, Ruby does."],sub:"Ruby",p:"she",ex:"Ruby → she → does."},
+  {k:"short",e:"Do Ryan and Ruby live in Greenwich?",y:1,a:"Yes, they do.",o:["Yes, they does.","Yes, Ryan and Ruby do."],sub:"Ryan and Ruby",p:"they",ex:"Ryan and Ruby → they → do."},
+  {k:"short",e:"Is Sherlock crazy?",y:1,a:"Yes, he is.",o:["Yes, he does.","Yes, he do."],ex:"Frage mit Is → Antwort mit is."},
+  {k:"short",e:"Does school start at nine o'clock?",y:1,a:"Yes, it does.",o:["Yes, it do.","Yes, school does."],sub:"school",p:"it",ex:"school → it → does."},
+  {k:"short",e:"Do your parents watch TV?",y:0,a:"No, they don't.",o:["No, they doesn't.","No, they don't watch."],sub:"your parents",p:"they",ex:"your parents → they → don't."},
+  {k:"short",e:"Can Karam sing?",y:1,a:"Yes, he can.",o:["Yes, he does.","Yes, he do."],ex:"Frage mit Can → Antwort mit can."},
+  {k:"short",e:"Does Mila have a brother?",y:1,a:"Yes, she does.",sub:"Mila",p:"she",ex:"Mila → she → does."},
+  {k:"short",e:"Do you like broccoli?",y:0,a:"No, I don't.",sub:"you",p:"I",ex:"you → I → don't."},
+  {k:"short",e:"Does Jonas play football?",y:1,a:"Yes, he does.",sub:"Jonas",p:"he",ex:"Jonas → he → does."}
+ ]},
+
+{id:"wh",sec:"pfad",ico:"🔎",t:"Fragen mit Fragewörtern",d:"When does school start? Where do the boys play?",
+ cards:[
+  {h:"Fragewort ganz vorne",b:`<p class="merk">Fragewort + do / does + Subjekt + Grundform … ?</p>
+   ${EX("<em>When</em> does school start?")}${EX("<em>Where</em> do the boys play football?")}${EX("<em>What</em> do your parents watch in the evenings?")}
+   <p>Danach geht es genau wie bei der Do/Does-Frage weiter.</p>`,say:"When does school start? Where do the boys play football? What do your parents watch in the evenings?"},
+  {h:"Welches Fragewort?",b:`<table class="tbl"><tr><td>What?</td><td>Was?</td></tr><tr><td>Where?</td><td>Wo? Wohin?</td></tr><tr><td>When?</td><td>Wann?</td></tr><tr><td>Why?</td><td>Warum?</td></tr></table>
+   <p>Schau auf die Antwort:</p>${EX("… – At nine o'clock. → <em>When</em>")}${EX("… – In the playground. → <em>Where</em>")}${EX("… – Videos. → <em>What</em>")}${EX("… – Because he is funny. → <em>Why</em>")}`,say:"What, where, when, why"},
+  {h:"Die Antwort: ein ganzer Satz",b:`<p>Auf eine Fragewort-Frage antwortest du mit einem Satz im Simple Present:</p>
+   ${EX("What do they watch in the evenings? – They <em>watch</em> videos.")}${EX("Where does Ella go to school? – She <em>goes</em> to a different school.")}`,say:"What do they watch in the evenings? They watch videos. Where does Ella go to school? She goes to a different school."}
+ ],
+ spick:["Fragewort + do/does + Subjekt + Grundform?","When = wann, Where = wo, What = was, Why = warum.","Antwort als Satz: They watch videos. She goes to a different school."],
+ tasks:[
+  {k:"gap",s:"[[When|Where|What]] does school start? – At nine o'clock.",ex:"Die Antwort ist eine Uhrzeit → When."},
+  {k:"gap",s:"[[Where|When|What]] do the boys play football? – In the playground.",ex:"Die Antwort ist ein Ort → Where."},
+  {k:"gap",s:"[[What|Where|When]] do your parents watch in the evenings? – Videos.",ex:"Die Antwort ist eine Sache → What."},
+  {k:"gap",s:"[[Where|What|Why]] does Ryan go at weekends? – To the park.",ex:"Ort → Where."},
+  {k:"gap",s:"[[What|Where|When]] does Lily eat for lunch? – Sandwiches.",ex:"Sache → What."},
+  {k:"gap",s:"[[Why|What|Where]] does Ruby like Sherlock? – Because he is funny.",ex:"Because → Why."},
+  {k:"gap",s:"When [[do|does]] you fly to Spain? – Every summer.",sub:"you",p:"you",ex:"you → do."},
+  {k:"gap",s:"Where [[does|do]] Ruby play netball? – At school.",sub:"Ruby",p:"she",ex:"Ruby → she → does."},
+  {k:"gap",s:"What does Karam [[like|likes]]? – Music.",ex:"Nach does: Grundform like."},
+  {k:"build",w:"When · you · to fly · to Spain",a:"When do you fly to Spain?",x:["does","flies"],sub:"you",p:"you",ex:"When + do + you + fly."},
+  {k:"build",w:"Where · the boys · to play · football",a:"Where do the boys play football?",x:["does","plays"],sub:"the boys",p:"they",ex:"Where + do + the boys + play."},
+  {k:"build",w:"What · your parents · to watch · in the evenings",a:"What do your parents watch in the evenings?",x:["does","you"],sub:"your parents",p:"they",ex:"What + do + your parents + watch."},
+  {k:"build",w:"When · school · to start",a:"When does school start?",x:["do","starts"],sub:"school",p:"it",ex:"school → it → does."},
+  {k:"type",s:"What do they watch in the evenings? – They ___ videos.",h:"watch",a:["watch"],ex:"They → watch, ohne s."},
+  {k:"type",s:"Where does Ella go to school? – She ___ to a different school.",h:"go",a:["goes"],ex:"She → goes."},
+  {k:"type",s:"When does Lily get up? – She ___ up at seven o'clock.",h:"get",a:["gets"],ex:"She → gets."}
+ ]},
+
+{id:"fehler",sec:"pfad",ico:"🕵️",t:"Fehler-Detektivin",d:"Die typischen Fehler aus Arbeiten finden und verbessern",
+ cards:[
+  {h:"Die 6 häufigsten Fehler",b:`${NO("Mila have a brother.","→ Mila has a brother.")}${NO("My sister does like strawberries.","→ My sister likes strawberries.")}${NO("He doesn't likes cats.","→ He doesn't like cats.")}
+   ${NO("He doesn't a sister.","→ He doesn't have a sister.")}${NO("Does Ben play …? (Stichwort: to say)","→ Does Ben say …?")}${NO("Yes, Ben and Sarah do.","→ Yes, they do.")}`},
+  {h:"Dein Check vor der Abgabe",b:`<ol><li><b>Wer?</b> he, she, it → s, does, doesn't</li><li><b>Positiver Satz?</b> kein does, nur Verb + s</li><li><b>Nach do/does/don't/doesn't:</b> Grundform ohne s</li><li><b>Verb da?</b> doesn't <u>have</u></li><li><b>Kurzantwort:</b> Pronomen + do/does</li><li><b>Rechtschreibung:</b> goes, watches, hurries, has</li></ol>`}
+ ],
+ spick:["Wer? he/she/it → s, does, doesn't.","Positiver Satz: kein does.","Nach do/does: Grundform.","Verb nicht vergessen.","Kurzantwort mit Pronomen."],
+ tasks:[
+  {k:"fix",s:"Mila {have} a brother.",c:"Mila has a brother.",ex:"Mila → she → has."},
+  {k:"fix",s:"He doesn't {likes} cats.",c:"He doesn't like cats.",ex:"Nach doesn't: Grundform."},
+  {k:"fix",s:"Does she {plays} football?",c:"Does she play football?",ex:"Nach Does: Grundform."},
+  {k:"fix",s:"My sister {does} like strawberries.",c:"My sister likes strawberries.",ex:"Kein does im normalen Satz."},
+  {k:"fix",s:"Ryan {don't} like cheese.",c:"Ryan doesn't like cheese.",ex:"Ryan → he → doesn't."},
+  {k:"fix",s:"{Do} Lily like pizza?",c:"Does Lily like pizza?",ex:"Lily → she → Does."},
+  {k:"fix",s:"Do {you} parents watch TV?",c:"Do your parents watch TV?",ex:"your parents = deine Eltern."},
+  {k:"fix",s:"She {gos} to school every day.",c:"She goes to school every day.",ex:"o → goes."},
+  {k:"fix",s:"He {watchs} TV after school.",c:"He watches TV after school.",ex:"Zischlaut → watches."},
+  {k:"fix",s:"Dad {hurrys} to work.",c:"Dad hurries to work.",ex:"Konsonant + y → hurries."},
+  {k:"fix",s:"Do you like chocolate? – Yes, I {like}.",c:"Yes, I do.",ex:"Kurzantwort mit do: Yes, I do."},
+  {k:"fix",s:"Ryan and Ruby {lives} in Greenwich.",c:"Ryan and Ruby live in Greenwich.",ex:"they → kein s."},
+  {k:"mc",q:"Welche Kurzantwort ist richtig?",e:"Do Ben and Sarah go to the same school?",o:["Yes, they do.","Yes, Ben and Sarah do.","Yes, they does."],ex:"Pronomen statt Namen."},
+  {k:"mc",q:"Welcher Satz ist richtig?",o:["He doesn't have a sister.","He doesn't a sister.","He doesn't has a sister."],ex:"Das Verb (have) muss dabei sein."},
+  {k:"mc",q:"Stichworte: Ben / to say / \"yes\" or \"no\"? Welche Frage passt?",o:["Does Ben say \"yes\" or \"no\"?","Does Ben play \"yes\" or \"no\"?","Do Ben say \"yes\" or \"no\"?"],ex:"Verb aus der Aufgabe nehmen: say."},
+  {k:"mc",q:"Welcher Satz ist richtig?",o:["My mum likes tea.","My mum does like tea.","My mum like tea."],ex:"Kein does im normalen Satz."}
+ ]},
+
+/* ---------------- Übungsteil ---------------- */
+{id:"u-mark",sec:"ueben",ico:"🖍️",t:"Üben: Text markieren",d:"Alle Simple-Present-Formen im Text finden",n:5,
+ cards:[{h:"So geht's",b:`<p>Wie auf dem Arbeitsblatt: Lies den Text und <b>markiere alle Verbformen im Simple Present</b>. Auch <b>am, is, are</b> und <b>don't / doesn't</b> mit dem Verb zählen.</p><p>Tippe die Wörter an, dann auf <b>Prüfen</b>.</p>`}],
+ spick:["Simple Present: live, likes, goes, has, doesn't like, I'm, is, are."],
+ tasks:[
+  {k:"mark",tx:"Hi there! {I'm} Ryan Eaton and I {live} in Greenwich with my parents and my twin sister, Ruby. My mum and dad {are} web designers. They {work} together in their office at home. My mum {is} cool. In her free time she {paints} pictures and {sells} them at Greenwich Market. Ruby {does} silly things.",ex:"I’m, live, are, work, is, paints, sells, does."},
+  {k:"mark",tx:"Hi! {I'm} Ruby. Sherlock {is} crazy. When he {sees} Lily's cat, he {hides} behind the sofa. Our cousin Ella {is} an only child. She {goes} to a different school, but we {see} her at weekends.",ex:"I’m, is, sees, hides, is, goes, see."},
+  {k:"mark",tx:"Karam {lives} in London with his family. He {loves} music and he {plays} the guitar every day. His brother {doesn't} {like} music. He {watches} football on TV.",ex:"lives, loves, plays, doesn't like, watches."},
+  {k:"mark",tx:"Lily {gets} up early. She always {has} breakfast with her mum. After breakfast she {goes} to school. Lily {likes} art, but she {doesn't} {like} sports. After school she often {meets} her friends in the park.",ex:"gets, has, goes, likes, doesn't like, meets."},
+  {k:"mark",tx:"My grandma {is} very funny. She {lives} near the river. She {doesn't} {have} a TV. At weekends we {see} her and she {cooks} soup for us.",ex:"is, lives, doesn't have, see, cooks."},
+  {k:"mark",tx:"Sherlock {is} a dog. He {sleeps} on the sofa and he {eats} lots of food. He {doesn't} {like} Lily's cat. Ryan and Ruby {love} Sherlock.",ex:"is, sleeps, eats, doesn't like, love."}
+ ]},
+
+{id:"u-luecke",sec:"ueben",ico:"📝",t:"Üben: Lückentext mit Verbform",d:"Verben in die richtige Form setzen, wie auf G9a",n:12,
+ cards:[{h:"So geht's",b:`<p>Setze das Verb in der Klammer in die <b>richtige Form</b> und tippe es ein.</p>${EX("They ___ (not | live) in Germany. → <em>don't live</em>")}${EX("Ryan's mum ___ (paint) pictures. → <em>paints</em>")}<p class="small">Mit der ’-Taste unter dem Feld bekommst du das Apostroph.</p>`}],
+ spick:["he/she/it + s · I/you/we/they ohne s","don't/doesn't + Grundform","isn't · can't"],
+ tasks:[
+  {k:"type",s:"Ryan and Ruby ___ in Greenwich.",h:"live",a:["live"],sub:"Ryan and Ruby",p:"they"},
+  {k:"type",s:"They ___ in Germany.",h:"not | live",a:["don't live","do not live"],sub:"They",p:"they"},
+  {k:"type",s:"Mr and Mrs Eaton ___ together at home.",h:"work",a:["work"],sub:"Mr and Mrs Eaton",p:"they"},
+  {k:"type",s:"Mrs Eaton ___ pictures.",h:"paint",a:["paints"],sub:"Mrs Eaton",p:"she"},
+  {k:"type",s:"She ___ them at Greenwich Market.",h:"sell",a:["sells"],sub:"She",p:"she"},
+  {k:"type",s:"Ruby ___ silly things.",h:"do",a:["does"],sub:"Ruby",p:"she"},
+  {k:"type",s:"Sherlock ___ behind the sofa.",h:"hide",a:["hides"],sub:"Sherlock",p:"he"},
+  {k:"type",s:"He ___ cats.",h:"not | like",a:["doesn't like","does not like"],sub:"He",p:"he"},
+  {k:"type",s:"Ella ___ to a different school.",h:"go",a:["goes"],sub:"Ella",p:"she"},
+  {k:"type",s:"Ryan ___ videos after school.",h:"watch",a:["watches"],sub:"Ryan",p:"he"},
+  {k:"type",s:"Karam ___ a brother.",h:"have",a:["has"],sub:"Karam",p:"he"},
+  {k:"type",s:"Karam's brother ___ a bike.",h:"not | have",a:["doesn't have","does not have"],sub:"Karam's brother",p:"he"},
+  {k:"type",s:"Lily ___ to school in the morning.",h:"hurry",a:["hurries"],sub:"Lily",p:"she"},
+  {k:"type",s:"I ___ cheese.",h:"not | eat",a:["don't eat","do not eat"],sub:"I",p:"I"},
+  {k:"type",s:"We ___ football at weekends.",h:"play",a:["play"],sub:"We",p:"we"},
+  {k:"type",s:"My dad ___ the dishes.",h:"wash",a:["washes"],sub:"My dad",p:"he"},
+  {k:"type",s:"My little sister ___ at school.",h:"not | be",a:["isn't","is not"]},
+  {k:"type",s:"Ryan ___ , but he can dance.",h:"not | can | sing",a:["can't sing","cannot sing","can not sing"]},
+  {k:"type",s:"Our teacher ___ \"Good morning!\"",h:"say",a:["says"],sub:"Our teacher",p:"she"},
+  {k:"type",s:"The birds ___ in the sky.",h:"fly",a:["fly"],sub:"The birds",p:"they"},
+  {k:"type",s:"Ruby ___ her cousin.",h:"miss",a:["misses"],sub:"Ruby",p:"she"},
+  {k:"type",s:"My grandma ___ a bike.",h:"not | ride",a:["doesn't ride","does not ride"],sub:"My grandma",p:"she"},
+  {k:"type",s:"In Germany we ___ a school uniform.",h:"not | wear",a:["don't wear","do not wear"],sub:"we",p:"we"},
+  {k:"type",s:"Ruby ___ her homework after school.",h:"not | do",a:["doesn't do","does not do"],sub:"Ruby",p:"she"}
+ ]},
+
+{id:"u-fragen",sec:"ueben",ico:"🧩",t:"Üben: Fragen aus Stichworten",d:"Ganze Fragen schreiben, wie auf G11a",n:10,
+ cards:[{h:"So geht's",b:`<p>Bilde aus den Stichworten eine <b>Frage</b> und tippe sie ganz ein.</p><div class="sw-line"><span>Ben and Sarah</span><span>to go</span><span>to the same school</span></div>${OK("Do Ben and Sarah go to the same school?")}<p class="small">Denk an: Do oder Does? Grundform! Alle Wörter aus den Stichworten. Großer Anfang und Fragezeichen.</p>`}],
+ spick:["Do / Does + Subjekt + Grundform … ?","Verb aus den Stichworten nehmen."],
+ tasks:[
+  {k:"write",w:"Ryan · to like · cats",a:["Does Ryan like cats?"],sub:"Ryan",p:"he"},
+  {k:"write",w:"you · to play · the guitar",a:["Do you play the guitar?"],sub:"you",p:"you"},
+  {k:"write",w:"your sister · to have · a bike",a:["Does your sister have a bike?"],sub:"your sister",p:"she"},
+  {k:"write",w:"Karam and Lily · to go · to the same school",a:["Do Karam and Lily go to the same school?"],sub:"Karam and Lily",p:"they"},
+  {k:"write",w:"Sherlock · to sleep · on the sofa",a:["Does Sherlock sleep on the sofa?"],sub:"Sherlock",p:"he"},
+  {k:"write",w:"your parents · to work · at home",a:["Do your parents work at home?"],sub:"your parents",p:"they"},
+  {k:"write",w:"Ruby · to do · her homework · after school",a:["Does Ruby do her homework after school?"],sub:"Ruby",p:"she"},
+  {k:"write",w:"you · to read · comics",a:["Do you read comics?"],sub:"you",p:"you"},
+  {k:"write",w:"Mrs Eaton · to sell · pictures",a:["Does Mrs Eaton sell pictures?"],sub:"Mrs Eaton",p:"she"},
+  {k:"write",w:"the twins · to watch · videos · at weekends",a:["Do the twins watch videos at weekends?"],sub:"the twins",p:"they"},
+  {k:"write",w:"Lily · to eat · pizza",a:["Does Lily eat pizza?"],sub:"Lily",p:"she"},
+  {k:"write",w:"your grandma · to cook · for you",a:["Does your grandma cook for you?"],sub:"your grandma",p:"she"},
+  {k:"write",w:"you and your friend · to listen to · the same music",a:["Do you and your friend listen to the same music?"],sub:"you and your friend",p:"we"},
+  {k:"write",w:"school · to start · at eight o'clock",a:["Does school start at eight o'clock?","Does school start at 8 o'clock?"],sub:"school",p:"it"},
+  {k:"write",w:"Ben · to say · hello · to his teacher",a:["Does Ben say hello to his teacher?"],sub:"Ben",p:"he"},
+  {k:"write",w:"your dad · to wash · the dishes",a:["Does your dad wash the dishes?"],sub:"your dad",p:"he"},
+  {k:"write",w:"Mrs Jones · to want · to go by bus",a:["Does Mrs Jones want to go by bus?"],sub:"Mrs Jones",p:"she"},
+  {k:"write",w:"your neighbour · to copy · from you",a:["Does your neighbour copy from you?"],sub:"your neighbour",p:"he"}
+ ]},
+
+{id:"u-kurz",sec:"ueben",ico:"✅",t:"Üben: Kurzantworten",d:"Kurzantworten selbst schreiben",n:10,
+ cards:[{h:"So geht's",b:`<p>Lies die Frage und schau auf ✓ (Ja) oder ✗ (Nein). Tippe die <b>Kurzantwort</b> ein.</p>${EX("Does your father work on Sundays? ✗ → <em>No, he doesn't.</em>")}<p class="small">Pronomen statt Namen, kein Verb!</p>`}],
+ spick:["Yes, + Pronomen + do/does.","No, + Pronomen + don't/doesn't."],
+ tasks:[
+  {k:"short",e:"Does Ryan have a twin sister?",y:1,a:"Yes, he does.",sub:"Ryan",p:"he"},
+  {k:"short",e:"Do your parents like pizza?",y:0,a:"No, they don't.",sub:"your parents",p:"they"},
+  {k:"short",e:"Does Lily play the guitar?",y:0,a:"No, she doesn't.",sub:"Lily",p:"she"},
+  {k:"short",e:"Do you and Ruby go to the same school?",y:1,a:"Yes, we do.",sub:"you and Ruby",p:"we"},
+  {k:"short",e:"Does school start at eight o'clock?",y:0,a:"No, it doesn't.",sub:"school",p:"it"},
+  {k:"short",e:"Do you like cheese?",y:1,a:"Yes, I do.",sub:"you",p:"I"},
+  {k:"short",e:"Do Ben and Sarah live in London?",y:1,a:"Yes, they do.",sub:"Ben and Sarah",p:"they"},
+  {k:"short",e:"Does your mum work at home?",y:0,a:"No, she doesn't.",sub:"your mum",p:"she"},
+  {k:"short",e:"Does Sherlock sleep on the sofa?",y:1,a:"Yes, he does.",sub:"Sherlock",p:"he"},
+  {k:"short",e:"Do you watch videos at weekends?",y:0,a:"No, I don't.",sub:"you",p:"I"},
+  {k:"short",e:"Do the boys play football in the playground?",y:1,a:"Yes, they do.",sub:"the boys",p:"they"},
+  {k:"short",e:"Does Karam love music?",y:1,a:"Yes, he does.",sub:"Karam",p:"he"},
+  {k:"short",e:"Is Ruby crazy?",y:0,a:"No, she isn't."},
+  {k:"short",e:"Can Lily sing?",y:1,a:"Yes, she can."},
+  {k:"short",e:"Does your grandpa ride a bike?",y:0,a:"No, he doesn't.",sub:"your grandpa",p:"he"},
+  {k:"short",e:"Do Mr and Mrs Eaton work together?",y:1,a:"Yes, they do.",sub:"Mr and Mrs Eaton",p:"they"}
+ ]},
+
+{id:"u-wh",sec:"ueben",ico:"🔍",t:"Üben: Fragewort-Fragen",d:"When, Where, What, Why: die passende Frage schreiben",n:10,
+ cards:[{h:"So geht's",b:`<p>Schreib die Frage mit dem Fragewort. Die Antwort steht schon da.</p><div class="sw-line"><span>When</span><span>school</span><span>to start</span></div><p class="small">– School starts at nine o'clock.</p>${OK("When does school start?")}`}],
+ spick:["Fragewort + do/does + Subjekt + Grundform?"],
+ tasks:[
+  {k:"write",w:"When · school · to start",pre:"– School starts at nine o'clock.",a:["When does school start?"],sub:"school",p:"it"},
+  {k:"write",w:"Where · the boys · to play · football",pre:"– In the playground.",a:["Where do the boys play football?"],sub:"the boys",p:"they"},
+  {k:"write",w:"What · your parents · to watch · in the evenings",pre:"– They watch videos.",a:["What do your parents watch in the evenings?"],sub:"your parents",p:"they"},
+  {k:"write",w:"When · you · to fly · to Spain",pre:"– We fly to Spain every summer.",a:["When do you fly to Spain?"],sub:"you",p:"you"},
+  {k:"write",w:"Where · Ryan and Ruby · to live",pre:"– In Greenwich.",a:["Where do Ryan and Ruby live?"],sub:"Ryan and Ruby",p:"they"},
+  {k:"write",w:"What · Mrs Eaton · to sell",pre:"– Pictures.",a:["What does Mrs Eaton sell?"],sub:"Mrs Eaton",p:"she"},
+  {k:"write",w:"Where · Sherlock · to hide",pre:"– Behind the sofa.",a:["Where does Sherlock hide?"],sub:"Sherlock",p:"he"},
+  {k:"write",w:"What · Karam · to play",pre:"– The guitar.",a:["What does Karam play?"],sub:"Karam",p:"he"},
+  {k:"write",w:"When · Lily · to get up",pre:"– At seven o'clock.",a:["When does Lily get up?"],sub:"Lily",p:"she"},
+  {k:"write",w:"What · you · to eat · for lunch",pre:"– Sandwiches.",a:["What do you eat for lunch?"],sub:"you",p:"you"},
+  {k:"write",w:"Why · Ruby · to like · Sherlock",pre:"– Because he is funny.",a:["Why does Ruby like Sherlock?"],sub:"Ruby",p:"she"},
+  {k:"write",w:"Where · Ella · to go · to school",pre:"– She goes to a different school.",a:["Where does Ella go to school?"],sub:"Ella",p:"she"},
+  {k:"type",s:"What do they watch in the evenings? – They ___ videos.",h:"watch",a:["watch"]},
+  {k:"type",s:"Where do the boys play football? – They ___ football in the playground.",h:"play",a:["play"]},
+  {k:"type",s:"When does school start? – It ___ at nine o'clock.",h:"start",a:["starts"]}
+ ]},
+
+{id:"u-bingo",sec:"ueben",ico:"🎲",t:"Üben: Bingo-Sätze",d:"Sätze und Fragen über die Bingo-Karte",n:10,
+ cards:[{h:"So geht's",b:`<p>Wie beim Bingo „Who has got a BINGO?!“: Auf der Karte steht, wer was hat oder mag (✓) und wer nicht (✗).</p>${EX("Mila ✓ a brother (have) → <em>Mila has a brother.</em>")}${EX("Felix ✗ a cat (have) → <em>Felix doesn't have a cat.</em>")}<p>Manchmal sollst du die Person auch <b>fragen</b> (Do you …?) oder ihre <b>Kurzantwort</b> schreiben.</p>`}],
+ spick:["✓ → Name + Verb mit s: Mila has a brother.","✗ → Name + doesn't + Grundform: Felix doesn't have a cat.","Frage an die Person: Do you …? Antwort: Yes, I do. / No, I don't."],
+ tasks:[
+  {k:"bingo",n:"Mila",it:"a brother",ico:"👦",y:1,v:"have",a:["Mila has a brother.","Mila has got a brother."],p:"she"},
+  {k:"bingo",n:"Julia",it:"a sister",ico:"👧",y:1,v:"have",a:["Julia has a sister.","Julia has got a sister."],p:"she"},
+  {k:"bingo",n:"Paul",it:"an aunt",ico:"👩",y:1,v:"have",a:["Paul has an aunt.","Paul has got an aunt."],p:"he"},
+  {k:"bingo",n:"David",it:"dogs",ico:"🐶",y:1,v:"like",a:["David likes dogs."],p:"he"},
+  {k:"bingo",n:"Jonas",it:"football",ico:"⚽",y:1,v:"play",a:["Jonas plays football."],p:"he"},
+  {k:"bingo",n:"Anna",it:"German class",ico:"📕",y:1,v:"like",a:["Anna likes German class."],p:"she"},
+  {k:"bingo",n:"Merle",it:"bananas",ico:"🍌",y:1,v:"like",a:["Merle likes bananas."],p:"she"},
+  {k:"bingo",n:"Felix",it:"a cat",ico:"🐱",y:0,v:"have",a:["Felix doesn't have a cat.","Felix hasn't got a cat.","Felix does not have a cat."],p:"he"},
+  {k:"bingo",n:"Yasmine",it:"videos",ico:"📺",y:0,v:"watch",a:["Yasmine doesn't watch videos.","Yasmine does not watch videos."],p:"she"},
+  {k:"bingo",n:"Ben",it:"broccoli",ico:"🥦",y:0,v:"like",a:["Ben doesn't like broccoli.","Ben does not like broccoli."],p:"he"},
+  {k:"bingo",n:"Lisa",it:"a cousin",ico:"🧒",y:0,v:"have",a:["Lisa doesn't have a cousin.","Lisa hasn't got a cousin.","Lisa does not have a cousin."],p:"she"},
+  {k:"bingo",n:"Tom",it:"cheese",ico:"🧀",y:0,v:"like",a:["Tom doesn't like cheese.","Tom does not like cheese."],p:"he"},
+  {k:"bingo",n:"Jonas",it:"football",ico:"⚽",y:1,v:"play",ask:1,a:["Do you play football?"]},
+  {k:"bingo",n:"Felix",it:"a cat",ico:"🐱",y:0,v:"have",ask:1,a:["Do you have a cat?","Have you got a cat?"]},
+  {k:"bingo",n:"Merle",it:"German class",ico:"📕",y:1,v:"like",ask:1,a:["Do you like German class?"]},
+  {k:"short",e:"Merle, do you like German class?",y:1,a:"Yes, I do.",sub:"you",p:"I"},
+  {k:"short",e:"Felix, do you have a cat?",y:0,a:"No, I don't.",sub:"you",p:"I"},
+  {k:"write",w:"Mila · to have · a brother",a:["Does Mila have a brother?"],sub:"Mila",p:"she",ex:"Du fragst über Mila (nicht Mila selbst): Does Mila …?"}
+ ]}
+];
+
+/* ---------------- Probe-Arbeit: Teile mit eigenen Aufgaben (zufällig gezogen) ---------------- */
+const PROBE={id:"probe",test:true,ico:"📄",t:"Probe-Arbeit",d:"6 Teile mit Punkten wie in der Klassenarbeit, Auswertung am Schluss",
+ cards:[{h:"Deine Probe-Arbeit",b:`<p>So wie in der Klassenarbeit: <b>6 Teile</b>, ohne Tipps und ohne Denkfrage. Ob es richtig war, siehst du erst <b>am Schluss</b>.</p><ol><li>Verbformen einsetzen</li><li>Sätze verneinen</li><li>Fragen aus Stichworten</li><li>Kurzantworten</li><li>Fragen mit Fragewörtern</li><li>Fehler finden</li></ol><p class="small">Nimm dir Zeit und mach am Ende den Check: Wer? s? Grundform? Verb da?</p>`}],
+ spick:["Wer? he/she/it → s, does, doesn't.","Nach do/does/don't/doesn't: Grundform.","Kurzantwort: Pronomen + do/does.","goes, watches, hurries, has."],
+ parts:[
+  {h:"Teil 1: Verbformen",b:"Setze das Verb in der richtigen Form ein.",ico:"📝",n:8,pts:1,ch:"u-luecke",pool:[
+   {k:"type",s:"My brother ___ the guitar.",h:"play",a:["plays"]},
+   {k:"type",s:"Ryan and Karam ___ to the same school.",h:"go",a:["go"]},
+   {k:"type",s:"Lily ___ TV after school.",h:"watch",a:["watches"]},
+   {k:"type",s:"Our cat ___ on my bed.",h:"sleep",a:["sleeps"]},
+   {k:"type",s:"My mum ___ about my homework.",h:"worry",a:["worries"]},
+   {k:"type",s:"Ruby ___ a twin brother.",h:"have",a:["has"]},
+   {k:"type",s:"Grandpa ___ the dishes.",h:"do",a:["does"]},
+   {k:"type",s:"My dad often ___ to London.",h:"fly",a:["flies"]},
+   {k:"type",s:"Ella ___ with her grandma at weekends.",h:"stay",a:["stays"]},
+   {k:"type",s:"She ___ her friends.",h:"miss",a:["misses"]},
+   {k:"type",s:"I ___ tomatoes.",h:"not | like",a:["don't like","do not like"],neg:1},
+   {k:"type",s:"Karam ___ cheese.",h:"not | eat",a:["doesn't eat","does not eat"],neg:1},
+   {k:"type",s:"They ___ a garden.",h:"not | have",a:["don't have","do not have"],neg:1},
+   {k:"type",s:"Sherlock ___ a cat.",h:"not | be",a:["isn't","is not"],neg:1},
+   {k:"type",s:"We ___ to school on Sundays.",h:"not | go",a:["don't go","do not go"],neg:1},
+   {k:"type",s:"My sister ___ her bike.",h:"not | ride",a:["doesn't ride","does not ride"],neg:1}]},
+  {h:"Teil 2: Verneinung",b:"Schreib den Satz verneint auf.",ico:"🚫",n:4,pts:2,ch:"not",pool:[
+   {k:"write",pre:"Ruby has a cat.",a:["Ruby doesn't have a cat.","Ruby does not have a cat.","Ruby hasn't got a cat."]},
+   {k:"write",pre:"We play football on Mondays.",a:["We don't play football on Mondays.","We do not play football on Mondays."]},
+   {k:"write",pre:"My sister goes to the park.",a:["My sister doesn't go to the park.","My sister does not go to the park."]},
+   {k:"write",pre:"Karam watches videos.",a:["Karam doesn't watch videos.","Karam does not watch videos."]},
+   {k:"write",pre:"The twins live in London.",a:["The twins don't live in London.","The twins do not live in London."]},
+   {k:"write",pre:"Lily does her homework.",a:["Lily doesn't do her homework.","Lily does not do her homework."]},
+   {k:"write",pre:"Sherlock hides behind the sofa.",a:["Sherlock doesn't hide behind the sofa.","Sherlock does not hide behind the sofa."]},
+   {k:"write",pre:"I eat pizza at weekends.",a:["I don't eat pizza at weekends.","I do not eat pizza at weekends."]}]},
+  {h:"Teil 3: Fragen bilden",b:"Bilde Fragen aus den Stichworten.",ico:"🧩",n:5,pts:2,ch:"u-fragen",pool:[
+   {k:"write",w:"Ruby · to like · Sherlock",a:["Does Ruby like Sherlock?"]},
+   {k:"write",w:"your friends · to play · netball",a:["Do your friends play netball?"]},
+   {k:"write",w:"Mr Eaton · to cook · lunch",a:["Does Mr Eaton cook lunch?"]},
+   {k:"write",w:"you · to ride · your bike · to school",a:["Do you ride your bike to school?"]},
+   {k:"write",w:"your teacher · to give · you · lots of homework",a:["Does your teacher give you lots of homework?"]},
+   {k:"write",w:"Lily and Ruby · to sing · together",a:["Do Lily and Ruby sing together?"]},
+   {k:"write",w:"the dog · to sleep · in the garden",a:["Does the dog sleep in the garden?"]},
+   {k:"write",w:"your brother · to have · a smartphone",a:["Does your brother have a smartphone?","Has your brother got a smartphone?"]},
+   {k:"write",w:"you · to wash · the dishes",a:["Do you wash the dishes?"]},
+   {k:"write",w:"Karam · to listen to · music · in the morning",a:["Does Karam listen to music in the morning?"]}]},
+  {h:"Teil 4: Kurzantworten",b:"Schreib die Kurzantwort. ✓ = Ja, ✗ = Nein.",ico:"✅",n:5,pts:1,ch:"u-kurz",pool:[
+   {k:"short",e:"Does Ryan have a twin sister?",y:1,a:"Yes, he does."},
+   {k:"short",e:"Do your parents like pizza?",y:0,a:"No, they don't."},
+   {k:"short",e:"Does Lily play the guitar?",y:0,a:"No, she doesn't."},
+   {k:"short",e:"Do you and Ruby go to the same school?",y:1,a:"Yes, we do."},
+   {k:"short",e:"Does school start at eight o'clock?",y:0,a:"No, it doesn't."},
+   {k:"short",e:"Do you like cheese?",y:1,a:"Yes, I do."},
+   {k:"short",e:"Is Sherlock crazy?",y:1,a:"Yes, he is."},
+   {k:"short",e:"Can Karam sing?",y:0,a:"No, he can't."},
+   {k:"short",e:"Do Ben and Sarah live in London?",y:1,a:"Yes, they do."},
+   {k:"short",e:"Does your grandma cook soup?",y:1,a:"Yes, she does."}]},
+  {h:"Teil 5: Fragewörter",b:"Schreib die Frage mit dem Fragewort.",ico:"🔍",n:3,pts:2,ch:"u-wh",pool:[
+   {k:"write",w:"Where · Karam · to live",pre:"– He lives in London.",a:["Where does Karam live?"]},
+   {k:"write",w:"When · the twins · to get up",pre:"– At seven o'clock.",a:["When do the twins get up?"]},
+   {k:"write",w:"What · Lily · to eat · for lunch",pre:"– She eats a sandwich.",a:["What does Lily eat for lunch?"]},
+   {k:"write",w:"Where · you · to play · football",pre:"– In the park.",a:["Where do you play football?"]},
+   {k:"write",w:"What · Ruby and Ryan · to watch · at weekends",pre:"– Videos.",a:["What do Ruby and Ryan watch at weekends?"]},
+   {k:"write",w:"When · Mrs Eaton · to sell · her pictures",pre:"– At weekends.",a:["When does Mrs Eaton sell her pictures?"]}]},
+  {h:"Teil 6: Fehler finden",b:"In jedem Satz ist ein Fehler. Tippe das falsche Wort an.",ico:"🕵️",n:4,pts:1,ch:"fehler",pool:[
+   {k:"fix",s:"Karam {have} a sister.",c:"Karam has a sister."},
+   {k:"fix",s:"She doesn't {plays} the guitar.",c:"She doesn't play the guitar."},
+   {k:"fix",s:"Does Ryan {likes} pizza?",c:"Does Ryan like pizza?"},
+   {k:"fix",s:"My friend {go} to my school.",c:"My friend goes to my school."},
+   {k:"fix",s:"Lily {don't} like cheese.",c:"Lily doesn't like cheese."},
+   {k:"fix",s:"He {watchs} TV.",c:"He watches TV."},
+   {k:"fix",s:"My mum {does} like tea.",c:"My mum likes tea."},
+   {k:"fix",s:"{Do} Ruby have a cat?",c:"Does Ruby have a cat?"}]}
+ ]};
+
+/* ================= Kapitel und Sterne ================= */
+const ALLCH=CH.concat([PROBE]);
+const chOf=id=>ALLCH.find(c=>c.id===id);
+const stars=c=>S.best[c.id]||0;
+const THIRD=["he","she","it"];
+const PRON=["i","you","he","she","it","we","they"];
+
+/* ================= Text-Hilfen ================= */
+const ap=s=>String(s).replace(/[’‘`´]/g,"'");
+function norm(s){s=ap(s).toLowerCase().replace(/[“”"]/g," ").replace(/(\d)\.(\d)/g,"$1:$2").replace(/[.!?,;]/g," ").replace(/\s+/g," ").trim();
+  return s.replace(/\bdoesn't\b/g,"does not").replace(/\bdon't\b/g,"do not").replace(/\bisn't\b/g,"is not").replace(/\baren't\b/g,"are not")
+    .replace(/\bhasn't\b/g,"has not").replace(/\bhaven't\b/g,"have not").replace(/\bcan't\b|\bcannot\b/g,"can not").replace(/\bi'm\b/g,"i am")}
+const sameAns=(typed,list)=>list.some(a=>norm(a)===norm(typed));
+function third(b){if(b==="have")return "has";if(/(o|s|sh|ch|x|z)$/.test(b))return b+"es";if(/[^aeiou]y$/.test(b))return b.slice(0,-1)+"ies";return b+"s"}
+function base(w){if(w==="has")return "have";if(w==="does")return "do";if(w==="goes")return "go";if(/[^aeiou]ies$/.test(w))return w.slice(0,-3)+"y";if(/(ss|sh|ch|x|z)es$/.test(w))return w.slice(0,-2);if(/s$/.test(w)&&!/ss$/.test(w))return w.slice(0,-1);return w}
+function hl(text,sub){const e=esc(text);if(!sub)return e;const i=e.toLowerCase().indexOf(esc(sub).toLowerCase());if(i<0)return e;
+  return e.slice(0,i)+`<mark class="kw">${e.slice(i,i+esc(sub).length)}</mark>`+e.slice(i+esc(sub).length)}
+
+/* Warum war es falsch? Ein Satz, der zum typischen Fehler passt (Vergleich getippt / richtig) */
+const APO=s=>ap(s).replace(/\b(doesn|don|isn|aren|can|hasn|haven)t\b/gi,"$1't");
+function hintFor(typed,target){
+  if(APO(typed)!==ap(typed)){if(norm(APO(typed))===norm(target))return "Fast! Nur das Apostroph fehlt: doesn’t, don’t, isn’t. Unter dem Feld ist die ’-Taste.";
+    return "Apostroph nicht vergessen (doesn’t, don’t)! "+hintFor(APO(typed),target)}
+  const A=norm(typed).split(" ").filter(Boolean),B=norm(target).split(" ").filter(Boolean);
+  if(!A.length)return "";
+  const miss=B.filter(w=>!A.includes(w)),extra=A.filter(w=>!B.includes(w));
+  if(B[0]==="yes"||B[0]==="no"){
+    if(A[0]!==B[0]&&(A[0]==="yes"||A[0]==="no"))return "Schau auf das Zeichen: ✓ heißt Yes, ✗ heißt No.";
+    if(A[1]&&!PRON.includes(A[1]))return "In der Kurzantwort steht kein Name, sondern ein Personalpronomen (I, you, he, she, it, we, they).";
+    if(A[1]&&A[1]!==B[1])return B[1]==="i"?"Die Frage geht an dich (you), also antwortest du mit I.":B[1]==="we"?"Gefragt sind du und jemand anderes: we.":`Welches Pronomen passt? Hier: ${B[1]}.`;
+    if(A.length>B.length)return "In der Kurzantwort steht kein Verb, nur do / does (don't / doesn't).";
+  }
+  const beCan=B.some(w=>["is","are","am","can"].includes(w));
+  if(beCan&&(extra.includes("does")||extra.includes("do")))return "Bei am, is, are und can brauchst du kein do / does.";
+  if(extra.includes("does")&&!B.includes("does"))return B.includes("do")?"I, you, we, they → do / don't.":"Im normalen Satz brauchst du kein does. Einfach das Verb mit s.";
+  if(extra.includes("do")&&miss.includes("does"))return "he, she, it → does / doesn't.";
+  if(extra.includes("you")&&miss.includes("your"))return "your = dein / deine. you = du.";
+  for(const m of miss)for(const e of extra){
+    if(e===base(m)&&e!==m)return e==="have"?"Bei he, she, it wird have zu has.":`He, she, it: das s muss mit! Richtig: ${m}.`;
+    if(m===base(e)&&e!==m&&(A.includes("does")||A.includes("do")))return e==="has"?"Nach does / doesn't kommt have, nicht has.":`Nach do / does / doesn't kommt die Grundform ohne s: ${m}.`;
+    if(m===base(e)&&e!==m)return `I, you, we, they: ohne s. Richtig: ${m}.`;
+    if(base(m)===base(e)||(m.slice(0,3)===e.slice(0,3)&&/s$/.test(m)&&/s$/.test(e))){
+      if(/[^aeiou]ies$/.test(m))return `Konsonant + y wird zu ies: ${m}.`;
+      if(/oes$/.test(m))return `Nach o kommt -es: ${m}.`;
+      if(/(ss|sh|ch|x)es$/.test(m))return `Nach einem Zischlaut (s, sh, ch, x) kommt -es: ${m}.`;
+      if(/[aeiou]ys$/.test(m))return `Vokal + y: nur s anhängen: ${m}.`;
+      if(m==="has")return "have → has.";
+      return `Schau auf die Schreibweise: ${m}.`}
+  }
+  if(A.includes("not")&&miss.length&&!extra.length)return "Nach don't / doesn't fehlt noch das Verb.";
+  if(miss.length&&!extra.length)return `Da fehlt etwas: ${miss.join(" ")}.`;
+  return ""}
+
+/* Form-Hinweise, wenn es inhaltlich stimmt */
+function formNote(typed,target){const n=[];const t=typed.trim();
+  if(/[A-Z]/.test(target[0])&&t[0]&&t[0]!==t[0].toUpperCase())n.push("Satzanfang groß schreiben");
+  if(/\?$/.test(target.trim())&&!/\?\s*$/.test(t))n.push("Fragezeichen nicht vergessen");
+  return n.length?`<p class="note">✏️ Kleiner Tipp: ${n.join(" und ")}.</p>`:""}
+
+/* Englisch vorlesen */
+const TTS={ok:"speechSynthesis" in window&&"SpeechSynthesisUtterance" in window,v:null};
+function pickVoice(){if(!TTS.ok)return;const all=speechSynthesis.getVoices()||[];let vs=all.filter(v=>/^en[-_]GB/i.test(v.lang));if(!vs.length)vs=all.filter(v=>/^en/i.test(v.lang));
+  const loc=vs.filter(v=>v.localService);if(loc.length)vs=loc;TTS.v=vs.find(v=>/daniel|kate|serena|arthur|martha/i.test(v.name))||vs[0]||null}
+if(TTS.ok){pickVoice();if(speechSynthesis.addEventListener)speechSynthesis.addEventListener("voiceschanged",pickVoice)}
+function say(t){if(!TTS.ok)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(ap(t).replace(/[✓✗→–]/g," "));u.lang="en-GB";if(TTS.v)u.voice=TTS.v;u.rate=.9;speechSynthesis.speak(u)}catch(e){}}
+function hush(){try{if(TTS.ok)speechSynthesis.cancel()}catch(e){}}
+const sayBtn=(t,l)=>TTS.ok&&t?`<button class="sayb" type="button" data-say="${esc(t)}">${I.spk}${l||"Anhören"}</button>`:"";
+function bindSay(root){(root||app).querySelectorAll("[data-say]").forEach(b=>b.onclick=()=>say(b.dataset.say))}
+
+/* ================= Startseite ================= */
+function home(){R=null;hush();closeSheet();
+  app.innerHTML=`
+  <section class="panel hero"><span class="eyebrow">Englisch · Grammatik</span>
+    <span class="emo" aria-hidden="true">🔁🐍❓</span>
+    <h2 style="font-size:1.4rem">Simple Present</h2>
+    <p class="small">Erst verstehen, dann viel üben, dann die Probe-Arbeit. Alles mit Wörtern, die du schon kennst.</p></section>
+  <button class="toggle" id="denk" aria-pressed="${S.denk?"true":"false"}"><span class="grow"><b>Denkfrage vor den Antworten</b><br><span class="small">Erst überlegen: Kann ich es durch he, she, it ersetzen?</span></span><span class="sw" aria-hidden="true"></span></button>
+  <span class="eyebrow sect">Lernpfad: Verstehen</span>
+  <div class="stations">${CH.filter(c=>c.sec==="pfad").map(stBtn).join("")}</div>
+  <span class="eyebrow sect">Großer Übungsteil</span>
+  <div class="stations">${CH.filter(c=>c.sec==="ueben").map(stBtn).join("")}</div>
+  <span class="eyebrow sect">Zum Schluss</span>
+  <div class="stations">${stBtn(PROBE)}
+    <button class="st extra" data-ch="regeln"><span class="ico" aria-hidden="true">📌</span><span class="grow"><span class="n">Entdecken</span><h3>Regelheft</h3><p>Alle Erklärungen und Spickzettel auf einer Seite</p></span></button></div>`;
+  $("#denk").onclick=e=>{S.denk=!S.denk;save();e.currentTarget.setAttribute("aria-pressed",S.denk?"true":"false")};
+  app.querySelectorAll(".st[data-ch]").forEach(b=>b.onclick=()=>openCh(b.dataset.ch));
+  scrollTo(0,0)}
+function stBtn(c){const k=CH.indexOf(c),b=stars(c);
+  return `<button class="st ${c.test?"extra":""}" data-ch="${c.id}"><span class="ico" aria-hidden="true">${c.ico}</span><span class="grow"><span class="n">${c.test?"Großer Test":"Kapitel "+(k+1)}</span><h3>${esc(c.t)}</h3><p>${esc(c.d)}</p><span class="stars" aria-label="${b} von 3 Sternen">${[0,1,2].map(i=>I.star(i<b)).join("")}</span></span></button>`}
+function openCh(id){if(id==="regeln")return regeln();const c=chOf(id);if(!c)return;intro(c)}
+
+/* ================= Erklär-Karten ================= */
+function intro(c,i){R=null;hush();i=i||0;const n=c.cards.length,last=i>=n-1,seen=S.seen[c.id],k=CH.indexOf(c);
+  app.innerHTML=`<div class="chead"><button class="backb" id="cbk">${I.back}Alle Kapitel</button></div>
+    <div><span class="eyebrow">${c.test?"Großer Test":"Kapitel "+(k+1)}</span><h2>${esc(c.t)}</h2></div>
+    <section class="card-x"><h3>${c.cards[i].h}</h3>${c.cards[i].b}${c.cards[i].say?`<div>${sayBtn(c.cards[i].say,"Beispiele anhören")}</div>`:""}</section>
+    ${n>1?`<div class="dotsnav" aria-label="Karte ${i+1} von ${n}">${c.cards.map((_,j)=>`<i class="${j===i?"on":""}"></i>`).join("")}</div>`:""}
+    <div class="row">${i>0?`<button class="ghost grow" id="prv">Zurück</button>`:""}<button class="go grow" id="nxt">${last?(c.test?"Probe-Arbeit starten":"Los geht's"):"Weiter"}</button></div>
+    ${!last&&seen?`<button class="ghost" id="skip">Erklärung überspringen</button>`:""}`;
+  bindSay();
+  $("#cbk").onclick=home;
+  $("#nxt").onclick=()=>{if(last){S.seen[c.id]=1;save();startRound(c.id)}else intro(c,i+1)};
+  if($("#prv"))$("#prv").onclick=()=>intro(c,i-1);
+  if($("#skip"))$("#skip").onclick=()=>startRound(c.id);
+  scrollTo(0,0)}
+
+/* Regel als Blatt von unten (bei einem Fehler) */
+function closeSheet(){document.querySelectorAll(".rsheet,.rsheet-bg").forEach(e=>e.remove())}
+function ruleSheet(c){closeSheet();const bg=document.createElement("div");bg.className="rsheet-bg";const sh=document.createElement("div");sh.className="rsheet";sh.setAttribute("role","dialog");sh.setAttribute("aria-label","Regel");
+  sh.innerHTML=`<h3>📌 ${esc(c.t)}</h3>${c.cards.filter(x=>!/So geht/.test(x.h)).map(x=>`<section class="card-x" style="min-height:0"><h3>${x.h}</h3>${x.b}</section>`).join("")||`<div class="spick"><ul>${c.spick.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`}<button class="go" id="shx">Zurück zur Aufgabe</button>`;
+  document.body.append(bg,sh);bg.onclick=closeSheet;sh.querySelector("#shx").onclick=closeSheet}
+function ruleChapter(t){if(R.c.sec==="pfad")return R.c;
+  const tg=norm([].concat(t.a||t.c||"").join(" "));
+  if(t.k==="short")return chOf("kurz");if(t.k==="fix")return chOf("fehler");
+  if(t.k==="write"&&t.w&&/^(when|where|what|why)/i.test(t.w))return chOf("wh");
+  if(t.k==="write"||t.k==="build")return chOf(/\bnot\b/.test(tg)?"not":"frage");
+  if(/\bnot\b/.test(tg))return chOf("not");
+  if(t.k==="mark")return chOf("wann");
+  return /(ies|oes|ches|shes|sses)\b/.test(tg)?chOf("spell"):chOf("s")}
+
+/* ================= Runde ================= */
+let R=null;
+const nFor=c=>{const d=c.n||10;return Math.min(c.tasks.length,window.lwFragen?lwFragen(d):d)};
+function startRound(id){const c=chOf(id);hush();
+  if(c.test){const tasks=[];c.parts.forEach((p,pi)=>{tasks.push({part:p,pi});
+      const pool=p.pool.filter(x=>!x.neg),neg=p.pool.filter(x=>x.neg);
+      const take=neg.length?shuffle(pool).slice(0,p.n-3).concat(shuffle(neg).slice(0,3)):shuffle(p.pool).slice(0,p.n);
+      take.forEach(t=>tasks.push({t,pi,pts:p.pts}))});
+    R={c,tasks,i:0,res:[],pts:0,max:0,byPart:c.parts.map(()=>[0,0]),log:[]};return showStep()}
+  const n=nFor(c),pick=shuffle(c.tasks.map((t,i)=>i)).slice(0,n).sort((a,b)=>a-b);
+  /* Lernpfad: in der Reihenfolge des Kapitels (vom Leichten zum Schweren), Übungsteil: gemischt */
+  const order=c.sec==="pfad"?pick:shuffle(pick);
+  R={c,tasks:order.map(i=>({t:c.tasks[i]})),i:0,res:[],n,again:0,pts:0,max:0};showStep()}
+function track(){const t=$("#track");if(!t)return;const L=R.tasks.filter(x=>!x.part).length;let k=0;
+  t.innerHTML=Array.from({length:L},(_,i)=>{const r=R.res[i];return `<i class="${r!=null?(R.c.test?"now":r===1?"ok":r>0?"half":"no"):(i===R.res.length?"now":"")}"></i>`}).join("")}
+function topbar(){return `<div class="topbar"><button id="quit" aria-label="Runde beenden"></button><div class="track" id="track"></div></div>`}
+function bindTop(){$("#quit").onclick=()=>{hush();home()};track()}
+function nextStep(){hush();closeSheet();R.i++;R.i>=R.tasks.length?endRound():showStep()}
+function showStep(){const st=R.tasks[R.i];R.locked=false;
+  if(st.part)return partScreen(st);
+  const t=st.t,test=!!R.c.test;
+  app.innerHTML=`${topbar()}<div class="q"><span class="lk">${st.again?"Nochmal · ":""}${LK[t.k]}</span><b>${esc(t.q||QD[t.k])}</b></div><section class="stage" id="cb"></section>`;
+  bindTop();const cb=$("#cb");
+  const go=()=>T[t.k](t,cb);
+  if(!test&&S.denk&&t.p&&t.k!=="mark"&&t.k!=="fix")denkStep(t,cb,go);else go();
+  scrollTo(0,0)}
+function partScreen(st){const p=st.part;
+  app.innerHTML=`${topbar()}<section class="panel part"><span class="big" aria-hidden="true">${p.ico}</span><h2>${esc(p.h)}</h2><p class="lead">${esc(p.b)}</p>
+    <p class="small">${p.n} Aufgaben, je ${p.pts} ${p.pts>1?"Punkte":"Punkt"}</p><button class="go" id="go" style="width:100%">Los</button></section>`;
+  bindTop();$("#go").onclick=nextStep;scrollTo(0,0)}
+
+const LK={mc:"Auswählen",gap:"Lücke füllen",type:"Verbform eintippen",build:"Satz bauen",write:"Satz schreiben",short:"Kurzantwort",mark:"Text markieren",fix:"Fehler finden",bingo:"Bingo"};
+const QD={gap:"Welche Form passt?",type:"Setze das Verb in der richtigen Form ein.",build:"Bau den Satz aus den Bausteinen.",write:"Schreib den ganzen Satz.",short:"Wie lautet die Kurzantwort?",mark:"Markiere alle Simple-Present-Formen.",fix:"Tippe das falsche Wort an.",bingo:"Schreib einen Satz über die Bingo-Karte."};
+
+/* Denkfrage: he, she, it oder nicht? (zählt nicht als Fehler) */
+function denkStep(t,cb,go){const box=document.createElement("div");box.className="denk";const th=THIRD.includes(t.p);
+  const shortQ=t.k==="short";
+  if(shortQ){const opts=shuffle([t.p].concat(shuffle(PRON.map(x=>x==="i"?"I":x).filter(x=>x!==t.p)).slice(0,2)));
+    box.innerHTML=`<p>💡 Erst überlegen: Welches Personalpronomen passt zu „${esc(t.sub)}“?</p><div class="chips">${opts.map(o=>`<button class="chip" data-k="${o}">${o}</button>`).join("")}</div>`;
+    cb.appendChild(box);
+    box.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{const ok=b.dataset.k===t.p;box.querySelectorAll(".chip").forEach(x=>{x.disabled=true;if(x.dataset.k===t.p)x.classList.add("ok")});if(!ok)b.classList.add("no");
+      box.insertAdjacentHTML("beforeend",`<span class="tip">${ok?"Genau! ":""}<b>${esc(t.sub)}</b> → <b>${t.p}</b>${t.p==="I"?" (die Frage geht an dich)":""}.</span>`);ok?sfxPop():0;go()});return}
+  const sub=t.k==="bingo"?t.n:t.sub;
+  const isPr=PRON.includes(sub.toLowerCase());
+  box.innerHTML=`<p>💡 Erst überlegen: ${isPr?`Gehört „${esc(sub)}“ zu he, she, it?`:`Kannst du „${esc(sub)}“ durch he, she oder it ersetzen?`}</p><div class="chips"><button class="chip" data-k="1">Ja: he / she / it</button><button class="chip" data-k="0">Nein: I / you / we / they</button></div>`;
+  cb.appendChild(box);
+  box.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{const ok=(b.dataset.k==="1")===th;box.querySelectorAll(".chip").forEach(x=>{x.disabled=true;if((x.dataset.k==="1")===th)x.classList.add("ok")});if(!ok)b.classList.add("no");
+    box.insertAdjacentHTML("beforeend",`<span class="tip">${ok?"Genau! ":""}${isPr?`<b>${esc(sub)}</b>`:`<b>${esc(sub)}</b> = <b>${t.p}</b>`} → ${dkTip(t,th)}</span>`);ok?sfxPop():0;go()})}
+function dkTip(t,th){const tg=ap(t.k==="gap"?t.s.match(/\[\[(.*?)[|\]]/)[1]:[].concat(t.a||(t.o&&t.o[0])||"")[0]).toLowerCase();
+  if(t.k==="bingo")return t.ask?"die Frage geht an das Kind selbst: Do you …?":t.y?(th?"Verb mit s.":"Verb ohne s."):(th?"doesn't + Grundform.":"don't + Grundform.");
+  if(/doesn't|does not/.test(tg))return "doesn't + Grundform.";
+  if(/don't|do not/.test(tg))return "don't + Grundform.";
+  if(/^does\b|\bdoes\b.*\?/.test(tg)||/^does$/.test(tg))return "Does + Grundform.";
+  if(/^do\b/.test(tg))return "Do + Grundform.";
+  if(/^(when|where|what|why) (do|does)/.test(tg))return th?"does + Grundform.":"do + Grundform.";
+  if(tg==="has"||/\bhas\b/.test(tg))return "have wird zu has.";
+  return th?"Verb mit s.":"Verb ohne s (Grundform)."}
+
+/* Ergebnis einer Aufgabe. ok: richtig, f: Anteil, right: richtige Lösung (Text), typed: Neas Antwort */
+function done(ok,o){if(R.locked)return;R.locked=true;o=o||{};const st=R.tasks[R.i],t=st.t;const f=o.f!=null?o.f:(ok?1:0);
+  if(R.c.test){const p=st.pts;let got=ok?p:(p>=2&&o.half?p/2:0);R.pts+=got;R.max+=p;R.byPart[st.pi][0]+=got;R.byPart[st.pi][1]+=p;R.res.push(got/p);
+    if(got<p)R.log.push({pi:st.pi,t,typed:o.typed,right:o.right,why:o.why,got,p});
+    track();sfxPop();
+    const nx=document.createElement("button");nx.className="next";nx.type="button";const nxs=R.tasks[R.i+1];
+    nx.textContent=!nxs?"Zur Auswertung":nxs.part?"Weiter zu "+nxs.part.h.split(":")[0]:"Weiter";nx.onclick=nextStep;
+    const fb=document.createElement("div");fb.className="fb";fb.innerHTML=`<p class="small">Antwort gespeichert. Die Auswertung kommt am Schluss.</p>`;
+    lwSheet($("#cb"),true,[fb,nx]);return}
+  if(!st.again){R.res.push(f);R.pts+=f;R.max+=1}
+  if(!ok&&!st.again&&R.again<3){R.again++;R.tasks.push({t,again:1})}
+  ok?sfxOk():sfxBad();track();
+  const fb=document.createElement("div");fb.className="fb "+(ok?"ok":"bad");fb.setAttribute("role","status");
+  const ex=t.ex?esc(t.ex):"";
+  fb.innerHTML=`<strong>${ok?pick(["Richtig!","Super!","Genau!","Klasse!","Stark!"]):f>0?"Fast!":"Nicht ganz"}</strong>
+    ${!ok&&o.right?`<p>Richtig: <b>${esc(o.right)}</b></p>`:""}${!ok&&o.why?`<p>💡 ${esc(o.why)}</p>`:""}${ex&&(!ok||!o.why)?`<p>${ex}</p>`:""}${o.note||""}
+    ${!ok&&!st.again&&R.again<=3?`<p class="small">Diese Aufgabe kommt am Ende der Runde nochmal.</p>`:""}
+    <div class="row" style="margin-top:4px">${o.say?sayBtn(o.say):""}${!ok?`<button class="sayb" type="button" id="rl">📌 Regel ansehen</button>`:""}</div>`;
+  const nx=document.createElement("button");nx.className="next";nx.type="button";nx.textContent=R.i+1>=R.tasks.length?"Ergebnis":"Weiter";nx.onclick=nextStep;
+  lwSheet($("#cb"),ok,[fb,nx]);bindSay(fb);
+  const rl=fb.querySelector("#rl");if(rl)rl.onclick=()=>ruleSheet(ruleChapter(t))}
+
+/* ================= Aufgabenarten ================= */
+const T={};
+function optsBox(cb,list,onPick){const box=document.createElement("div");box.className="opts";
+  const opts=shuffle(list.map((x,i)=>({x,i})));box.innerHTML=opts.map(o=>`<button class="opt" data-i="${o.i}">${esc(o.x)}</button>`).join("");cb.appendChild(box);
+  box.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{if(R.locked)return;const ok=b.dataset.i==="0";
+    box.querySelectorAll(".opt").forEach(x=>{x.disabled=true;if(x.dataset.i==="0")x.classList.add("ok")});if(!ok)b.classList.add("bad");onPick(ok,list[+b.dataset.i])})}
+T.mc=(t,cb)=>{if(t.e)cb.insertAdjacentHTML("beforeend",`<div class="sent">${hl(t.e,t.sub)}</div>`);
+  optsBox(cb,t.o,(ok,v)=>done(ok,{right:t.o[0],why:!ok&&!t.de?hintFor(v,t.o[0]):"",say:t.de?t.e:t.o[0]}))};
+T.gap=(t,cb)=>{const m=t.s.match(/\[\[(.*?)\]\]/),opts=m[1].split("|"),pre=t.s.slice(0,m.index),post=t.s.slice(m.index+m[0].length);
+  const txt=document.createElement("div");txt.className="sent";cb.appendChild(txt);
+  const full=v=>pre+v+post;
+  const draw=g=>{txt.innerHTML=hl(t.s.replace(m[0],"\u0000"),t.sub).replace("\u0000",g)};draw(`<span class="gap now">?</span>`);
+  const ch=document.createElement("div");ch.className="chips";cb.appendChild(ch);
+  ch.innerHTML=shuffle(opts).map(o=>`<button class="chip">${esc(o)}</button>`).join("");
+  ch.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{if(R.locked)return;const v=b.textContent,ok=v===opts[0];
+    draw(ok?`<span class="gap ok">${esc(v)}</span>`:`<span class="gap bad"><s>${esc(v)}</s>${esc(opts[0])}</span>`);
+    ch.querySelectorAll(".chip").forEach(x=>x.disabled=true);
+    done(ok,{why:ok?"":hintFor(full(v),full(opts[0])),say:full(opts[0])})})};
+/* Eingabefeld mit Apostroph-Taste */
+function inputBox(cb,o){const w=document.createElement("div");w.className="inp";
+  w.innerHTML=`${o.pre?`<span class="pre">${esc(o.pre)}</span>`:""}<input class="field" id="fld" type="text" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="${o.sentence?"sentences":"none"}" enterkeyhint="done" aria-label="Antwort" placeholder="${esc(o.ph||"hier eintippen")}">
+    <div class="keys"><button class="chip" type="button" data-ins="’" aria-label="Apostroph einfügen">’</button>${o.sentence?`<button class="chip" type="button" data-ins="?" aria-label="Fragezeichen einfügen">?</button>`:""}<span class="small">’ für don’t und doesn’t</span></div>
+    <button class="go" id="chk" disabled>Prüfen</button>`;
+  cb.appendChild(w);const f=w.querySelector("#fld"),chk=w.querySelector("#chk");
+  f.oninput=()=>{chk.disabled=!f.value.trim()};
+  w.querySelectorAll("[data-ins]").forEach(b=>b.onclick=()=>{const s=f.selectionStart??f.value.length,e=f.selectionEnd??s;f.value=f.value.slice(0,s)+b.dataset.ins+f.value.slice(e);f.focus();f.setSelectionRange(s+1,s+1);f.oninput()});
+  const fire=()=>{if(R.locked||!f.value.trim())return;f.blur();f.readOnly=true;w.querySelectorAll(".keys,#chk").forEach(x=>x.remove());o.check(f.value,f)};
+  chk.onclick=fire;f.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();fire()}};
+  if(!o.noFocus)setTimeout(()=>{try{f.focus({preventScroll:true})}catch(e){}},50);return f}
+T.type=(t,cb)=>{const parts=t.s.split("___");
+  cb.insertAdjacentHTML("beforeend",`<div class="sent">${hl(parts[0],t.sub)}<span class="gap now">___</span>${esc(parts[1]||"")} <span class="hint">(${esc(t.h)})</span></div>`);
+  inputBox(cb,{check:(v,f)=>{const ok=sameAns(v,t.a);f.classList.add(ok?"ok":"bad");
+    const full=x=>parts[0]+x+(parts[1]||"");
+    cb.querySelector(".gap").outerHTML=ok?`<span class="gap ok">${esc(v.trim())}</span>`:`<span class="gap bad"><s>${esc(v.trim())}</s>${esc(t.a[0])}</span>`;
+    done(ok,{right:t.a[0],typed:v,why:ok?"":hintFor(full(v),full(t.a[0])),say:full(t.a[0]),half:false})}})};
+const stichHTML=w=>`<div class="sw-line">${w.split(" · ").map(x=>`<span>${esc(x)}</span>`).join("")}<span>?</span></div>`;
+T.write=(t,cb)=>{const isQ=/\?$/.test(t.a[0]);
+  if(t.w)cb.insertAdjacentHTML("beforeend",isQ?stichHTML(t.w):`<div class="sw-line">${t.w.split(" · ").map(x=>`<span>${esc(x)}</span>`).join("")}</div>`);
+  if(t.pre&&t.w)cb.insertAdjacentHTML("beforeend",`<p class="small">${esc(t.pre)}</p>`);
+  if(t.pre&&!t.w)cb.insertAdjacentHTML("beforeend",`<div class="sent">${esc(t.pre)}</div>`);
+  inputBox(cb,{sentence:1,ph:isQ?"Frage hier eintippen":"Satz hier eintippen",check:(v,f)=>{const ok=sameAns(v,t.a);f.classList.add(ok?"ok":"bad");
+    const A=norm(v).split(" "),B=norm(t.a[0]).split(" ");const d=wordDiff(A,B);
+    done(ok,{right:t.a[0],typed:v,why:ok?"":hintFor(v,t.a[0]),note:ok?formNote(v,t.a[0]):"",say:t.a[0],half:d<=1})}})};
+function wordDiff(a,b){const d=Array.from({length:a.length+1},(_,i)=>[i]);for(let j=1;j<=b.length;j++)d[0][j]=j;
+  for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[a.length][b.length]}
+T.build=(t,cb)=>{const end=t.a.slice(-1),words=t.a.slice(0,-1).replace(/"/g,"").split(" ");
+  const bank=shuffle(words.concat(t.x||[]).map((w,i)=>({w,i})));let line=[];
+  cb.insertAdjacentHTML("beforeend",stichHTML(t.w).replace(`<span>?</span>`,end==="?"?`<span>?</span>`:""));
+  const L=document.createElement("div");L.className="line";const B=document.createElement("div");B.className="bank";cb.append(L,B);
+  const ctl=document.createElement("div");ctl.className="row";ctl.innerHTML=`<button class="ghost grow" id="clr">Zurücksetzen</button><button class="go grow" id="chk" disabled>Prüfen</button>`;cb.appendChild(ctl);
+  const draw=()=>{L.innerHTML=line.length?line.map((o,k)=>`<button class="tile" data-k="${k}">${esc(o.w)}</button>`).join("")+`<span class="end">${end}</span>`:`<span class="ph">Tippe die Bausteine in der richtigen Reihenfolge an.</span>`;
+    B.innerHTML=bank.map(o=>`<button class="tile" data-i="${o.i}" ${line.includes(o)?"disabled":""}>${esc(o.w)}</button>`).join("");
+    $("#chk").disabled=!line.length;
+    L.querySelectorAll(".tile").forEach(b=>b.onclick=()=>{if(R.locked)return;line.splice(+b.dataset.k,1);draw()});
+    B.querySelectorAll(".tile").forEach(b=>b.onclick=()=>{if(R.locked)return;line.push(bank.find(o=>o.i===+b.dataset.i));sfxPop();draw()})};
+  draw();
+  $("#clr").onclick=()=>{if(R.locked)return;line=[];draw()};
+  $("#chk").onclick=()=>{if(R.locked)return;const v=line.map(o=>o.w).join(" ")+end,ok=norm(v)===norm(t.a);
+    L.classList.add(ok?"ok":"bad");ctl.remove();B.remove();L.querySelectorAll(".tile").forEach(x=>x.disabled=true);
+    done(ok,{right:t.a,why:ok?"":hintFor(v,t.a),say:t.a})}};
+T.short=(t,cb)=>{cb.insertAdjacentHTML("beforeend",`<div class="sent">${hl(t.e,t.sub)}<div style="margin-top:8px"><span class="yn ${t.y?"y":"n"}">${t.y?"✓ Ja":"✗ Nein"}</span></div></div>`);
+  if(t.o&&!R.c.test&&R.c.sec==="pfad"){optsBox(cb,[t.a].concat(t.o),(ok,v)=>done(ok,{right:t.a,why:ok?"":hintFor(v,t.a),say:t.e+" "+t.a}));return}
+  inputBox(cb,{sentence:1,ph:t.y?"Yes, …":"No, …",check:(v,f)=>{let w=v.trim();const yn=t.y?"Yes":"No";
+    if(!/^(yes|no)\b/i.test(w))w=yn+", "+w;const ok=sameAns(w,[t.a].concat(t.alt||[]));f.classList.add(ok?"ok":"bad");
+    done(ok,{right:t.a,typed:v,why:ok?"":hintFor(w,t.a),say:t.e+" "+t.a})}})};
+T.bingo=(t,cb)=>{cb.insertAdjacentHTML("beforeend",`<div class="bcell"><span class="bico" aria-hidden="true">${t.ico}</span><span class="grow"><b>${esc(t.it)}</b><span class="who">${esc(t.n)}</span></span><span class="yn ${t.y?"y":"n"}">${t.y?"✓":"✗"}</span></div>
+    <p class="lead">${t.ask?`Frag <b>${esc(t.n)}</b> danach. Verb: <b>(to) ${esc(t.v)}</b>`:`Schreib einen Satz über <b>${esc(t.n)}</b>. Verb: <b>(to) ${esc(t.v)}</b>`}</p>`);
+  inputBox(cb,{sentence:1,ph:t.ask?"Do you …?":t.n+" …",check:(v,f)=>{const ok=sameAns(v,t.a);f.classList.add(ok?"ok":"bad");
+    const hg=ok&&/has got|hasn't got|have you got/i.test(v)?`<p class="note">Auch richtig! Im Simple Present heißt es: <b>${esc(t.a[0])}</b></p>`:"";
+    done(ok,{right:t.a[0],typed:v,why:ok?"":hintFor(v,t.a[0]),note:ok?(hg||formNote(v,t.a[0])):"",say:t.a[0]})}})};
+/* Text: {Wort} = Ziel */
+function tokens(tx){return (tx.match(/\{[^}]+\}|[^\s{]+/g)||[]).map(w=>({w:w.replace(/[{}]/g,""),hit:w[0]==="{"}))}
+T.mark=(t,cb)=>{const tk=tokens(t.tx),one=!!t.one;
+  const box=document.createElement("div");box.className="txt tap";box.innerHTML=tk.map((o,i)=>`<span class="u" role="button" tabindex="0" data-i="${i}">${esc(o.w)}</span>`).join(" ");cb.appendChild(box);
+  const need=tk.filter(o=>o.hit).length;
+  if(!one)cb.insertAdjacentHTML("beforeend",`<p class="small" id="cnt">Markiert: 0</p><button class="go" id="chk" disabled>Prüfen</button>`);
+  const sel=new Set();
+  const finish=()=>{let hits=0,miss=0;box.querySelectorAll(".u").forEach(s=>{const i=+s.dataset.i,h=tk[i].hit;s.removeAttribute("tabindex");s.classList.remove("sel");
+      if(sel.has(i)&&h){s.classList.add("hit");hits++}else if(sel.has(i)){s.classList.add("miss");miss++}else if(h)s.classList.add("left")});
+    const ok=hits===need&&!miss,f=Math.max(0,(hits-miss)/need);if($("#chk"))$("#chk").remove();if($("#cnt"))$("#cnt").remove();
+    done(ok,{f,why:ok?"":one?"Das grün umrandete Wort ist richtig.":`${hits} von ${need} gefunden${miss?`, ${miss} zu viel markiert`:""}. Grün umrandet = übersehen.`})};
+  box.querySelectorAll(".u").forEach(s=>{const tap=()=>{if(R.locked)return;const i=+s.dataset.i;sfxPop();
+      if(one){sel.add(i);finish();return}
+      sel.has(i)?sel.delete(i):sel.add(i);s.classList.toggle("sel");$("#cnt").textContent="Markiert: "+sel.size;$("#chk").disabled=!sel.size};
+    s.onclick=tap;s.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();tap()}}});
+  if(!one)$("#chk").onclick=finish};
+T.fix=(t,cb)=>{const tk=tokens(t.s);
+  const box=document.createElement("div");box.className="txt tap";box.style.fontSize="1.25rem";box.innerHTML=tk.map((o,i)=>`<span class="u" role="button" tabindex="0" data-i="${i}">${esc(o.w)}</span>`).join(" ");cb.appendChild(box);
+  box.querySelectorAll(".u").forEach(s=>{const tap=()=>{if(R.locked)return;const i=+s.dataset.i,ok=tk[i].hit;
+      box.querySelectorAll(".u").forEach(x=>{x.removeAttribute("tabindex");if(tk[+x.dataset.i].hit)x.classList.add(ok?"hit":"left")});if(!ok)s.classList.add("miss");
+      done(ok,{right:t.c,typed:tk[i].w,why:ok?"":`Der Fehler steckt in „${tk.find(o=>o.hit).w}“.`,say:t.c})};
+    s.onclick=tap;s.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();tap()}}})};
+
+/* ================= Ergebnis ================= */
+function endRound(){const c=R.c,q=R.max?R.pts/R.max:0;const st=q>=.9?3:q>=.7?2:q>=.5?1:0;
+  S.best[c.id]=Math.max(S.best[c.id]||0,st);
+  const fmt=x=>String(Math.round(x*2)/2).replace(".",",");
+  if(c.test)S.probe={pts:R.pts,max:R.max,parts:R.byPart,d:new Date().toLocaleDateString("de-DE")};
+  save();
+  const k=CH.indexOf(c),nxt=CH[k+1];
+  const cheer=c.test?["Weiter üben, du schaffst das!","Gut gemacht!","Stark!","Super, du bist bereit für die Arbeit!"][st]:["Dranbleiben, das wird!","Gut gemacht!","Stark!","Super, das sitzt!"][st];
+  let body="";
+  if(c.test){const weak=c.parts.map((p,i)=>({p,i,q:R.byPart[i][1]?R.byPart[i][0]/R.byPart[i][1]:1})).filter(x=>x.q<.8);
+    body=`<p class="lead"><b>${fmt(R.pts)} von ${R.max} Punkten</b> (${Math.round(q*100)} %)</p>
+      <div class="teile3">${c.parts.map((p,i)=>`<div><span class="small">${p.ico} ${esc(p.h.replace(/^Teil \d+: /,""))}</span><b>${fmt(R.byPart[i][0])} / ${R.byPart[i][1]}</b></div>`).join("")}</div>
+      ${R.log.length?`<h3 style="align-self:flex-start;margin-top:6px">Das schauen wir uns nochmal an</h3><div class="rev">${R.log.map(l=>`<div class="ri"><span class="small">${esc(c.parts[l.pi].h)}${l.got?` · ${fmt(l.got)} von ${l.p} Punkten`:""}</span>
+        <span>${esc(l.t.w||l.t.pre||l.t.e||l.t.s.replace(/[{}]/g,""))}${l.t.h?` (${esc(l.t.h)})`:""}</span>
+        ${l.typed?`<span>Du: <s>${esc(l.typed)}</s></span>`:""}<span class="c">✔ ${esc(l.right)}</span>${l.why?`<span class="small">💡 ${esc(l.why)}</span>`:""}</div>`).join("")}</div>`:`<p>Alles richtig. Wow!</p>`}
+      ${weak.length?`<p class="small" style="margin-top:4px">Übe nochmal:</p>${weak.map(x=>`<button class="ghost" data-ch="${x.p.ch}">${chOf(x.p.ch).ico} ${esc(chOf(x.p.ch).t)}</button>`).join("")}`:""}`}
+  else body=`<p class="lead"><b>${R.res.filter(x=>x===1).length} von ${R.res.length}</b> Aufgaben gleich richtig</p>`;
+  app.innerHTML=`<section class="result"><h2>${cheer}</h2><div class="bigstars">${[0,1,2].map(i=>I.star(i<st).replace("<svg",`<svg class="s${i+1}"`)).join("")}</div>
+    ${body}
+    <div class="spick"><b>📌 Spickzettel: ${esc(c.t)}</b><ul>${c.spick.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+    <button class="go" id="again">${c.test?"Neue Probe-Arbeit":"Nochmal üben"}</button>
+    ${nxt&&st>=2&&!c.test?`<button class="ghost" id="nx">Weiter: ${esc(nxt.t)}</button>`:""}
+    <button class="ghost" id="hm">Alle Kapitel</button></section>`;
+  if(st>=2)beep([523.25,659.25,783.99,1046.5],.2);
+  const id=c.id;R=null;
+  $("#again").onclick=()=>startRound(id);$("#hm").onclick=home;if($("#nx"))$("#nx").onclick=()=>openCh(nxt.id);
+  app.querySelectorAll("[data-ch]").forEach(b=>b.onclick=()=>openCh(b.dataset.ch));
+  scrollTo(0,0)}
+
+/* ================= Entdecken: Regelheft ================= */
+function regeln(){R=null;hush();
+  const big=`<div class="spick"><b>📌 Der große Spickzettel</b><ul>
+    <li>Simple Present: was immer wieder passiert und was man mag (always, often, never, every day).</li>
+    <li>he, she, it: das s muss mit! He likes, she goes, it watches, he hurries, she has.</li>
+    <li>Verneinung: don't / doesn't + Grundform. He doesn't like cats.</li>
+    <li>Frage: Do / Does + Subjekt + Grundform? Does she like cats?</li>
+    <li>Fragewort vorne: When does school start?</li>
+    <li>Kurzantwort: Yes, they do. No, he doesn't. Pronomen, kein Verb!</li>
+    <li>to be und can ohne do: She isn't … Is she …? Can you …?</li></ul></div>`;
+  app.innerHTML=`<div class="chead"><button class="backb" id="cbk">${I.back}Alle Kapitel</button></div>
+    <div><span class="eyebrow">Entdecken</span><h2>Regelheft</h2><p class="small" style="margin-top:4px">Alles zum Nachlesen. Mit 🔊 hörst du die Beispiele auf Englisch.</p></div>
+    ${big}
+    ${CH.filter(c=>c.sec==="pfad").map((c,i)=>`<div class="regel-ch"><span class="eyebrow sect">Kapitel ${i+1} · ${esc(c.t)}</span>${c.cards.map(x=>`<section class="card-x"><h3>${x.h}</h3>${x.b}${x.say?`<div>${sayBtn(x.say,"Beispiele anhören")}</div>`:""}</section>`).join("")}</div>`).join("")}
+    ${S.probe?`<p class="small">Letzte Probe-Arbeit am ${esc(S.probe.d)}: ${String(S.probe.pts).replace(".",",")} von ${S.probe.max} Punkten.</p>`:""}`;
+  bindSay();$("#cbk").onclick=home;scrollTo(0,0)}
+
+/* ================= Start ================= */
+function kapitelSprung(){const id=location.hash.slice(1);if(id==="regeln"){regeln();return true}if(!chOf(id))return false;openCh(id);return true}
+window.lwStart?lwStart('home',kapitelSprung):(kapitelSprung()||home());
+</script>
+<script>/* Lernwelt: Kapitel-Fortschritt für die Startseite (siehe sync.js) */
+if(window.LW&&LW.kapitel){LW.kapitel(function(){return ALLCH.map(function(c){return {t:c.t,p:stars(c)/3}})})}</script>
+</body></html>
