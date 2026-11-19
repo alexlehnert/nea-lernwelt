@@ -1,0 +1,927 @@
+<!doctype html><html lang="de"><head><meta charset=utf8><script src="/api/config"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="/sync.js"></script><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"><link rel="manifest" href="/manifest.webmanifest"><meta name="apple-mobile-web-app-title" content="Lernwelt"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="theme-color" content="#5B3FE6"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover">
+
+<title>Lese- und Hör-Detektivin</title>
+<style>
+/* Lese- und Hör-Detektivin (Deutsch, Grundschule Klasse 3): Lese- und Hörverstehen für die GLN.
+   Lernpfad mit 9 Kapiteln: jedes beginnt mit Erklär-Karten, dann eine Runde mit einem Text (lesen oder anhören)
+   und Fragen wie in der Klassenarbeit (Auswahl, Bild-Auswahl, richtig/falsch/steht nicht im Text, Textstelle antippen,
+   Reihenfolge, Lücken). Hören = Vorlesen mit den Stimmen des Geräts (Web Speech).
+   Entdecken = Lese-Ecke (alle Texte lesen oder mitlesend anhören), Großer Test = Probe-GLN (Teil 1 Lesen, Teil 2 Hören). */
+:root{color-scheme:light dark}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{margin:0;background:var(--lw-bg);color:var(--lw-ink);font-family:var(--lw-f-b);font-size:18px;line-height:1.45;-webkit-tap-highlight-color:transparent;padding-top:env(safe-area-inset-top,0px)}
+.wrap{max-width:640px;margin:0 auto;padding:14px max(16px,env(safe-area-inset-right,0px)) 130px max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px}
+h1,h2,h3{font-family:var(--lw-f-d);font-weight:700;margin:0;line-height:1.15;text-wrap:balance}
+h2{font-size:1.55rem}
+h3{font-size:1.15rem}
+p{margin:0}
+b{font-weight:700}
+button{font:inherit;color:inherit;cursor:pointer;touch-action:manipulation}
+button:focus-visible,a:focus-visible,summary:focus-visible,.u:focus-visible{outline:3px solid var(--lw-brand);outline-offset:2px}
+svg{display:block}
+.small{font-size:.9rem;color:var(--lw-muted)}
+.lead{font-size:1.05rem}
+.panel{background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--lw-de)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.grow{flex:1;min-width:0}
+.ghost{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:8px 14px}
+.ghost svg,.go svg{width:20px;height:20px;flex:none}
+.go{display:inline-flex;align-items:center;justify-content:center;gap:8px}
+
+/* Startseite */
+.hero{display:flex;flex-direction:column;gap:8px}
+.hero .emo{font-size:2.4rem;line-height:1;letter-spacing:.1em}
+.stations{display:flex;flex-direction:column;gap:12px}
+.st{display:flex;align-items:center;gap:14px;text-align:left;width:100%;padding:14px;border-radius:22px;background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:5px}
+.st:active{transform:translateY(3px);border-bottom-width:2px}
+.st .ico{width:56px;height:56px;flex:none;border-radius:16px;background:var(--lw-de-s);color:var(--lw-de);display:grid;place-items:center;font-size:1.7rem;line-height:1}
+.st h3{font-size:1.12rem}
+.st p{font-size:.92rem;color:var(--lw-muted);line-height:1.3;margin-top:2px}
+.st .n{font:700 12px var(--lw-f-b);letter-spacing:.1em;text-transform:uppercase;color:var(--lw-de)}
+.st.extra .ico{background:var(--lw-sun);color:#5B3A00}
+.sect{margin-top:6px}
+.stars{display:flex;gap:2px;margin-top:6px}
+.stars svg{width:20px;height:20px}
+.toggle{display:flex;align-items:center;gap:12px;text-align:left;width:100%;padding:12px 14px;border-radius:18px;background:var(--lw-card);border:2px solid var(--lw-line)}
+.toggle .sw{flex:none;width:48px;height:28px;border-radius:99px;background:var(--lw-line);position:relative;transition:background .2s}
+.toggle .sw::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:transform .2s}
+.toggle[aria-pressed="true"] .sw{background:var(--lw-de)}
+.toggle[aria-pressed="true"] .sw::after{transform:translateX(20px)}
+
+/* Erklär-Karten */
+.chead{display:flex;align-items:center;gap:12px}
+.backb{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:6px 14px 6px 10px;border-radius:14px;border:2px solid var(--lw-line);border-bottom-width:4px;background:var(--lw-card);font-weight:700;color:var(--lw-muted)}
+.backb svg{width:18px;height:18px}
+.card-x{background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:22px;padding:18px 16px;display:flex;flex-direction:column;gap:12px;min-height:240px}
+.card-x h3{font-size:1.3rem;color:var(--lw-de)}
+.card-x ul,.card-x ol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:6px}
+.dotsnav{display:flex;gap:6px;justify-content:center}
+.dotsnav i{width:9px;height:9px;border-radius:50%;background:var(--lw-line)}
+.dotsnav i.on{background:var(--lw-de);width:22px;border-radius:99px}
+.bsp{border-left:5px solid var(--lw-de);background:var(--lw-de-s);border-radius:0 14px 14px 0;padding:10px 12px;line-height:1.5}
+.bsp.bad{border-color:var(--lw-bad);background:var(--lw-bad-bg)}
+.bsp small{display:block;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--lw-muted);margin-bottom:2px}
+.spick{background:var(--lw-de-s);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:6px;text-align:left}
+.spick ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px}
+.rfleg{display:flex;flex-direction:column;gap:6px}
+.rfleg span{display:flex;gap:10px;align-items:baseline}
+.rfleg i{font-style:normal;flex:none;min-width:30px;text-align:center;font-weight:700;border-radius:8px;padding:0 6px}
+
+/* Text */
+.txt{background:var(--lw-card);border:2px solid var(--lw-line);border-radius:18px;padding:14px 16px;font-size:1.12rem;line-height:1.75}
+.txt p+p{margin-top:10px}
+.txh{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.txh .tico{font-size:2.2rem;line-height:1;flex:none}
+.txh h3{font-size:1.25rem}
+.lbl{display:block;font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--lw-muted);line-height:1.3}
+.txt p.mk{background:var(--lw-sun);color:#3A2600;border-radius:10px;margin-inline:-8px;padding:2px 8px}
+.u{border-radius:6px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.u.now{background:var(--lw-sun);color:#3A2600}
+.tap .u{cursor:pointer;padding:1px 2px;background:var(--lw-soft)}
+.tap .u:active{background:var(--lw-de-s)}
+.tap .u.hit{background:var(--lw-ok-bg);color:var(--lw-ok-ink);outline:2px solid var(--lw-ok)}
+.tap .u.miss{background:var(--lw-bad-bg);color:var(--lw-bad-ink);text-decoration:line-through}
+.tap .u.left{background:var(--lw-ok-bg);color:var(--lw-ok-ink);outline:2px dashed var(--lw-ok)}
+details.ref{background:var(--lw-card);border:2px solid var(--lw-line);border-radius:18px}
+details.ref>summary{list-style:none;display:flex;align-items:center;gap:10px;min-height:52px;padding:8px 14px;font-weight:700;color:var(--lw-de);cursor:pointer}
+details.ref>summary::-webkit-details-marker{display:none}
+details.ref>summary::after{content:"";margin-left:auto;width:10px;height:10px;border-right:3px solid currentColor;border-bottom:3px solid currentColor;transform:rotate(45deg);transition:transform .2s}
+details.ref[open]>summary::after{transform:rotate(-135deg)}
+details.ref .txt{border:none;border-top:2px solid var(--lw-line);border-radius:0 0 16px 16px}
+.beleg{margin-top:8px;padding:8px 10px;border-radius:12px;background:var(--lw-card);font-size:.98rem;line-height:1.5}
+
+/* Hören */
+.hear{display:flex;flex-direction:column;align-items:center;gap:12px;padding:22px 16px;background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:22px;text-align:center}
+.hear .tico{font-size:3rem;line-height:1}
+.play{width:112px;height:112px;border-radius:50%;border:none;background:var(--lw-de);color:#fff;display:grid;place-items:center;box-shadow:0 6px 0 var(--lw-de-d)}
+.play:active{transform:translateY(4px);box-shadow:0 2px 0 var(--lw-de-d)}
+.play svg{width:52px;height:52px}
+.play:disabled{opacity:.4;box-shadow:none}
+.play.on{animation:pulse 1.4s infinite}
+@keyframes pulse{50%{box-shadow:0 6px 0 var(--lw-de-d),0 0 0 14px var(--lw-de-s)}}
+.ears{display:flex;gap:6px;justify-content:center;font-weight:700;color:var(--lw-muted)}
+.ears i{font-style:normal;width:30px;height:30px;border-radius:50%;border:2px solid var(--lw-de);display:grid;place-items:center;font-size:.95rem}
+.ears i.on{background:var(--lw-de);color:#fff}
+.replay{display:flex;align-items:center;gap:10px;min-height:52px;padding:8px 14px;border-radius:18px;border:2px solid var(--lw-line);border-bottom-width:4px;background:var(--lw-card);font-weight:700;color:var(--lw-de);width:100%;justify-content:center}
+.replay.on{background:var(--lw-de);color:#fff;border-color:var(--lw-de-d)}
+.replay svg{width:22px;height:22px}
+.vorher{text-align:left;align-self:stretch}
+.vorher ol{margin:6px 0 0;padding-left:22px;display:flex;flex-direction:column;gap:4px}
+.spk{flex:none;display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:6px 14px;border-radius:14px;border:2px solid var(--lw-line);border-bottom-width:4px;background:var(--lw-card);font-weight:700;color:var(--lw-de)}
+.spk svg{width:20px;height:20px}
+.spk.on{background:var(--lw-de);color:#fff;border-color:var(--lw-de-d)}
+
+/* Runde */
+.topbar{display:flex;align-items:center;gap:12px}
+.track{flex:1;display:flex;gap:4px}
+.track i{flex:1;height:12px;border-radius:99px;background:var(--lw-line)}
+.track i.ok{background:var(--lw-ok)}
+.track i.no{background:var(--lw-bad)}
+.track i.half{background:linear-gradient(90deg,var(--lw-ok) 50%,var(--lw-bad) 50%)}
+.track i.now{background:var(--lw-de)}
+.q b{display:block;font:700 1.3rem/1.25 var(--lw-f-d)}
+.q .lk{display:inline-block;margin-bottom:6px;padding:3px 10px;border-radius:99px;background:var(--lw-de-s);color:var(--lw-de);font:700 .82rem/1.2 var(--lw-f-b);letter-spacing:.04em}
+.stage{display:flex;flex-direction:column;gap:14px}
+.opts{display:grid;grid-template-columns:1fr;gap:10px}
+.opt{width:100%;padding:12px 14px;display:flex;align-items:center;justify-content:flex-start;text-align:left;line-height:1.35}
+.opt:disabled{cursor:default}
+.picgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.picgrid .opt{flex-direction:column;justify-content:center;text-align:center;gap:6px;min-height:118px;font-size:1rem}
+.picgrid .opt .e{font-size:2.8rem;line-height:1}
+.tipp{align-self:flex-start}
+.denk{background:var(--lw-sun);color:#3A2600;border-radius:18px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.denk p{font:700 1.02rem/1.3 var(--lw-f-d)}
+.denk .chips{display:flex;flex-wrap:wrap;gap:8px}
+.denk .chip{background:#fff;color:#3A2600;border-color:#E8B400}
+.denk .chip.ok{background:var(--lw-ok-bg);border-color:var(--lw-ok);color:var(--lw-ok-ink)}
+.denk .chip.no{background:var(--lw-bad-bg);border-color:var(--lw-bad);color:var(--lw-bad-ink)}
+.denk .tip{font-size:.95rem}
+.denk .chip:disabled{opacity:.55}
+.denk .chip.ok,.denk .chip.no{opacity:1}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips .chip{font-size:1.05rem;min-height:46px}
+.chip:disabled{opacity:.4}
+/* richtig / falsch / steht nicht im Text */
+.rf{display:flex;flex-direction:column;gap:12px}
+.rfi{background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:4px;border-radius:18px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.rfi.ok{border-color:var(--lw-ok);background:var(--lw-ok-bg)}
+.rfi.bad{border-color:var(--lw-bad);background:var(--lw-bad-bg)}
+.rfi p{font-weight:700;line-height:1.35}
+.rfb{display:grid;grid-template-columns:1fr 1fr 1.3fr;gap:6px}
+.rfb button{min-height:50px;padding:4px 6px;border-radius:14px;border:2px solid var(--lw-line);border-bottom-width:4px;background:var(--lw-card);font:700 .92rem/1.15 var(--lw-f-b);color:var(--lw-ink)}
+.rfb button:disabled{cursor:default}
+.rfb button.sel{background:var(--lw-de);border-color:var(--lw-de-d);color:#fff}
+.rfb button.right{background:var(--lw-ok);border-color:var(--lw-ok);color:#fff}
+.rfb button.wrong{background:var(--lw-bad);border-color:var(--lw-bad);color:#fff}
+.rfi small{font-size:.88rem;font-weight:700}
+/* Reihenfolge */
+.ord{display:flex;flex-direction:column;gap:10px}
+.oc{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:12px 14px;min-height:58px;border-radius:18px;border:2px solid var(--lw-line);border-bottom-width:5px;background:var(--lw-card);line-height:1.35}
+.oc .num{flex:none;width:34px;height:34px;border-radius:50%;border:2px dashed var(--lw-line);display:grid;place-items:center;font:700 1.1rem/1 var(--lw-f-d);color:var(--lw-muted)}
+.oc.on{border-color:var(--lw-de)}
+.oc.on .num{border:none;background:var(--lw-de);color:#fff}
+.oc.ok{border-color:var(--lw-ok);background:var(--lw-ok-bg)}
+.oc.ok .num{background:var(--lw-ok)}
+.oc.bad{border-color:var(--lw-bad);background:var(--lw-bad-bg)}
+.oc.bad .num{background:var(--lw-bad)}
+.oc small{display:block;font-size:.85rem;font-weight:700;color:var(--lw-ok-ink)}
+/* Lücken */
+.gap{display:inline-block;min-width:2.4em;padding:0 .3em;border-radius:8px;border:2px dashed var(--lw-line);color:var(--lw-muted);text-align:center;line-height:1.35}
+.gap.now{border-color:var(--lw-de);background:var(--lw-de-s);color:var(--lw-de);animation:blink 1.2s infinite}
+.gap.ok{border-style:solid;border-color:var(--lw-ok);background:var(--lw-ok-bg);color:var(--lw-ok-ink);animation:none}
+.gap.bad{border-style:solid;border-color:var(--lw-bad);background:var(--lw-bad-bg);color:var(--lw-bad-ink);animation:none}
+.gap s{opacity:.7;margin-right:4px}
+@keyframes blink{50%{opacity:.55}}
+/* Teil-Karte im Test */
+.part{display:flex;flex-direction:column;gap:12px;align-items:flex-start}
+.part .big{font-size:3rem;line-height:1}
+/* Ergebnis */
+.result{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;padding-top:20px}
+.bigstars{display:flex;gap:8px}
+.bigstars svg{width:64px;height:64px}
+.bigstars .s1{animation:pop .5s .1s both}.bigstars .s2{animation:pop .5s .35s both}.bigstars .s3{animation:pop .5s .6s both}
+@keyframes pop{0%{transform:scale(.4)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+.result .go,.result .ghost{width:100%}
+.teile{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
+.teile div{background:var(--lw-card);border:2px solid var(--lw-line);border-radius:16px;padding:10px}
+.teile b{display:block;font:700 1.4rem/1.2 var(--lw-f-d)}
+.libitem{display:flex;gap:12px;align-items:center;text-align:left;width:100%;padding:12px;border-radius:18px;background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:4px}
+.libitem .tico{font-size:2rem;line-height:1;flex:none;width:44px;text-align:center}
+.libitem h3{font-size:1.05rem}
+.fb p{margin-top:4px}
+.lw-sheet .ghost{width:100%;min-height:50px}
+@media (max-width:360px){.rfb{grid-template-columns:1fr}.picgrid .opt{min-height:100px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style><!--lw-look--><link rel="stylesheet" href="/lernwelt-app.css"><script src="/lernwelt-app.js"></script><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap"><style id="lw-look">
+/* Übungs-Bausteine im Lernwelt-Look (wie im Konzept: Antwortkacheln, grüne Rückmeldung, dicke Knöpfe) */
+.go,.next,.check{background:var(--lw-c);color:#fff;border:none;border-radius:16px;min-height:54px;padding:12px 22px;
+  font-family:var(--lw-f-d);font-weight:700;font-size:1.05rem;letter-spacing:.04em;text-transform:uppercase;box-shadow:0 5px 0 var(--lw-cd)}
+.go:active,.next:active,.check:active{transform:translateY(3px);box-shadow:0 2px 0 var(--lw-cd)}
+.ghost{background:var(--lw-card);color:var(--lw-ink);border:2px solid var(--lw-line);border-bottom-width:4px;border-radius:14px;min-height:44px;font-weight:700}
+.chip{background:var(--lw-card);color:var(--lw-ink);border:2px solid var(--lw-line);border-radius:99px;min-height:40px;padding:6px 14px;font-weight:700}
+.chip[aria-pressed="true"]{background:var(--lw-c);border-color:var(--lw-c);color:#fff}
+.progress{height:14px;background:var(--lw-line);border-radius:99px}
+.progress i{background:var(--lw-ok);border-radius:99px}
+.card{background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:22px;box-shadow:none}
+.card-top{background:none;color:var(--lw-c);padding:16px 18px 0;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase}
+.card-top .tag{font-size:.8rem}
+.card-body{background-image:none}
+.prompt{font-family:var(--lw-f-d);font-weight:700}
+.opts{gap:12px}
+.opt{background:var(--lw-card);color:var(--lw-ink);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:18px;min-height:60px;
+  font-family:var(--lw-f-d);font-weight:600;font-size:1.12rem}
+.opt:not(:disabled):active{transform:translateY(3px);border-bottom-width:2px}
+.opt.ok{border:3px solid var(--lw-ok);border-bottom-width:6px;background:var(--lw-ok-bg);color:var(--lw-ok-ink)}
+.opt.bad{border-color:var(--lw-bad);background:var(--lw-bad-bg);color:var(--lw-bad-ink)}
+.tile{background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:4px;border-radius:12px;font-family:var(--lw-f-d);font-weight:700}
+.slots{border-radius:16px}
+.slots .tile{background:var(--lw-cs);border-color:var(--lw-c)}
+.inp input,.field{border-radius:16px}
+.fb{border-radius:22px;padding:16px 16px 18px;gap:8px}
+.fb.ok{background:var(--lw-ok-bg);border:none;color:var(--lw-ink)}
+.fb.bad{background:var(--lw-bad-bg);border:none;color:var(--lw-ink)}
+.fb strong{font-family:var(--lw-f-d);font-weight:700;font-size:1.3rem;display:flex;align-items:center;gap:10px}
+.fb.ok strong{color:var(--lw-ok-ink)}
+.fb.bad strong{color:var(--lw-bad-ink)}
+.fb.ok strong::before,.fb.bad strong::before{content:"";flex:none;width:36px;height:36px;border-radius:50%;background:var(--lw-ok) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/20px no-repeat}
+.fb.bad strong::before{background:var(--lw-bad) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3.4' stroke-linecap='round'%3E%3Cpath d='M7 7l10 10M17 7L7 17'/%3E%3C/svg%3E") center/18px no-repeat}
+.card-top .tag{color:var(--lw-c);font-family:var(--lw-f-b);font-weight:700;letter-spacing:.12em}
+.card-top .fachtag{background:var(--lw-cs);color:var(--lw-c);font-family:var(--lw-f-b);font-weight:700}
+/* @kit */
+/* Lese- und Hör-Detektivin ist von Anfang an im Lernwelt-Look gebaut: nur die Fach-Farbe setzen. */
+:root:root:root{--lw-c:var(--lw-de); --lw-cd:var(--lw-de-d); --lw-cs:var(--lw-de-s)}
+.go{width:auto}
+.go:disabled{opacity:.5}
+</style><!--/lw-look-->
+</head><body><nav id="lw-bar" class="lw-bar lw-de" aria-label="Lernwelt"><a class="lw-back" href="index.html#heft-lesenhoeren" aria-label="Zurück zum Heft"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a><span class="lw-t"><span class="lw-eyebrow">Deutsch</span><span class="lw-name">Lese- und Hör-Detektivin</span></span></nav>
+<main class="wrap" id="app"></main>
+<script>
+"use strict";
+/* ================= Grundlagen ================= */
+const $=s=>document.querySelector(s);
+const app=$("#app");
+const rand=n=>Math.floor(Math.random()*n);
+const pick=a=>a[rand(a.length)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=rand(i+1);[a[i],a[j]]=[a[j],a[i]]}return a};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* ================= Zustand ================= */
+const KEY="lesen-hoeren-v1";
+const DEF={best:{},seen:{},rot:{},denk:true,probe:null};
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&typeof s==="object")return Object.assign(JSON.parse(JSON.stringify(DEF)),s)}catch(e){}return JSON.parse(JSON.stringify(DEF))}
+let S=load();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+
+/* kurze Töne */
+let AC=null;
+function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){AC=null}}if(AC&&AC.state==="suspended")AC.resume();return AC}
+function beep(fs,len,type,vol){const a=ac();if(!a)return;let t=a.currentTime+.02;fs.forEach(f=>{const o=a.createOscillator(),g=a.createGain();o.type=type||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol||.18,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+len);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+len+.02);t+=len*.75})}
+const sfxOk=()=>beep([1046.5,1318.5],.14);
+const sfxBad=()=>beep([233,175],.18,"triangle",.12);
+const sfxPop=()=>beep([784],.08,"sine",.12);
+
+/* ================= Vorlesen (wie in Bildergeschichte/Ethik: Sätze einzeln, nur Stimmen auf dem Gerät) ================= */
+const TTS={ok:"speechSynthesis" in window&&"SpeechSynthesisUtterance" in window,v:null,run:0,keep:null,awake:false};
+function pickVoices(){if(!TTS.ok)return;const all=speechSynthesis.getVoices()||[];
+  let vs=all.filter(v=>/^de([-_]|$)/i.test(v.lang));const dd=vs.filter(v=>/de[-_]DE/i.test(v.lang));if(dd.length)vs=dd;
+  const loc=vs.filter(v=>v.localService);if(loc.length)vs=loc;
+  TTS.v=vs.find(v=>/anna|petra|helena|katja|marlene|vicki/i.test(v.name))||vs.find(v=>v.default)||vs[0]||null}
+if(TTS.ok){pickVoices();if(speechSynthesis.addEventListener)speechSynthesis.addEventListener("voiceschanged",pickVoices);else speechSynthesis.onvoiceschanged=pickVoices}
+function wake(){if(!TTS.ok||TTS.awake)return;TTS.awake=true;
+  try{const u=new SpeechSynthesisUtterance(" ");u.volume=0;u.lang="de-DE";TTS.keep=u;speechSynthesis.speak(u)}catch(e){}
+  pickVoices()}
+["touchend","click","keydown"].forEach(ev=>document.addEventListener(ev,wake,{capture:true,passive:true}));
+document.addEventListener("visibilitychange",()=>{if(document.hidden)hush()});
+const talking=()=>TTS.ok&&(speechSynthesis.speaking||speechSynthesis.pending);
+function stopNow(){if(talking()){speechSynthesis.cancel();TTS.cut=Date.now()}}
+let onHush=null;
+function hush(){TTS.run++;stopNow();if(onHush){const f=onHush;onHush=null;f()}}
+function chunks(t){const out=[];(t.match(/[^.!?…]+[.!?…]*["“”»«„]?\s*/g)||[t]).forEach(s=>{s=s.trim();if(!s)return;
+  while(s.length>180){let k=s.lastIndexOf(", ",180);if(k<60)k=s.lastIndexOf(" ",180);if(k<1)k=180;out.push(s.slice(0,k+1));s=s.slice(k+1).trim()}
+  if(s)out.push(s)});return out}
+/* Teile nacheinander vorlesen; onPart(i) vor jedem Teil (zum Mitlesen), onend am Schluss. stop = Abbruch-Rückruf */
+function speakSeq(parts,onPart,onend,stop){if(!TTS.ok){if(onend)setTimeout(onend,0);return false}
+  hush();const id=TTS.run;onHush=stop||null;
+  const q=[];parts.forEach((p,i)=>chunks(p).forEach((c,j)=>q.push({c,i,first:j===0})));let k=0;
+  const one=()=>{if(id!==TTS.run)return;if(k>=q.length){onHush=null;if(onend)onend();return}
+    const it=q[k++];if(it.first&&onPart)onPart(it.i);
+    const u=new SpeechSynthesisUtterance(it.c);u.lang="de-DE";if(TTS.v)u.voice=TTS.v;u.rate=.88;TTS.keep=u;
+    let fired=false;const fin=()=>{if(fired)return;fired=true;clearTimeout(wd);setTimeout(one,it.first&&q[k]&&q[k].first?220:60)};
+    u.onend=fin;u.onerror=fin;const wd=setTimeout(fin,2500+u.text.length*120);
+    try{if(speechSynthesis.paused)speechSynthesis.resume();speechSynthesis.speak(u)}catch(e){fin()}};
+  const wait=90-(Date.now()-(TTS.cut||0));wait>0?setTimeout(one,wait):one();return true}
+
+/* ================= Symbole ================= */
+const I={
+  back:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>`,
+  spk:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>`,
+  play:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg>`,
+  stop:`<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6.5" y="6.5" width="11" height="11" rx="2" fill="currentColor"/></svg>`,
+  star:on=>`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z" fill="${on?"#FFC93C":"var(--lw-line)"}" stroke="${on?"#D99A00":"none"}" stroke-width="1.2" stroke-linejoin="round"/></svg>`
+};
+
+/* ================= Texte =================
+   p = Absätze, jeder Absatz = Liste von Satz-Einheiten (eine Einheit kann man im Kapitel „Beweis im Text“ antippen).
+   hoer: true = Hörtext (wird vorgelesen, Text erst danach sichtbar). probe: true = gehört zur Probe-GLN. */
+const TX={
+turnbeutel:{t:"Wo ist der Turnbeutel?",art:"Geschichte",ico:"🎒",p:[
+  ["Am Dienstagmorgen stand Ben vor der Haustür und suchte seinen Turnbeutel.","Er hing nicht an der Garderobe und lag auch nicht in seinem Zimmer.","„Mama, hast du meinen Turnbeutel gesehen?“, rief Ben.","„Nein“, antwortete Mama, „aber wir müssen in fünf Minuten los.“"],
+  ["Ben schaute unter das Sofa.","Dort lag nur ein alter Socken.","Dann lief er in die Küche.","Auch dort war kein Turnbeutel."],
+  ["Plötzlich hörte Ben ein lautes Schnarchen aus dem Garten.","Er sah aus dem Fenster und musste lachen.","Sein Hund Bruno lag in der Hundehütte und hatte den Kopf auf den grünen Turnbeutel gelegt.","Bruno schlief tief und fest."],
+  ["Ben holte seinen Beutel und kraulte Bruno hinter den Ohren.","„Du Schlingel“, sagte er, „heute brauche ich meine Turnschuhe selbst.“","Dann rannte er zum Auto, und sie kamen gerade noch pünktlich zur Schule."]]},
+einladung:{t:"Einladung zu Linas Geburtstag",art:"Einladung",ico:"🎉",p:[
+  ["Liebe Emma,"],
+  ["am Samstag, dem 28. November, werde ich 9 Jahre alt.","Das möchte ich mit dir feiern!"],
+  ["Die Feier beginnt um 15 Uhr bei mir zu Hause in der Rosenstraße 4.","Um 18 Uhr können dich deine Eltern wieder abholen."],
+  ["Wir machen eine Schatzsuche im Wald.","Bitte zieh feste Schuhe an und bring eine Taschenlampe mit.","Zum Abendessen gibt es Pizza."],
+  ["Bitte sag mir bis Mittwoch Bescheid, ob du kommen kannst."],
+  ["Ich freue mich auf dich!","Deine Lina"]]},
+igel:{t:"Der Igel",art:"Sachtext",ico:"🦔",p:[
+  ["Der Igel ist ein kleines Säugetier.","Auf seinem Rücken trägt er etwa 7000 Stacheln.","Wenn er Angst hat, rollt er sich zu einer stacheligen Kugel zusammen.","So schützt er sich vor Feinden wie dem Fuchs."],
+  ["Igel sind in der Nacht unterwegs.","Am Tag schlafen sie in einem Versteck unter Hecken oder in Laubhaufen.","Nachts suchen sie nach Futter.","Sie fressen am liebsten Käfer, Regenwürmer und Schnecken."],
+  ["Im Herbst frisst sich der Igel eine dicke Fettschicht an.","Dann baut er sich ein Nest aus Blättern.","Von November bis März hält er dort Winterschlaf.","In dieser Zeit atmet er ganz langsam und frisst nichts."],
+  ["Du kannst Igeln helfen, wenn du im Garten einen Laubhaufen liegen lässt.","Milch darfst du einem Igel aber nicht geben, denn davon bekommt er Bauchschmerzen."]]},
+bauernhof:{t:"Ausflug zum Bauernhof",art:"Geschichte",ico:"🐄",p:[
+  ["Die Klasse 3b machte einen Ausflug zum Bauernhof von Familie Klein.","Schon im Bus waren alle Kinder aufgeregt."],
+  ["Zuerst zeigte Bäuerin Klein den Kindern den Kuhstall.","Dort standen zwanzig Kühe und ein kleines Kälbchen.","Das Kälbchen war erst zwei Tage alt."],
+  ["Danach durften die Kinder die Hühner füttern.","Mila sammelte sogar fünf Eier ein.","Ein frecher Hahn pickte Jonas in den Schuh.","Alle lachten, nur Jonas nicht."],
+  ["Anschließend gab es auf der Wiese ein Picknick.","Bäuerin Klein brachte frische Milch und Brot mit Butter."],
+  ["Zum Schluss fuhren die Kinder mit dem Traktor über den Hof.","Auf der Rückfahrt im Bus waren alle müde, aber glücklich.","Jonas sagte: „Nächstes Mal ziehe ich Gummistiefel an!“"]]},
+kresse:{t:"So wächst Kresse",art:"Anleitung",ico:"🌱",p:[
+  ["Du brauchst: einen Teller, Watte, Kressesamen und Wasser."],
+  ["1. Lege den Teller mit einer dicken Schicht Watte aus.","2. Mache die Watte mit Wasser nass. Sie soll feucht sein, aber nicht im Wasser schwimmen.","3. Streue die Kressesamen auf die Watte.","4. Stelle den Teller an einen hellen Platz, zum Beispiel auf die Fensterbank.","5. Gieße die Watte jeden Tag mit ein wenig Wasser."],
+  ["Nach etwa einer Woche kannst du die Kresse mit einer Schere abschneiden.","Sie schmeckt lecker auf einem Butterbrot!"]]},
+opa:{t:"Opas Geheimnis",art:"Geschichte",ico:"👴",p:[
+  ["Jeden Mittwoch verschwand Opa Karl für zwei Stunden im Gartenhäuschen.","Die Tür schloss er immer ab.","„Was machst du da drin?“, fragte Hanna neugierig.","Opa zwinkerte nur und sagte: „Das ist ein Geheimnis.“"],
+  ["Hanna dachte an einen Schatz.","Vielleicht baute Opa aber auch eine Rakete?","Einmal drückte sie ihr Ohr an die Tür.","Sie hörte ein Sägen und ein leises Hämmern."],
+  ["An Hannas Geburtstag stand Opa mit einem großen Tuch im Garten.","Darunter war etwas versteckt.","„Eins, zwei, drei!“, rief Opa und zog das Tuch weg."],
+  ["Vor Hanna stand ein Puppenhaus aus Holz mit roten Fensterläden und einer kleinen Treppe.","Hanna fiel Opa um den Hals.","„Jetzt weiß ich, was du jeden Mittwoch gemacht hast!“, lachte sie.","Opa strahlte über das ganze Gesicht."]]},
+saar:{t:"Hoch über der Saar",art:"Geschichte",ico:"🌳",p:[
+  ["In den Herbstferien fuhr Familie Becker an die Saarschleife.","Dort macht der Fluss Saar eine große Kurve.","Paul und seine kleine Schwester Ida wollten auf den Baumwipfelpfad."],
+  ["Der Pfad ist ein langer Holzweg hoch oben zwischen den Bäumen.","Ida hielt sich am Geländer fest.","„Mir ist ein bisschen mulmig“, flüsterte sie.","Paul nahm ihre Hand und sagte: „Ich bin bei dir.“"],
+  ["Am Ende des Weges stand ein hoher Turm.","Ein Weg führte im Kreis um den Turm herum nach oben.","Oben hatten sie eine herrliche Aussicht.","Unter ihnen glitzerte die Saar in der Sonne, und die Bäume leuchteten rot, gelb und orange."],
+  ["„Das war der schönste Ausflug der Ferien!“, rief Ida.","Jetzt hatte sie gar keine Angst mehr."]]},
+fledermaus:{t:"Fledermäuse",art:"Sachtext",ico:"🦇",p:[
+  ["Fledermäuse sind die einzigen Säugetiere, die richtig fliegen können.","Ihre Flügel sind aus dünner Haut.","Die Haut ist zwischen den langen Fingern gespannt."],
+  ["Fledermäuse jagen in der Nacht.","Im Dunkeln stoßen sie sehr hohe Rufe aus, die wir Menschen nicht hören können.","Die Rufe prallen an Insekten und Bäumen ab und kommen als Echo zurück.","So finden Fledermäuse ihren Weg und ihre Beute."],
+  ["Bei uns fressen Fledermäuse vor allem Insekten wie Mücken und Motten.","Eine kleine Zwergfledermaus kann in einer Nacht mehrere hundert Mücken fangen."],
+  ["Am Tag schlafen Fledermäuse.","Dabei hängen sie mit dem Kopf nach unten in Höhlen, auf Dachböden oder in hohlen Bäumen."]]},
+/* kurze Hörtexte */
+zoo:{t:"Durchsage im Zoo",art:"Durchsage",ico:"🐧",hoer:true,p:[["Achtung, eine Durchsage!","Die Fütterung der Pinguine beginnt heute schon um 14 Uhr.","Kommen Sie zum Pinguinbecken neben dem Eingang!"]]},
+oma:{t:"Nachricht von Oma",art:"Sprachnachricht",ico:"📱",hoer:true,p:[["Hallo Lea, hier ist Oma.","Ich hole dich morgen von der Schule ab.","Warte bitte am großen Tor.","Danach backen wir zusammen einen Apfelkuchen!"]]},
+raetsel1:{t:"Tier-Rätsel",art:"Rätsel",ico:"❓",hoer:true,p:[["Ich lebe auf dem Bauernhof.","Ich habe eine rosa Haut und einen Ringelschwanz.","Ich wälze mich gern im Schlamm.","Wer bin ich?"]]},
+raetsel2:{t:"Noch ein Tier-Rätsel",art:"Rätsel",ico:"❓",hoer:true,p:[["Ich habe lange Ohren und hoppele über die Wiese.","Ich fresse gern Möhren und Klee.","Wer bin ich?"]]},
+regen:{t:"Durchsage in der Schule",art:"Durchsage",ico:"🏫",hoer:true,p:[["Liebe Kinder, wegen des starken Regens bleibt ihr in der großen Pause heute in euren Klassen.","Die Spielekiste dürft ihr trotzdem benutzen."]]},
+baecker:{t:"Mama hat einen Auftrag",art:"Nachricht",ico:"🥖",hoer:true,p:[["Tim, bitte geh schnell zum Bäcker.","Kauf sechs Brötchen und ein Brot.","Das Geld liegt auf dem Küchentisch."]]},
+wetter:{t:"Der Wetterbericht",art:"Radio",ico:"📻",hoer:true,p:[["Und nun das Wetter für morgen.","Am Vormittag scheint die Sonne.","Am Nachmittag ziehen dunkle Wolken auf, und es gibt Gewitter.","Nehmt lieber einen Regenschirm mit!"]]},
+bahnhof:{t:"Durchsage am Bahnhof",art:"Durchsage",ico:"🚆",hoer:true,p:[["Achtung am Gleis 3!","Der Zug nach Saarbrücken hat heute zehn Minuten Verspätung.","Wir bitten um Entschuldigung."]]},
+raetsel3:{t:"Herbst-Rätsel",art:"Rätsel",ico:"❓",hoer:true,p:[["Ich bin rund und orange.","Ich wachse im Herbst auf dem Feld.","An Halloween schnitzt man mir ein Gesicht.","Wer bin ich?"]]},
+sportfest:{t:"Morgen ist Sportfest",art:"Ansage",ico:"🏅",hoer:true,p:[["Kinder, morgen ist Sportfest!","Bringt bitte Turnschuhe, eine Trinkflasche und eure Sportkleidung mit.","Wir treffen uns um acht Uhr auf dem Sportplatz."]]},
+/* Hörgeschichten */
+zahn:{t:"Der Wackelzahn",art:"Hörgeschichte",ico:"🦷",hoer:true,p:[
+  ["Mia hatte schon seit einer Woche einen Wackelzahn.","Er war ganz vorne oben.","Beim Essen tat es ein bisschen weh."],
+  ["Am Montag biss Mia in der Pause in einen knackigen Apfel.","Plötzlich steckte etwas Hartes im Apfel.","Es war ihr Zahn!","Mia lachte und zeigte allen die Zahnlücke."],
+  ["Ihr Freund Can sagte: „Jetzt kannst du durch die Lücke pfeifen!“","Mia probierte es sofort aus.","Es klappte!"],
+  ["Am Abend legte sie den Zahn in einer kleinen Dose unter ihr Kopfkissen.","Am nächsten Morgen lag dort ein glänzender Stein mit einem kleinen Zettel.","Darauf stand: „Danke für den schönen Zahn! Deine Zahnfee.“"]]},
+kruemel:{t:"Ein Kätzchen im Kirschbaum",art:"Hörgeschichte",ico:"🐱",hoer:true,p:[
+  ["Am Samstagnachmittag spielte Jonas mit seiner Schwester Pia im Garten Fußball.","Plötzlich hörten sie ein klägliches Miauen.","Es kam aus dem großen Kirschbaum."],
+  ["Ganz oben auf einem dünnen Ast saß ein kleines graues Kätzchen.","Es traute sich nicht mehr herunter.","„Wir müssen ihm helfen!“, rief Pia."],
+  ["Jonas holte Papa aus dem Haus.","Papa stellte eine lange Leiter an den Baum und kletterte vorsichtig hinauf.","Das Kätzchen fauchte erst, aber dann ließ es sich hochheben.","Unten gab Pia ihm ein Schälchen Wasser."],
+  ["Kurz darauf kam die Nachbarin, Frau Sommer, angelaufen.","„Da bist du ja, Krümel!“, rief sie erleichtert.","Krümel war seit dem Morgen verschwunden.","Als Dankeschön bekamen Jonas und Pia ein großes Stück Kirschkuchen."]]},
+zelt:{t:"Nachts im Zelt",art:"Hörgeschichte",ico:"⛺",hoer:true,p:[
+  ["In den Sommerferien durfte Lukas zum ersten Mal mit seinem Freund Emil im Garten zelten.","Sie hatten Schlafsäcke, Taschenlampen und eine Tüte Gummibärchen dabei."],
+  ["Zuerst erzählten sie sich Witze.","Die Tüte mit den restlichen Gummibärchen legten sie vor das Zelt.","Dann wurde es dunkel und ganz still."],
+  ["Auf einmal raschelte es draußen.","Etwas schnaufte und kratzte am Zelt.","Lukas hielt die Luft an.","Emil flüsterte: „Was ist das? Ein Wolf?“"],
+  ["Mutig leuchtete Lukas mit der Taschenlampe durch den Spalt der Zelttür.","Da sahen sie einen kleinen Igel, der an der Gummibärchentüte schnüffelte.","Die Jungen lachten erleichtert.","Sie legten die Tüte ins Zelt und stellten dem Igel ein Schälchen Wasser hin.","Danach schliefen sie bis zum Morgen tief und fest."]]},
+biene:{t:"Die Honigbiene",art:"Hör-Sachtext",ico:"🐝",hoer:true,p:[
+  ["Honigbienen leben in einem großen Volk zusammen.","In einem Bienenstock wohnen im Sommer bis zu 50 000 Bienen.","Es gibt nur eine Königin.","Sie legt die Eier."],
+  ["Die meisten Bienen sind Arbeiterinnen.","Sie fliegen von Blüte zu Blüte und sammeln Nektar und Blütenstaub.","Aus dem Nektar machen die Bienen Honig."],
+  ["Wenn eine Biene viele Blüten gefunden hat, fliegt sie zurück zum Stock und tanzt.","Mit diesem Tanz zeigt sie den anderen Bienen, wo das Futter ist."],
+  ["Bienen sind sehr wichtig für uns, denn sie bestäuben die Blüten.","Nur so wachsen zum Beispiel Äpfel und Kirschen."]]},
+/* Probe-GLN */
+baumhaus:{t:"Das Baumhaus",art:"Geschichte",ico:"🏡",probe:true,p:[
+  ["Lars und seine Freundin Selin wünschten sich schon lange ein Baumhaus.","Im Garten von Lars stand eine alte, dicke Buche.","„Die ist perfekt!“, sagte Selin."],
+  ["Am Samstag holte Lars' Mama Bretter, Nägel und einen Hammer aus dem Keller.","Zuerst bauten sie zusammen einen Boden auf einen starken Ast.","Danach nagelten sie drei Wände fest.","Selin malte ein Schild mit der Aufschrift „Eintritt nur für Freunde“."],
+  ["Am Nachmittag fing es plötzlich an zu regnen.","Die Kinder saßen im Baumhaus, und es tropfte ihnen auf den Kopf.","„Wir haben das Dach vergessen!“, rief Lars.","Die beiden mussten so lachen, dass ihnen der Bauch wehtat."],
+  ["Am Sonntag bauten sie ein Dach aus einer alten Plane.","Am Abend aßen sie im Baumhaus Kekse und hörten dem Regen zu.","Diesmal blieben sie trocken."]]},
+laterne:{t:"Der Laternenumzug",art:"Hörgeschichte",ico:"🏮",hoer:true,probe:true,p:[
+  ["Am 11. November war in Emils Dorf der Laternenumzug.","Emil hatte in der Schule eine Laterne gebastelt.","Sie sah aus wie ein großer gelber Mond mit einem lachenden Gesicht."],
+  ["Um 17 Uhr trafen sich alle Kinder vor der Kirche.","Vorne ritt ein Mann auf einem braunen Pferd.","Er trug einen roten Mantel und spielte den heiligen Martin.","Die Kinder liefen hinterher und sangen Laternenlieder."],
+  ["Plötzlich kam ein starker Windstoß, und Emils Laterne ging aus.","Emil war traurig.","Da hielt seine Freundin Nele ihre Laterne neben seine und zündete sein Licht wieder an.","„Danke, Nele!“, sagte Emil und strahlte."],
+  ["Am Ende brannte auf dem Dorfplatz ein großes Feuer, und jedes Kind bekam eine süße Martinsbrezel."]]}
+};
+const units=tx=>tx.p.flat();
+const findUnit=(tx,at)=>{const ats=[].concat(at);return units(tx).findIndex(u=>ats.some(a=>u.includes(a)))};
+const paraOf=(tx,at)=>{const ats=[].concat(at);return tx.p.findIndex(pa=>pa.some(u=>ats.some(a=>u.includes(a))))};
+/* Text als HTML. o.tap = Einheiten antippbar, o.mark = Absatz hervorheben */
+function txHTML(tx,o){o=o||{};let k=0;
+  return `<div class="txt${o.tap?" tap":""}"><div class="txh"><span class="tico" aria-hidden="true">${tx.ico}</span><span><span class="lbl">${esc(tx.art)}</span><h3>${esc(tx.t)}</h3></span></div>${tx.p.map((pa,pi)=>`<p class="${o.mark===pi?"mk":""}">${pa.map(u=>{const j=k++;return `<span class="u" data-u="${j}"${o.tap?` role="button" tabindex="0"`:""}>${esc(u)}</span>`}).join(" ")}</p>`).join("")}</div>`}
+
+/* ================= Kapitel =================
+   cards: Erklär-Karten vor der Runde; spick: Spickzettel am Ende.
+   mode "lesen": erst den Text lesen, bei jeder Frage aufklappbar. mode "hoeren": Text anhören, erst am Ende sichtbar.
+   sets: [{tx, tasks}] – eine Runde nimmt Texte der Reihe nach, bis mindestens n Fragen zusammen sind.
+   Aufgabenarten:
+     mc    {q, o:[richtig, …], at?, w?, ex}       Auswahl (at = Textstelle mit der Antwort, w = Fragewort für die Denkfrage)
+     pic   {q, o:[[Emoji, Wort], …], at?, ex}     Bild-Auswahl (erstes richtig)
+     rf    {s:[[Aussage, "r"|"f"|"n"], …], ex}    richtig / falsch / steht nicht im Text
+     find  {q, a:Textstück(e), ex}                Satz im Text antippen
+     order {q?, o:[richtige Reihenfolge], ex}     Reihenfolge antippen
+     gap   {q?, s:"… [[richtig|falsch|falsch]] …", at?, ex}  Lücke füllen */
+const W={Wer:"eine Person oder ein Tier",Wo:"einen Ort",Wann:"eine Zeit oder einen Tag",Was:"eine Sache oder eine Handlung",Warum:"einen Grund",Wie:"eine Art und Weise",Zahl:"eine Zahl",Farbe:"eine Farbe"};
+const WN={Wer:"Wer?",Wo:"Wo?",Wann:"Wann?",Was:"Was?",Warum:"Warum?",Wie:"Wie?",Zahl:"Wie viele?",Farbe:"Welche Farbe?"};
+const CH=[
+{id:"detektiv",t:"Lese-Detektivin",d:"So liest du einen Text genau: W-Fragen beantworten",ico:"🔍",mode:"lesen",n:6,
+ cards:[
+  {h:"Lesen wie eine Detektivin",b:`<ol><li><b>Überschrift und Bild ansehen:</b> Worum geht es wohl?</li><li><b>Den ganzen Text lesen</b>, in Ruhe, ohne zu hetzen.</li><li><b>Die Frage genau lesen.</b> Was will sie wissen?</li><li><b>Im Text nachsehen.</b> Nicht raten! Die Antwort steht fast immer im Text.</li><li><b>Prüfen:</b> Passt meine Antwort wirklich zur Frage?</li></ol>`},
+  {h:"Die W-Fragen",b:`<p>Das Fragewort verrät dir, was du im Text suchen musst:</p><ul><li><b>Wer?</b> eine Person oder ein Tier</li><li><b>Wo?</b> einen Ort</li><li><b>Wann?</b> eine Zeit oder einen Tag</li><li><b>Was?</b> eine Sache oder eine Handlung</li><li><b>Warum?</b> einen Grund, oft mit „weil“</li></ul><div class="bsp"><small>Beispiel</small>„<b>Wann</b> sucht Ben den Turnbeutel?“ Ich suche eine Zeit: „Am Dienstagmorgen“.</div>`},
+  {h:"Der Text bleibt bei dir",b:`<p>Du liest den Text zuerst einmal ganz. Bei jeder Frage kannst du ihn wieder <b>aufklappen</b> und nachsehen, genau wie auf dem Blatt in der Klassenarbeit.</p><p>Mit <b>💡 Wo steht's?</b> zeigt dir die App den Absatz, in dem die Antwort steckt.</p>`}],
+ spick:["Erst den ganzen Text lesen, dann die Fragen","Fragewort verrät, was du suchst: Wer, wo, wann, was, warum","Nicht raten: im Text nachsehen"],
+ sets:[
+  {tx:"turnbeutel",tasks:[
+   {k:"mc",w:"Wann",q:"Wann sucht Ben seinen Turnbeutel?",o:["am Dienstagmorgen","am Montagabend","am Sonntag","in der großen Pause"],at:"Dienstagmorgen",ex:"Gleich im ersten Satz steht die Zeit."},
+   {k:"mc",w:"Was",q:"Was findet Ben unter dem Sofa?",o:["einen alten Socken","seinen Turnbeutel","einen Ball","seine Turnschuhe"],at:"alter Socken",ex:"Unter dem Sofa liegt nur ein alter Socken."},
+   {k:"mc",w:"Wer",q:"Wer hat den Turnbeutel?",o:["Bruno, der Hund","Mama","Bens Schwester","die Lehrerin"],at:"Kopf auf den grünen",ex:"Bruno hat seinen Kopf auf den Turnbeutel gelegt."},
+   {k:"mc",w:"Farbe",q:"Welche Farbe hat der Turnbeutel?",o:["grün","rot","blau","gelb"],at:"grünen Turnbeutel",ex:"Es ist ein grüner Turnbeutel."},
+   {k:"mc",w:"Warum",q:"Warum muss Ben lachen?",o:["Weil Bruno auf dem Turnbeutel schläft.","Weil Mama einen Witz erzählt.","Weil der Socken lustig aussieht.","Weil er heute schulfrei hat."],at:"Kopf auf den grünen",ex:"Ben sieht aus dem Fenster: Bruno schläft auf seinem Turnbeutel."},
+   {k:"mc",w:"Was",q:"Was ist im Turnbeutel?",o:["Turnschuhe","Bücher","ein Pausenbrot","Hundefutter"],at:"Turnschuhe",ex:"Ben sagt: „Heute brauche ich meine Turnschuhe selbst.“"}]},
+  {tx:"einladung",tasks:[
+   {k:"mc",w:"Wer",q:"Wer schreibt die Einladung?",o:["Lina","Emma","Linas Mama","die Lehrerin"],at:"Deine Lina",ex:"Unten steht, wer geschrieben hat: Deine Lina."},
+   {k:"mc",w:"Zahl",q:"Wie alt wird Lina?",o:["9 Jahre","8 Jahre","10 Jahre","28 Jahre"],at:"9 Jahre",ex:"Die 28 ist das Datum, nicht das Alter. Lina wird 9."},
+   {k:"mc",w:"Wo",q:"Wo findet die Feier statt?",o:["in der Rosenstraße 4","im Schwimmbad","in der Schule","bei Emma zu Hause"],at:"Rosenstraße",ex:"Die Feier ist bei Lina zu Hause in der Rosenstraße 4."},
+   {k:"mc",w:"Wie",q:"Wie lange dauert die Feier?",o:["drei Stunden","eine Stunde","zwei Stunden","den ganzen Tag"],at:["15 Uhr","18 Uhr"],ex:"Von 15 Uhr bis 18 Uhr sind es drei Stunden. Hier musst du zwei Stellen im Text zusammen lesen."},
+   {k:"mc",w:"Was",q:"Was soll Emma mitbringen?",o:["eine Taschenlampe","eine Pizza","ein Kuscheltier","einen Schlafsack"],at:"Taschenlampe",ex:"Emma soll eine Taschenlampe mitbringen, für die Schatzsuche im Wald."},
+   {k:"mc",w:"Wann",q:"Bis wann soll Emma Bescheid sagen?",o:["bis Mittwoch","bis Samstag","bis Montag","bis 18 Uhr"],at:"Mittwoch",ex:"Bis Mittwoch soll Emma sagen, ob sie kommt."},
+   {k:"pic",q:"Was gibt es zum Abendessen?",o:[["🍕","Pizza"],["🍝","Nudeln"],["🌭","Würstchen"],["🥗","Salat"]],at:"Pizza",ex:"Zum Abendessen gibt es Pizza."}]}]},
+{id:"stimmt",t:"Stimmt das?",d:"Richtig, falsch oder steht nicht im Text",ico:"✅",mode:"lesen",n:5,
+ cards:[
+  {h:"Drei Möglichkeiten",b:`<p>In der GLN kommen oft Sätze, bei denen du ankreuzen musst:</p><div class="rfleg"><span><i style="background:var(--lw-ok-bg);color:var(--lw-ok-ink)">✓</i><span><b>richtig:</b> Genau das steht im Text.</span></span><span><i style="background:var(--lw-bad-bg);color:var(--lw-bad-ink)">✗</i><span><b>falsch:</b> Im Text steht etwas anderes.</span></span><span><i style="background:var(--lw-soft);color:var(--lw-brand)">?</i><span><b>steht nicht im Text:</b> Der Text sagt dazu gar nichts.</span></span></div>`},
+  {h:"Falsch oder steht nicht drin?",b:`<p>Das ist der Trick: Prüfe, ob der Text überhaupt etwas dazu sagt.</p><div class="bsp"><small>Text</small>Ben schaute unter das Sofa. Dort lag nur ein alter Socken.</div><div class="bsp bad"><small>Unter dem Sofa liegt ein Ball.</small>Falsch: Im Text steht, dass dort ein Socken liegt.</div><div class="bsp"><small>Ben hat eine Schwester.</small>Steht nicht im Text: Über Geschwister erfährst du nichts.</div>`},
+  {h:"Nicht dein Wissen zählt",b:`<p>Vielleicht weißt du etwas über das Thema. Aber hier zählt <b>nur, was im Text steht</b>.</p><div class="bsp"><small>Beispiel</small>„Igel können schwimmen.“ Das stimmt vielleicht in echt, aber im Igel-Text steht es nicht. Also: <b>steht nicht im Text</b>.</div>`}],
+ spick:["richtig: steht genau so im Text","falsch: der Text sagt etwas anderes","steht nicht im Text: der Text sagt dazu nichts","Nur der Text zählt, nicht was du sonst weißt"],
+ sets:[
+  {tx:"igel",tasks:[
+   {k:"rf",s:[["Igel schlafen am Tag.","r"],["Igel fressen am liebsten Äpfel.","f"],["Ein Igel wird etwa fünf Jahre alt.","n"]],ex:"Igel fressen am liebsten Käfer, Regenwürmer und Schnecken. Wie alt sie werden, steht nicht im Text."},
+   {k:"rf",s:[["Ein Igel hat etwa 7000 Stacheln.","r"],["Der Igel hält im Sommer Winterschlaf.","f"],["Igel haben schlechte Augen.","n"]],ex:"Der Winterschlaf dauert von November bis März. Über die Augen sagt der Text nichts."},
+   {k:"rf",s:[["Im Winterschlaf frisst der Igel nichts.","r"],["Man soll Igeln Milch geben.","f"],["Der Fuchs ist ein Feind des Igels.","r"]],ex:"Milch bekommt Igeln nicht, sie bekommen Bauchschmerzen davon."},
+   {k:"mc",q:"Was macht der Igel, wenn er Angst hat?",o:["Er rollt sich zu einer Kugel zusammen.","Er läuft schnell weg.","Er gräbt sich ein Loch.","Er klettert auf einen Baum."],at:"rollt er sich",ex:"Er rollt sich zu einer stacheligen Kugel zusammen."}]},
+  {tx:"turnbeutel",tasks:[
+   {k:"rf",s:[["Ben sucht seinen Turnbeutel am Dienstagmorgen.","r"],["Unter dem Sofa liegt ein Turnschuh.","f"],["Ben hat eine Schwester.","n"]],ex:"Unter dem Sofa liegt ein alter Socken. Ob Ben Geschwister hat, steht nicht im Text."},
+   {k:"rf",s:[["Bruno ist Bens Hund.","r"],["Bruno bellt laut im Garten.","f"],["Bruno ist drei Jahre alt.","n"]],ex:"Bruno bellt nicht, er schnarcht! Wie alt er ist, steht nicht im Text."},
+   {k:"rf",s:[["Ben kommt zu spät zur Schule.","f"],["Ben fährt mit dem Auto zur Schule.","r"],["Bens Lehrerin heißt Frau Weber.","n"]],ex:"Sie kommen gerade noch pünktlich. Die Lehrerin kommt im Text nicht vor."}]},
+  {tx:"einladung",tasks:[
+   {k:"rf",s:[["Die Feier ist an einem Samstag.","r"],["Lina wird 8 Jahre alt.","f"],["Lina wünscht sich ein Buch.","n"]],ex:"Lina wird 9. Über Wünsche schreibt sie nichts."},
+   {k:"rf",s:[["Die Kinder machen eine Schatzsuche im Wald.","r"],["Die Feier beginnt um 16 Uhr.","f"],["Zur Feier kommen zehn Kinder.","n"]],ex:"Die Feier beginnt um 15 Uhr. Wie viele Kinder kommen, steht nicht da."},
+   {k:"rf",s:[["Emma soll eine Taschenlampe mitbringen.","r"],["Zum Abendessen gibt es Pizza.","r"],["Emma kann gut schwimmen.","n"]],ex:"Ob Emma schwimmen kann, hat mit der Einladung nichts zu tun."}]},
+  {tx:"fledermaus",tasks:[
+   {k:"rf",s:[["Fledermäuse können fliegen.","r"],["Menschen können die Rufe der Fledermäuse gut hören.","f"],["Fledermäuse werden bis zu 30 Jahre alt.","n"]],ex:"Die Rufe sind so hoch, dass wir Menschen sie nicht hören können."},
+   {k:"rf",s:[["Fledermäuse schlafen am Tag.","r"],["Fledermäuse fressen bei uns vor allem Obst.","f"],["Fledermäuse haben Federn.","f"]],ex:"Bei uns fressen sie vor allem Insekten. Ihre Flügel sind aus dünner Haut, nicht aus Federn."},
+   {k:"rf",s:[["Fledermäuse schlafen mit dem Kopf nach unten.","r"],["Fledermäuse jagen am Mittag.","f"],["Fledermäuse bekommen im Juni ihre Jungen.","n"]],ex:"Sie jagen in der Nacht. Über Junge steht nichts im Text."}]}]},
+{id:"beweis",t:"Beweis im Text",d:"Den Satz mit der Antwort finden und antippen",ico:"👆",mode:"lesen",n:5,
+ cards:[
+  {h:"Zeig mir die Stelle!",b:`<p>Eine gute Detektivin hat immer einen <b>Beweis</b>. In der GLN sollst du manchmal den Satz unterstreichen oder die Zeile aufschreiben, in der die Antwort steht.</p><p>Hier tippst du den Satz an.</p>`},
+  {h:"So findest du die Stelle schnell",b:`<ol><li>Such in der Frage ein <b>Schlüsselwort</b>, zum Beispiel „Kälbchen“ oder „Hahn“.</li><li>Lass deine Augen über den Text gleiten, bis du das Wort findest.</li><li>Lies den Satz genau. Beantwortet er die Frage?</li></ol><div class="bsp"><small>Frage</small>Wie alt ist das <b>Kälbchen</b>? Schlüsselwort: Kälbchen. Dort steht: „Das Kälbchen war erst zwei Tage alt.“</div>`}],
+ spick:["Schlüsselwort aus der Frage im Text suchen","Den ganzen Satz lesen: Passt er zur Frage?","Manchmal steht die Antwort im Satz danach"],
+ sets:[
+  {tx:"bauernhof",tasks:[
+   {k:"find",q:"Wie alt ist das Kälbchen? Tippe den Satz an.",a:"zwei Tage alt",ex:"Schlüsselwort Kälbchen: „Das Kälbchen war erst zwei Tage alt.“"},
+   {k:"find",q:"Warum lacht Jonas nicht mit? Tippe den Satz an, der den Grund verrät.",a:"frecher Hahn",ex:"Der Hahn hat Jonas in den Schuh gepickt. Das findet Jonas gar nicht lustig."},
+   {k:"find",q:"Welcher Satz zeigt, dass den Kindern der Ausflug gefallen hat?",a:"müde, aber glücklich",ex:"„Alle waren müde, aber glücklich.“"},
+   {k:"find",q:"Was gab es beim Picknick zu essen und zu trinken? Tippe den Satz an.",a:"frische Milch",ex:"Bäuerin Klein brachte frische Milch und Brot mit Butter."},
+   {k:"mc",q:"Wie viele Eier sammelt Mila?",o:["fünf","zwei","zwanzig","zehn"],at:"fünf Eier",ex:"Mila sammelt fünf Eier. Zwanzig ist die Zahl der Kühe."}]},
+  {tx:"igel",tasks:[
+   {k:"find",q:"Wo schlafen Igel am Tag? Tippe den Satz an.",a:"Versteck unter Hecken",ex:"Am Tag schlafen sie unter Hecken oder in Laubhaufen."},
+   {k:"find",q:"Wie kannst du einem Igel helfen? Tippe den Satz an.",a:"Laubhaufen liegen",ex:"Ein Laubhaufen im Garten ist ein gutes Versteck für Igel."},
+   {k:"find",q:"Welcher Satz erklärt, wie sich der Igel schützt?",a:["rollt er sich","So schützt"],ex:"Er rollt sich zu einer stacheligen Kugel zusammen. So schützt er sich."},
+   {k:"find",q:"Was macht der Igel im Herbst? Tippe den ersten Satz dazu an.",a:"Fettschicht",ex:"Im Herbst frisst er sich eine dicke Fettschicht an."}]},
+  {tx:"turnbeutel",tasks:[
+   {k:"find",q:"Wo hat Ben schon gesucht, bevor er Mama fragt? Tippe den Satz an.",a:"Garderobe",ex:"Der Turnbeutel hing nicht an der Garderobe und lag auch nicht im Zimmer."},
+   {k:"find",q:"Woran merkt Ben, dass im Garten jemand ist?",a:"Schnarchen",ex:"Er hört ein lautes Schnarchen aus dem Garten."},
+   {k:"find",q:"Welcher Satz zeigt, dass Ben nicht böse auf Bruno ist?",a:"kraulte",ex:"Ben krault Bruno hinter den Ohren. So macht man das nur, wenn man nicht böse ist."},
+   {k:"find",q:"Kommt Ben pünktlich zur Schule? Tippe den Beweis an.",a:"pünktlich",ex:"Sie kommen gerade noch pünktlich zur Schule."}]},
+  {tx:"fledermaus",tasks:[
+   {k:"find",q:"Welcher Satz sagt, woraus die Flügel sind?",a:"dünner Haut",ex:"Die Flügel sind aus dünner Haut."},
+   {k:"find",q:"Wo schlafen Fledermäuse am Tag? Tippe den Satz an.",a:"Kopf nach unten",ex:"In Höhlen, auf Dachböden oder in hohlen Bäumen."},
+   {k:"find",q:"Wie viele Mücken kann eine Zwergfledermaus in einer Nacht fangen?",a:"mehrere hundert",ex:"Mehrere hundert Mücken in einer Nacht!"},
+   {k:"find",q:"Welcher Satz sagt, dass Fledermäuse etwas Besonderes sind?",a:"einzigen Säugetiere",ex:"Sie sind die einzigen Säugetiere, die richtig fliegen können."}]}]},
+{id:"reihe",t:"Was passiert zuerst?",d:"Die richtige Reihenfolge finden, auch in Anleitungen",ico:"🔢",mode:"lesen",n:5,
+ cards:[
+  {h:"Wörter für die Reihenfolge",b:`<p>Diese Wörter zeigen dir, was nacheinander passiert:</p><div class="chips"><span class="chip">zuerst</span><span class="chip">dann</span><span class="chip">danach</span><span class="chip">anschließend</span><span class="chip">später</span><span class="chip">zum Schluss</span></div><p>Achte beim Lesen auf diese Wörter. Sie sind wie Wegweiser.</p>`},
+  {h:"Anleitungen",b:`<p>Eine <b>Anleitung</b> erklärt, wie man etwas macht, zum Beispiel ein Rezept oder eine Bastelanleitung.</p><p>Die Schritte sind oft <b>nummeriert</b>: 1., 2., 3. Die Reihenfolge ist wichtig, sonst klappt es nicht.</p>`},
+  {h:"So sortierst du",b:`<p>Tippe die Sätze in der richtigen Reihenfolge an: zuerst das, was zuerst passiert.</p><p>Vertippt? Mit <b>Zurücksetzen</b> fängst du neu an. Du kannst vorher im Text nachsehen.</p>`}],
+ spick:["Wegweiser-Wörter: zuerst, dann, danach, anschließend, zum Schluss","Anleitungen haben Nummern: die Reihenfolge zählt","Beim Sortieren im Text nachsehen"],
+ sets:[
+  {tx:"bauernhof",tasks:[
+   {k:"order",o:["Die Kinder sehen sich den Kuhstall an.","Die Kinder füttern die Hühner.","Die Kinder machen ein Picknick.","Die Kinder fahren mit dem Traktor."],ex:"Zuerst Kuhstall, danach Hühner, anschließend Picknick, zum Schluss Traktor."},
+   {k:"order",o:["Alle fahren aufgeregt mit dem Bus los.","Mila sammelt Eier ein.","Bäuerin Klein bringt Milch und Brot.","Auf der Rückfahrt sind alle müde."],ex:"So steht es im Text, von Anfang bis Ende."},
+   {k:"mc",q:"Welche Wörter zeigen dir, was als Letztes passiert?",o:["Zum Schluss","Zuerst","Danach","Anschließend"],at:"Zum Schluss",ex:"„Zum Schluss“ zeigt das Ende an."},
+   {k:"mc",q:"Was passiert direkt nach dem Hühnerfüttern?",o:["Es gibt ein Picknick.","Die Kinder fahren Traktor.","Die Kinder sehen das Kälbchen.","Die Kinder fahren nach Hause."],at:"Anschließend",ex:"„Anschließend gab es auf der Wiese ein Picknick.“"}]},
+  {tx:"kresse",tasks:[
+   {k:"order",o:["Watte auf den Teller legen","Watte nass machen","Samen auf die Watte streuen","Teller auf die Fensterbank stellen"],ex:"Schritt 1 bis 4 der Anleitung."},
+   {k:"order",o:["Samen streuen","jeden Tag gießen","nach einer Woche abschneiden","Kresse aufs Butterbrot legen"],ex:"Erst säen, dann gießen, dann ernten und essen."},
+   {k:"mc",q:"Was brauchst du NICHT?",o:["Erde","Watte","Kressesamen","einen Teller"],at:"Du brauchst",ex:"Kresse wächst hier auf Watte, Erde brauchst du nicht. Achte auf das Wort NICHT in der Frage!"},
+   {k:"mc",q:"Wie lange dauert es, bis du die Kresse ernten kannst?",o:["etwa eine Woche","einen Tag","einen Monat","ein Jahr"],at:"einer Woche",ex:"Nach etwa einer Woche kannst du sie abschneiden."},
+   {k:"mc",q:"Was für ein Text ist das?",o:["eine Anleitung","ein Märchen","ein Brief","ein Gedicht"],ex:"Eine Anleitung erklärt Schritt für Schritt, wie man etwas macht. Die Nummern zeigen die Reihenfolge."}]},
+  {tx:"turnbeutel",tasks:[
+   {k:"order",o:["Ben fragt Mama nach dem Turnbeutel.","Ben schaut unter das Sofa.","Ben hört ein Schnarchen.","Ben krault Bruno hinter den Ohren."],ex:"So läuft die Suche ab."},
+   {k:"mc",q:"Wo sucht Ben direkt nach dem Sofa?",o:["in der Küche","im Garten","im Auto","in der Schule"],at:"Küche",ex:"„Dann lief er in die Küche.“"},
+   {k:"order",o:["Ben sieht aus dem Fenster.","Ben holt seinen Beutel.","Ben rennt zum Auto.","Ben kommt in der Schule an."],ex:"Das Ende der Geschichte, Schritt für Schritt."}]}]},
+{id:"woerter",t:"Wörter verstehen",d:"Was bedeutet ein Wort im Text? Bilder im Kopf",ico:"💬",mode:"lesen",n:5,
+ cards:[
+  {h:"Ein Wort ist neu? Kein Problem!",b:`<p>Manchmal kennst du ein Wort nicht. Dann hilft dir der <b>Satz drumherum</b>:</p><div class="bsp"><small>Beispiel</small>„Mir ist ein bisschen <b>mulmig</b>“, flüsterte Ida und hielt sich am Geländer fest.<br>Sie flüstert und hält sich fest: <b>mulmig</b> heißt, sie hat ein bisschen Angst.</div>`},
+  {h:"Redewendungen",b:`<p>Manche Sätze meint man nicht wörtlich:</p><ul><li>„Sie <b>fiel ihm um den Hals</b>“ heißt: Sie umarmt ihn fest.</li><li>„Er <b>strahlte</b> über das ganze Gesicht“ heißt: Er lächelt sehr glücklich.</li></ul><p>Frag dich: Was passt zur Geschichte?</p>`},
+  {h:"Bilder im Kopf",b:`<p>Gute Leser machen sich beim Lesen ein <b>Bild im Kopf</b>. In der GLN sollst du manchmal das Bild ankreuzen, das zum Text passt.</p><p>Hier tippst du auf das passende Bild.</p>`}],
+ spick:["Neues Wort? Den Satz drumherum lesen","Redewendungen nicht wörtlich nehmen","Beim Lesen ein Bild im Kopf machen"],
+ sets:[
+  {tx:"opa",tasks:[
+   {k:"mc",q:"„Opa zwinkerte nur.“ Was macht Opa?",o:["Er schließt kurz ein Auge.","Er schüttelt den Kopf.","Er weint.","Er schreit laut."],at:"zwinkerte",ex:"Zwinkern heißt: kurz ein Auge zumachen. Damit zeigt Opa: Ich verrate nichts!"},
+   {k:"mc",q:"„Opa strahlte über das ganze Gesicht.“ Was bedeutet das?",o:["Er lächelt sehr glücklich.","Sein Gesicht leuchtet wie eine Lampe.","Er hat einen Sonnenbrand.","Er ist böse."],at:"strahlte",ex:"Strahlen heißt hier: sich sehr freuen und lächeln."},
+   {k:"mc",q:"„Hanna fiel Opa um den Hals.“ Was bedeutet das?",o:["Sie umarmt ihn fest.","Sie stolpert und fällt hin.","Sie hat Halsschmerzen.","Sie schubst Opa."],at:"um den Hals",ex:"Jemandem um den Hals fallen heißt: ihn vor Freude umarmen."},
+   {k:"pic",q:"Was hat Opa gebaut?",o:[["🏠","ein Häuschen"],["🚀","eine Rakete"],["💰","eine Schatzkiste"],["🧸","einen Teddy"]],at:"Puppenhaus",ex:"Es ist ein Puppenhaus aus Holz, also ein kleines Häuschen."},
+   {k:"mc",q:"Was ist ein „Gartenhäuschen“?",o:["ein kleines Haus im Garten","ein Haus aus Blumen","ein Vogelhaus","ein großes Wohnhaus"],at:"Gartenhäuschen",ex:"Garten + Häuschen: ein kleines Haus im Garten."}]},
+  {tx:"saar",tasks:[
+   {k:"mc",q:"„Mir ist ein bisschen mulmig.“ Wie fühlt sich Ida?",o:["Sie hat ein bisschen Angst.","Sie ist sehr müde.","Sie hat Hunger.","Sie ist wütend."],at:"mulmig",ex:"Sie hält sich fest und flüstert: Ihr ist ein bisschen ängstlich zumute."},
+   {k:"mc",q:"Was ist ein Baumwipfelpfad?",o:["ein Holzweg hoch oben zwischen den Bäumen","ein Weg am Fluss","ein Spielplatz im Wald","ein Baum mit einer Treppe"],at:"Holzweg",ex:"Das erklärt der Text gleich am Anfang vom 2. Absatz."},
+   {k:"mc",q:"Der Pfad führt hoch oben durch die Bäume. Was ist dann ein „Wipfel“?",o:["die Spitze eines Baumes","die Wurzel eines Baumes","ein Ast am Boden","ein Blatt"],at:"hoch oben",ex:"Hoch oben im Baum ist der Wipfel, die Baumspitze."},
+   {k:"mc",q:"„Die Saar glitzerte in der Sonne.“ Was bedeutet glitzern?",o:["funkeln und blitzen","laut rauschen","stinken","austrocknen"],at:"glitzerte",ex:"Wenn Sonne auf Wasser scheint, funkelt und blitzt es."},
+   {k:"pic",q:"Welches Bild passt zu den Bäumen an der Saar?",o:[["🍂","bunte Herbstblätter"],["🌲","dunkelgrüne Tannen"],["❄️","weiß vom Schnee"],["🌸","rosa Blüten"]],at:"rot, gelb und orange",ex:"Die Bäume leuchten rot, gelb und orange: Es ist Herbst."}]}]},
+{id:"zeilen",t:"Zwischen den Zeilen",d:"Gefühle, Gründe und die passende Überschrift",ico:"💭",mode:"lesen",n:5,
+ cards:[
+  {h:"Was nicht direkt dasteht",b:`<p>Nicht alles steht wörtlich im Text. Manchmal musst du <b>mitdenken</b>:</p><div class="bsp"><small>Text</small>Hanna hörte ein Sägen und ein leises Hämmern.</div><p>Was macht Opa wohl? Er <b>baut etwas aus Holz</b>. Das steht nicht da, aber die Hinweise verraten es.</p>`},
+  {h:"Gefühle erkennen",b:`<p>Wie sich jemand fühlt, zeigt der Text oft durch das, was die Person <b>tut</b> oder <b>sagt</b>:</p><ul><li>lacht, strahlt, umarmt: <b>froh</b></li><li>flüstert, hält sich fest: <b>ängstlich</b></li><li>schreit, stampft: <b>wütend</b></li></ul>`},
+  {h:"Die passende Überschrift",b:`<p>Eine gute Überschrift passt zur <b>ganzen</b> Geschichte, nicht nur zu einem kleinen Teil.</p><p>Frag dich: Worum geht es hauptsächlich?</p>`}],
+ spick:["Hinweise sammeln und mitdenken","Gefühle an Taten und Worten erkennen","Die Überschrift passt zur ganzen Geschichte"],
+ sets:[
+  {tx:"opa",tasks:[
+   {k:"mc",q:"Was hat Opa im Gartenhäuschen gemacht?",o:["Er hat ein Puppenhaus gebaut.","Er hat einen Schatz versteckt.","Er hat eine Rakete gebaut.","Er hat geschlafen."],at:"Sägen",ex:"Das steht nicht in einem Satz. Aber das Sägen, das Hämmern und das Puppenhaus aus Holz verraten es."},
+   {k:"mc",q:"Warum schließt Opa die Tür immer ab?",o:["Hanna soll die Überraschung nicht vorher sehen.","Er hat Angst vor Dieben.","Die Tür ist kaputt.","Er will allein schlafen."],at:"Geheimnis",ex:"Es ist ein Geheimnis, nämlich Hannas Geburtstagsgeschenk."},
+   {k:"mc",q:"Wie fühlt sich Hanna, als sie das Puppenhaus sieht?",o:["überglücklich","enttäuscht","wütend","ängstlich"],at:"um den Hals",ex:"Sie fällt Opa um den Hals und lacht."},
+   {k:"mc",q:"Wie fühlt sich Opa am Ende?",o:["stolz und glücklich","traurig","müde","ärgerlich"],at:"strahlte",ex:"Opa strahlt über das ganze Gesicht."},
+   {k:"mc",q:"Warum drückt Hanna ihr Ohr an die Tür?",o:["Sie ist neugierig und will das Geheimnis herausfinden.","Ihr ist kalt.","Sie sucht ihre Katze.","Sie will schlafen."],at:"Ohr an die Tür",ex:"Hanna ist neugierig, das steht schon im ersten Absatz."},
+   {k:"mc",q:"Welche Überschrift passt auch gut zu der Geschichte?",o:["Die Überraschung im Gartenhäuschen","Hanna geht in die Schule","Ein Tag am Meer","Der verlorene Schlüssel"],ex:"Die ganze Geschichte dreht sich um die Überraschung, die Opa im Gartenhäuschen baut."}]},
+  {tx:"saar",tasks:[
+   {k:"mc",q:"In welcher Jahreszeit spielt die Geschichte?",o:["im Herbst","im Sommer","im Winter","im Frühling"],at:"Herbstferien",ex:"Herbstferien und bunte Blätter verraten es."},
+   {k:"mc",q:"Warum nimmt Paul Idas Hand?",o:["Er will ihr Mut machen.","Er will schneller laufen.","Ida ist hingefallen.","Er hat selbst Angst."],at:"Ich bin bei dir",ex:"Ida ist mulmig, und Paul sagt: „Ich bin bei dir.“ Er tröstet sie."},
+   {k:"mc",q:"Wie verändert sich Ida in der Geschichte?",o:["Erst hat sie Angst, am Ende ist sie begeistert.","Erst ist sie fröhlich, am Ende traurig.","Sie hat die ganze Zeit Angst.","Am Ende ist sie schlecht gelaunt."],at:"gar keine Angst",ex:"Am Anfang ist ihr mulmig, am Ende ruft sie: „Das war der schönste Ausflug!“"},
+   {k:"mc",q:"Welche Überschrift passt auch?",o:["Idas Mut auf dem Baumwipfelpfad","Ein Regentag zu Hause","Paul hat Geburtstag","Die verlorene Mütze"],ex:"Es geht um den Ausflug und darum, wie Ida ihre Angst verliert."}]},
+  {tx:"bauernhof",tasks:[
+   {k:"mc",q:"Warum will Jonas nächstes Mal Gummistiefel anziehen?",o:["Damit der Hahn ihn nicht in den Fuß picken kann.","Weil es geregnet hat.","Weil er Traktor fahren will.","Weil seine Schuhe zu klein sind."],at:"Gummistiefel",ex:"Der Hahn hat ihn in den Schuh gepickt. In Gummistiefeln wäre das nicht so schlimm."},
+   {k:"mc",q:"Wie fühlen sich die Kinder auf der Hinfahrt?",o:["aufgeregt","gelangweilt","traurig","müde"],at:"aufgeregt",ex:"Schon im Bus waren alle aufgeregt."},
+   {k:"mc",q:"Welche Überschrift passt auch?",o:["Ein Tag mit Kühen, Hühnern und Traktor","Jonas und der Hund","Die Klassenfahrt ans Meer","Ein Tag im Zoo"],ex:"Die Überschrift fasst den ganzen Ausflug zusammen."}]}]},
+{id:"sach",t:"Sachtexte knacken",d:"Absätze, Überschriften und Fakten",ico:"📰",mode:"lesen",n:6,
+ cards:[
+  {h:"Was ist ein Sachtext?",b:`<p>Ein <b>Sachtext</b> erklärt etwas, das es wirklich gibt: Tiere, Pflanzen, Orte.</p><ul><li>Er hat keine ausgedachten Figuren.</li><li>Er enthält <b>Fakten</b>: Zahlen, Namen, Erklärungen.</li><li>Jeder <b>Absatz</b> hat ein eigenes kleines Thema.</li></ul>`},
+  {h:"Absätze sind Schubladen",b:`<p>Jeder Absatz ist wie eine Schublade. In einer steht alles übers Aussehen, in der nächsten alles übers Fressen.</p><div class="bsp"><small>Tipp</small>Lies den ersten Satz eines Absatzes. Er verrät oft, worum es geht. So findest du die passende Überschrift.</div>`},
+  {h:"Lücken füllen",b:`<p>Manchmal fehlt in einem Satz ein Wort. Such den Satz im Text und schau nach, welches Wort dort steht.</p>`}],
+ spick:["Sachtext = Fakten über echte Dinge","Jeder Absatz hat ein eigenes Thema","Der erste Satz verrät das Thema des Absatzes"],
+ sets:[
+  {tx:"igel",tasks:[
+   {k:"mc",q:"Welche Überschrift passt zum 2. Absatz?",o:["Was frisst der Igel?","Wie sieht der Igel aus?","Der Winterschlaf","So hilfst du dem Igel"],at:"in der Nacht unterwegs",ex:"Im 2. Absatz geht es darum, wann und was der Igel frisst."},
+   {k:"mc",q:"Welche Überschrift passt zum 3. Absatz?",o:["Der Winterschlaf","Was frisst der Igel?","Feinde des Igels","Igel-Babys"],at:"Fettschicht",ex:"Fettschicht, Nest, Winterschlaf: Es geht um den Winter."},
+   {k:"gap",s:"Igel fressen am liebsten Käfer, [[Regenwürmer|Nüsse|Blätter]] und Schnecken.",at:"Käfer",ex:"Käfer, Regenwürmer und Schnecken."},
+   {k:"gap",s:"Von [[November|Juli|Mai]] bis März hält der Igel Winterschlaf.",at:"November",ex:"Von November bis März."},
+   {k:"mc",q:"Warum soll man einem Igel keine Milch geben?",o:["Er bekommt davon Bauchschmerzen.","Er mag keine Milch.","Milch ist zu teuer.","Er trinkt nur im Winter."],at:"Milch",ex:"Davon bekommt er Bauchschmerzen."},
+   {k:"mc",q:"Woran erkennst du, dass das ein Sachtext ist?",o:["Er erklärt Fakten über Igel.","Ein Igel namens Stups erlebt ein Abenteuer.","Er reimt sich.","Er beginnt mit „Liebe Emma“."],ex:"Ein Sachtext erklärt Tatsachen. Es gibt keine Figuren mit Namen und keine Abenteuer."}]},
+  {tx:"fledermaus",tasks:[
+   {k:"mc",q:"Welche Überschrift passt zum 2. Absatz?",o:["Jagen mit Echo","Was Fledermäuse fressen","Wo Fledermäuse schlafen","Die Flügel"],at:"jagen in der Nacht",ex:"Rufe, Echo, Weg finden: Es geht ums Jagen im Dunkeln."},
+   {k:"mc",q:"Welche Überschrift passt zum 4. Absatz?",o:["Schlafen mit dem Kopf nach unten","Jagen mit Echo","Fledermäuse als Haustiere","Die Flügel"],at:"Am Tag schlafen",ex:"Der 4. Absatz erzählt, wie und wo Fledermäuse schlafen."},
+   {k:"gap",s:"Die Flügel der Fledermaus sind aus dünner [[Haut|Federn|Pappe]].",at:"dünner Haut",ex:"Aus dünner Haut."},
+   {k:"gap",s:"Bei uns fressen Fledermäuse vor allem [[Insekten|Früchte|Fische]].",at:"vor allem Insekten",ex:"Mücken und Motten sind Insekten."},
+   {k:"mc",q:"Wie finden Fledermäuse im Dunkeln ihren Weg?",o:["mit Rufen und dem Echo","mit einer Taschenlampe","mit ihrer Nase","sie fliegen nur, wenn der Mond scheint"],at:"Echo",ex:"Die Rufe prallen ab und kommen als Echo zurück."},
+   {k:"mc",q:"Was erfährst du NICHT aus dem Text?",o:["wie viele Junge eine Fledermaus bekommt","was Fledermäuse fressen","wo Fledermäuse schlafen","woraus die Flügel sind"],ex:"Über Junge steht nichts im Text. Alles andere schon."}]},
+  {tx:"kresse",tasks:[
+   {k:"mc",q:"Wozu ist die Liste ganz oben in der Anleitung da?",o:["Sie sagt, was du alles brauchst.","Sie sagt, wie die Kresse schmeckt.","Sie ist die Überschrift.","Sie erzählt eine Geschichte."],at:"Du brauchst",ex:"Bevor du anfängst, legst du alles bereit."},
+   {k:"gap",s:"Stelle den Teller an einen [[hellen|dunklen|kalten]] Platz.",at:"hellen Platz",ex:"Pflanzen brauchen Licht: zum Beispiel die Fensterbank."},
+   {k:"mc",q:"Womit schneidest du die Kresse ab?",o:["mit einer Schere","mit einem Messer","mit den Fingern","mit einem Löffel"],at:"Schere",ex:"Mit einer Schere."}]}]},
+{id:"ohren",t:"Ohren auf!",d:"Kurze Durchsagen, Nachrichten und Rätsel anhören",ico:"👂",mode:"hoeren",n:6,
+ cards:[
+  {h:"So hörst du gut zu",b:`<ol><li><b>Ruhe:</b> Leg alles weg und schau auf dein Blatt (hier: aufs Handy).</li><li><b>Erstes Hören:</b> Worum geht es? Wer spricht?</li><li><b>Merk dir:</b> Namen, Zahlen, Uhrzeiten, Orte.</li><li><b>Zweites Hören:</b> Achte auf die Einzelheiten, nach denen gefragt wird.</li></ol>`},
+  {h:"Wie in der GLN",b:`<p>In der Klassenarbeit liest die Lehrerin den Text meistens <b>zweimal</b> vor. Den Text siehst du dabei nicht.</p><p>Hier drückst du auf <b>▶</b> und das Handy liest vor. Mach den Ton an! Kopfhörer sind auch gut.</p>`},
+  {h:"Nochmal hören",b:`<p>Bei den Fragen kannst du hier mit <b>🔊 Nochmal hören</b> den Text wieder anhören. Versuch aber, mit <b>zwei Mal</b> auszukommen, wie in der GLN.</p><p>Am Ende kannst du den Text mitlesen.</p>`}],
+ spick:["Gut zuhören: Namen, Zahlen, Uhrzeiten, Orte merken","Erstes Hören: Worum geht es? Zweites Hören: Einzelheiten","In der GLN hörst du den Text meist zweimal"],
+ sets:[
+  {tx:"zoo",tasks:[{k:"mc",q:"Wann werden die Pinguine gefüttert?",o:["um 14 Uhr","um 4 Uhr","um 12 Uhr","um 15 Uhr"],at:"14 Uhr",ex:"Heute schon um 14 Uhr."},{k:"mc",q:"Wo ist das Pinguinbecken?",o:["neben dem Eingang","beim Affenhaus","am Ausgang","am Spielplatz"],at:"Eingang",ex:"Neben dem Eingang."}]},
+  {tx:"oma",tasks:[{k:"pic",q:"Was wollen Lea und Oma backen?",o:[["🍎","Apfelkuchen"],["🍪","Plätzchen"],["🍓","Erdbeertorte"],["🥨","Brezeln"]],at:"Apfelkuchen",ex:"Sie backen einen Apfelkuchen."},{k:"mc",q:"Wo soll Lea warten?",o:["am großen Tor","im Klassenzimmer","an der Bushaltestelle","auf dem Spielplatz"],at:"Tor",ex:"Am großen Tor."}]},
+  {tx:"raetsel1",tasks:[{k:"pic",q:"Wer bin ich?",o:[["🐷","Schwein"],["🐄","Kuh"],["🐑","Schaf"],["🐔","Huhn"]],ex:"Rosa Haut, Ringelschwanz und Schlamm: das Schwein."}]},
+  {tx:"regen",tasks:[{k:"mc",q:"Warum bleiben die Kinder in der Pause drinnen?",o:["Weil es stark regnet.","Weil es schneit.","Weil der Schulhof gestrichen wird.","Weil die Pause ausfällt."],at:"Regens",ex:"Wegen des starken Regens."},{k:"rf",s:[["Die Kinder dürfen die Spielekiste benutzen.","r"],["Die Pause fällt heute aus.","f"]],ex:"Die Pause ist drinnen, und die Spielekiste ist erlaubt."}]},
+  {tx:"baecker",tasks:[{k:"mc",q:"Wie viele Brötchen soll Tim kaufen?",o:["sechs","sieben","zwei","zehn"],at:"sechs",ex:"Sechs Brötchen und ein Brot."},{k:"mc",q:"Wo liegt das Geld?",o:["auf dem Küchentisch","in Tims Hosentasche","im Flur","beim Bäcker"],at:"Küchentisch",ex:"Auf dem Küchentisch."}]},
+  {tx:"raetsel2",tasks:[{k:"pic",q:"Wer bin ich?",o:[["🐰","Hase"],["🐿️","Eichhörnchen"],["🐭","Maus"],["🦊","Fuchs"]],ex:"Lange Ohren, hoppeln, Möhren: der Hase."}]},
+  {tx:"wetter",tasks:[{k:"pic",q:"Wie ist das Wetter am Nachmittag?",o:[["⛈️","Gewitter"],["☀️","Sonne"],["❄️","Schnee"],["🌫️","Nebel"]],at:"Gewitter",ex:"Am Vormittag Sonne, am Nachmittag Gewitter."},{k:"mc",q:"Was soll man mitnehmen?",o:["einen Regenschirm","eine Sonnenbrille","eine Mütze","eine Taschenlampe"],at:"Regenschirm",ex:"Nehmt lieber einen Regenschirm mit!"}]},
+  {tx:"bahnhof",tasks:[{k:"mc",q:"Wohin fährt der Zug?",o:["nach Saarbrücken","nach Homburg","nach Trier","nach Berlin"],at:"Saarbrücken",ex:"Der Zug nach Saarbrücken."},{k:"mc",q:"Wie viel Verspätung hat der Zug?",o:["zehn Minuten","drei Minuten","eine Stunde","zwanzig Minuten"],at:"zehn Minuten",ex:"Zehn Minuten. Die 3 ist das Gleis!"}]},
+  {tx:"raetsel3",tasks:[{k:"pic",q:"Wer bin ich?",o:[["🎃","Kürbis"],["🍊","Orange"],["🥕","Möhre"],["🍎","Apfel"]],ex:"Rund, orange, wächst auf dem Feld, Gesicht an Halloween: der Kürbis."}]},
+  {tx:"sportfest",tasks:[{k:"mc",q:"Was müssen die Kinder NICHT mitbringen?",o:["einen Badeanzug","Turnschuhe","eine Trinkflasche","Sportkleidung"],at:"Turnschuhe",ex:"Turnschuhe, Trinkflasche und Sportkleidung. Ein Badeanzug wurde nicht genannt."},{k:"mc",q:"Wo treffen sich die Kinder?",o:["auf dem Sportplatz","in der Turnhalle","vor der Schule","im Schwimmbad"],at:"Sportplatz",ex:"Um acht Uhr auf dem Sportplatz."}]}]},
+{id:"hoeren",t:"Hörgeschichten",d:"Längere Texte anhören und Fragen beantworten, wie in der GLN",ico:"🎧",mode:"hoeren",n:5,
+ cards:[
+  {h:"Längere Texte hören",b:`<p>Jetzt werden die Texte länger. Das ist wie in der GLN.</p><ul><li>Beim <b>ersten Hören</b>: Wer kommt vor? Was passiert?</li><li>Dann <b>schau dir die Fragen an</b>. Dafür gibt es hier einen Knopf.</li><li>Beim <b>zweiten Hören</b> achtest du genau auf das, was gefragt wird.</li></ul>`},
+  {h:"Im Kopf mitschreiben",b:`<p>Stell dir die Geschichte wie einen Film vor. Was passiert <b>zuerst</b>, was <b>danach</b>, was am <b>Ende</b>?</p><p>Merk dir besonders: <b>Namen</b>, <b>Zahlen</b>, <b>Farben</b> und <b>wie sich die Figuren fühlen</b>.</p>`}],
+ spick:["Erstes Hören: Wer, was, wo?","Vor dem zweiten Hören die Fragen ansehen","Geschichte wie einen Film im Kopf ablaufen lassen"],
+ sets:[
+  {tx:"zahn",tasks:[
+   {k:"mc",q:"Wo war Mias Wackelzahn?",o:["vorne oben","hinten unten","vorne unten","hinten oben"],at:"vorne oben",ex:"Ganz vorne oben."},
+   {k:"mc",q:"Wobei fällt der Zahn heraus?",o:["beim Biss in einen Apfel","beim Zähneputzen","beim Fußballspielen","im Schlaf"],at:"Apfel",ex:"In der Pause beißt sie in einen knackigen Apfel."},
+   {k:"mc",q:"Wer ist Can?",o:["Mias Freund","Mias Bruder","Mias Lehrer","Mias Hund"],at:"Ihr Freund Can",ex:"Can ist Mias Freund."},
+   {k:"rf",s:[["Mia hatte seit einer Woche einen Wackelzahn.","r"],["Mia weint, als der Zahn herausfällt.","f"],["Mia ist acht Jahre alt.","n"]],ex:"Mia lacht und zeigt die Zahnlücke. Wie alt sie ist, wurde nicht gesagt."},
+   {k:"pic",q:"Was liegt am Morgen unter dem Kopfkissen?",o:[["💎","ein glänzender Stein"],["🪙","eine Münze"],["🍬","ein Bonbon"],["🦷","der Zahn"]],at:"glänzender Stein",ex:"Ein glänzender Stein mit einem Zettel von der Zahnfee."},
+   {k:"order",o:["Mia beißt in einen Apfel.","Can sagt, sie kann jetzt pfeifen.","Mia legt den Zahn unter das Kissen.","Mia findet einen Stein und einen Zettel."],ex:"So passiert es nacheinander."}]},
+  {tx:"kruemel",tasks:[
+   {k:"mc",q:"Was spielen Jonas und Pia?",o:["Fußball","Verstecken","Federball","Fangen"],at:"Fußball",ex:"Sie spielen im Garten Fußball."},
+   {k:"pic",q:"Auf welchem Baum sitzt das Kätzchen?",o:[["🍒","Kirschbaum"],["🍎","Apfelbaum"],["🌲","Tanne"],["🌰","Kastanie"]],at:"Kirschbaum",ex:"Im großen Kirschbaum."},
+   {k:"mc",q:"Welche Farbe hat das Kätzchen?",o:["grau","schwarz","weiß","rot"],at:"graues",ex:"Ein kleines graues Kätzchen."},
+   {k:"mc",q:"Wer klettert auf die Leiter?",o:["Papa","Jonas","Pia","Frau Sommer"],at:"kletterte",ex:"Papa stellt die Leiter an und klettert hinauf."},
+   {k:"rf",s:[["Das Kätzchen gehört Frau Sommer.","r"],["Das Kätzchen war seit einer Woche verschwunden.","f"],["Frau Sommer hat auch einen Hund.","n"]],ex:"Krümel war seit dem Morgen verschwunden. Von einem Hund war keine Rede."},
+   {k:"mc",q:"Was bekommen die Kinder als Dankeschön?",o:["ein Stück Kirschkuchen","ein Eis","ein Kätzchen","Geld"],at:"Kirschkuchen",ex:"Ein großes Stück Kirschkuchen."}]},
+  {tx:"zelt",tasks:[
+   {k:"mc",q:"Wo zelten Lukas und Emil?",o:["im Garten","im Wald","am See","auf dem Campingplatz"],at:"im Garten zelten",ex:"Im Garten."},
+   {k:"mc",q:"Wann spielt die Geschichte?",o:["in den Sommerferien","in den Herbstferien","an Weihnachten","an Ostern"],at:"Sommerferien",ex:"In den Sommerferien."},
+   {k:"mc",q:"Was glaubt Emil, wer draußen ist?",o:["ein Wolf","ein Bär","ein Gespenst","ein Igel"],at:"Wolf",ex:"Emil flüstert: „Ein Wolf?“"},
+   {k:"pic",q:"Wer ist wirklich vor dem Zelt?",o:[["🦔","ein Igel"],["🐺","ein Wolf"],["🐈","eine Katze"],["🦊","ein Fuchs"]],at:"kleinen Igel",ex:"Ein kleiner Igel schnüffelt an der Gummibärchentüte."},
+   {k:"order",o:["Die Jungen erzählen Witze.","Draußen raschelt es.","Lukas leuchtet mit der Taschenlampe.","Die Jungen stellen Wasser hin."],ex:"Witze, Rascheln, Taschenlampe, Wasser."},
+   {k:"mc",q:"Wie fühlen sich die Jungen, als sie den Igel sehen?",o:["erleichtert","enttäuscht","wütend","traurig"],at:"erleichtert",ex:"Sie lachen erleichtert: Es ist kein Wolf."}]},
+  {tx:"biene",tasks:[
+   {k:"mc",q:"Wie viele Königinnen gibt es in einem Bienenstock?",o:["eine","zwei","zehn","50 000"],at:"nur eine Königin",ex:"Es gibt nur eine Königin."},
+   {k:"mc",q:"Was macht die Königin?",o:["Sie legt die Eier.","Sie sammelt Nektar.","Sie tanzt.","Sie bewacht den Eingang."],at:"legt die Eier",ex:"Die Königin legt die Eier."},
+   {k:"mc",q:"Woraus machen Bienen Honig?",o:["aus Nektar","aus Wasser","aus Blättern","aus Zucker"],at:"Aus dem Nektar",ex:"Aus dem Nektar der Blüten."},
+   {k:"mc",q:"Warum tanzt eine Biene?",o:["Sie zeigt den anderen, wo das Futter ist.","Sie freut sich über die Sonne.","Sie will die Königin wecken.","Ihr ist kalt."],at:"tanzt",ex:"Mit dem Tanz zeigt sie, wo die Blüten sind."},
+   {k:"rf",s:[["Die meisten Bienen sind Arbeiterinnen.","r"],["In einem Stock gibt es viele Königinnen.","f"],["Bienen können fünf Kilometer weit fliegen.","n"]],ex:"Es gibt nur eine Königin. Wie weit Bienen fliegen, wurde nicht gesagt."},
+   {k:"pic",q:"Welches Obst wurde im Text genannt?",o:[["🍒","Kirschen"],["🍌","Bananen"],["🍇","Trauben"],["🍓","Erdbeeren"]],at:"Kirschen",ex:"Äpfel und Kirschen wachsen nur, weil Bienen die Blüten bestäuben."}]}]},
+{id:"probe",t:"Probe-GLN",d:"Teil 1 Lesen, Teil 2 Hören, wie in der Klassenarbeit",ico:"📝",test:true,
+ cards:[
+  {h:"So läuft die Probe-GLN",b:`<p>Die Probe-GLN hat <b>zwei Teile</b>, wie die echte Klassenarbeit:</p><ul><li><b>Teil 1 Lesen:</b> Du liest eine Geschichte und beantwortest Fragen. Den Text darfst du immer wieder aufklappen.</li><li><b>Teil 2 Hören:</b> Du hörst eine Geschichte <b>zweimal</b>. Danach beantwortest du die Fragen, ohne nochmal zu hören.</li></ul><p>Am Ende siehst du deine Punkte. Es gibt keine Tipps, nur dein Können zählt!</p>`},
+  {h:"Bevor es losgeht",b:`<ul><li>Ton am Handy an, oder Kopfhörer bereit?</li><li>Ruhiger Platz?</li><li>Du schaffst das! Lies genau, hör genau hin, und rate nicht, sondern schau nach.</li></ul>`}],
+ spick:["Lesen: Erst alles lesen, dann bei jeder Frage nachsehen","Richtig, falsch, steht nicht im Text genau unterscheiden","Hören: Erst worum es geht, beim zweiten Mal die Einzelheiten"],
+ parts:[
+  {h:"Teil 1: Lesen",ico:"📖",b:"Lies die Geschichte in Ruhe. Bei jeder Frage kannst du den Text wieder aufklappen.",tx:"baumhaus",tasks:[
+   {k:"mc",q:"Auf welchem Baum bauen die Kinder das Baumhaus?",o:["auf einer Buche","auf einer Eiche","auf einer Tanne","auf einem Apfelbaum"],at:"Buche",ex:"Auf der alten, dicken Buche."},
+   {k:"mc",q:"Was holt Lars' Mama aus dem Keller?",o:["Bretter, Nägel und einen Hammer","eine Leiter und Farbe","Kekse und Saft","eine Plane und ein Seil"],at:"Bretter",ex:"Bretter, Nägel und einen Hammer."},
+   {k:"rf",s:[["Das Baumhaus steht im Garten von Lars.","r"],["Selin malt ein Schild.","r"],["Am Samstag scheint den ganzen Tag die Sonne.","f"],["Lars hat einen kleinen Bruder.","n"]],ex:"Am Nachmittag fängt es an zu regnen. Ob Lars Geschwister hat, steht nicht im Text."},
+   {k:"order",o:["Die Kinder bauen den Boden.","Sie nageln die Wände fest.","Es regnet ins Baumhaus.","Sie bauen ein Dach aus einer Plane."],ex:"Boden, Wände, Regen, Dach."},
+   {k:"find",q:"Warum tropft es den Kindern auf den Kopf? Tippe den Satz an, der es verrät.",a:"Dach vergessen",ex:"„Wir haben das Dach vergessen!“"},
+   {k:"mc",q:"Warum tut den beiden der Bauch weh?",o:["Sie haben sehr gelacht.","Sie haben zu viele Kekse gegessen.","Sie sind vom Baum gefallen.","Sie haben Hunger."],at:"lachen",ex:"Sie mussten so lachen, dass ihnen der Bauch wehtat."},
+   {k:"mc",q:"Was steht auf Selins Schild?",o:["Eintritt nur für Freunde","Betreten verboten","Lars und Selin","Vorsicht, Baustelle"],at:"Aufschrift",ex:"„Eintritt nur für Freunde“."},
+   {k:"gap",s:"Am Sonntag bauten sie ein Dach aus einer alten [[Plane|Tür|Decke]].",at:"Plane",ex:"Aus einer alten Plane."},
+   {k:"mc",q:"Welche Überschrift passt auch gut?",o:["Das vergessene Dach","Ein Tag im Schwimmbad","Der Streit im Garten","Selins Geburtstag"],ex:"Das vergessene Dach ist der lustigste und wichtigste Moment der Geschichte."}]},
+  {h:"Teil 2: Hören",ico:"🎧",b:"Du hörst die Geschichte zweimal. Danach beantwortest du die Fragen, ohne nochmal zu hören.",tx:"laterne",max:2,tasks:[
+   {k:"mc",q:"Wann ist der Laternenumzug?",o:["am 11. November","am 24. Dezember","am 1. Mai","am 31. Oktober"],at:"11. November",ex:"Am 11. November, dem Martinstag."},
+   {k:"pic",q:"Wie sieht Emils Laterne aus?",o:[["🌝","wie ein lachender Mond"],["⭐","wie ein Stern"],["🐟","wie ein Fisch"],["☀️","wie eine Sonne"]],at:"Mond",ex:"Wie ein großer gelber Mond mit einem lachenden Gesicht."},
+   {k:"mc",q:"Wo treffen sich die Kinder?",o:["vor der Kirche","vor der Schule","auf dem Dorfplatz","im Kindergarten"],at:"Kirche",ex:"Um 17 Uhr vor der Kirche."},
+   {k:"rf",s:[["Der Mann auf dem Pferd trägt einen roten Mantel.","r"],["Das Pferd ist weiß.","f"],["Emils Laterne geht wegen des Regens aus.","f"],["Nele hilft Emil.","r"]],ex:"Das Pferd ist braun, und die Laterne geht wegen des Windes aus."},
+   {k:"mc",q:"Wie fühlt sich Emil, als Nele ihm hilft?",o:["froh und dankbar","traurig","wütend","ängstlich"],at:"strahlte",ex:"Er sagt „Danke, Nele!“ und strahlt."},
+   {k:"mc",q:"Was bekommt jedes Kind am Ende?",o:["eine süße Martinsbrezel","eine neue Laterne","einen Luftballon","eine Kerze"],at:"Martinsbrezel",ex:"Eine süße Martinsbrezel."}]}]}
+];
+
+/* ================= Kapitel und Sterne ================= */
+const chOf=id=>CH.find(c=>c.id===id);
+const stars=c=>S.best[c.id]||0;
+const ptsOf=t=>t.k==="rf"?t.s.length:1;
+
+/* ================= Startseite ================= */
+function home(){R=null;hush();
+  app.innerHTML=`
+  <section class="panel hero"><span class="eyebrow">Deutsch · Lesen und Zuhören</span>
+    <span class="emo" aria-hidden="true">🔍📖👂</span>
+    <h2 style="font-size:1.4rem">Genau lesen, gut zuhören</h2>
+    <p class="small">Kurze Geschichten, Sachtexte und Hörtexte, dazu Fragen wie in der GLN. Am Ende wartet die Probe-GLN.</p></section>
+  <button class="toggle" id="denk" aria-pressed="${S.denk?"true":"false"}"><span class="grow"><b>Denkfrage vor den Antworten</b><br><span class="small">Erst überlegen: Was suche ich im Text?</span></span><span class="sw" aria-hidden="true"></span></button>
+  <span class="eyebrow sect">Lesen</span>
+  <div class="stations">${CH.filter(c=>c.mode==="lesen").map(stBtn).join("")}</div>
+  <span class="eyebrow sect">Hören</span>
+  <div class="stations">${CH.filter(c=>c.mode==="hoeren").map(stBtn).join("")}</div>
+  <span class="eyebrow sect">Zum Schluss</span>
+  <div class="stations">${CH.filter(c=>c.test).map(stBtn).join("")}
+    <button class="st extra" data-ch="lesecke"><span class="ico" aria-hidden="true">🛋️</span><span class="grow"><span class="n">Entdecken</span><h3>Lese-Ecke</h3><p>Alle Texte in Ruhe lesen oder anhören und mitlesen</p></span></button></div>`;
+  $("#denk").onclick=e=>{S.denk=!S.denk;save();e.currentTarget.setAttribute("aria-pressed",S.denk?"true":"false")};
+  app.querySelectorAll(".st[data-ch]").forEach(b=>b.onclick=()=>openCh(b.dataset.ch));
+  scrollTo(0,0)}
+function stBtn(c){const k=CH.indexOf(c),b=stars(c);
+  return `<button class="st ${c.test?"extra":""}" data-ch="${c.id}"><span class="ico" aria-hidden="true">${c.ico}</span><span class="grow"><span class="n">${c.test?"Großer Test":"Kapitel "+(k+1)}</span><h3>${esc(c.t)}</h3><p>${esc(c.d)}</p><span class="stars" aria-label="${b} von 3 Sternen">${[0,1,2].map(i=>I.star(i<b)).join("")}</span></span></button>`}
+function openCh(id){if(id==="lesecke")return ecke();const c=chOf(id);if(!c)return;intro(c)}
+
+/* ================= Erklär-Karten ================= */
+function intro(c,i){R=null;hush();i=i||0;const n=c.cards.length,last=i>=n-1,seen=S.seen[c.id];
+  const k=CH.indexOf(c);
+  app.innerHTML=`<div class="chead"><button class="backb" id="cbk">${I.back}Alle Kapitel</button></div>
+    <div><span class="eyebrow">${c.test?"Großer Test":"Kapitel "+(k+1)}</span><h2>${esc(c.t)}</h2></div>
+    <section class="card-x"><h3>${c.cards[i].h}</h3>${c.cards[i].b}</section>
+    ${n>1?`<div class="dotsnav" aria-label="Karte ${i+1} von ${n}">${c.cards.map((_,j)=>`<i class="${j===i?"on":""}"></i>`).join("")}</div>`:""}
+    <div class="row">${i>0?`<button class="ghost grow" id="prv">Zurück</button>`:""}<button class="go grow" id="nxt">${last?(c.test?"Probe-GLN starten":"Los geht's"):"Weiter"}</button></div>
+    ${!last&&seen?`<button class="ghost" id="skip">Erklärung überspringen</button>`:""}`;
+  $("#cbk").onclick=home;
+  $("#nxt").onclick=()=>{if(last){S.seen[c.id]=1;save();startRound(c.id)}else intro(c,i+1)};
+  if($("#prv"))$("#prv").onclick=()=>intro(c,i-1);
+  if($("#skip"))$("#skip").onclick=()=>startRound(c.id);
+  scrollTo(0,0)}
+
+/* ================= Runde =================
+   R.steps: {read:tx} Text lesen · {listen:tx,max} Text anhören · {part} Teil-Karte im Test · {task,tx} Frage */
+let R=null;
+function startRound(id){const c=chOf(id);hush();const steps=[];let n=0;const used=[];
+  if(c.test){c.parts.forEach((p,pi)=>{steps.push({part:p,pi});steps.push(TX[p.tx].hoer?{listen:p.tx,max:p.max}:{read:p.tx});
+    p.tasks.forEach(t=>steps.push({task:t,tx:p.tx,pi}));n+=p.tasks.length;used.push(p.tx)})}
+  else{const L=c.sets.length;let k=(S.rot[id]||0)%L,taken=0;
+    while(taken<L&&(n<c.n)){const set=c.sets[(k+taken)%L];taken++;used.push(set.tx);
+      steps.push(c.mode==="hoeren"?{listen:set.tx}:{read:set.tx});
+      set.tasks.forEach(t=>steps.push({task:t,tx:set.tx}));n+=set.tasks.length}
+    S.rot[id]=(k+taken)%L;save()}
+  R={id,c,steps,si:0,n,res:[],pts:0,max:0,used,plays:{},byPart:[[0,0],[0,0]]};showStep()}
+function track(){const t=$("#track");if(!t)return;t.innerHTML=Array.from({length:R.n},(_,i)=>{const r=R.res[i];return `<i class="${r!=null?(r===1?"ok":r>0?"half":"no"):(i===R.res.length?"now":"")}"></i>`}).join("")}
+function topbar(){return `<div class="topbar"><button id="quit" aria-label="Runde beenden"></button><div class="track" id="track"></div></div>`}
+function bindTop(){$("#quit").onclick=()=>{hush();home()};track()}
+function nextStep(){hush();R.si++;R.si>=R.steps.length?endRound():showStep()}
+function showStep(){const st=R.steps[R.si];R.locked=false;hush();
+  if(st.part)return partScreen(st);
+  if(st.read)return readScreen(TX[st.read]);
+  if(st.listen)return listenScreen(st.listen,st.max);
+  showTask(st)}
+
+/* Teil-Karte (nur Probe-GLN) */
+function partScreen(st){const p=st.part;
+  app.innerHTML=`${topbar()}<section class="panel part"><span class="big" aria-hidden="true">${p.ico}</span><h2>${esc(p.h)}</h2><p class="lead">${esc(p.b)}</p>
+    <button class="go" id="go" style="width:100%">${st.pi===0?"Text lesen":"Zum Hören"}</button></section>`;
+  bindTop();$("#go").onclick=nextStep;scrollTo(0,0)}
+
+/* Text lesen */
+function readScreen(tx){
+  app.innerHTML=`${topbar()}<div class="q"><span class="lk">Lesen</span><b>Lies den Text genau.</b></div>
+    ${txHTML(tx)}
+    <p class="small">Bei den Fragen kannst du den Text jederzeit wieder aufklappen.</p>
+    <button class="go" id="go" style="width:100%">Zu den Fragen</button>`;
+  bindTop();$("#go").onclick=nextStep;scrollTo(0,0)}
+
+/* Text anhören */
+function hearText(tx){return [tx.t+"."].concat(units(tx))}
+function listenScreen(id,max){const tx=TX[id],test=!!max,ch=R.c,qs=R.steps.filter(s=>s.task&&s.tx===id);
+  const heard=()=>R.plays[tx.t]||0;
+  app.innerHTML=`${topbar()}<div class="q"><span class="lk">Hören</span><b>Hör gut zu!</b></div>
+    <section class="hear"><span class="tico" aria-hidden="true">${tx.ico}</span><h3>${esc(tx.t)}</h3>
+      <button class="play" id="play" aria-label="Text anhören">${I.play}</button>
+      <div class="ears" id="ears"></div>
+      <p class="small" id="hint">${test?"Du darfst den Text zweimal hören.":ch.id==="ohren"?"Drück auf ▶. Du kannst so oft hören, wie du willst.":"Hör einmal zu. Dann schau dir die Fragen an und hör ein zweites Mal."}</p>
+      ${!test&&ch.id==="hoeren"?`<details class="ref vorher" id="vor"><summary>Fragen vorher ansehen</summary><div class="txt"><ol>${qs.map(s=>`<li>${esc(s.task.q||(s.task.k==="rf"?"Richtig, falsch oder nicht gesagt?":"Bring in die richtige Reihenfolge."))}</li>`).join("")}</ol></div></details>`:""}
+    </section>
+    <div id="notts"></div>
+    <button class="go" id="go" style="width:100%" disabled>Zu den Fragen</button>
+    ${TTS.ok?`<button class="ghost" id="nots" style="align-self:center">Kein Ton? Text lesen</button>`:""}`;
+  bindTop();
+  const play=$("#play"),go=$("#go");
+  const ears=()=>{const n=heard();$("#ears").innerHTML=test?[0,1].map(i=>`<i class="${i<n?"on":""}">${i+1}</i>`).join("")+`<span style="align-self:center">${n>=2?"zweimal gehört":""}</span>`:(n?`<span>${n}× gehört</span>`:"")};ears();
+  const idle=()=>{play.classList.remove("on");play.innerHTML=I.play;play.setAttribute("aria-label","Text anhören");if(test&&heard()>=max)play.disabled=true};
+  const showText=why=>{$("#notts").innerHTML=`<div class="panel"><p class="small">${why}</p>${txHTML(tx)}</div>`;go.disabled=false};
+  if(!TTS.ok){play.disabled=true;showText("Dein Gerät kann leider nicht vorlesen. Lass dir den Text von jemandem vorlesen, ohne selbst hinzuschauen, oder lies ihn hier.")}
+  play.onclick=()=>{if(play.classList.contains("on")){hush();return}
+    if(test&&heard()>=max)return;wake();R.plays[tx.t]=heard()+1;ears();
+    play.classList.add("on");play.innerHTML=I.stop;play.setAttribute("aria-label","Stopp");
+    speakSeq(hearText(tx),null,()=>{idle();go.disabled=false;if(test&&heard()<max)$("#hint").textContent="Jetzt nochmal: Achte auf die Einzelheiten.";else if(test)$("#hint").textContent="Jetzt geht es zu den Fragen."},idle)};
+  go.onclick=()=>{if(test&&heard()<max&&!confirmOnce(go,"Du darfst noch einmal hören. Trotzdem weiter?"))return;nextStep()};
+  if($("#nots"))$("#nots").onclick=()=>{hush();showText("Lies den Text einmal still durch, so als ob er vorgelesen wird.");$("#nots").remove()};
+  scrollTo(0,0)}
+/* zweimal tippen statt Dialog */
+function confirmOnce(btn,msg){if(btn.dataset.sure)return true;btn.dataset.sure=1;btn.textContent="Ja, weiter";
+  btn.insertAdjacentHTML("beforebegin",`<p class="small" style="text-align:center">${esc(msg)}</p>`);return false}
+
+/* Frage */
+const LK={mc:"Auswählen",pic:"Bild antippen",rf:"Richtig oder falsch?",find:"Beweis antippen",order:"Reihenfolge",gap:"Lücke füllen"};
+const QD={rf:"Stimmt das? Tippe bei jedem Satz an.",order:"Bring es in die richtige Reihenfolge. Tippe nacheinander an.",gap:"Welches Wort fehlt?"};
+function showTask(st){const t=st.task,tx=TX[st.tx],hear=!!tx.hoer,test=R.c.test;
+  app.innerHTML=`${topbar()}<div class="q"><span class="lk">${hear?"Hören · ":""}${LK[t.k]}</span><b>${esc(t.q||QD[t.k])}</b></div>
+    <div id="ref"></div><section class="stage" id="cb"></section>`;
+  bindTop();
+  const ref=$("#ref"),cb=$("#cb");
+  if(hear){const noRe=test;
+    if(!noRe){ref.innerHTML=`<button class="replay" id="rp">${I.spk}<span>Nochmal hören</span></button>`;
+      const rp=$("#rp"),idle=()=>{rp.classList.remove("on");rp.lastChild.textContent="Nochmal hören"};
+      rp.onclick=()=>{if(rp.classList.contains("on")){hush();return}wake();R.plays[tx.t]=(R.plays[tx.t]||0)+1;rp.classList.add("on");rp.lastChild.textContent="Stopp";speakSeq(hearText(tx),null,idle,idle)}}}
+  else if(t.k!=="find"){const open=R.refOpen!=null?R.refOpen:false;
+    ref.innerHTML=`<details class="ref" id="dt"${open?" open":""}><summary>📖 Text: ${esc(tx.t)}</summary>${txHTML(tx)}</details>`;
+    $("#dt").addEventListener("toggle",e=>{R.refOpen=e.target.open});
+    if(t.at&&!test){ref.insertAdjacentHTML("beforeend",`<button class="ghost tipp" id="tp" style="margin-top:10px">💡 Wo steht's?</button>`);
+      $("#tp").onclick=()=>{const d=$("#dt");d.querySelector(".txt").outerHTML=txHTML(tx,{mark:paraOf(tx,t.at)});d.open=true;$("#tp").remove();
+        const m=d.querySelector("p.mk");if(m)m.scrollIntoView({behavior:"smooth",block:"center"})}}}
+  const go=()=>T[t.k](t,cb,tx);
+  if(t.w&&S.denk)denkStep(t.w,cb,go);else go();
+  scrollTo(0,0)}
+
+/* Denkfrage: Was suche ich im Text? (zählt nicht als Fehler) */
+function denkStep(w,cb,go){const box=document.createElement("div");box.className="denk";
+  const others=shuffle(Object.keys(W).filter(k=>k!==w&&W[k]!==W[w])).slice(0,2);
+  const opts=shuffle([w].concat(others));
+  box.innerHTML=`<p>💡 Was suchst du im Text?</p><div class="chips">${opts.map(k=>`<button class="chip" data-k="${k}">${esc(W[k])}</button>`).join("")}</div>`;
+  cb.appendChild(box);
+  box.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{const ok=b.dataset.k===w;
+    box.querySelectorAll(".chip").forEach(x=>{x.disabled=true;if(x.dataset.k===w)x.classList.add("ok")});if(!ok)b.classList.add("no");
+    box.insertAdjacentHTML("beforeend",`<span class="tip">${ok?"Genau! ":""}Bei <b>${esc(WN[w])}</b> suchst du ${esc(W[w])}.</span>`);
+    ok?sfxPop():0;go()})}
+
+/* Beleg aus dem Text für die Rückmeldung */
+function beleg(t,tx){if(!t.at)return "";const ats=[].concat(t.at);const us=units(tx).filter(u=>ats.some(a=>u.includes(a)));if(!us.length)return "";
+  return `<div class="beleg">${tx.hoer?"🔊 Im Hörtext hieß es":"📖 Im Text steht"}: „${us.map(esc).join(" … ")}“</div>`}
+/* Ergebnis einer Frage; frac = Anteil der Punkte (für richtig/falsch-Aufgaben) */
+function done(ok,ex,extra,frac){if(R.locked)return;R.locked=true;
+  const st=R.steps[R.si],t=st.task;const f=frac!=null?frac:(ok?1:0),p=ptsOf(t);
+  R.res.push(f);R.pts+=f*p;R.max+=p;if(st.pi!=null){R.byPart[st.pi][0]+=f*p;R.byPart[st.pi][1]+=p}
+  ok?sfxOk():sfxBad();track();
+  const fb=document.createElement("div");fb.className="fb "+(ok?"ok":"bad");fb.setAttribute("role","status");
+  fb.innerHTML=`<strong>${ok?pick(["Richtig!","Super!","Genau!","Klasse!","Stark!"]):f>0?"Fast!":"Nicht ganz"}</strong>${ex?`<p>${ex}</p>`:""}${extra||""}`;
+  const nx=document.createElement("button");nx.className="next";nx.type="button";
+  const last=R.si+1>=R.steps.length,nxs=R.steps[R.si+1];
+  nx.textContent=last?"Ergebnis":nxs&&nxs.part?"Weiter zu Teil 2":nxs&&(nxs.read||nxs.listen)?"Nächster Text":"Weiter";
+  nx.onclick=nextStep;
+  lwSheet($("#cb"),ok,[fb,nx])}
+
+/* ================= Aufgabenarten ================= */
+const T={};
+T.mc=(t,cb,tx)=>{const opts=shuffle(t.o.map((x,i)=>({x,i})));
+  const box=document.createElement("div");box.className="opts";
+  box.innerHTML=opts.map(o=>`<button class="opt" data-i="${o.i}">${esc(o.x)}</button>`).join("");cb.appendChild(box);
+  box.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{if(R.locked)return;const ok=b.dataset.i==="0";
+    box.querySelectorAll(".opt").forEach(x=>{x.disabled=true;if(x.dataset.i==="0")x.classList.add("ok")});if(!ok)b.classList.add("bad");
+    done(ok,esc(t.ex),beleg(t,tx))})};
+T.pic=(t,cb,tx)=>{const opts=shuffle(t.o.map((x,i)=>({x,i})));
+  const box=document.createElement("div");box.className="opts picgrid";
+  box.innerHTML=opts.map(o=>`<button class="opt" data-i="${o.i}"><span class="e" aria-hidden="true">${o.x[0]}</span><span>${esc(o.x[1])}</span></button>`).join("");cb.appendChild(box);
+  box.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{if(R.locked)return;const ok=b.dataset.i==="0";
+    box.querySelectorAll(".opt").forEach(x=>{x.disabled=true;if(x.dataset.i==="0")x.classList.add("ok")});if(!ok)b.classList.add("bad");
+    done(ok,esc(t.ex),beleg(t,tx))})};
+/* richtig / falsch / steht nicht im Text */
+const RFL={r:"richtig",f:"falsch",n:"steht nicht im Text"};
+T.rf=(t,cb,tx)=>{const ans=t.s.map(()=>null);
+  const box=document.createElement("div");box.className="rf";
+  box.innerHTML=t.s.map((s,i)=>`<div class="rfi" data-i="${i}"><p>${esc(s[0])}</p><div class="rfb">${["r","f","n"].map(k=>`<button data-k="${k}" aria-pressed="false">${k==="r"?"✓ richtig":k==="f"?"✗ falsch":tx.hoer?"? nicht gesagt":"? steht nicht im Text"}</button>`).join("")}</div></div>`).join("")+
+    `<button class="go" id="chk" disabled>Prüfen</button>`;
+  cb.appendChild(box);
+  box.querySelectorAll(".rfi").forEach(row=>{const i=+row.dataset.i;row.querySelectorAll("button").forEach(b=>b.onclick=()=>{if(R.locked||box.dataset.done)return;ans[i]=b.dataset.k;sfxPop();
+    row.querySelectorAll("button").forEach(x=>{x.classList.toggle("sel",x===b);x.setAttribute("aria-pressed",x===b)});$("#chk").disabled=ans.some(a=>!a)})});
+  $("#chk").onclick=()=>{if(R.locked)return;box.dataset.done=1;let good=0;
+    box.querySelectorAll(".rfi").forEach(row=>{const i=+row.dataset.i,right=t.s[i][1],ok=ans[i]===right;if(ok)good++;
+      row.classList.add(ok?"ok":"bad");row.querySelectorAll("button").forEach(x=>{x.disabled=true;x.classList.remove("sel");if(x.dataset.k===right)x.classList.add("right");else if(x.dataset.k===ans[i])x.classList.add("wrong")});
+      if(!ok)row.insertAdjacentHTML("beforeend",`<small>Richtig wäre: ${RFL[right]}${tx.hoer&&right==="n"?" (wurde nicht gesagt)":""}</small>`)});
+    $("#chk").remove();
+    done(good===t.s.length,`${good} von ${t.s.length} richtig. ${esc(t.ex)}`,"",good/t.s.length)}};
+/* Satz im Text antippen */
+T.find=(t,cb,tx)=>{const right=new Set();units(tx).forEach((u,i)=>{if([].concat(t.a).some(a=>u.includes(a)))right.add(i)});
+  cb.insertAdjacentHTML("beforeend",txHTML(tx,{tap:true}));
+  cb.querySelectorAll(".u").forEach(s=>{const hit=()=>{if(R.locked)return;const i=+s.dataset.u,ok=right.has(i);
+    s.classList.add(ok?"hit":"miss");cb.querySelectorAll(".u").forEach(x=>{x.removeAttribute("tabindex");if(!ok&&right.has(+x.dataset.u))x.classList.add("left")});
+    const r=cb.querySelector(".u.left");if(r)r.scrollIntoView({behavior:"smooth",block:"center"});
+    done(ok,(ok?"":"Der grün umrandete Satz ist der Beweis. ")+esc(t.ex))};
+    s.onclick=hit;s.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();hit()}}})};
+/* Reihenfolge antippen */
+T.order=(t,cb,tx)=>{const seq=shuffle(t.o.map((x,i)=>i));let tap=[];
+  const box=document.createElement("div");box.className="ord";
+  box.innerHTML=seq.map(i=>`<button class="oc" data-i="${i}"><span class="num"></span><span class="grow">${esc(t.o[i])}</span></button>`).join("");cb.appendChild(box);
+  cb.insertAdjacentHTML("beforeend",`<button class="ghost" id="undo" disabled>Zurücksetzen</button>`);
+  const undo=$("#undo");
+  undo.onclick=()=>{tap=[];box.querySelectorAll(".oc").forEach(b=>{b.classList.remove("on");b.querySelector(".num").textContent=""});undo.disabled=true};
+  box.querySelectorAll(".oc").forEach(b=>b.onclick=()=>{if(R.locked||b.classList.contains("on"))return;tap.push(+b.dataset.i);sfxPop();
+    b.classList.add("on");b.querySelector(".num").textContent=tap.length;undo.disabled=false;
+    if(tap.length===t.o.length){const ok=tap.every((n,i)=>n===i);undo.remove();
+      box.querySelectorAll(".oc").forEach(x=>{const n=+x.dataset.i,good=tap.indexOf(n)===n;x.classList.add(good?"ok":"bad");x.disabled=true;
+        if(!good)x.querySelector(".grow").insertAdjacentHTML("beforeend",`<small>gehört an Platz ${n+1}</small>`)});
+      done(ok,esc(t.ex))}})};
+/* Lücke füllen */
+T.gap=(t,cb,tx)=>{const m=t.s.match(/\[\[(.*?)\]\]/),opts=m[1].split("|"),pre=t.s.slice(0,m.index),post=t.s.slice(m.index+m[0].length);
+  const txt=document.createElement("div");txt.className="txt";cb.appendChild(txt);
+  const draw=v=>{txt.innerHTML=esc(pre)+(v==null?`<span class="gap now">?</span>`:v===opts[0]?`<span class="gap ok">${esc(v)}</span>`:`<span class="gap bad"><s>${esc(v)}</s>${esc(opts[0])}</span>`)+esc(post)};draw(null);
+  const ch=document.createElement("div");ch.className="chips";cb.appendChild(ch);
+  ch.innerHTML=shuffle(opts).map(o=>`<button class="chip">${esc(o)}</button>`).join("");
+  ch.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{if(R.locked)return;const v=b.textContent,ok=v===opts[0];draw(v);ch.querySelectorAll(".chip").forEach(x=>x.disabled=true);
+    done(ok,esc(t.ex),beleg(t,tx))})};
+
+/* ================= Ergebnis ================= */
+function endRound(){const c=R.c,q=R.max?R.pts/R.max:0;const st=q>=.9?3:q>=.7?2:q>=.5?1:0;
+  S.best[c.id]=Math.max(S.best[c.id]||0,st);
+  const P=x=>Math.round(x*2)/2;
+  if(c.test)S.probe={pts:P(R.pts),max:R.max,a:P(R.byPart[0][0]),am:R.byPart[0][1],b:P(R.byPart[1][0]),bm:R.byPart[1][1],d:new Date().toLocaleDateString("de-DE")};
+  save();
+  const k=CH.indexOf(c),nxt=CH[k+1];
+  const cheer=c.test?["Weiter üben, du schaffst das!","Gut gemacht!","Stark!","Super, du bist bereit für die GLN!"][st]:["Dranbleiben, das wird!","Gut gemacht!","Stark!","Super, du bist eine echte Text-Detektivin!"][st];
+  const used=R.used.slice(),id=c.id;
+  app.innerHTML=`<section class="result"><h2>${cheer}</h2><div class="bigstars">${[0,1,2].map(i=>I.star(i<st).replace("<svg",`<svg class="s${i+1}"`)).join("")}</div>
+    ${c.test?`<p class="lead"><b>${String(P(R.pts)).replace(".",",")} von ${R.max} Punkten</b></p>
+      <div class="teile"><div><span class="small">📖 Teil 1 Lesen</span><b>${String(S.probe.a).replace(".",",")} / ${S.probe.am}</b></div><div><span class="small">🎧 Teil 2 Hören</span><b>${String(S.probe.b).replace(".",",")} / ${S.probe.bm}</b></div></div>`
+      :`<p class="lead"><b>${R.res.filter(x=>x===1).length} von ${R.n}</b> Fragen ganz richtig</p>`}
+    <div class="spick"><b>📌 Spickzettel: ${esc(c.t)}</b><ul>${c.spick.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+    ${used.filter(u=>TX[u].hoer).map(u=>`<button class="ghost" data-r="${u}">${I.spk}Hörtext mitlesen: ${esc(TX[u].t)}</button>`).join("")}
+    <button class="go" id="again">${c.test?"Probe-GLN nochmal":"Nochmal üben"}</button>
+    ${nxt&&st>=2&&!c.test?`<button class="ghost" id="nx">Weiter: ${esc(nxt.t)}</button>`:""}
+    <button class="ghost" id="hm">Alle Kapitel</button></section>`;
+  if(st>=2)beep([523.25,659.25,783.99,1046.5],.2);
+  R=null;
+  $("#again").onclick=()=>startRound(id);$("#hm").onclick=home;if($("#nx"))$("#nx").onclick=()=>openCh(nxt.id);
+  app.querySelectorAll("[data-r]").forEach(b=>b.onclick=()=>reader(b.dataset.r,home));
+  scrollTo(0,0)}
+
+/* ================= Entdecken: Lese-Ecke ================= */
+function ecke(){R=null;hush();const probeDone=!!S.probe;
+  const item=id=>{const t=TX[id];return `<button class="libitem" data-t="${id}"><span class="tico" aria-hidden="true">${t.ico}</span><span class="grow"><h3>${esc(t.t)}</h3><span class="small">${esc(t.art)}</span></span></button>`};
+  const ids=Object.keys(TX).filter(k=>!TX[k].probe||probeDone);
+  app.innerHTML=`<div class="chead"><button class="backb" id="cbk">${I.back}Alle Kapitel</button></div>
+    <div><span class="eyebrow">Entdecken</span><h2>Lese-Ecke</h2><p class="small" style="margin-top:4px">Lies die Texte in Ruhe, oder lass sie dir vorlesen und lies mit. Der Satz, der gerade gelesen wird, leuchtet gelb.</p></div>
+    <span class="eyebrow sect">Geschichten und Sachtexte</span><div class="stations">${ids.filter(k=>!TX[k].hoer).map(item).join("")}</div>
+    <span class="eyebrow sect">Hörtexte zum Mitlesen</span><div class="stations">${ids.filter(k=>TX[k].hoer).map(item).join("")}</div>
+    ${probeDone?`<p class="small">Letzte Probe-GLN am ${esc(S.probe.d)}: ${String(S.probe.pts).replace(".",",")} von ${S.probe.max} Punkten.</p>`:`<p class="small">🔒 Die Texte der Probe-GLN erscheinen hier, wenn du sie gemacht hast.</p>`}`;
+  $("#cbk").onclick=home;
+  app.querySelectorAll("[data-t]").forEach(b=>b.onclick=()=>reader(b.dataset.t,ecke));
+  scrollTo(0,0)}
+function reader(id,back){hush();const tx=TX[id];
+  app.innerHTML=`<div class="chead"><button class="backb" id="cbk">${I.back}${back===ecke?"Lese-Ecke":"Alle Kapitel"}</button></div>
+    ${TTS.ok?`<button class="spk" id="spk" style="align-self:flex-start">${I.spk}<span> Vorlesen und mitlesen</span></button>`:""}
+    ${txHTML(tx)}`;
+  $("#cbk").onclick=()=>{hush();back()};
+  const sp=$("#spk");if(!sp){scrollTo(0,0);return}
+  const us=[...app.querySelectorAll(".txt .u")];
+  const clear=()=>{us.forEach(u=>u.classList.remove("now"));sp.classList.remove("on");sp.lastChild.textContent=" Vorlesen und mitlesen"};
+  sp.onclick=()=>{if(sp.classList.contains("on")){hush();return}wake();sp.classList.add("on");sp.lastChild.textContent=" Stopp";
+    speakSeq(hearText(tx),i=>{us.forEach(u=>u.classList.remove("now"));if(i>0&&us[i-1]){us[i-1].classList.add("now");us[i-1].scrollIntoView({behavior:"smooth",block:"center"})}},clear,clear)};
+  scrollTo(0,0)}
+
+/* ================= Start ================= */
+/* Lernwelt: direkt ins Kapitel (lesenhoeren.html#stimmt …), Anker stehen in hefte.js */
+function kapitelSprung(){const id=location.hash.slice(1);if(id==="lesecke"){ecke();return true}if(!chOf(id))return false;openCh(id);return true}
+window.lwStart?lwStart('home',kapitelSprung):(kapitelSprung()||home());
+</script>
+<script>/* Lernwelt: Kapitel-Fortschritt für die Startseite (siehe sync.js) */
+if(window.LW&&LW.kapitel){LW.kapitel(function(){return CH.map(function(c){return {t:c.t,p:stars(c)/3}})})}</script>
+</body></html>
