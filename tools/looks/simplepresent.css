@@ -1,0 +1,5 @@
+/* @kit */
+/* Simple Present ist von Anfang an im Lernwelt-Look gebaut: nur die Fach-Farbe setzen. */
+:root:root:root{--lw-c:var(--lw-en); --lw-cd:var(--lw-en-d); --lw-cs:var(--lw-en-s)}
+.go{width:auto}
+.go:disabled{opacity:.5}
