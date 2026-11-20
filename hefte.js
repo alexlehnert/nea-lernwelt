@@ -77,12 +77,12 @@ window.LW_HEFTE = [
     frei: { t: 'Karteikasten · Neueste zuerst', s: 'Erst die neuesten Kapitel festigen, ältere kommen nach und nach dazu' } },
   { id: 'simplepresent', fragen: true, abzeichen: 'Present-Profi', fach: 'englisch', thema: 'Grammatik', name: 'Simple Present',
     info: 'He, she, it mit s, don’t/doesn’t, Fragen mit Do/Does und Kurzantworten: erst verstehen, dann viel üben, dann die Probe-Arbeit', key: 'simple-present-v1',
-    // Kapitel der App (CH in simplepresent.html): 1 bis 8 Lernpfad, 9 bis 14 Übungsteil wie auf den Arbeitsblättern G9a/G11a/Bingo
+    // Kapitel der App (CH in simplepresent.html): 1 bis 8 Lernpfad, 9 bis 15 Übungsteil wie auf den Arbeitsblättern G9a/G11a/Bingo/Mixed exercises (2)
     kapitel: ['Wann nehme ich das Simple Present?', 'He, she, it: das s muss mit!', '-s, -es oder -ies?', "Verneinung mit don't und doesn't", 'Fragen mit Do und Does', 'Kurzantworten', 'Fragen mit Fragewörtern', 'Fehler-Detektivin',
-      'Üben: Text markieren', 'Üben: Lückentext mit Verbform', 'Üben: Fragen aus Stichworten', 'Üben: Kurzantworten', 'Üben: Fragewort-Fragen', 'Üben: Bingo-Sätze'],
-    anker: ['wann', 's', 'spell', 'not', 'frage', 'kurz', 'wh', 'fehler', 'u-mark', 'u-luecke', 'u-fragen', 'u-kurz', 'u-wh', 'u-bingo'],
+      'Üben: Text markieren', 'Üben: Lückentext mit Verbform', 'Üben: Fragen aus Stichworten', 'Üben: Kurzantworten', 'Üben: Fragewort-Fragen', 'Üben: Fragen-Mix: do/does oder is/are', 'Üben: Bingo-Sätze'],
+    anker: ['wann', 's', 'spell', 'not', 'frage', 'kurz', 'wh', 'fehler', 'u-mark', 'u-luecke', 'u-fragen', 'u-kurz', 'u-wh', 'u-mix', 'u-bingo'],
     entdecken: { a: 'regeln', t: 'Regelheft', s: 'Alle Erklärungen und der große Spickzettel' },
-    test: { a: 'probe', kap: 'Probe-Arbeit', s: '6 Teile mit Punkten wie in der Klassenarbeit' } },
+    test: { a: 'probe', kap: 'Probe-Arbeit', s: '7 Teile mit Punkten wie in der Klassenarbeit' } },
   // Zellen, Mikroskop und Skelett laufen in einer App (bio-expedition.html, teilt: gemeinsamer Speicher zellstadt-v1).
   // mikroskop.html und skelett.html leitet vercel.json auf bio-expedition.html um; von = Fortschritt aus der Zeit, als es ein Heft war.
   { id: 'bio-expedition', abzeichen: 'Bio-Forscherin', fach: 'biologie', thema: 'Zellen', name: 'Zellen-Expedition',
