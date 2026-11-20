@@ -5,7 +5,7 @@
 /* Simple Present (Englisch, Gymnasium Klasse 5): Vorbereitung auf die Klassenarbeit.
    Lernpfad mit 8 Kapiteln (Erklär-Karten, dann eine Runde mit Denkfrage „he/she/it?“), großer Übungsteil mit 6 Aufgabenarten
    wie auf den Arbeitsblättern G9a/G11a/Bingo (Text markieren, Lückentext, Fragen aus Stichworten, Kurzantworten, Fragewörter, Bingo-Sätze),
-   Probe-Arbeit mit 6 Teilen und Punkten (Auswertung am Schluss), Entdecken = Regelheft. Nur Vokabeln, die Nea schon hatte. */
+   Probe-Arbeit mit 7 Teilen und Punkten (Auswertung am Schluss), Entdecken = Regelheft. Nur Vokabeln, die Nea schon hatte. */
 :root{color-scheme:light dark}
 *{box-sizing:border-box}
 html,body{min-height:100%}
@@ -702,7 +702,11 @@ const CH=[
   {k:"short",e:"Is Ruby crazy?",y:0,a:"No, she isn't."},
   {k:"short",e:"Can Lily sing?",y:1,a:"Yes, she can."},
   {k:"short",e:"Does your grandpa ride a bike?",y:0,a:"No, he doesn't.",sub:"your grandpa",p:"he"},
-  {k:"short",e:"Do Mr and Mrs Eaton work together?",y:1,a:"Yes, they do.",sub:"Mr and Mrs Eaton",p:"they"}
+  {k:"short",e:"Do Mr and Mrs Eaton work together?",y:1,a:"Yes, they do.",sub:"Mr and Mrs Eaton",p:"they"},
+  {k:"short",e:"Do Julie and Chris live in Frankfurt?",y:0,a:"No, they don't.",sub:"Julie and Chris",p:"they"},
+  {k:"short",e:"Does Lara play the guitar?",y:0,a:"No, she doesn't.",sub:"Lara",p:"she"},
+  {k:"short",e:"Do you go to St Mary's School?",y:1,a:"Yes, I do.",sub:"you",p:"I"},
+  {k:"short",e:"Does your dog like walks?",y:1,a:"Yes, it does.",alt:["Yes, he does.","Yes, she does."],sub:"your dog",p:"it"}
  ]},
 
 {id:"u-wh",sec:"ueben",ico:"🔍",t:"Üben: Fragewort-Fragen",d:"When, Where, What, Why: die passende Frage schreiben",n:10,
@@ -724,6 +728,45 @@ const CH=[
   {k:"type",s:"What do they watch in the evenings? – They ___ videos.",h:"watch",a:["watch"]},
   {k:"type",s:"Where do the boys play football? – They ___ football in the playground.",h:"play",a:["play"]},
   {k:"type",s:"When does school start? – It ___ at nine o'clock.",h:"start",a:["starts"]}
+ ]},
+
+{id:"u-mix",sec:"ueben",ico:"🎒",t:"Üben: Fragen-Mix: do/does oder is/are",d:"Mixed questions bag wie auf dem Blatt (2): Fragen und Kurzantworten",n:10,
+ cards:[{h:"do / does oder is / are?",b:`<p>Schau, ob im Satz schon ein <b>anderes Verb</b> steht (play, like, drink, want …):</p>
+   ${EX("… the dog <em>drink</em> water? → <b>Does</b> the dog drink water? – Yes, it does.","anderes Verb da → do / does")}
+   ${EX("… Cathy her sister? → <b>Is</b> Cathy her sister? – Yes, she is.","kein anderes Verb → is / are (sein)")}
+   ${EX("… the boys in their room? → <b>Are</b> the boys in their room? – No, they aren't.")}
+   <p class="merk">Die Kurzantwort nimmt dasselbe Wort wie die Frage: Does → does, Is → is, Are → are.</p>`,say:"Does the dog drink water? Yes, it does. Is Cathy her sister? Yes, she is. Are the boys in their room? No, they aren't."},
+  {h:"Die Frage muss zur Antwort passen",b:`<p>Aus einem Satz machst du eine Ja/Nein-Frage. Bei <b>Yes</b> fragst du genau das, was im Satz steht. Bei <b>No</b> fragst du nach etwas anderem.</p>
+   ${EX("Cathy plays in the hockey team.")}${OK("Does Cathy play in the hockey team? – Yes, she does.")}${OK("Does Cathy play in the football team? – No, she doesn't.")}`,say:"Does Cathy play in the hockey team? Yes, she does. Does Cathy play in the football team? No, she doesn't."}],
+ spick:["Anderes Verb im Satz → Do / Does + Grundform.","Kein anderes Verb (sein) → Is / Are.","Kurzantwort mit demselben Wort: Does → does, Is → is, Are → are.","Bei Yes genau das fragen, was im Satz steht."],
+ tasks:[
+  {k:"bag",s:"___ the girls at Sherwood Junior School?",v:"Are",y:1,a:"Yes, they are."},
+  {k:"bag",s:"___ the boys in their room?",v:"Are",y:0,a:"No, they aren't.",alt:["No, they are not."]},
+  {k:"bag",s:"___ Cathy her sister?",v:"Is",y:1,a:"Yes, she is."},
+  {k:"bag",s:"___ the dog drink water?",v:"Does",y:1,a:"Yes, it does.",alt:["Yes, he does.","Yes, she does."]},
+  {k:"bag",s:"___ Mrs Smith the English teacher?",v:"Is",y:0,a:"No, she isn't.",alt:["No, she is not."]},
+  {k:"bag",s:"___ Ryan and Ruby twins?",v:"Are",y:1,a:"Yes, they are."},
+  {k:"bag",s:"___ Sherlock like cats?",v:"Does",y:0,a:"No, he doesn't.",alt:["No, it doesn't."]},
+  {k:"bag",s:"___ your parents work at home?",v:"Do",y:1,a:"Yes, they do."},
+  {k:"bag",s:"___ Lily in your class?",v:"Is",y:0,a:"No, she isn't.",alt:["No, she is not."]},
+  {k:"bag",s:"___ you busy?",v:"Are",y:1,a:"Yes, I am.",alt:["Yes, we are."]},
+  {k:"bag",s:"___ the children eat pizza?",v:"Do",y:1,a:"Yes, they do."},
+  {k:"bag",s:"___ Karam happy?",v:"Is",y:1,a:"Yes, he is."},
+  {k:"fit",st:"Cathy plays in the hockey team.",y:1,a:["Does Cathy play in the hockey team?"],sa:"Yes, she does."},
+  {k:"fit",st:"The children eat pizza.",y:0,chg:"bananas",a:["Do the children eat bananas?"],sa:"No, they don't."},
+  {k:"fit",st:"The team meets after school.",y:1,a:["Does the team meet after school?"],sa:"Yes, it does.",sAlt:["Yes, they do."]},
+  {k:"fit",st:"Betty and Carol play their favourite game on Wednesdays.",y:0,chg:"on Mondays",a:["Do Betty and Carol play their favourite game on Mondays?"],sa:"No, they don't."},
+  {k:"fit",st:"Lily likes Sherlock.",y:1,a:["Does Lily like Sherlock?"],sa:"Yes, she does."},
+  {k:"fit",st:"Mr and Mrs Eaton work at home.",y:0,chg:"in an office",a:["Do Mr and Mrs Eaton work in an office?"],sa:"No, they don't."},
+  {k:"fit",st:"Ryan watches TV after school.",y:0,chg:"videos",a:["Does Ryan watch videos after school?"],sa:"No, he doesn't."},
+  {k:"build",w:"Ellie · her teachers · does · like",a:"Does Ellie like her teachers?",sub:"Ellie",p:"she",ex:"Level 1 vom Blatt: Does + Ellie + like + her teachers."},
+  {k:"build",w:"you · do · in the morning · watch TV",a:"Do you watch TV in the morning?",sub:"you",p:"you",ex:"Do + you + watch TV + in the morning."},
+  {k:"build",w:"Amar · want · a pet · does",a:"Does Amar want a pet?",sub:"Amar",p:"he",ex:"Does + Amar + want + a pet."},
+  {k:"build",w:"do · have · on the weekend · you · school",a:"Do you have school on the weekend?",sub:"you",p:"you",ex:"Do + you + have + school + on the weekend."},
+  {k:"write",w:"Ellie · her teachers · like",a:["Does Ellie like her teachers?"],sub:"Ellie",p:"she",ex:"Level 2: do/does selbst ergänzen. Ellie → she → Does."},
+  {k:"write",w:"you · in the morning · watch TV",a:["Do you watch TV in the morning?"],sub:"you",p:"you",ex:"you → Do."},
+  {k:"write",w:"Amar · want · a pet",a:["Does Amar want a pet?"],sub:"Amar",p:"he",ex:"Amar → he → Does + want."},
+  {k:"write",w:"have · on the weekend · you · school",a:["Do you have school on the weekend?"],sub:"you",p:"you",ex:"Do you have school on the weekend?"}
  ]},
 
 {id:"u-bingo",sec:"ueben",ico:"🎲",t:"Üben: Bingo-Sätze",d:"Sätze und Fragen über die Bingo-Karte",n:10,
@@ -752,8 +795,8 @@ const CH=[
 ];
 
 /* ---------------- Probe-Arbeit: Teile mit eigenen Aufgaben (zufällig gezogen) ---------------- */
-const PROBE={id:"probe",test:true,ico:"📄",t:"Probe-Arbeit",d:"6 Teile mit Punkten wie in der Klassenarbeit, Auswertung am Schluss",
- cards:[{h:"Deine Probe-Arbeit",b:`<p>So wie in der Klassenarbeit: <b>6 Teile</b>, ohne Tipps und ohne Denkfrage. Ob es richtig war, siehst du erst <b>am Schluss</b>.</p><ol><li>Verbformen einsetzen</li><li>Sätze verneinen</li><li>Fragen aus Stichworten</li><li>Kurzantworten</li><li>Fragen mit Fragewörtern</li><li>Fehler finden</li></ol><p class="small">Nimm dir Zeit und mach am Ende den Check: Wer? s? Grundform? Verb da?</p>`}],
+const PROBE={id:"probe",test:true,ico:"📄",t:"Probe-Arbeit",d:"7 Teile mit Punkten wie in der Klassenarbeit, Auswertung am Schluss",
+ cards:[{h:"Deine Probe-Arbeit",b:`<p>So wie in der Klassenarbeit: <b>7 Teile</b>, ohne Tipps und ohne Denkfrage. Ob es richtig war, siehst du erst <b>am Schluss</b>.</p><ol><li>Verbformen einsetzen</li><li>Sätze verneinen</li><li>Fragen aus Stichworten</li><li>Kurzantworten</li><li>Fragen mit Fragewörtern</li><li>Fehler finden</li><li>do/does oder is/are</li></ol><p class="small">Nimm dir Zeit und mach am Ende den Check: Wer? s? Grundform? Verb da?</p>`}],
  spick:["Wer? he/she/it → s, does, doesn't.","Nach do/does/don't/doesn't: Grundform.","Kurzantwort: Pronomen + do/does.","goes, watches, hurries, has."],
  parts:[
   {h:"Teil 1: Verbformen",b:"Setze das Verb in der richtigen Form ein.",ico:"📝",n:8,pts:1,ch:"u-luecke",pool:[
@@ -819,7 +862,15 @@ const PROBE={id:"probe",test:true,ico:"📄",t:"Probe-Arbeit",d:"6 Teile mit Pun
    {k:"fix",s:"Lily {don't} like cheese.",c:"Lily doesn't like cheese."},
    {k:"fix",s:"He {watchs} TV.",c:"He watches TV."},
    {k:"fix",s:"My mum {does} like tea.",c:"My mum likes tea."},
-   {k:"fix",s:"{Do} Ruby have a cat?",c:"Does Ruby have a cat?"}]}
+   {k:"fix",s:"{Do} Ruby have a cat?",c:"Does Ruby have a cat?"}]},
+  {h:"Teil 7: do/does oder is/are",b:"Ergänze do, does, is oder are und schreib die Kurzantwort.",ico:"🎒",n:4,pts:2,ch:"u-mix",pool:[
+   {k:"bag",s:"___ the twins at home?",v:"Are",y:1,a:"Yes, they are."},
+   {k:"bag",s:"___ your sister like apples?",v:"Does",y:0,a:"No, she doesn't.",alt:["No, she does not."]},
+   {k:"bag",s:"___ Mr Eaton funny?",v:"Is",y:1,a:"Yes, he is."},
+   {k:"bag",s:"___ the boys play hockey?",v:"Do",y:0,a:"No, they don't.",alt:["No, they do not."]},
+   {k:"bag",s:"___ Ella your cousin?",v:"Is",y:0,a:"No, she isn't.",alt:["No, she is not."]},
+   {k:"bag",s:"___ the cat sleep on the sofa?",v:"Does",y:1,a:"Yes, it does.",alt:["Yes, he does.","Yes, she does."]},
+   {k:"bag",s:"___ you and Karam friends?",v:"Are",y:1,a:"Yes, we are."}]}
  ]};
 
 /* ================= Kapitel und Sterne ================= */
@@ -935,6 +986,7 @@ function ruleSheet(c){closeSheet();const bg=document.createElement("div");bg.cla
   document.body.append(bg,sh);bg.onclick=closeSheet;sh.querySelector("#shx").onclick=closeSheet}
 function ruleChapter(t){if(R.c.sec==="pfad")return R.c;
   const tg=norm([].concat(t.a||t.c||"").join(" "));
+  if(t.k==="bag"||t.k==="fit")return chOf("u-mix");
   if(t.k==="short")return chOf("kurz");if(t.k==="fix")return chOf("fehler");
   if(t.k==="write"&&t.w&&/^(when|where|what|why)/i.test(t.w))return chOf("wh");
   if(t.k==="write"||t.k==="build")return chOf(/\bnot\b/.test(tg)?"not":"frage");
@@ -973,8 +1025,8 @@ function partScreen(st){const p=st.part;
     <p class="small">${p.n} Aufgaben, je ${p.pts} ${p.pts>1?"Punkte":"Punkt"}</p><button class="go" id="go" style="width:100%">Los</button></section>`;
   bindTop();$("#go").onclick=nextStep;scrollTo(0,0)}
 
-const LK={mc:"Auswählen",gap:"Lücke füllen",type:"Verbform eintippen",build:"Satz bauen",write:"Satz schreiben",short:"Kurzantwort",mark:"Text markieren",fix:"Fehler finden",bingo:"Bingo"};
-const QD={gap:"Welche Form passt?",type:"Setze das Verb in der richtigen Form ein.",build:"Bau den Satz aus den Bausteinen.",write:"Schreib den ganzen Satz.",short:"Wie lautet die Kurzantwort?",mark:"Markiere alle Simple-Present-Formen.",fix:"Tippe das falsche Wort an.",bingo:"Schreib einen Satz über die Bingo-Karte."};
+const LK={bag:"Fragen-Mix",fit:"Frage + Kurzantwort",mc:"Auswählen",gap:"Lücke füllen",type:"Verbform eintippen",build:"Satz bauen",write:"Satz schreiben",short:"Kurzantwort",mark:"Text markieren",fix:"Fehler finden",bingo:"Bingo"};
+const QD={bag:"Do, Does, Is oder Are? Dann die Kurzantwort.",fit:"Schreib eine Ja/Nein-Frage, die zur Antwort passt, und die Kurzantwort.",gap:"Welche Form passt?",type:"Setze das Verb in der richtigen Form ein.",build:"Bau den Satz aus den Bausteinen.",write:"Schreib den ganzen Satz.",short:"Wie lautet die Kurzantwort?",mark:"Markiere alle Simple-Present-Formen.",fix:"Tippe das falsche Wort an.",bingo:"Schreib einen Satz über die Bingo-Karte."};
 
 /* Denkfrage: he, she, it oder nicht? (zählt nicht als Fehler) */
 function denkStep(t,cb,go){const box=document.createElement("div");box.className="denk";const th=THIRD.includes(t.p);
@@ -1002,7 +1054,7 @@ function dkTip(t,th){const tg=ap(t.k==="gap"?t.s.match(/\[\[(.*?)[|\]]/)[1]:[].c
 
 /* Ergebnis einer Aufgabe. ok: richtig, f: Anteil, right: richtige Lösung (Text), typed: Neas Antwort */
 function done(ok,o){if(R.locked)return;R.locked=true;o=o||{};const st=R.tasks[R.i],t=st.t;const f=o.f!=null?o.f:(ok?1:0);
-  if(R.c.test){const p=st.pts;let got=ok?p:(p>=2&&o.half?p/2:0);R.pts+=got;R.max+=p;R.byPart[st.pi][0]+=got;R.byPart[st.pi][1]+=p;R.res.push(got/p);
+  if(R.c.test){const p=st.pts;let got=ok?p:(o.f!=null?Math.round(p*o.f*2)/2:(p>=2&&o.half?p/2:0));R.pts+=got;R.max+=p;R.byPart[st.pi][0]+=got;R.byPart[st.pi][1]+=p;R.res.push(got/p);
     if(got<p)R.log.push({pi:st.pi,t,typed:o.typed,right:o.right,why:o.why,got,p});
     track();sfxPop();
     const nx=document.createElement("button");nx.className="next";nx.type="button";const nxs=R.tasks[R.i+1];
@@ -1092,6 +1144,28 @@ T.bingo=(t,cb)=>{cb.insertAdjacentHTML("beforeend",`<div class="bcell"><span cla
   inputBox(cb,{sentence:1,ph:t.ask?"Do you …?":t.n+" …",check:(v,f)=>{const ok=sameAns(v,t.a);f.classList.add(ok?"ok":"bad");
     const hg=ok&&/has got|hasn't got|have you got/i.test(v)?`<p class="note">Auch richtig! Im Simple Present heißt es: <b>${esc(t.a[0])}</b></p>`:"";
     done(ok,{right:t.a[0],typed:v,why:ok?"":hintFor(v,t.a[0]),note:ok?(hg||formNote(v,t.a[0])):"",say:t.a[0]})}})};
+/* Fragen-Mix (Blatt 2, Ex. 6): erst Do/Does/Is/Are wählen, dann Kurzantwort tippen. Halbe Punkte möglich */
+T.bag=(t,cb)=>{const sent=document.createElement("div");sent.className="sent";cb.appendChild(sent);
+  const draw=g=>{sent.innerHTML=esc(t.s).replace("___",g)+`<div style="margin-top:8px"><span class="yn ${t.y?"y":"n"}">${t.y?"✓ Ja":"✗ Nein"}</span></div>`};
+  draw(`<span class="gap now">?</span>`);
+  const ch=document.createElement("div");ch.className="chips";cb.appendChild(ch);
+  ch.innerHTML=shuffle(["Do","Does","Is","Are"]).map(o=>`<button class="chip">${o}</button>`).join("");
+  ch.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{if(R.locked||ch.dataset.done)return;ch.dataset.done=1;const v=b.textContent,ok1=v===t.v;
+    ch.querySelectorAll(".chip").forEach(x=>x.disabled=true);
+    draw(ok1||R.c.test?`<span class="gap ${R.c.test?"":"ok"}">${esc(v)}</span>`:`<span class="gap bad"><s>${esc(v)}</s>${esc(t.v)}</span>`);
+    if(!R.c.test)ok1?sfxPop():sfxBad();
+    const q=t.s.replace("___",t.v);
+    inputBox(cb,{sentence:1,ph:t.y?"Yes, …":"No, …",check:(w,f)=>{w=w.trim();if(!/^(yes|no)\b/i.test(w))w=(t.y?"Yes":"No")+", "+w;
+      const ok2=sameAns(w,[t.a].concat(t.alt||[]));f.classList.add(ok2?"ok":"bad");
+      const why=[!ok1?`Frage: ${/^(Is|Are)$/.test(t.v)?"Kein anderes Verb im Satz → "+t.v+".":"Da steht noch ein Verb → "+t.v+" + Grundform."}`:"",!ok2?(hintFor(w,t.a)||`Kurzantwort mit demselben Wort wie die Frage: ${t.a}`):""].filter(Boolean).join(" ");
+      done(ok1&&ok2,{f:(ok1+ok2)/2,right:q+" – "+t.a,typed:v+" … – "+w,why,say:q+" "+t.a})}})})};
+/* Frage passt zur Antwort (Blatt 2, Ex. 6 unten): Ja/Nein-Frage schreiben, dann Kurzantwort */
+T.fit=(t,cb)=>{cb.insertAdjacentHTML("beforeend",`<div class="sent">${esc(t.st)}<div style="margin-top:8px"><span class="yn ${t.y?"y":"n"}">${t.y?"✓ Antwort: Yes":"✗ Antwort: No"}</span>${t.chg?` <span class="small">Frag nach: <b>${esc(t.chg)}</b></span>`:""}</div></div>`);
+  inputBox(cb,{sentence:1,ph:"Frage hier eintippen",check:(v,f)=>{const ok1=sameAns(v,t.a);f.classList.add(ok1?"ok":"bad");
+    inputBox(cb,{sentence:1,ph:t.y?"Yes, …":"No, …",noFocus:0,check:(w,g)=>{w=w.trim();if(!/^(yes|no)\b/i.test(w))w=(t.y?"Yes":"No")+", "+w;
+      const ok2=sameAns(w,[t.sa].concat(t.sAlt||[]));g.classList.add(ok2?"ok":"bad");
+      const why=[!ok1?hintFor(v,t.a[0]):"",!ok2?hintFor(w,t.sa):""].filter(Boolean).join(" ");
+      done(ok1&&ok2,{f:(ok1+ok2)/2,right:t.a[0]+" – "+t.sa,typed:v+" – "+w,why,note:ok1&&ok2?formNote(v,t.a[0]):"",say:t.a[0]+" "+t.sa,half:true})}})}})};
 /* Text: {Wort} = Ziel */
 function tokens(tx){return (tx.match(/\{[^}]+\}|[^\s{]+/g)||[]).map(w=>({w:w.replace(/[{}]/g,""),hit:w[0]==="{"}))}
 T.mark=(t,cb)=>{const tk=tokens(t.tx),one=!!t.one;
@@ -1128,7 +1202,7 @@ function endRound(){const c=R.c,q=R.max?R.pts/R.max:0;const st=q>=.9?3:q>=.7?2:q
     body=`<p class="lead"><b>${fmt(R.pts)} von ${R.max} Punkten</b> (${Math.round(q*100)} %)</p>
       <div class="teile3">${c.parts.map((p,i)=>`<div><span class="small">${p.ico} ${esc(p.h.replace(/^Teil \d+: /,""))}</span><b>${fmt(R.byPart[i][0])} / ${R.byPart[i][1]}</b></div>`).join("")}</div>
       ${R.log.length?`<h3 style="align-self:flex-start;margin-top:6px">Das schauen wir uns nochmal an</h3><div class="rev">${R.log.map(l=>`<div class="ri"><span class="small">${esc(c.parts[l.pi].h)}${l.got?` · ${fmt(l.got)} von ${l.p} Punkten`:""}</span>
-        <span>${esc(l.t.w||l.t.pre||l.t.e||l.t.s.replace(/[{}]/g,""))}${l.t.h?` (${esc(l.t.h)})`:""}</span>
+        <span>${esc(l.t.w||l.t.pre||l.t.e||l.t.st||l.t.s.replace(/[{}]/g,""))}${l.t.h?` (${esc(l.t.h)})`:""}</span>
         ${l.typed?`<span>Du: <s>${esc(l.typed)}</s></span>`:""}<span class="c">✔ ${esc(l.right)}</span>${l.why?`<span class="small">💡 ${esc(l.why)}</span>`:""}</div>`).join("")}</div>`:`<p>Alles richtig. Wow!</p>`}
       ${weak.length?`<p class="small" style="margin-top:4px">Übe nochmal:</p>${weak.map(x=>`<button class="ghost" data-ch="${x.p.ch}">${chOf(x.p.ch).ico} ${esc(chOf(x.p.ch).t)}</button>`).join("")}`:""}`}
   else body=`<p class="lead"><b>${R.res.filter(x=>x===1).length} von ${R.res.length}</b> Aufgaben gleich richtig</p>`;
