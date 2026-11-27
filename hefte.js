@@ -61,6 +61,13 @@ window.LW_HEFTE = [
     kapitel: ['Mein Regelheft', 'Tauschen erlaubt? (K⁺)', 'Klammer-Karussell (A⁺)', 'Die neutrale Null (N⁺)', 'Geschickt rechnen', 'Gesetz-Detektivin', 'Hilf im Klassenchat'],
     anker: ['regeln', 'tauschen', 'klammern', 'null', 'geschickt', 'detektiv', 'chat'],
     test: { a: 'mix', kap: 'Großer Mix', s: 'Alle drei Gesetze gemischt' } },
+  { id: 'klammern', fragen: true, abzeichen: 'Klammer-Profi', fach: 'mathe', thema: 'Rechengesetze', name: 'Klammer-Profi',
+    info: 'Fit für den GLN: Plus- und Minusklammer, Umstellen, Punkt vor Strich, Ausmultiplizieren und Ausklammern mit allen Tricks (Buch S. 85–105)', key: 'klammer-profi-v1',
+    // Lernpfad von leicht nach schwer (CH in klammern.html), Probe-GLN als Großer Test
+    kapitel: ['Mein Regelheft', 'Plus- und Minusklammer', 'Minus-Sammlerin', 'Umstellen mit Rucksack', 'Klammer, Potenz, Punkt, Strich', 'Faktoren-Partner',
+      'Ausmultiplizieren', 'Ausklammern', 'Drei Tricks', 'Fehler-Detektivin', 'Regeln in Worten', 'Erklär-Chat'],
+    anker: ['regeln', 'klammer', 'sammeln', 'umstellen', 'reihenfolge', 'partner', 'ausmulti', 'ausklammern', 'tricks', 'detektiv', 'worte', 'chat'],
+    test: { a: 'mix', kap: 'Probe-GLN', s: '15 Aufgaben aus allen Kapiteln, wie in der Arbeit' } },
   { id: 'englisch', abzeichen: 'Vokabel-Champion', fach: 'englisch', thema: 'Vokabeln und Grammatik', name: 'English trainer',
     info: 'Vokabeln S. 170–189 und Grammatik Seite für Seite, mit Chats zum Mitschreiben, oder im Karteikasten mit den neuesten Kapiteln zuerst', key: 'englisch-kartei-5-v1',
     // Ein Kapitel pro Buchseite, Grammatik dort eingeordnet, wo sie thematisch passt (muss zu KAPS in englisch.html passen)
