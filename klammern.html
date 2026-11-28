@@ -1,0 +1,721 @@
+<!doctype html><html lang="de"><head><meta charset=utf8><script src="/api/config"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="/sync.js"></script><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"><link rel="manifest" href="/manifest.webmanifest"><meta name="apple-mobile-web-app-title" content="Lernwelt"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="theme-color" content="#5B3FE6"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Klammer-Profi</title>
+<style>
+/* Klammer-Profi: Rechengesetze für den GLN (Buch S. 85–105).
+   Plus-/Minusklammer, Subtrahenden zusammenfassen, Umstellen, Punkt vor Strich, Faktoren-Partner,
+   Ausmultiplizieren, Ausklammern mit Tricks (Faktor 1, Quadrat, versteckter Faktor), Fehler finden, Regeln in Worten.
+   Aufbau wie rechengesetze.html: Regelheft zum Lesen, dann Runden mit Sternen, Klassenchat, Probe-GLN.
+   Farben und Schriften kommen aus lernwelt-app.css (hell und dunkel). */
+:root{color-scheme:light dark}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{margin:0;background:var(--lw-bg);color:var(--lw-ink);font-family:var(--lw-f-b);font-size:17px;line-height:1.45;-webkit-tap-highlight-color:transparent;padding-top:env(safe-area-inset-top,0px)}
+.wrap{max-width:640px;margin:0 auto;padding:14px max(16px,env(safe-area-inset-right,0px)) 130px max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px}
+h1,h2,h3{font-family:var(--lw-f-d);font-weight:700;margin:0;line-height:1.15;text-wrap:balance}
+h2{font-size:1.6rem}
+h3{font-size:1.15rem}
+p{margin:0}
+b{font-weight:700}
+sup{font-size:.6em;line-height:0;position:relative;top:-.15em;vertical-align:super}
+button{font:inherit;color:inherit;cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+button:focus-visible{outline:3px solid var(--lw-brand);outline-offset:2px}
+svg{display:block}
+.small{font-size:.88rem;color:var(--lw-muted)}
+.lead{font-size:1.05rem}
+.num{white-space:nowrap;font-variant-numeric:tabular-nums}
+.panel{background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--lw-ma)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.grow{flex:1}
+.ghost{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:8px 14px}
+.ghost svg,.go svg{width:18px;height:18px;flex:none}
+.go{display:inline-flex;align-items:center;justify-content:center;gap:8px}
+
+/* Startseite */
+.hero{display:flex;flex-direction:column;gap:8px}
+.lawchips{display:flex;gap:8px;flex-wrap:wrap}
+.lawchip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:99px;background:var(--lw-ma-s);color:var(--lw-ma);font:700 .95rem/1.1 var(--lw-f-d)}
+.stations{display:flex;flex-direction:column;gap:12px}
+.st{display:flex;align-items:center;gap:14px;text-align:left;width:100%;padding:14px;border-radius:22px;background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:5px}
+.st:active{transform:translateY(3px);border-bottom-width:2px}
+.st .ico{width:56px;height:56px;flex:none;border-radius:16px;background:var(--lw-ma-s);color:var(--lw-ma);display:grid;place-items:center;font:700 1.25rem/1 var(--lw-f-d)}
+.st .ico svg{width:30px;height:30px}
+.st h3{font-size:1.12rem}
+.st p{font-size:.9rem;color:var(--lw-muted);line-height:1.3;margin-top:2px}
+.st .n{font:700 12px var(--lw-f-b);letter-spacing:.1em;text-transform:uppercase;color:var(--lw-ma)}
+.stars{display:flex;gap:2px;margin-top:6px}
+.stars svg{width:20px;height:20px}
+.st.read .ico{background:var(--lw-sun);color:#5B3A00}
+.seen{display:inline-block;margin-top:6px;font-size:.82rem;font-weight:700;color:var(--lw-ok-ink);background:var(--lw-ok-bg);padding:2px 10px;border-radius:99px}
+
+/* Merkseite (Regelheft) */
+.chead{display:flex;align-items:center;gap:12px}
+.backb{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:6px 14px 6px 10px;border-radius:14px;border:2px solid var(--lw-line);border-bottom-width:4px;background:var(--lw-card);font-weight:700;color:var(--lw-muted)}
+.backb svg{width:18px;height:18px}
+.law{gap:12px}
+.lawhead{display:flex;align-items:center;gap:12px}
+.lawhead .badge{width:52px;height:52px;flex:none;border-radius:16px;background:var(--lw-ma);color:#fff;display:grid;place-items:center;font:700 1.4rem/1 var(--lw-f-d)}
+.lawhead .badge sup{font-size:.6em}
+.lawhead h3{font-size:1.2rem}
+.lawhead .small{margin-top:2px}
+/* wie im Regelheft: Regel im roten Kasten */
+.formel{align-self:center;border:3px solid #D94A3A;border-radius:10px;padding:8px 18px;font:700 clamp(1.35rem,6.5vw,1.8rem)/1.2 var(--lw-f-d);white-space:nowrap;background:var(--lw-card)}
+.bsp{font:600 1.1rem/1.5 var(--lw-f-d);font-variant-numeric:tabular-nums}
+.bsp .k{font:400 .85rem var(--lw-f-b);color:var(--lw-muted);display:block}
+.worte{border-left:5px solid var(--lw-ma);padding:4px 0 4px 12px}
+.worte .wl{display:block;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;color:var(--lw-ma)}
+.meta{background:var(--lw-soft);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.meta .mt{display:flex;gap:10px;align-items:flex-start}
+.meta .em{font-size:1.9rem;line-height:1}
+.meta .mt b{display:block;font-family:var(--lw-f-d);font-size:1.05rem}
+.falle{background:var(--lw-bad-bg);color:var(--lw-ink);border-radius:18px;padding:14px;display:flex;gap:10px;align-items:flex-start}
+.falle .em{font-size:1.6rem;line-height:1}
+.falle s{color:var(--lw-bad-ink);text-decoration-thickness:3px}
+.falle b.r{color:var(--lw-ok-ink)}
+.words{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:4px 6px;align-items:end;text-align:center;font:700 1.6rem/1 var(--lw-f-d)}
+.words small{font:700 .72rem/1.2 var(--lw-f-b);color:var(--lw-ma);letter-spacing:.04em;display:block;margin-top:6px}
+
+/* Demo: Murmeln tauschen */
+.lz{white-space:nowrap}
+.demo,.zrow,.gline{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.demo{display:flex;flex-direction:column;align-items:center;gap:10px;background:var(--lw-card);border-radius:16px;padding:12px}
+.demo .go{width:100%}
+.bags{display:flex;align-items:center;justify-content:center;gap:10px;width:100%}
+.bag{flex:1;max-width:150px;border:2px solid var(--lw-line);border-radius:16px;padding:8px;display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--lw-card)}
+.bag b{font:700 1.8rem/1 var(--lw-f-d)}
+.dots{display:flex;flex-wrap:wrap;justify-content:center;gap:4px;max-width:110px}
+.dots i{width:12px;height:12px;border-radius:50%;background:var(--c)}
+.demo .sumline{font:700 1.5rem/1.2 var(--lw-f-d);font-variant-numeric:tabular-nums}
+.pl{font:700 1.6rem/1 var(--lw-f-d);color:var(--lw-muted)}
+
+/* Klammer = Gondel */
+.gline{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;font:700 clamp(1.5rem,7.5vw,2.1rem)/1.2 var(--lw-f-d);font-variant-numeric:tabular-nums}
+.gon{display:inline-flex;align-items:center;gap:6px;padding:4px 8px 6px;border-radius:14px 14px 18px 18px;background:var(--lw-ma-s);border:3px solid var(--lw-ma);position:relative;transition:background .2s}
+.gon::before{content:"";position:absolute;left:50%;top:-12px;width:3px;height:10px;background:var(--lw-ma);transform:translateX(-50%)}
+.gon .br{color:var(--lw-ma)}
+.steps{font:600 1.1rem/1.5 var(--lw-f-d);text-align:center;font-variant-numeric:tabular-nums}
+.plus{min-width:44px;min-height:44px;border-radius:12px;border:2px dashed var(--lw-ma);background:none;color:var(--lw-ma);font:700 1em/1 var(--lw-f-d);padding:0 4px}
+.plus.in{border-style:solid;background:var(--lw-ma);color:#fff}
+
+/* Runde */
+.topbar{display:flex;align-items:center;gap:12px}
+.track{flex:1;display:flex;gap:4px}
+.track i{flex:1;height:12px;border-radius:99px;background:var(--lw-line)}
+.track i.ok{background:var(--lw-ok)}
+.track i.no{background:var(--lw-bad)}
+.track i.now{background:var(--lw-ma)}
+.q{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.q b{display:block;font:700 1.3rem/1.2 var(--lw-f-d)}
+.q .lk{flex:none;padding:4px 10px;border-radius:99px;background:var(--lw-ma-s);color:var(--lw-ma);font:700 .95rem/1.2 var(--lw-f-d)}
+.stage{display:flex;flex-direction:column;gap:14px}
+.show{background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:22px;padding:18px 12px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center}
+.eq{font:700 clamp(1.5rem,7.5vw,2.3rem)/1.25 var(--lw-f-d);display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:0 .3em;font-variant-numeric:tabular-nums}
+.slot{display:inline-grid;place-items:center;min-width:1.6em;min-height:1.25em;padding:0 .2em;border-radius:12px;border:2px dashed var(--lw-ma);background:var(--lw-ma-s);color:var(--lw-ma);font-variant-numeric:tabular-nums;white-space:nowrap}
+.slot.full{border-style:solid}
+.slot.ok{border-color:var(--lw-ok);background:var(--lw-ok-bg);color:var(--lw-ok-ink)}
+.slot.bad{border-color:var(--lw-bad);background:var(--lw-bad-bg);color:var(--lw-bad-ink)}
+.sub{font-size:.95rem;color:var(--lw-muted)}
+.opts{display:grid;grid-template-columns:1fr;gap:10px}
+.opts.g2{grid-template-columns:1fr 1fr}
+.opt{width:100%;padding:10px 12px;display:flex;align-items:center;justify-content:center;text-align:center;font-variant-numeric:tabular-nums}
+.opt:disabled{cursor:default}
+.opt sup{font-size:.6em}
+.kp{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.kp button{min-height:54px;border-radius:16px;border:2px solid var(--lw-line);border-bottom-width:5px;background:var(--lw-card);font:700 1.5rem/1 var(--lw-f-d);color:var(--lw-ink);display:grid;place-items:center}
+.kp button:active{transform:translateY(3px);border-bottom-width:2px}
+.kp button:disabled{opacity:.45}
+.kp .del{color:var(--lw-muted)}
+.kp .del svg{width:26px;height:26px}
+.kp .ok{background:var(--lw-ma);border-color:var(--lw-ma-d);color:#fff;font-size:1.15rem;letter-spacing:.04em}
+.fb .big{font:700 1.4rem/1.3 var(--lw-f-d);color:var(--lw-ink);font-variant-numeric:tabular-nums}
+.fb p{margin-top:4px}
+.lw-sheet .ghost{width:100%;min-height:50px}
+
+/* Zahlenkärtchen zum Ziehen */
+.zrow{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;font:700 clamp(1.5rem,7.5vw,2.1rem)/1 var(--lw-f-d)}
+.zt{min-width:72px;min-height:64px;padding:6px 12px;border-radius:18px;border:3px solid var(--lw-ma);border-bottom-width:6px;background:var(--lw-card);color:var(--lw-ink);font:700 1em/1 var(--lw-f-d);font-variant-numeric:tabular-nums;touch-action:none;position:relative;transition:transform .35s cubic-bezier(.3,1.4,.5,1),background .15s,border-color .15s}
+.zt.drag{transition:none;z-index:50;box-shadow:0 10px 24px rgba(30,27,58,.25);cursor:grabbing}
+.zt.sel{background:var(--lw-ma);color:#fff;border-color:var(--lw-ma-d)}
+.zt.over{background:var(--lw-sun);border-color:#D99A00;color:#3A2600}
+.zt.shake{animation:shake .4s}
+.zt.pop{animation:pop .45s}
+.zt.ten{border-color:var(--lw-ok);background:var(--lw-ok-bg);color:var(--lw-ok-ink)}
+.zt:disabled{cursor:default}
+.op{color:var(--lw-muted)}
+#pz{gap:6px;font-size:clamp(1.3rem,6.4vw,1.8rem)}
+#pz .zt{min-width:58px;padding:6px 8px}
+.res{min-width:1.6em}
+.res.q{color:var(--lw-muted)}
+.res.diff{color:var(--lw-bad-ink)}
+.res.same{color:var(--lw-ok-ink)}
+.before{font:600 1.05rem/1.3 var(--lw-f-d);color:var(--lw-muted);font-variant-numeric:tabular-nums}
+.hint{font-size:.95rem;color:var(--lw-muted);display:flex;align-items:center;gap:6px;justify-content:center}
+.hint svg{width:22px;height:22px;flex:none;color:var(--lw-ma)}
+@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+@keyframes pop{0%{transform:scale(.4)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+
+/* Ergebnis */
+.result{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;padding-top:20px}
+.bigstars{display:flex;gap:8px}
+.bigstars svg{width:64px;height:64px}
+.bigstars .s1{animation:pop .5s .1s both}.bigstars .s2{animation:pop .5s .35s both}.bigstars .s3{animation:pop .5s .6s both}
+.result .go,.result .ghost{width:100%}
+.missed{align-self:stretch;text-align:left}
+.missed ul{margin:6px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+.chatbox{min-width:0}
+
+/* Klammer-Profi: Schritt-für-Schritt-Rechnungen und Ausdrücke */
+.calc{font:600 1.15rem/1.6 var(--lw-f-d);font-variant-numeric:tabular-nums;display:flex;flex-direction:column;align-items:flex-start;background:var(--lw-card);border-radius:16px;padding:10px 14px}
+.calc span{opacity:1;transition:opacity .25s}
+.calc span.off{display:none}
+.calc .note{font:400 .85rem/1.3 var(--lw-f-b);color:var(--lw-muted);margin-left:.6em}
+.calc .hl{color:var(--lw-ma);font-weight:700}
+.pair2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pair2 .calc{font-size:1rem}
+.pair2 b.who{font:700 .8rem var(--lw-f-b);letter-spacing:.08em;text-transform:uppercase;color:var(--lw-ma)}
+.tbl{display:flex;flex-wrap:wrap;gap:8px}
+.tbl span{padding:6px 12px;border-radius:12px;background:var(--lw-ma-s);color:var(--lw-ma);font:700 1.05rem/1.2 var(--lw-f-d);font-variant-numeric:tabular-nums}
+.order{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font:700 1rem/1.2 var(--lw-f-d)}
+.order span.o{padding:6px 10px;border-radius:12px;background:var(--lw-ma);color:#fff}
+.wrong{color:var(--lw-bad-ink)}
+.eq.sm{font-size:clamp(1.2rem,5.6vw,1.8rem)}
+.eq .lz{display:inline-flex;align-items:center;gap:.3em}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style><!--lw-look--><link rel="stylesheet" href="/lernwelt-app.css"><script src="/lernwelt-app.js"></script><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap"><style id="lw-look">
+/* Übungs-Bausteine im Lernwelt-Look (wie im Konzept: Antwortkacheln, grüne Rückmeldung, dicke Knöpfe) */
+.go,.next,.check{background:var(--lw-c);color:#fff;border:none;border-radius:16px;min-height:54px;padding:12px 22px;
+  font-family:var(--lw-f-d);font-weight:700;font-size:1.05rem;letter-spacing:.04em;text-transform:uppercase;box-shadow:0 5px 0 var(--lw-cd)}
+.go:active,.next:active,.check:active{transform:translateY(3px);box-shadow:0 2px 0 var(--lw-cd)}
+.ghost{background:var(--lw-card);color:var(--lw-ink);border:2px solid var(--lw-line);border-bottom-width:4px;border-radius:14px;min-height:44px;font-weight:700}
+.chip{background:var(--lw-card);color:var(--lw-ink);border:2px solid var(--lw-line);border-radius:99px;min-height:40px;padding:6px 14px;font-weight:700}
+.chip[aria-pressed="true"]{background:var(--lw-c);border-color:var(--lw-c);color:#fff}
+.progress{height:14px;background:var(--lw-line);border-radius:99px}
+.progress i{background:var(--lw-ok);border-radius:99px}
+.card{background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:22px;box-shadow:none}
+.card-top{background:none;color:var(--lw-c);padding:16px 18px 0;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase}
+.card-top .tag{font-size:.8rem}
+.card-body{background-image:none}
+.prompt{font-family:var(--lw-f-d);font-weight:700}
+.opts{gap:12px}
+.opt{background:var(--lw-card);color:var(--lw-ink);border:2px solid var(--lw-line);border-bottom-width:5px;border-radius:18px;min-height:60px;
+  font-family:var(--lw-f-d);font-weight:600;font-size:1.12rem}
+.opt:not(:disabled):active{transform:translateY(3px);border-bottom-width:2px}
+.opt.ok{border:3px solid var(--lw-ok);border-bottom-width:6px;background:var(--lw-ok-bg);color:var(--lw-ok-ink)}
+.opt.bad{border-color:var(--lw-bad);background:var(--lw-bad-bg);color:var(--lw-bad-ink)}
+.tile{background:var(--lw-card);border:2px solid var(--lw-line);border-bottom-width:4px;border-radius:12px;font-family:var(--lw-f-d);font-weight:700}
+.slots{border-radius:16px}
+.slots .tile{background:var(--lw-cs);border-color:var(--lw-c)}
+.inp input,.field{border-radius:16px}
+.fb{border-radius:22px;padding:16px 16px 18px;gap:8px}
+.fb.ok{background:var(--lw-ok-bg);border:none;color:var(--lw-ink)}
+.fb.bad{background:var(--lw-bad-bg);border:none;color:var(--lw-ink)}
+.fb strong{font-family:var(--lw-f-d);font-weight:700;font-size:1.3rem;display:flex;align-items:center;gap:10px}
+.fb.ok strong{color:var(--lw-ok-ink)}
+.fb.bad strong{color:var(--lw-bad-ink)}
+.fb.ok strong::before,.fb.bad strong::before{content:"";flex:none;width:36px;height:36px;border-radius:50%;background:var(--lw-ok) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/20px no-repeat}
+.fb.bad strong::before{background:var(--lw-bad) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3.4' stroke-linecap='round'%3E%3Cpath d='M7 7l10 10M17 7L7 17'/%3E%3C/svg%3E") center/18px no-repeat}
+.card-top .tag{color:var(--lw-c);font-family:var(--lw-f-b);font-weight:700;letter-spacing:.12em}
+.card-top .fachtag{background:var(--lw-cs);color:var(--lw-c);font-family:var(--lw-f-b);font-weight:700}
+/* @kit */
+/* Klammer-Profi ist von Anfang an im Lernwelt-Look gebaut: nur die Fach-Farbe setzen (wie rechengesetze). */
+:root:root:root{--lw-c:var(--lw-ma); --lw-cd:var(--lw-ma-d); --lw-cs:var(--lw-ma-s)}
+.go{width:auto}
+.go:disabled{opacity:.5}
+</style><!--/lw-look--><script src="/lernwelt-chat.js"></script></head><body><nav id="lw-bar" class="lw-bar lw-ma" aria-label="Lernwelt"><a class="lw-back" href="index.html#heft-klammern" aria-label="Zurück zum Heft"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a><span class="lw-t"><span class="lw-eyebrow">Mathe</span><span class="lw-name">Klammer-Profi</span></span></nav>
+<main class="wrap" id="app"></main>
+<script>
+"use strict";
+/* ================= Grundlagen ================= */
+const $=s=>document.querySelector(s);
+const app=$("#app");
+const rand=n=>Math.floor(Math.random()*n);
+const rnd=(a,b)=>a+rand(b-a+1);
+const pick=a=>a[rand(a.length)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=rand(i+1);[a[i],a[j]]=[a[j],a[i]]}return a};
+const notTen=(a,b)=>{let n;do{n=rnd(a,b)}while(n%10===0);return n};
+const sq=a=>`${a}<sup>2</sup>`;
+const cube=a=>`${a}<sup>3</sup>`;
+/* Antwortoptionen ohne doppelte Texte */
+const uniq=opts=>opts.filter((o,i,a)=>a.findIndex(x=>x.h===o.h)===i);
+
+/* ================= Zustand ================= */
+const KEY="klammer-profi-v1";
+const DEF={best:{},chat:{},seen:false};
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&typeof s==="object")return Object.assign(JSON.parse(JSON.stringify(DEF)),s)}catch(e){}return JSON.parse(JSON.stringify(DEF))}
+let S=load();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+
+/* kurze Töne für richtig/falsch */
+let AC=null;
+function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){AC=null}}if(AC&&AC.state==="suspended")AC.resume();return AC}
+function beep(fs,len,type,vol){const a=ac();if(!a)return;let t=a.currentTime+.02;fs.forEach(f=>{const o=a.createOscillator(),g=a.createGain();o.type=type||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol||.18,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+len);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+len+.02);t+=len*.75})}
+const sfxOk=()=>beep([1046.5,1318.5],.14);
+const sfxBad=()=>beep([233,175],.18,"triangle",.12);
+const sfxPop=()=>beep([784],.08,"sine",.12);
+
+/* ================= Symbole ================= */
+const I={
+  back:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>`,
+  del:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 5H9l-6 7 6 7h12z"/><path d="M12.5 9.5l5 5M17.5 9.5l-5 5"/></svg>`,
+  book:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/><path d="M9 8h7M9 12h5"/></svg>`,
+  swap:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h14l-4-4M20 16H6l4 4"/></svg>`,
+  search:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg>`,
+  chat:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9.5h8M8 12.5h5"/></svg>`,
+  pen:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg>`,
+  next:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>`,
+  mix:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h3.5c4 0 6 10 10 10H21M3 17h3.5c1.6 0 2.8-1.6 3.8-3.5M13.7 9.5C14.7 8.2 15.6 7 17 7h4M18.5 4.5L21 7l-2.5 2.5M18.5 14.5L21 17l-2.5 2.5"/></svg>`,
+  star:on=>`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z" fill="${on?"#FFC93C":"var(--lw-line)"}" stroke="${on?"#D99A00":"none"}" stroke-width="1.2" stroke-linejoin="round"/></svg>`
+};
+
+/* ================= Bausteine für Aufgaben ================= */
+const eqShow=(left,slotRight)=>`<div class="eq">${left}${slotRight===false?"":`<span>=</span><span class="slot" id="slot">?</span>`}</div>`;
+const kpTask=(o)=>Object.assign({kind:"kp"},o);
+const mcTask=(o)=>Object.assign({kind:"mc"},o);
+const yesNo=(ok)=>[{h:"Stimmt",ok:ok},{h:"Stimmt nicht",ok:!ok}];
+/* Lücke mitten im Term: show enthält <span class="slot" id="slot">?</span> */
+const SLOT=`<span class="slot" id="slot">?</span>`;
+const steps=a=>a.join(" = ");
+
+/* ================= Aufgaben ================= */
+const T={
+  /* ---------- 2. Plus- und Minusklammer ---------- */
+  kSign(){const outer=pick(["−","−","−","+"]),inner=pick(["+","−"]);
+    const b=rnd(40,150),c=rnd(11,b-10),a=b+rnd(30,200);
+    const ans=outer==="−"?(inner==="+"?"−":"+"):inner;
+    return mcTask({lk:"Klammer",topic:"Minusklammer",q:"Klammer weg: Welches Zeichen kommt in die Lücke?",
+      show:`<div class="eq sm"><span>${a} ${outer} (${b} ${inner} ${c})</span><span>=</span><span class="lz">${a} ${outer} ${b} <span class="slot">?</span> ${c}</span></div>`,
+      opts:[{h:"+",ok:ans==="+"},{h:"−",ok:ans==="−"}],g2:true,
+      ex:outer==="−"?`Minus vor der Klammer: Alle Zeichen in der Klammer drehen sich um. Aus ${inner} wird <b>${ans}</b>.`
+        :`Plus vor der Klammer: Die Klammer fällt einfach weg, alle Zeichen bleiben. Also <b>${ans}</b> ${c}.`})},
+  kCalc(){const v=pick(["mp","mm","pm","pp"]);let a,b,c,show,res,way;
+    if(v==="mp"){b=notTen(12,89);const r=pick([100,200,250,300]);a=r+b;c=notTen(11,r-11);res=a-b-c;show=`${a} − (${b} + ${c})`;way=steps([`${a} − ${b} − ${c}`,`${r} − ${c}`,res])}
+    else if(v==="mm"){b=notTen(12,89);const r=pick([100,200,300]);a=r+b;c=notTen(11,b-1);res=a-b+c;show=`${a} − (${b} − ${c})`;way=steps([`${a} − ${b} + ${c}`,`${r} + ${c}`,res])}
+    else if(v==="pm"){a=notTen(111,189);b=200-a;c=notTen(21,99);res=a+b-c;show=`${a} + (${b} − ${c})`;way=steps([`${a} + ${b} − ${c}`,`200 − ${c}`,res])}
+    else{a=notTen(111,389);b=(100-a%100)%100;if(b<10)b+=100;c=notTen(11,99);res=a+b+c;show=`${a} + (${b} + ${c})`;way=steps([`${a} + ${b} + ${c}`,`${a+b} + ${c}`,res])}
+    return kpTask({lk:"Klammer",topic:"Minusklammer",q:"Löse die Klammer auf und rechne geschickt.",show:eqShow(`<span>${show}</span>`),ans:String(res),ex:`${show} = ${way}`})},
+  kTrap(){const b=rnd(40,99),c=rnd(11,b-5),a=b+c+rnd(10,90);const v=pick(["mmF","mmT","mpF","mpT"]);
+    const M={mmF:[`${a} − (${b} − ${c}) = ${a} − ${b} − ${c}`,false,`Stimmt nicht! Minus vor der Klammer: aus − ${c} wird <b>+ ${c}</b>. Richtig: ${a} − ${b} + ${c} = ${a-b+c}.`],
+      mmT:[`${a} − (${b} − ${c}) = ${a} − ${b} + ${c}`,true,`Stimmt! Minus vor der Klammer dreht das Zeichen um: − ${c} wird + ${c}. Beides ist ${a-b+c}.`],
+      mpF:[`${a} − (${b} + ${c}) = ${a} − ${b} + ${c}`,false,`Stimmt nicht! Aus + ${c} wird <b>− ${c}</b>. Richtig: ${a} − ${b} − ${c} = ${a-b-c}.`],
+      mpT:[`${a} − (${b} + ${c}) = ${a} − ${b} − ${c}`,true,`Stimmt! Aus + ${c} wird − ${c}. Beides ist ${a-b-c}.`]}[v];
+    return mcTask({lk:"Klammer",topic:"Minusklammer",q:"Stimmt das?",show:`<div class="eq sm"><span>${M[0]}</span></div>`,opts:yesNo(M[1]),g2:true,ex:M[2]})},
+
+  /* ---------- 3. Subtrahenden zusammenfassen ---------- */
+  sGap(){const b=rnd(12,60),c=rnd(11,50),a=b+c+rnd(5,80);
+    return kpTask({lk:"Sammeln",topic:"Subtrahenden",q:"Welche Zahl fehlt?",show:`<div class="eq sm"><span>${a} − ${b} − ${c}</span><span>=</span><span class="lz">${a} − (${b} + ${SLOT} )</span></div>`,ans:String(c),
+      ex:`Statt ${b} und ${c} einzeln abzuziehen, zieht man ihre <b>Summe</b> ab: ${a} − (${b} + ${c}) = ${a} − ${b+c} = ${a-b-c}.`})},
+  sCalc(){const three=rand(2);let subs,a;
+    if(three){const b=notTen(12,88),c=(10-b%10)+10*rnd(0,3),d=rnd(11,60);subs=[b,c,d];
+      /* b+c ist ein glatter Zehner */}else{const b=notTen(12,88),c=(10-b%10)+10*rnd(0,4);subs=[b,c]}
+    const s=subs.reduce((x,y)=>x+y,0);a=s+rnd(1,120);
+    const order=three?shuffle(subs):subs;const pairSum=three?subs[0]+subs[1]:s;
+    const way=three?`${a} − (${subs[0]} + ${subs[1]}) − ${subs[2]} = ${a} − ${pairSum} − ${subs[2]} = ${a-s}`:`${a} − (${subs[0]} + ${subs[1]}) = ${a} − ${s} = ${a-s}`;
+    return kpTask({lk:"Sammeln",topic:"Subtrahenden",q:"Fasse die Zahlen hinter dem Minus zusammen und rechne.",show:eqShow(`<span>${a} − ${order.join(" − ")}</span>`),ans:String(a-s),ex:way})},
+  sTrap(){const b=rnd(20,60),c=rnd(5,b-5),a=b+c+rnd(20,90);const ok=rand(2)===1;
+    return mcTask({lk:"Sammeln",topic:"Subtrahenden",q:"Stimmt das?",show:`<div class="eq sm"><span>${a} − ${b} − ${c} = ${a} − (${b} ${ok?"+":"−"} ${c})</span></div>`,opts:yesNo(ok),g2:true,
+      ex:ok?`Stimmt! Wer erst ${b} und dann ${c} abzieht, zieht insgesamt ${b+c} ab. Beides ist ${a-b-c}.`
+        :`Stimmt nicht! Mehrere Subtrahenden fasst man als <b>Summe</b> zusammen: ${a} − (${b} + ${c}) = ${a-b-c}. Mit (${b} − ${c}) käme ${a-b+c} heraus.`})},
+
+  /* ---------- 4. Umstellen mit Rechenzeichen ---------- */
+  uWhich(){const a=notTen(41,89),c=100-a;let b;do{b=rnd(11,70)}while(b===c||b===a);
+    const opts=shuffle([{h:`${a} + ${c} − ${b}`,ok:true},{h:`${a} + ${c} + ${b}`,ok:false},{h:`${a} − ${c} + ${b}`,ok:false},{h:`${a} − ${c} − ${b}`,ok:false}]);
+    return mcTask({lk:"Umstellen",topic:"Umstellen",q:"Welche Umstellung ist richtig?",show:`<div class="eq"><span>${a} − ${b} + ${c}</span></div>`,opts,
+      ex:`Das Rechenzeichen wandert mit: <b>+ ${c}</b> nach vorne, <b>− ${b}</b> nach hinten. ${a} + ${c} − ${b} = 100 − ${b} = ${100-b}.`})},
+  uCalc(){const v=rand(3);let show,res,way;
+    if(v===0){const x=rnd(150,320),y=rnd(120,300),dx=rnd(1,9),dy=rnd(1,9);const z=x-100,w=y-dy;
+      show=`${x} + ${y} − ${z} − ${w}`;res=x+y-z-w;way=`${x} − ${z} + ${y} − ${w} = 100 + ${dy} = ${res}`}
+    else if(v===1){const x=notTen(51,98),y=100-x,p=notTen(11,89),q=100-p;
+      show=`${x} + ${p} + ${y} + ${q}`;res=200;way=`${x} + ${y} + ${p} + ${q} = 100 + 100 = 200`;
+      if(rand(2)){const m=rnd(11,60);show+=` − ${m}`;res-=m;way=`(${x} + ${y}) + (${p} + ${q}) − ${m} = 200 − ${m} = ${res}`}}
+    else{const x=rnd(200,400),z=x-rnd(1,9),y=rnd(100,300),w=y-100;
+      show=`${x} + ${y} − ${z} − ${w}`;res=x+y-z-w;way=`${x} − ${z} + ${y} − ${w} = ${x-z} + 100 = ${res}`}
+    return kpTask({lk:"Umstellen",topic:"Umstellen",q:"Stelle geschickt um und rechne im Kopf.",show:eqShow(`<span>${show}</span>`),ans:String(res),ex:`${show} = ${way}`})},
+  uTrue(){const v=pick(["erst","sil","sil2"]);
+    if(v==="erst"){const a=rnd(90,130),b=rnd(40,80),c=rnd(50,99);
+      return mcTask({lk:"Umstellen",topic:"Umstellen",q:"Darf man das erste Glied so tauschen?",show:`<div class="eq sm"><span>${a} − ${b} + ${c} = ${c} − ${b} + ${a}</span></div>`,opts:yesNo(true),g2:true,
+        ex:`Stimmt! Vor der ersten Zahl steht ein unsichtbares Plus (+${a}). Es wandert mit. Beides ist ${a-b+c}.`})}
+    const a=notTen(41,89),c=100-a;let b;do{b=rnd(11,70)}while(b===c||b===a);
+    return mcTask({lk:"Umstellen",topic:"Umstellen",q:"Hat Silvester richtig umgestellt?",show:`<div class="eq sm"><span>${a} − ${b} + ${c} = ${a} + ${c} + ${b}</span></div>`,opts:yesNo(false),g2:true,
+      ex:`Stimmt nicht! Das Minus gehört zur ${b} und muss mitwandern: ${a} + ${c} <b>− ${b}</b> = ${100-b}.`})},
+
+  /* ---------- 5. Punkt vor Strich, Potenzen, Klammern ---------- */
+  rPvs(){const v=rand(3);let show,res,way;
+    if(v===0){const b=rnd(6,19),c=rnd(3,9),a=b*c+rnd(2,40);show=`${a} − ${b} · ${c}`;res=a-b*c;way=`${a} − ${b*c} = ${res}`}
+    else if(v===1){const a=rnd(3,9),b=rnd(6,15),c=rnd(3,9),d=rnd(6,15);show=`${a} · ${b} + ${c} · ${d}`;res=a*b+c*d;way=`${a*b} + ${c*d} = ${res}`}
+    else{const b=rnd(2,6),c=rnd(6,14),d=rnd(2,6),e=rnd(5,12),a=d*e+rnd(5,40);show=`${a} + ${b} · ${c} − ${d} · ${e}`;res=a+b*c-d*e;way=`${a} + ${b*c} − ${d*e} = ${res}`}
+    return kpTask({lk:"Reihenfolge",topic:"Reihenfolge",q:"Berechne. Punkt vor Strich!",show:eqShow(`<span>${show}</span>`),ans:String(res),ex:`${show} = ${way}`})},
+  rKlammer(){const v=rand(3);let show,res,way;
+    if(v===0){const a=rnd(3,12),b=rnd(5,30),c=rnd(2,20);show=`${a} · (${b} + ${c})`;res=a*(b+c);way=`${a} · ${b+c} = ${res}`}
+    else if(v===1){const d=rnd(2,9),c=d+rnd(2,9),b=rnd(5,15),a=b*(c-d)+rnd(2,60);show=`${a} − ${b} · (${c} − ${d})`;res=a-b*(c-d);way=`${a} − ${b} · ${c-d} = ${a} − ${b*(c-d)} = ${res}`}
+    else{const a=rnd(3,9),b=rnd(2,9),c=rnd(3,9),d=rnd(1,6);show=`(${a} + ${b}) · (${c} + ${d})`;res=(a+b)*(c+d);way=`${a+b} · ${c+d} = ${res}`}
+    return kpTask({lk:"Reihenfolge",topic:"Reihenfolge",q:"Klammern zuerst!",show:eqShow(`<span>${show}</span>`),ans:String(res),ex:`${show} = ${way}`})},
+  rPot(){const v=rand(3);let show,res,way;
+    if(v===0){const b=rnd(2,5),c=rnd(2,3),a=rnd(3,40);const p=c===2?b*b:b*b*b;show=`${a} + 2 · ${c===2?sq(b):cube(b)}`;res=a+2*p;way=`${a} + 2 · ${p} = ${a} + ${2*p} = ${res}`}
+    else if(v===1){const c=rnd(3,9),a=rnd(2,6),b=Math.ceil((c*c+1)/a)+rnd(0,8);show=`${a} · ${b} − ${sq(c)}`;res=a*b-c*c;way=`${a*b} − ${c*c} = ${res}`}
+    else{const a=rnd(8,15),b=a-1,k=rnd(2,9);show=`${k} · (${sq(a)} − ${sq(b)})`;res=k*(a*a-b*b);way=`${k} · (${a*a} − ${b*b}) = ${k} · ${a*a-b*b} = ${res}`}
+    return kpTask({lk:"Reihenfolge",topic:"Reihenfolge",q:"Potenzen zuerst berechnen!",show:eqShow(`<span>${show}</span>`),ans:String(res),ex:`${show} = ${way}`})},
+  rNest(){const e=rnd(2,9),d=e+rnd(2,8),c=rnd(2,5),b=rnd(5,30),a=b+c*(d-e)+rnd(2,40);
+    const res=a-(b+c*(d-e));
+    return kpTask({lk:"Reihenfolge",topic:"Reihenfolge",q:"Geschachtelte Klammern: innen anfangen!",show:eqShow(`<span>${a} − [${b} + ${c} · (${d} − ${e})]</span>`),ans:String(res),
+      ex:`Erst ( ), dann [ ]: ${a} − [${b} + ${c} · ${d-e}] = ${a} − [${b} + ${c*(d-e)}] = ${a} − ${b+c*(d-e)} = ${res}`})},
+  rSetBr(){let a,b,c,d,f;do{b=rnd(3,9);c=rnd(2,6);d=rnd(2,9);a=b*(c+d)+rnd(4,40);
+      f=[{h:`(${a} − ${b}) · ${c} + ${d}`,v:(a-b)*c+d},{h:`${a} − ${b} · (${c} + ${d})`,v:a-b*(c+d)},{h:`${a} − (${b} · ${c} + ${d})`,v:a-(b*c+d)},{h:`(${a} − ${b}) · (${c} + ${d})`,v:(a-b)*(c+d)}];
+    }while(new Set(f.map(x=>x.v).concat([a-b*c+d])).size<5);
+    const t=pick(f);
+    return mcTask({lk:"Reihenfolge",topic:"Reihenfolge",q:`Wo stehen die Klammern, damit ${t.v} herauskommt?`,show:`<div class="eq sm"><span>${a} − ${b} · ${c} + ${d}</span></div><p class="sub">Ohne Klammern: ${a-b*c+d}</p>`,
+      opts:shuffle(f.map(x=>({h:x.h,ok:x===t}))),ex:`${t.h} = ${t.v}. Klammern ändern die Reihenfolge, darum kommt etwas anderes heraus als ohne Klammern.`})},
+
+  /* ---------- 6. Faktoren-Partner ---------- */
+  pPick(){const P=pick([[4,25],[2,50],[8,125],[4,250],[5,20],[2,5],[5,40]]);let x,y;
+    /* ungerade und ohne 5: dann ergibt kein anderes Paar eine runde Zahl */
+    do{x=rnd(3,17);y=rnd(3,13)}while(x%2===0||y%2===0||x%5===0||y%5===0||x===y);
+    const f=shuffle([P[0],P[1],x,y]);const prod=P[0]*P[1];
+    const wrong=[[P[0],x],[P[1],y],[x,y]].map(([u,v])=>({h:`${u} · ${v}`,ok:false}));
+    return mcTask({lk:"Partner",topic:"Partner",q:"Welche zwei Faktoren tust du zuerst zusammen?",show:`<div class="eq"><span>${f.join(" · ")}</span></div>`,
+      opts:shuffle(uniq([{h:`${P[0]} · ${P[1]}`,ok:true},...wrong])),g2:true,
+      ex:`${P[0]} · ${P[1]} = ${prod}, eine runde Zahl. Dann (${P[0]} · ${P[1]}) · (${x} · ${y}) = ${prod} · ${x*y} = ${prod*x*y}.`})},
+  pCalc(){const P=pick([[4,25],[2,50],[8,125],[5,20],[4,250]]);let x,y;do{x=rnd(3,13);y=rnd(3,9)}while(x%2===0||y%2===0||x%5===0||y%5===0||x===y);
+    const f=shuffle([P[0],P[1],x,y]);const r=P[0]*P[1]*x*y;
+    return kpTask({lk:"Partner",topic:"Partner",q:"Stelle die Faktoren um und rechne geschickt.",show:eqShow(`<span>${f.join(" · ")}</span>`),ans:String(r),
+      ex:`(${P[0]} · ${P[1]}) · (${x} · ${y}) = ${P[0]*P[1]} · ${x*y} = ${r}`})},
+
+  /* ---------- 7. Ausmultiplizieren ---------- */
+  dGap(){const a=rnd(3,19),R=pick([20,30,40,50,60,70,80,90,100]),c=rnd(1,9),op=pick(["+","−"]);
+    return kpTask({lk:"Ausmultiplizieren",topic:"Ausmultiplizieren",q:"Multipliziere aus: Welche Zahl fehlt?",
+      show:`<div class="eq sm"><span>${a} · (${R} ${op} ${c})</span><span>=</span><span class="lz">${a*R} ${op} ${SLOT}</span></div>`,ans:String(a*c),
+      ex:`Jedes Glied in der Klammer wird mit ${a} multipliziert: ${a} · ${R} ${op} ${a} · ${c} = ${a*R} ${op} ${a*c} = ${op==="+"?a*R+a*c:a*R-a*c}.`})},
+  dCalc(){const v=rand(3);let show,res,way;
+    if(v===0){const a=rnd(6,19),R=pick([20,30,40,50,100]),c=rnd(1,9),op=pick(["+","−"]);res=op==="+"?a*(R+c):a*(R-c);
+      show=`${a} · (${R} ${op} ${c})`;way=`${a*R} ${op} ${a*c} = ${res}`}
+    else if(v===1){const a=rnd(6,19),c=rnd(1,9),R=pick([20,30,40,50]);res=(R-c)*a;show=`(${R} − ${c}) · ${a}`;way=`${R} · ${a} − ${c} · ${a} = ${R*a} − ${c*a} = ${res}`}
+    else{const a=rnd(4,16),b=pick([10,20,30]),c=rnd(1,9);res=a*(100-b+c);show=`${a} · (100 − ${b} + ${c})`;way=`${a*100} − ${a*b} + ${a*c} = ${res}`}
+    return kpTask({lk:"Ausmultiplizieren",topic:"Ausmultiplizieren",q:"Multipliziere aus und berechne.",show:eqShow(`<span>${show}</span>`),ans:String(res),ex:`${show} = ${way}`})},
+  dZerleg(){const a=rnd(12,19),R=pick([30,40,50,60,70,80,90]),k=rnd(1,2),dn=rand(2);const n=dn?R-k:R+k;
+    const best=dn?`${R} − ${k}`:`${R} + ${k}`;
+    const wrongMath=dn?`${R} + ${k}`:`${R} − ${k}`;
+    const lo=Math.floor(n/10)*10-10,harder=`${lo} + ${n-lo}`;
+    return mcTask({lk:"Ausmultiplizieren",topic:"Ausmultiplizieren",q:`Wie zerlegst du ${n} für ${a} · ${n} am geschicktesten?`,show:`<div class="eq"><span>${a} · ${n}</span></div>`,
+      opts:shuffle([{h:`${a} · (${best})`,ok:true},{h:`${a} · (${wrongMath})`,ok:false},{h:`${a} · (${harder})`,ok:false}]),
+      ex:`${n} liegt ganz nah an ${R}: ${a} · (${best}) = ${a*R} ${dn?"−":"+"} ${a*k} = ${a*n}. ${a} · (${wrongMath}) ist nicht ${n}, und ${harder} geht zwar, macht aber mehr Rechnerei.`})},
+  dKlammerOder(){const v=rand(2);
+    if(v){/* Klammer ergibt runde Zahl */const a=rnd(12,48),x=rnd(11,25),y=rnd(11,25),z=pick([50,60,100])-x-y;
+      return mcTask({lk:"Ausmultiplizieren",topic:"Ausmultiplizieren",q:"Was ist hier günstiger?",show:`<div class="eq sm"><span>${a} · (${x} + ${y} + ${z})</span></div>`,
+        opts:[{h:"Klammer zuerst",ok:true},{h:"Ausmultiplizieren",ok:false}],g2:true,ex:`Die Klammer ergibt eine runde Zahl: ${x} + ${y} + ${z} = ${x+y+z}. Dann ${a} · ${x+y+z} = ${a*(x+y+z)}.`})}
+    const a=rnd(12,79),R=pick([40,90,100]),k=rnd(1,3);
+    return mcTask({lk:"Ausmultiplizieren",topic:"Ausmultiplizieren",q:"Was ist hier günstiger?",show:`<div class="eq sm"><span>${a} · (${R} − ${k})</span></div>`,
+      opts:[{h:"Klammer zuerst",ok:false},{h:"Ausmultiplizieren",ok:true}],g2:true,ex:`${R} − ${k} = ${R-k} ist krumm. Ausmultiplizieren ist leichter: ${a} · ${R} − ${a} · ${k} = ${a*R} − ${a*k} = ${a*(R-k)}.`})},
+  dWrong(){const a=rnd(3,9),b=pick([20,30,40,50]),c=rnd(2,9);const op=pick(["+","−"]);const o2=op==="+"?"−":"+";
+    return mcTask({lk:"Ausmultiplizieren",topic:"Ausmultiplizieren",q:"Welche Umformung ist richtig?",show:`<div class="eq"><span>${a} · (${b} ${op} ${c})</span></div>`,
+      opts:shuffle([{h:`${a} · ${b} ${op} ${a} · ${c}`,ok:true},{h:`${a} · ${b} ${op} ${c}`,ok:false},{h:`${a} · ${b} ${o2} ${a} · ${c}`,ok:false},{h:`${a} + ${b} ${op} ${c}`,ok:false}]),
+      ex:`Der Faktor ${a} wird an <b>jedes</b> Glied verteilt, das Rechenzeichen bleibt: ${a} · ${b} ${op} ${a} · ${c} = ${op==="+"?a*(b+c):a*(b-c)}.`})},
+
+  /* ---------- 8. Ausklammern ---------- */
+  oWhich(){let a,b,c;do{a=rnd(12,59);b=rnd(11,89);c=rnd(11,89)}while(a===b||a===c||b===c);const op=pick(["+","−"]);if(op==="−"&&b<c)[b,c]=[c,b];
+    const forms=[`${a} · ${b} ${op} ${a} · ${c}`,`${a} · ${b} ${op} ${c} · ${a}`,`${b} · ${a} ${op} ${a} · ${c}`];
+    return mcTask({lk:"Ausklammern",topic:"Ausklammern",q:"Welchen Faktor kannst du ausklammern?",show:`<div class="eq sm"><span>${pick(forms)}</span></div>`,
+      opts:shuffle([{h:String(a),ok:true},{h:String(b),ok:false},{h:String(c),ok:false}]),g2:false,
+      ex:`${a} steckt in beiden Produkten: ${a} · (${b} ${op} ${c}).`})},
+  oGap(){const a=rnd(12,49),b=notTen(12,88),R=pick([50,100,100,60,80]);const c=R-b>0?R-b:(Math.ceil(b/10)*10+10)-b;
+    return kpTask({lk:"Ausklammern",topic:"Ausklammern",q:"Klammere aus: Welche Zahl fehlt?",show:`<div class="eq sm"><span>${a} · ${b} + ${a} · ${c}</span><span>=</span><span class="lz">${a} · (${b} + ${SLOT} )</span></div>`,ans:String(c),
+      ex:`${a} steht in beiden Produkten, also davor. In die Klammer kommt der Rest: ${a} · (${b} + ${c}) = ${a} · ${b+c} = ${a*(b+c)}.`})},
+  oCalc(){const v=rand(2);let a=rnd(12,59),b,c,show,res,way;
+    if(v){b=notTen(12,88);c=(Math.ceil(b/10)*10)-b+10*rnd(0,3);if(c<1)c+=10;show=pick([`${a} · ${b} + ${a} · ${c}`,`${b} · ${a} + ${a} · ${c}`]);res=a*(b+c);way=`${a} · (${b} + ${c}) = ${a} · ${b+c} = ${res}`}
+    else{c=rnd(11,60);b=c+pick([10,20,30,40,50,100]);show=pick([`${a} · ${b} − ${a} · ${c}`,`${a} · ${b} − ${c} · ${a}`]);res=a*(b-c);way=`${a} · (${b} − ${c}) = ${a} · ${b-c} = ${res}`}
+    return kpTask({lk:"Ausklammern",topic:"Ausklammern",q:"Klammere aus und rechne.",show:eqShow(`<span>${show}</span>`),ans:String(res),ex:`${show} = ${way}`})},
+
+  /* ---------- 9. Tricks: Faktor 1, Quadrat, versteckter Faktor ---------- */
+  tEins(){const a=rnd(12,99),R=pick([20,30,50,100]),up=rand(2);const b=up?R-1:R+1;
+    const show=up?pick([`${a} · ${b} + ${a}`,`${a} + ${b} · ${a}`]):`${a} · ${b} − ${a}`;
+    return kpTask({lk:"Faktor 1",topic:"Faktor 1",q:"Der Trick mit dem Faktor 1: Welche Zahl fehlt?",show:`<div class="eq sm"><span>${show}</span><span>=</span><span class="lz">${a} · (${b} ${up?"+":"−"} ${SLOT} )</span></div>`,ans:"1",
+      ex:`Die einzelne ${a} ist ${a} · <b>1</b>. Also ${a} · (${b} ${up?"+":"−"} 1) = ${a} · ${R} = ${a*R}.`})},
+  tQuad(){const up=rand(2);let a,b;
+    if(up){a=notTen(21,79);b=100-a}else{a=rnd(25,95);b=a-pick([1,2,3,5,10])}
+    const show=up?`${sq(a)} + ${a} · ${b}`:`${sq(a)} − ${a} · ${b}`;
+    return kpTask({lk:"Quadrat",topic:"Quadrat",q:"Ein Quadrat ist ein Produkt: Welche Zahl fehlt?",show:`<div class="eq sm"><span>${show}</span><span>=</span><span class="lz">${a} · ( ${SLOT} ${up?"+":"−"} ${b})</span></div>`,ans:String(a),
+      ex:`${sq(a)} = ${a} · ${a}. Also ${a} · ${a} ${up?"+":"−"} ${a} · ${b} = ${a} · (${a} ${up?"+":"−"} ${b}) = ${a} · ${up?a+b:a-b} = ${up?a*(a+b):a*(a-b)}.`})},
+  tVersteckt(){let a;do{a=rnd(3,17)}while(a===10);const up=rand(2);let b,k;
+    if(up){b=notTen(12,88);const R=Math.ceil(b/10)*10;k=R-b;if(k<2){k+=10}}else{k=rnd(2,9);b=pick([30,40,50,60,80,100])+k}
+    const p=a*k,show=up?pick([`${a} · ${b} + ${p}`,`${p} + ${b} · ${a}`]):`${a} · ${b} − ${p}`;const r=up?a*(b+k):a*(b-k);
+    return kpTask({lk:"Versteckt",topic:"Versteckt",q:`Versteckter Faktor: ${p} = ${a} · ?`,show:`<div class="eq sm"><span>${show}</span><span>=</span><span class="lz">${a} · (${b} ${up?"+":"−"} ${SLOT} )</span></div>`,ans:String(k),
+      ex:`${p} = ${a} · ${k}. Also ${a} · (${b} ${up?"+":"−"} ${k}) = ${a} · ${up?b+k:b-k} = ${r}.`})},
+  tCalc(){const v=rand(3);let show,res,way;
+    if(v===0){const a=rnd(12,99),R=pick([20,50,100]);const b=R-1;show=`${a} · ${b} + ${a}`;res=a*R;way=`${a} · ${b} + ${a} · 1 = ${a} · (${b} + 1) = ${a} · ${R} = ${res}`}
+    else if(v===1){const a=notTen(21,89),b=100-a;show=`${sq(a)} + ${a} · ${b}`;res=a*100;way=`${a} · (${a} + ${b}) = ${a} · 100 = ${res}`}
+    else{const a=pick([3,4,6,7,8,9,11,12,13]),b=notTen(12,88);let k=Math.ceil(b/10)*10-b;if(k<2)k+=10;show=`${a} · ${b} + ${a*k}`;res=a*(b+k);way=`${a} · ${b} + ${a} · ${k} = ${a} · ${b+k} = ${res}`}
+    return kpTask({lk:"Tricks",topic:"Tricks",q:"Klammere geschickt aus und rechne.",show:eqShow(`<span>${show}</span>`),ans:String(res),ex:`${show} = ${way}`})},
+  tMulti(){const a=pick([12,18,25,24,15]),v=rand(2);let show,res,way;
+    if(v){let x,y,z;do{x=rnd(30,70);y=rnd(20,60);z=x+y-pick([50,60,40])}while(z<5||z===x||z===y);show=`${a} · ${x} + ${a} · ${y} − ${a} · ${z}`;res=a*(x+y-z);way=`${a} · (${x} + ${y} − ${z}) = ${a} · ${x+y-z} = ${res}`}
+    else{const y=rnd(10,30),x=pick([40,50,60])+y-1;show=`${a} + ${x} · ${a} − ${a} · ${y}`;const t=1+x-y;res=a*t;way=`${a} · (1 + ${x} − ${y}) = ${a} · ${t} = ${res}`}
+    return kpTask({lk:"Tricks",topic:"Tricks",q:"Mehr als zwei Glieder: Klammere aus.",show:eqShow(`<span>${show}</span>`),ans:String(res),ex:`${show} = ${way}`})},
+
+  /* ---------- 10. Fehler-Detektivin ---------- */
+  fehler(){const E=pick(["mk","um","f1","sub","pvs","dist"]);let c;
+    if(E==="mk"){const b=rnd(50,99),x=rnd(11,b-10),a=b+rnd(60,140);c=[`${a} − (${b} − ${x}) = ${a} − ${b} − ${x} = ${a-b-x}`,`Richtig: ${a} − ${b} + ${x} = ${a-b+x}.`]}
+    else if(E==="um"){const a=notTen(41,89),z=100-a;let b;do{b=rnd(11,70)}while(b===z||b===a);c=[`${a} − ${b} + ${z} = ${a} + ${z} + ${b} = ${100+b}`,`Richtig: ${a} + ${z} − ${b} = ${100-b}.`]}
+    else if(E==="f1"){if(rand(2)){const a=pick([99,49,19,29]);c=[`${a} + ${sq(a)} = ${a} · ${a} = ${a*a}`,`Richtig: ${a} · (1 + ${a}) = ${a} · ${a+1} = ${a*(a+1)}.`]}
+      else{const a=rnd(12,49),b=pick([39,59,79,99]);c=[`${a} · ${b} + ${a} = ${a} · ${b} = ${a*b}`,`Richtig: ${a} · (${b} + 1) = ${a} · ${b+1} = ${a*(b+1)}.`]}}
+    else if(E==="sub"){const b=rnd(30,60),x=rnd(5,b-10),a=b+x+rnd(20,80);c=[`${a} − ${b} − ${x} = ${a} − (${b} − ${x}) = ${a-b+x}`,`Richtig: ${a} − (${b} + ${x}) = ${a-b-x}.`]}
+    else if(E==="pvs"){const a=rnd(3,9),b=rnd(3,9),x=rnd(3,9);c=[`${a} + ${b} · ${x} = ${a+b} · ${x} = ${(a+b)*x}`,`Richtig: ${a} + ${b*x} = ${a+b*x}.`]}
+    else{const a=rnd(3,9),b=pick([20,30,40]),x=rnd(2,9);c=[`${a} · (${b} + ${x}) = ${a} · ${b} + ${x} = ${a*b+x}`,`Richtig: ${a} · ${b} + ${a} · ${x} = ${a*b+a*x}.`]}
+    const D={mk:"Minus vor der Klammer: Die Zeichen in der Klammer wurden nicht umgedreht.",um:"Beim Umstellen ist das Minuszeichen nicht mitgewandert.",f1:"Der Faktor 1 wurde vergessen.",
+      sub:"Mehrere Subtrahenden fasst man als Summe zusammen, nicht als Differenz.",pvs:"Punkt vor Strich wurde nicht beachtet.",dist:"Beim Ausmultiplizieren wurde nicht jedes Glied multipliziert."};
+    const others=shuffle(Object.keys(D).filter(k=>k!==E)).slice(0,2);
+    return mcTask({lk:"Detektivin",topic:"Fehler",q:"Hier steckt ein Fehler drin. Welcher?",show:`<div class="eq sm wrong"><span>${c[0]}</span></div>`,
+      opts:shuffle([E,...others].map(k=>({h:D[k],ok:k===E}))),ex:`${D[E]} ${c[1]}`})},
+
+  /* ---------- 11. Regeln in Worten (Erkläre / Formuliere) ---------- */
+  worte(){const W=WORTE[(R&&R.wi!=null)?(R.wi++%WORTE.length):rand(WORTE.length)];
+    return mcTask({lk:"In Worten",topic:"Worte",q:W.q,show:W.s?`<div class="eq sm"><span>${W.s}</span></div>`:"",opts:shuffle(W.o.map((h,i)=>({h,ok:i===0}))),ex:W.ex})},
+  nennen(){const a=rnd(3,19),b=rnd(11,60),c=rnd(2,30),op=pick(["+","−"]);const dir=rand(2);
+    const s=dir?`${a} · (${b} ${op} ${c}) = ${a} · ${b} ${op} ${a} · ${c}`:`${a} · ${b} ${op} ${a} · ${c} = ${a} · (${b} ${op} ${c})`;
+    return mcTask({lk:"In Worten",topic:"Worte",q:"Wie heißt diese Umformung?",show:`<div class="eq sm"><span>${s}</span></div>`,opts:[{h:"Ausmultiplizieren",ok:!!dir},{h:"Ausklammern",ok:!dir}],g2:true,
+      ex:dir?"Die Klammer wird aufgelöst, der Faktor an jedes Glied verteilt: <b>Ausmultiplizieren</b>.":"Der gemeinsame Faktor wird vor die Klammer gezogen: <b>Ausklammern</b>. Das ist der Rückweg vom Ausmultiplizieren."})}
+};
+
+/* Satz-Bank für „Regeln in Worten“ (erste Antwort ist richtig, wird gemischt) */
+const WORTE=[
+  {q:"Wie lautet die Minusklammerregel?",s:"a − (b − c) = a − b + c",o:["Steht ein Minus vor der Klammer, drehen sich beim Weglassen alle Zeichen in der Klammer um.","Steht ein Minus vor der Klammer, darf man sie einfach weglassen.","Nur das erste Zeichen in der Klammer dreht sich um.","Minus vor der Klammer macht alles zu Plus."],
+    ex:"Aus + wird −, aus − wird +, und zwar bei <b>allen</b> Zeichen in der Klammer."},
+  {q:"Was sagt die Plusklammerregel?",s:"a + (b − c) = a + b − c",o:["Steht ein Plus vor der Klammer, darf man sie weglassen. Alle Zeichen bleiben gleich.","Steht ein Plus vor der Klammer, drehen sich alle Zeichen um.","Man muss die Klammer immer zuerst ausrechnen.","Plus vor der Klammer macht alle Zeichen zu Plus."],
+    ex:"Bei Plus vor der Klammer ändert sich nichts, die Klammer fällt einfach weg."},
+  {q:"Was fehlt? „Beim Umstellen nimmt man das … mit.“",o:["Rechenzeichen vor der Zahl","Ergebnis","Rechenzeichen hinter der Zahl","Klammer"],
+    ex:"Das Rechenzeichen <b>vor</b> der Zahl gehört zu ihr wie ein Rucksack: 75 − 39 + 25 = 75 + 25 − 39."},
+  {q:"Warum darf man 78 − 37 − 23 als 78 − (37 + 23) rechnen?",o:["Wer erst 37 und dann 23 abzieht, zieht insgesamt 37 + 23 = 60 ab.","Weil man beim Minus tauschen darf.","Weil Klammern immer erlaubt sind.","Weil 37 − 23 = 14 ist."],
+    ex:"Statt mehrere Zahlen einzeln zu subtrahieren, kann man ihre <b>Summe</b> subtrahieren."},
+  {q:"Warum darf man bei 115 − 69 + 89 die erste Zahl mit der 89 tauschen?",o:["Vor der ersten Zahl steht ein unsichtbares Plus, das mitwandert.","Weil die erste Zahl immer egal ist.","Weil 115 größer ist als 89.","Man darf es nicht."],
+    ex:"115 ist eigentlich +115. Das Plus wandert mit: 89 − 69 + 115 = 135, genau wie vorher."},
+  {q:"Welcher Satz beschreibt das Distributivgesetz?",s:"a · (b + c) = a · b + a · c",o:["Man multipliziert jedes Glied der Klammer mit der Zahl und addiert die Ergebnisse.","Man multipliziert nur das erste Glied der Klammer.","Man darf die Faktoren vertauschen.","Plus 0 ändert nichts."],
+    ex:"Der Faktor wird an <b>jedes</b> Glied verteilt. Distributiv heißt „verteilend“."},
+  {q:"Was bedeutet „distributiv“?",o:["verteilend","vertauschend","verbindend","neutral"],ex:"Lateinisch <i>distribuere</i> heißt verteilen: Der Faktor wird auf alle Glieder der Klammer verteilt."},
+  {q:"Was macht man beim Ausklammern?",o:["Man zieht einen gemeinsamen Faktor vor die Klammer.","Man löst die Klammer auf.","Man rechnet zuerst die Klammer aus.","Man streicht alle Klammern weg."],
+    ex:"Ausklammern ist der Rückweg vom Ausmultiplizieren: 17 · 38 + 17 · 22 = 17 · (38 + 22)."},
+  {q:"Warum steht bei 68 · 49 + 68 eine 1 in der Klammer?",o:["Die einzelne 68 ist 68 · 1.","Weil 49 + 1 = 50 schöner aussieht.","Weil man immer 1 dazuschreibt.","Weil 68 durch 1 teilbar ist."],
+    ex:"68 = 68 · 1. Also 68 · 49 + 68 · 1 = 68 · (49 + 1) = 68 · 50 = 3400."},
+  {q:"Wann ist Silvesters Weg 16 · (70 − 1) günstiger als 16 · (60 + 9)?",o:["Wenn die Zahl knapp unter einer runden Zahl liegt.","Immer, Minus ist leichter.","Nie, Plus ist immer besser.","Wenn die Zahl gerade ist."],
+    ex:"69 liegt knapp unter 70: 16 · 70 − 16 = 1120 − 16 = 1104. Bei 71 nimmt man 70 + 1."},
+  {q:"Wie hat der kleine Gauß 1 + 2 + … + 100 so schnell gerechnet?",o:["Er hat Paare gebildet: 1 + 100, 2 + 99, … Jedes ergibt 101, es gibt 50 Paare.","Er hat alle Zahlen einzeln addiert.","Er hat 100 · 100 gerechnet.","Er hat einen Taschenrechner benutzt."],
+    ex:"50 Paare mal 101 = 5050. Dafür braucht man nur Umstellen und die Plusklammerregel."},
+  {q:"Warum ist (5 + 9) · 13 nicht dasselbe wie 5 + 9 · 13?",o:["Die Klammer ändert die Reihenfolge: Ohne Klammer gilt Punkt vor Strich.","Es ist dasselbe.","Weil 13 eine Primzahl ist.","Weil man Klammern immer zuletzt rechnet."],
+    ex:"(5 + 9) · 13 = 14 · 13 = 182, aber 5 + 9 · 13 = 5 + 117 = 122."},
+  {q:"In welcher Reihenfolge rechnet man?",o:["Klammer → Potenz → Punkt → Strich","Punkt → Strich → Klammer → Potenz","Von links nach rechts, immer","Strich → Punkt → Klammer → Potenz"],
+    ex:"Erst Klammern (innen zuerst), dann Potenzen, dann Punkt vor Strich."}
+];
+
+/* ================= Kapitel ================= */
+const CH=[
+  {id:"regeln",t:"Mein Regelheft",d:"Alle Regeln und Tricks Schritt für Schritt zum Durchklicken",ico:"book",read:true},
+  {id:"klammer",t:"Plus- und Minusklammer",d:"Minus vor der Klammer dreht alle Zeichen um",ico:"−( )",n:8,types:["kSign","kSign","kCalc","kCalc","kCalc","kTrap","kTrap"]},
+  {id:"sammeln",t:"Minus-Sammlerin",d:"Mehrere Zahlen abziehen? Erst sammeln!",ico:"−+−",n:7,types:["sGap","sCalc","sCalc","sCalc","sTrap"]},
+  {id:"umstellen",t:"Umstellen mit Rucksack",d:"Das Rechenzeichen wandert mit",ico:"swap",n:8,types:["uWhich","uWhich","uCalc","uCalc","uCalc","uTrue"]},
+  {id:"reihenfolge",t:"Klammer, Potenz, Punkt, Strich",d:"Die Reihenfolge und geschachtelte Klammern",ico:"[( )]",n:9,types:["rPvs","rPvs","rKlammer","rKlammer","rPot","rNest","rNest","rSetBr"]},
+  {id:"partner",t:"Faktoren-Partner",d:"4 · 25, 8 · 125 und Co. zuerst zusammen",ico:"·100",n:7,types:["pPick","pPick","pCalc","pCalc","pCalc"]},
+  {id:"ausmulti",t:"Ausmultiplizieren",d:"Der Faktor verteilt sich auf jedes Glied",ico:"a·( )",n:9,types:["dGap","dGap","dCalc","dCalc","dZerleg","dZerleg","dKlammerOder","dWrong"]},
+  {id:"ausklammern",t:"Ausklammern",d:"Den gemeinsamen Faktor vor die Klammer ziehen",ico:"( )",n:8,types:["oWhich","oGap","oGap","oCalc","oCalc","oCalc"]},
+  {id:"tricks",t:"Drei Tricks",d:"Faktor 1, Quadrat und versteckter Faktor",ico:"·1",n:9,types:["tEins","tEins","tQuad","tQuad","tVersteckt","tVersteckt","tCalc","tMulti"]},
+  {id:"detektiv",t:"Fehler-Detektivin",d:"Was haben Silvester und Co. falsch gemacht?",ico:"search",n:7,types:["fehler"]},
+  {id:"worte",t:"Regeln in Worten",d:"Erkläre, formuliere, begründe wie im GLN",ico:"pen",n:8,types:["worte","worte","worte","worte","worte","nennen"]},
+  {id:"chat",t:"Erklär-Chat",d:"Deine Freunde fragen, du erklärst",ico:"chat",chat:true},
+  {id:"mix",t:"Probe-GLN",d:"Alles gemischt, wie in der Arbeit",ico:"mix",n:15,types:null}
+];
+const chOf=id=>CH.find(c=>c.id===id);
+const stars=c=>c.read?(S.seen?3:0):(S.best[c.id]||0);
+/* Probe-GLN: aus jedem Kapitel etwas (reine Rechenaufgaben bevorzugt) */
+const MIXPOOL=["kCalc","kTrap","sCalc","uCalc","uWhich","rPvs","rKlammer","rPot","rNest","rSetBr","pCalc","dCalc","dZerleg","dKlammerOder","oCalc","oWhich","tEins","tQuad","tVersteckt","tCalc","tMulti","fehler","worte","nennen"];
+
+/* ================= Startseite ================= */
+function home(){R=null;
+  app.innerHTML=`
+  <section class="panel hero"><span class="eyebrow">Fit für den GLN</span>
+    <h2 style="font-size:1.4rem">Klammern, Ausmultiplizieren, Ausklammern</h2>
+    <p class="small">Von leicht nach schwer: erst die Klammerregeln, dann das Distributivgesetz mit allen Tricks, am Ende die Probe-GLN.</p></section>
+  <div class="stations">${CH.map((c,k)=>{const b=stars(c);const ico=I[c.ico]||`<span>${c.ico}</span>`;
+    const st=c.read?(S.seen?`<span class="seen">✓ gelesen</span>`:""):`<span class="stars" aria-label="${b} von 3 Sternen">${[0,1,2].map(i=>I.star(i<b)).join("")}</span>`;
+    return `<button class="st ${c.read?"read":""}" data-ch="${c.id}"><span class="ico" style="font-size:${String(c.ico).length>3?".95rem":"1.25rem"}">${ico}</span><span class="grow"><span class="n">${c.id==="mix"?"Großer Test":"Kapitel "+(k+1)}</span><h3>${c.t}</h3><p>${c.d}</p>${st}</span></button>`}).join("")}</div>`;
+  app.querySelectorAll(".st[data-ch]").forEach(b=>b.onclick=()=>openCh(b.dataset.ch));
+  scrollTo(0,0)}
+function openCh(id){const c=chOf(id);if(!c)return;if(c.read)return regeln();if(c.chat)return chat();startRound(id)}
+
+/* ================= Kapitel 1: Regelheft ================= */
+/* Rechnung Schritt für Schritt aufdecken */
+function stepper(el,lines,label){let n=1;
+  el.innerHTML=`<div class="calc">${lines.map((l,i)=>`<span class="${i?"off":""}">${i?"= ":""}${l}</span>`).join("")}</div><button class="ghost" type="button">${I.next}<span>${label||"Nächster Schritt"}</span></button>`;
+  const b=el.querySelector("button"),sp=el.querySelectorAll(".calc span:not(.note)");
+  b.onclick=()=>{if(n<sp.length){sp[n].classList.remove("off");n++;sfxPop()}if(n>=sp.length){b.disabled=true;b.querySelector("span").textContent="Fertig ✓"}}}
+const RULES=[
+  {e:"Regel 1",h:"Plusklammer und Minusklammer",f:"a − (b − c) = a − b + c",
+   w:"Steht ein <b>Plus</b> vor der Klammer, fällt sie einfach weg. Steht ein <b>Minus</b> davor, drehen sich beim Weglassen <b>alle</b> Zeichen in der Klammer um: aus + wird −, aus − wird +.",
+   bild:["🔄","Stell dir vor: Das Minus ist ein Umdreh-Schild","Jedes Zeichen, das aus der Klammer herauskommt, muss am Schild vorbei und dreht sich um."],
+   bsp:["176 − (76 − 53)","176 − 76 <span class=\"hl\">+</span> 53","100 + 53","153"],
+   falle:"Nicht <s>176 − 76 − 53</s>! Das − 53 wird zu <b class=\"r\">+ 53</b>."},
+  {e:"Regel 2",h:"Mehrere Zahlen abziehen",f:"a − b − c = a − (b + c)",
+   w:"Statt mehrere Zahlen einzeln zu subtrahieren, kann man ihre <b>Summe</b> subtrahieren.",
+   bild:["🛒","Stell dir vor: An der Kasse","Ob du zwei Sachen einzeln bezahlst oder erst zusammenzählst und einmal bezahlst: Weg ist gleich viel Geld."],
+   bsp:["409 − 113 − 87 − 198","409 − (113 + 87 + 198)","409 − 398","11"],
+   falle:"Nicht <s>a − (b − c)</s>! In die Klammer kommt ein <b class=\"r\">Plus</b>."},
+  {e:"Regel 3",h:"Umstellen mit Rucksack",f:"Glieder mit Rechenzeichen umstellen",
+   w:"Die Glieder dürfen umgestellt werden, wenn das Rechenzeichen <b>davor</b> mitwandert. Vor der ersten Zahl steht ein unsichtbares Plus.",
+   bild:["🎒","Stell dir vor: Jede Zahl trägt ihr Zeichen als Rucksack","Wohin die Zahl geht, da geht auch ihr Rucksack hin."],
+   bsp:["75 − 39 + 25","75 + 25 − 39","100 − 39","61"],
+   falle:"Silvester rechnet <s>75 + 25 + 39</s>. Das Minus gehört zur 39 und muss mit: <b class=\"r\">75 + 25 − 39</b>."},
+  {e:"Regel 4",h:"Klammer, Potenz, Punkt, Strich",f:"( ) → x² → · : → + −",
+   w:"Zuerst Klammern (bei geschachtelten Klammern innen anfangen: erst ( ), dann [ ]), dann Potenzen, dann Punkt vor Strich, sonst von links nach rechts.",
+   bild:["🪆","Stell dir vor: Matroschka-Puppen","Die kleinste Klammer innen machst du zuerst auf, dann die nächste."],
+   bsp:["46 − [13 + 3 · (16 − 7)]","46 − [13 + 3 · 9]","46 − [13 + 27]","46 − 40","6"]},
+  {e:"Regel 5",h:"Faktoren-Partner",f:"a · b · c = a · c · b",
+   w:"Beim Malnehmen darf man die Faktoren umstellen. Such zuerst Partner, die eine runde Zahl ergeben.",
+   bild:["🤝","Stell dir vor: Tanzpartner","Wer zusammen eine runde Zahl ergibt, tanzt zuerst."],
+   bsp:["14 · 8 · 11 · 125","(14 · 11) · (8 · 125)","154 · 1000","154000"],
+   tbl:["2 · 5 = 10","4 · 25 = 100","2 · 50 = 100","5 · 20 = 100","8 · 125 = 1000","4 · 250 = 1000"]},
+  {e:"Regel 6",h:"Ausmultiplizieren (Distributivgesetz)",f:"a · (b + c) = a · b + a · c",
+   w:"Man multipliziert eine Summe (oder Differenz) mit einer Zahl, indem man <b>jedes Glied</b> mit der Zahl multipliziert. Distributiv heißt „verteilend“.",
+   bild:["🎁","Stell dir vor: Die Zahl vor der Klammer verteilt Geschenke","Jedes Glied in der Klammer bekommt eins, keins wird vergessen."],
+   zwei:[["Wurzel (Plus)",["16 · 74","16 · (70 + 4)","1120 + 64","1184"]],["Silvester (Minus)",["16 · 74","16 · (80 − 6)","1280 − 96","1184"]]],
+   tipp:"Liegt die Zahl knapp <b>unter</b> einer runden Zahl (69, 98), nimm Minus: 16 · (70 − 1). Liegt sie knapp <b>darüber</b> (71, 103), nimm Plus."},
+  {e:"Regel 7",h:"Ausklammern",f:"a · b + a · c = a · (b + c)",
+   w:"Ausklammern ist der Rückweg: Steckt in beiden Produkten derselbe Faktor, zieht man ihn vor die Klammer.",
+   bild:["👨‍👩‍👧","Stell dir vor: Ein gemeinsamer Familienname","Steht er in beiden Namen, schreibt man ihn nur einmal davor."],
+   bsp:["17 · 38 + 17 · 22","17 · (38 + 22)","17 · 60","1020"]},
+  {e:"Regel 8",h:"Drei Tricks fürs Ausklammern",f:"a · b + a = a · (b + 1)",
+   w:"<b>Faktor 1:</b> Eine einzelne Zahl ist sie selbst mal 1.<br><b>Quadrat:</b> 73² ist 73 · 73.<br><b>Versteckter Faktor:</b> 42 ist 7 · 6, also 7 · 24 + 42 = 7 · 24 + 7 · 6.",
+   bild:["🕵️","Stell dir vor: Der Faktor hat sich verkleidet","Als 1, als Quadrat oder versteckt in einer anderen Zahl. Du entlarvst ihn."],
+   bsp:["99 + 99²","99 · 1 + 99 · 99","99 · (1 + 99)","99 · 100","9900"],
+   falle:"Nicht <s>99 + 99² = 99 · 99</s>! Ohne die <b class=\"r\">1</b> fehlt ein Glied."}
+];
+function regeln(){R=null;
+  app.innerHTML=`<div class="chead"><button class="backb" id="cbk">${I.back}Alle Kapitel</button></div>
+  <div><span class="eyebrow">Kapitel 1</span><h2>Mein Regelheft</h2><p class="small" style="margin-top:4px">Acht Regeln für den GLN. Tipp bei jedem Beispiel auf „Nächster Schritt“ und rechne im Kopf mit.</p></div>
+  ${RULES.map((r,i)=>`<section class="panel law">
+    <div class="lawhead"><span class="badge">${i+1}</span><div><span class="eyebrow">${r.e}</span><h3>${r.h}</h3></div></div>
+    <div class="formel" style="white-space:normal;text-align:center">${r.f}</div>
+    <p class="worte"><span class="wl">In Worten</span>${r.w}</p>
+    ${r.tbl?`<div class="tbl">${r.tbl.map(x=>`<span>${x}</span>`).join("")}</div>`:""}
+    ${r.bsp?`<div class="demo" id="st${i}"></div>`:""}
+    ${r.zwei?`<div class="pair2">${r.zwei.map((z,k)=>`<div><b class="who">${z[0]}</b><div class="demo" id="st${i}_${k}"></div></div>`).join("")}</div>`:""}
+    ${r.tipp?`<p class="small">${r.tipp}</p>`:""}
+    ${r.falle?`<div class="falle"><span class="em">⚠️</span><div><b>Achtung, Falle!</b><br>${r.falle}</div></div>`:""}
+    <div class="meta"><div class="mt"><span class="em">${r.bild[0]}</span><div><b>${r.bild[1]}</b>${r.bild[2]}</div></div></div>
+  </section>`).join("")}
+  <section class="panel"><h3>Drei Fragen vor jeder Aufgabe</h3>
+    <p>① Kann ich etwas zu <b>10, 100 oder 1000</b> zusammenfassen?<br>② Gibt es einen <b>gemeinsamen Faktor</b>, auch versteckt oder als „· 1“?<br>③ Steht ein <b>Minus vor der Klammer</b>?</p>
+    <p class="small">Im Heft: Jeder Schritt in eine neue Zeile, jede Zeile beginnt mit „=“.</p>
+    <button class="go" id="gelesen">${S.seen?"Weiter: Plus- und Minusklammer":"Alles gelesen ✓"}</button></section>`;
+  $("#cbk").onclick=home;
+  RULES.forEach((r,i)=>{if(r.bsp)stepper($("#st"+i),r.bsp);if(r.zwei)r.zwei.forEach((z,k)=>stepper($(`#st${i}_${k}`),z[1],"Weiter"))});
+  $("#gelesen").onclick=()=>{const first=!S.seen;S.seen=true;save();if(first)beep([523.25,659.25,783.99],.16);startRound("klammer")};
+  scrollTo(0,0)}
+
+/* ================= Runde ================= */
+let R=null;
+function startRound(id){const c=chOf(id);
+  const pool=c.types||MIXPOOL;let list=[];
+  /* jede Aufgabenart mindestens einmal (wenn Platz), Rest zufällig, nie zweimal dieselbe Art hintereinander */
+  const n=lwFragen(c.n),base=shuffle(Array.from(new Set(pool))).slice(0,n);
+  while(base.length<n)base.push(pick(pool));
+  list=shuffle(base);for(let i=1;i<list.length;i++)if(list[i]===list[i-1]){const j=list.findIndex((x,k)=>k>i&&x!==list[i]&&x!==list[i-1]);if(j>0)[list[i],list[j]]=[list[j],list[i]]}
+  R={id,i:0,ok:0,res:[],miss:[],wi:rand(WORTE.length)};
+  if(id==="worte")WORTE.sort(()=>Math.random()-.5);
+  R.tasks=list.map(k=>T[k]());R.n=R.tasks.length;showTask()}
+function track(){$("#track").innerHTML=Array.from({length:R.n},(_,i)=>`<i class="${i<R.res.length?(R.res[i]?"ok":"no"):(i===R.i?"now":"")}"></i>`).join("")}
+function showTask(){const t=R.tasks[R.i];R.locked=false;R.typed="";
+  app.innerHTML=`<div class="topbar"><button id="quit" aria-label="Runde beenden"></button><div class="track" id="track"></div></div>
+    <div class="q"><b>${t.q}</b><span class="lk">${t.lk}</span></div>
+    <section class="stage" id="cb"></section>`;
+  $("#quit").onclick=home;track();
+  const cb=$("#cb");
+  let h=t.show?`<div class="show">${t.show}</div>`:"";
+  if(t.kind==="mc")h+=`<div class="opts ${t.g2?"g2":""}">${t.opts.map((o,i)=>`<button class="opt" data-i="${i}">${o.h}</button>`).join("")}</div>`;
+  else h+=keypad();
+  cb.innerHTML=h;
+  if(t.kind==="mc")cb.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{if(R.locked)return;const o=t.opts[+b.dataset.i];
+    cb.querySelectorAll(".opt").forEach((x,i)=>{x.disabled=true;if(t.opts[i].ok)x.classList.add("ok")});if(!o.ok)b.classList.add("bad");done(o.ok,t.ex)});
+  else wireKeypad(cb,t.ans,6,(ok)=>done(ok,(ok?"":`Richtig ist <b>${t.ans}</b>. `)+t.ex));
+  scrollTo(0,0)}
+function keypad(){return `<div class="kp">${[1,2,3,4,5,6,7,8,9].map(n=>`<button data-k="${n}">${n}</button>`).join("")}<button class="del" data-k="del" aria-label="Löschen">${I.del}</button><button data-k="0">0</button><button class="ok" data-k="ok" disabled>OK</button></div>`}
+/* Ziffernblock (eigener, damit keine Handy-Tastatur aufspringt) */
+function wireKeypad(cb,ans,max,fin){R.kp=k=>{if(R.locked)return;
+    if(k==="ok"){if(!R.typed)return;const ok=R.typed===ans;const sl=$("#slot");sl.classList.add(ok?"ok":"bad");cb.querySelectorAll(".kp button").forEach(b=>b.disabled=true);fin(ok,R.typed);return}
+    if(k==="del")R.typed=R.typed.slice(0,-1);else if(R.typed.length<max)R.typed=(R.typed==="0"?"":R.typed)+k;
+    const sl=$("#slot");sl.textContent=R.typed||"?";sl.classList.toggle("full",!!R.typed);cb.querySelector(".kp .ok").disabled=!R.typed};
+  cb.querySelectorAll(".kp button").forEach(b=>b.onclick=()=>R.kp(b.dataset.k))}
+document.addEventListener("keydown",e=>{if(!R||!R.kp||R.locked||e.metaKey||e.ctrlKey||e.altKey||!$(".kp"))return;
+  if(/^[0-9]$/.test(e.key))R.kp(e.key);else if(e.key==="Backspace")R.kp("del");else if(e.key==="Enter"){e.preventDefault();R.kp("ok")}});
+
+function done(ok,ex){if(R.locked)return;R.locked=true;const t=R.tasks[R.i];
+  R.res.push(ok);if(ok)R.ok++;else R.miss.push(t);
+  ok?sfxOk():sfxBad();track();
+  const fb=document.createElement("div");fb.className="fb "+(ok?"ok":"bad");fb.setAttribute("role","status");
+  fb.innerHTML=`<strong>${ok?pick(["Richtig!","Super!","Genau!","Klasse!","Stark!"]):"Nicht ganz"}</strong><p>${ex}</p>`;
+  const nx=document.createElement("button");nx.className="next";nx.type="button";nx.textContent=R.i+1>=R.n?"Ergebnis":"Weiter";
+  nx.onclick=()=>{R.i++;R.i>=R.n?endRound():showTask()};
+  lwSheet($("#cb"),ok,[fb,nx])}
+const TOPIC={Minusklammer:"Plus- und Minusklammer (Regel 1)",Subtrahenden:"Mehrere Zahlen abziehen (Regel 2)",Umstellen:"Umstellen mit Rucksack (Regel 3)",Reihenfolge:"Klammer, Potenz, Punkt, Strich (Regel 4)",
+  Partner:"Faktoren-Partner (Regel 5)",Ausmultiplizieren:"Ausmultiplizieren (Regel 6)",Ausklammern:"Ausklammern (Regel 7)","Faktor 1":"Trick: Faktor 1 (Regel 8)",Quadrat:"Trick: Quadrat (Regel 8)",
+  Versteckt:"Trick: versteckter Faktor (Regel 8)",Tricks:"Ausklammern mit Tricks (Regel 7 und 8)",Fehler:"Typische Fehler erkennen",Worte:"Regeln in Worten"};
+function endRound(){const n=R.n,ok=R.ok,q=ok/n;const st=q>=.9?3:q>=.7?2:q>=.5?1:0;
+  S.best[R.id]=Math.max(S.best[R.id]||0,st);save();
+  const k=CH.findIndex(c=>c.id===R.id),nxt=CH[k+1];
+  const cheer=["Dranbleiben, das wird!","Gut gemacht!","Stark!","Super, du bist ein Klammer-Profi!"][st];
+  const topics=[...new Set(R.miss.map(t=>TOPIC[t.topic]||t.topic))];
+  app.innerHTML=`<section class="result"><h2>${cheer}</h2><div class="bigstars">${[0,1,2].map(i=>I.star(i<st).replace("<svg",`<svg class="s${i+1}"`)).join("")}</div>
+    <p class="lead"><b>${ok} von ${n}</b> richtig</p>
+    ${topics.length?`<div class="panel missed"><b>Schau dir das noch einmal an:</b><ul>${topics.map(x=>`<li>${x}</li>`).join("")}</ul><button class="ghost" id="rg">${I.book}Im Regelheft nachlesen</button></div>`:""}
+    <button class="go" id="again">Nochmal üben</button>
+    ${nxt&&st>=2?`<button class="ghost" id="nx">Weiter: ${nxt.t}</button>`:""}
+    <button class="ghost" id="hm">Alle Kapitel</button></section>`;
+  if(st>=2)beep([523.25,659.25,783.99,1046.5],.2);
+  const id=R.id;R=null;
+  $("#again").onclick=()=>startRound(id);$("#hm").onclick=home;if($("#nx"))$("#nx").onclick=()=>openCh(nxt.id);if($("#rg"))$("#rg").onclick=regeln;
+  scrollTo(0,0)}
+
+/* ================= Erklär-Chat (lernwelt-chat.js) ================= */
+const CHATS=[
+ {name:'Minusklammer',title:'Ben',sub:'online',ava:'B',lines:[
+  {w:'Ben',t:'Ich hab 176 − (76 − 53) = 176 − 76 − 53 = 47. Die Lehrerin hat’s rot angestrichen 😤'},
+  {t:'Minus vor der Klammer! Da drehen sich ___ Zeichen in der Klammer um.',a:['alle'],o:['alle','keine','nur die ersten'],ex:'Beim Weglassen einer Minusklammer drehen sich alle Zeichen um.'},
+  {t:'Aus − 53 wird also ___ 53.',a:['+'],o:['+','−','·'],ex:'Aus − wird +.'},
+  {t:'176 − 76 + 53 = 100 + 53 = ___',a:['153'],o:['153','47','123'],ex:'100 + 53 = 153.'},
+  {w:'Ben',t:'Ahhh, das Umdreh-Schild 🔄 Danke!'}]},
+ {name:'Faktor 1',title:'Mia',sub:'online',ava:'M',lines:[
+  {w:'Mia',t:'99 + 99² … ich hab einfach 99 · 99 = 9801 gerechnet. Stimmt das?'},
+  {t:'Fast! Die einzelne 99 ist eigentlich 99 · ___.',a:['1'],o:['1','0','99'],ex:'Jede Zahl ist sie selbst mal 1.'},
+  {t:'Also 99 · 1 + 99 · 99 = 99 · (1 + 99) = 99 · ___',a:['100'],o:['100','99','98'],ex:'1 + 99 = 100.'},
+  {t:'Das sind ___.',a:['9900'],o:['9900','9801','9999'],ex:'99 · 100 = 9900.'},
+  {w:'Mia',t:'Den Faktor 1 vergess ich nie wieder ☝️'}]},
+ {name:'Wurzel oder Silvester',title:'Klasse 5 💬',sub:'Lena, Tom, du',ava:'5',lines:[
+  {w:'Lena',t:'Wie rechnet ihr 16 · 69 im Kopf? 🤯'},
+  {w:'Tom',t:'Ich mach 16 · (60 + 9) = 960 + 144 … puh.'},
+  {t:'Geschickter: 69 liegt knapp unter 70. Also 16 · (70 − ___)',a:['1'],o:['1','9','10'],ex:'69 = 70 − 1.'},
+  {t:'16 · 70 = ___',a:['1120'],o:['1120','1112','112'],ex:'16 · 7 = 112, mal 10 = 1120.'},
+  {t:'1120 − 16 = ___',a:['1104'],o:['1104','1136','1114'],ex:'1120 − 16 = 1104.'},
+  {t:'Das ist das ___: Die 16 wird auf beide Glieder verteilt.',a:['Distributivgesetz'],o:['Distributivgesetz','Kommutativgesetz','Assoziativgesetz'],ex:'Distributiv heißt verteilend.'},
+  {w:'Lena',t:'Silvesters Weg ist echt schneller 😎'}]},
+ {name:'Gauß-Trick',title:'Tom',sub:'online',ava:'T',lines:[
+  {w:'Tom',t:'Wie konnte der kleine Gauß 1 + 2 + … + 100 in einer Minute ausrechnen?'},
+  {t:'Er hat Paare gebildet: 1 + 100, 2 + 99, 3 + 98 … Jedes Paar ergibt ___.',a:['101'],o:['101','100','99'],ex:'1 + 100 = 101, 2 + 99 = 101 …'},
+  {t:'Es gibt ___ solche Paare.',a:['50'],o:['50','100','25'],ex:'100 Zahlen, je zwei in einem Paar: 50 Paare.'},
+  {t:'50 · 101 = ___',a:['5050'],o:['5050','5000','10100'],ex:'50 · 100 + 50 · 1 = 5000 + 50 = 5050.'},
+  {w:'Tom',t:'Krass, nur mit Umstellen und Klammern 🤓'}]}
+];
+function chat(){R=null;
+  app.innerHTML=`<div class="chead"><button class="backb" id="cbk">${I.back}Alle Kapitel</button></div>
+    <div><span class="eyebrow">Kapitel ${CH.findIndex(c=>c.id==="chat")+1}</span><h2>Erklär-Chat</h2><p class="small" style="margin-top:4px">Deine Freunde verstehen etwas nicht. Erklär es ihnen Schritt für Schritt. Jeder Chat ohne Fehler bringt einen Stern.</p></div>
+    <div class="chatbox" id="chatbox"></div>`;
+  $("#cbk").onclick=home;
+  if(!window.lwChatPanel){$("#chatbox").innerHTML=`<p class="small">Der Chat lädt gerade nicht. Versuch es später nochmal.</p>`;return}
+  lwChatPanel($("#chatbox"),{fach:'ma',people:{Lena:'#E0567A',Tom:'#2F80ED',Mia:'#8B4FE0',Ben:'#E07B12'},chats:CHATS,
+    onEnd:function(i,res){if(res.every(r=>r.ok)){S.chat[i]=true;S.best.chat=Math.min(3,Object.keys(S.chat).length);save();beep([523.25,659.25,783.99],.16)}}});
+  scrollTo(0,0)}
+
+/* Lernwelt: direkt ins Kapitel (klammern.html#ausklammern …), Anker stehen in hefte.js */
+function kapitelSprung(){const id=location.hash.slice(1);if(!chOf(id))return false;openCh(id);return true}
+// Kam Nea über ein Kapitel der Lernwelt, führt „Alle Kapitel/Startseite“ zurück zur Heft-Seite
+window.lwStart?lwStart('home',kapitelSprung):(kapitelSprung()||home());
+</script>
+<script>/* Lernwelt: Kapitel-Fortschritt für die Startseite (siehe sync.js) */
+if(window.LW&&LW.kapitel){
+LW.kapitel(function(){
+  return CH.map(function(c){return {t:c.t,p:stars(c)/3}});
+});
+}</script>
+</body></html>
