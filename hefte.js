@@ -178,6 +178,8 @@ window.LW_HEFTE = [
 window.LW_LINKS = [
   { name: 'Merkplakat Terme', fach: 'Mathe', fachId: 'mathe', href: 'https://claude.ai/artifact/BWXY5mNJuKSzEBTuy6s5LS' },
   { name: 'Merkblatt: 2er- und 10er-Potenzen', fach: 'Mathe', fachId: 'mathe', href: 'https://claude.ai/artifact/2uFKtcM6oqygmuiCnjhXFK' },
+  { name: 'Merkblatt: Klammern & Distributivgesetz', fach: 'Mathe', fachId: 'mathe', href: '/merkblaetter/merkblatt-klammern.pdf' },
+  { name: 'Übungsblätter GLN: Klammern', fach: 'Mathe', fachId: 'mathe', href: '/merkblaetter/uebungsblaetter-klammern.pdf' },
   { name: 'Lernplan 5. Klasse', fach: 'Planen', href: 'https://claude.ai/artifact/F3KZTT6ncsVdgLyo42Sh2J' },
   { name: 'Lernstrategien für Nea', fach: 'Wie lerne ich gut?', href: 'https://claude.ai/artifact/5F1gLTMsWZBsAxN6R3kujD' }
 ];
